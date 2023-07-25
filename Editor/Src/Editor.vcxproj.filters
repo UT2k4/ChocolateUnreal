@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Src">
+      <UniqueIdentifier>{ce095663-158f-4a2f-b41e-902e47b977d9}</UniqueIdentifier>
+      <Extensions>*.cpp</Extensions>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{665ccb44-0cba-4927-8913-6ead609d524e}</UniqueIdentifier>
+      <Extensions>*.uc</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CoolBsp.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="EdHook.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnBsp.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdAct.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdCam.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdClick.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdCnst.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdCsg.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdFact.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEditor.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdRend.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdSrv.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnEdTran.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnMeshEd.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnScrCom.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnShadow.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnSyntax.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnTopics.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnVisi.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Editor.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorPrivate.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="UnEdTran.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="UnScrCom.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="UnTopics.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Classes\EditorEngine.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>"$/Unreal", QBCAAAAA</SccProjectName>
+    <SccLocalPath>..\..</SccLocalPath>
+    <ProjectGuid>{2155FFAA-0D1B-4FB1-9A9D-D8221F759856}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\..\Lib\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\..\Lib\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MinimalRebuild>true</MinimalRebuild>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\..\Core\Inc;..\..\Engine\Inc;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Debug\UnrealI.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+      <AdditionalOptions> /D /Zm256 PACKAGE="\"UnrealI"\"</AdditionalOptions>
+      <StructMemberAlignment>4Bytes</StructMemberAlignment>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\..\Lib\UnrealI.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <RedirectOutputAndErrors>NUL</RedirectOutputAndErrors>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\..\Lib\UnrealI.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LinkDLL>true</LinkDLL>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>.\..\Lib\UnrealI.dll</OutputFile>
+      <ImportLibrary>.\..\Lib\UnrealI.lib</ImportLibrary>
+      <BaseAddress>0x10900000</BaseAddress>
+      <AdditionalDependencies>..\..\Core\Lib\Core.lib;..\..\Engine\Lib\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\..\Core\Inc;..\..\Engine\Inc;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Release\UnrealI.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+      <AdditionalOptions> /D /Zm256 PACKAGE="\"UnrealI"\"</AdditionalOptions>
+      <StructMemberAlignment>4Bytes</StructMemberAlignment>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\..\Lib\UnrealI.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <RedirectOutputAndErrors>NUL</RedirectOutputAndErrors>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\..\Lib\UnrealI.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LinkDLL>true</LinkDLL>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>.\..\Lib\UnrealI.dll</OutputFile>
+      <ImportLibrary>.\..\Lib\UnrealI.lib</ImportLibrary>
+      <BaseAddress>0x10700000</BaseAddress>
+      <AdditionalDependencies>..\..\Core\Lib\Core.lib;..\..\Engine\Lib\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Classes\AlarmPoint.uc" />
+    <CustomBuild Include="..\Classes\AltarTrigger.uc" />
+    <CustomBuild Include="..\Classes\Amplifier.uc" />
+    <CustomBuild Include="..\Classes\Arc.uc" />
+    <CustomBuild Include="..\Classes\Arm1.uc" />
+    <CustomBuild Include="..\Classes\Armor.uc" />
+    <CustomBuild Include="..\Classes\Arrow.uc" />
+    <CustomBuild Include="..\Classes\ArrowSpawner.uc" />
+    <CustomBuild Include="..\Classes\AsbestosSuit.uc" />
+    <CustomBuild Include="..\Classes\ASMD.uc" />
+    <CustomBuild Include="..\Classes\ASMDAmmo.uc" />
+    <CustomBuild Include="..\Classes\AutoMag.uc" />
+    <CustomBuild Include="..\Classes\BabyCow.uc" />
+    <CustomBuild Include="..\Classes\BallExplosion.uc" />
+    <CustomBuild Include="..\Classes\Bandages.uc" />
+    <CustomBuild Include="..\Classes\Barrel.uc" />
+    <CustomBuild Include="..\Classes\BarrelSludge.uc" />
+    <CustomBuild Include="..\Classes\Behemoth.uc" />
+    <CustomBuild Include="..\Classes\bigbiogel.uc" />
+    <CustomBuild Include="..\Classes\bigblacksmoke.uc" />
+    <CustomBuild Include="..\Classes\BigRock.uc" />
+    <CustomBuild Include="..\Classes\biodrop.uc" />
+    <CustomBuild Include="..\Classes\biogel.uc" />
+    <CustomBuild Include="..\Classes\bird1.uc" />
+    <CustomBuild Include="..\Classes\BiterFish.uc" />
+    <CustomBuild Include="..\Classes\BiterFishSchool.uc" />
+    <CustomBuild Include="..\Classes\Bloblet.uc" />
+    <CustomBuild Include="..\Classes\Blood2.uc" />
+    <CustomBuild Include="..\Classes\BloodBurst.uc" />
+    <CustomBuild Include="..\Classes\BloodPool.uc" />
+    <CustomBuild Include="..\Classes\BloodPuff.uc" />
+    <CustomBuild Include="..\Classes\BloodSpurt.uc" />
+    <CustomBuild Include="..\Classes\BloodTrail.uc" />
+    <CustomBuild Include="..\Classes\BlueBook.uc" />
+    <CustomBuild Include="..\Classes\Book.uc" />
+    <CustomBuild Include="..\Classes\BotInfo.uc" />
+    <CustomBuild Include="..\Classes\Bots.uc" />
+    <CustomBuild Include="..\Classes\Boulder.uc" />
+    <CustomBuild Include="..\Classes\Boulder1.uc" />
+    <CustomBuild Include="..\Classes\BreakingGlass.uc" />
+    <CustomBuild Include="..\Classes\Brute.uc" />
+    <CustomBuild Include="..\Classes\brutecarcass.uc" />
+    <CustomBuild Include="..\Classes\BruteProjectile.uc" />
+    <CustomBuild Include="..\Classes\Bubble.uc" />
+    <CustomBuild Include="..\Classes\Bubble1.uc" />
+    <CustomBuild Include="..\Classes\BubbleGenerator.uc" />
+    <CustomBuild Include="..\Classes\BulletHit.uc" />
+    <CustomBuild Include="..\Classes\Burned.uc" />
+    <CustomBuild Include="..\Classes\Candle.uc" />
+    <CustomBuild Include="..\Classes\Candle2.uc" />
+    <CustomBuild Include="..\Classes\Cannon.uc" />
+    <CustomBuild Include="..\Classes\CannonBolt.uc" />
+    <CustomBuild Include="..\Classes\CaveManta.uc" />
+    <CustomBuild Include="..\Classes\Chair.uc" />
+    <CustomBuild Include="..\Classes\Chest.uc" />
+    <CustomBuild Include="..\Classes\Chip.uc" />
+    <CustomBuild Include="..\Classes\Chunk.uc" />
+    <CustomBuild Include="..\Classes\Chunk1.uc" />
+    <CustomBuild Include="..\Classes\Chunk2.uc" />
+    <CustomBuild Include="..\Classes\Chunk3.uc" />
+    <CustomBuild Include="..\Classes\Chunk4.uc" />
+    <CustomBuild Include="..\Classes\Clip.uc" />
+    <CustomBuild Include="..\Classes\CloudZone.uc" />
+    <CustomBuild Include="..\Classes\CoopGame.uc" />
+    <CustomBuild Include="..\Classes\Corroded.uc" />
+    <CustomBuild Include="..\Classes\Cow.uc" />
+    <CustomBuild Include="..\Classes\cowcarcass.uc" />
+    <CustomBuild Include="..\Classes\CreatureCarcass.uc" />
+    <CustomBuild Include="..\Classes\CreatureChunks.uc" />
+    <CustomBuild Include="..\Classes\CreatureFactory.uc" />
+    <CustomBuild Include="..\Classes\crucifiednali.uc" />
+    <CustomBuild Include="..\Classes\Dampener.uc" />
+    <CustomBuild Include="..\Classes\DarkMatch.uc" />
+    <CustomBuild Include="..\Classes\DeadBodySwarm.uc" />
+    <CustomBuild Include="..\Classes\DeadMales.uc" />
+    <CustomBuild Include="..\Classes\DeathMatchGame.uc" />
+    <CustomBuild Include="..\Classes\Decapitated.uc" />
+    <CustomBuild Include="..\Classes\DefaultAmmo.uc" />
+    <CustomBuild Include="..\Classes\DEProj.uc" />
+    <CustomBuild Include="..\Classes\devilfish.uc" />
+    <CustomBuild Include="..\Classes\devilfishcarcass.uc" />
+    <CustomBuild Include="..\Classes\Dice.uc" />
+    <CustomBuild Include="..\Classes\DispersionAmmo.uc" />
+    <CustomBuild Include="..\Classes\DispersionPistol.uc" />
+    <CustomBuild Include="..\Classes\DKmaplist.uc" />
+    <CustomBuild Include="..\Classes\DMmaplist.uc" />
+    <CustomBuild Include="..\Classes\Drip.uc" />
+    <CustomBuild Include="..\Classes\DripGenerator.uc" />
+    <CustomBuild Include="..\Classes\Drowned.uc" />
+    <CustomBuild Include="..\Classes\DynamicAmbientSound.uc" />
+    <CustomBuild Include="..\Classes\Earthquake.uc" />
+    <CustomBuild Include="..\Classes\Eightball.uc" />
+    <CustomBuild Include="..\Classes\Electricity.uc" />
+    <CustomBuild Include="..\Classes\EliteKrallBolt.uc" />
+    <CustomBuild Include="..\Classes\EndGame.uc" />
+    <CustomBuild Include="..\Classes\EnergyBolt.uc" />
+    <CustomBuild Include="..\Classes\EntryGameInfo.uc" />
+    <CustomBuild Include="..\Classes\ExplodingWall.uc" />
+    <CustomBuild Include="..\Classes\ExplosionChain.uc" />
+    <CustomBuild Include="..\Classes\Fan2.uc" />
+    <CustomBuild Include="..\Classes\FatRing.uc" />
+    <CustomBuild Include="..\Classes\FearSpot.uc" />
+    <CustomBuild Include="..\Classes\Fell.uc" />
+    <CustomBuild Include="..\Classes\Female.uc" />
+    <CustomBuild Include="..\Classes\Female2Body.uc" />
+    <CustomBuild Include="..\Classes\FemaleBody.uc" />
+    <CustomBuild Include="..\Classes\FemaleBot.uc" />
+    <CustomBuild Include="..\Classes\FemaleOne.uc" />
+    <CustomBuild Include="..\Classes\FemaleOneBot.uc" />
+    <CustomBuild Include="..\Classes\FemaleOneCarcass.uc" />
+    <CustomBuild Include="..\Classes\FemaleTorso.uc" />
+    <CustomBuild Include="..\Classes\FemaleTwo.uc" />
+    <CustomBuild Include="..\Classes\FemaleTwoBot.uc" />
+    <CustomBuild Include="..\Classes\FemaleTwoCarcass.uc" />
+    <CustomBuild Include="..\Classes\FireSlith.uc" />
+    <CustomBuild Include="..\Classes\Flag1.uc" />
+    <CustomBuild Include="..\Classes\Flag2.uc" />
+    <CustomBuild Include="..\Classes\Flag3.uc" />
+    <CustomBuild Include="..\Classes\FlakBox.uc" />
+    <CustomBuild Include="..\Classes\FlakCannon.uc" />
+    <CustomBuild Include="..\Classes\FlakShell.uc" />
+    <CustomBuild Include="..\Classes\FlameBall.uc" />
+    <CustomBuild Include="..\Classes\FlameExplosion.uc" />
+    <CustomBuild Include="..\Classes\Flare.uc" />
+    <CustomBuild Include="..\Classes\Flashlight.uc" />
+    <CustomBuild Include="..\Classes\FlashLightBeam.uc" />
+    <CustomBuild Include="..\Classes\FlockMasterPawn.uc" />
+    <CustomBuild Include="..\Classes\FlockPawn.uc" />
+    <CustomBuild Include="..\Classes\Fly.uc" />
+    <CustomBuild Include="..\Classes\FlyCarcass.uc" />
+    <CustomBuild Include="..\Classes\ForceField.uc" />
+    <CustomBuild Include="..\Classes\ForceFieldProj.uc" />
+    <CustomBuild Include="..\Classes\Gasbag.uc" />
+    <CustomBuild Include="..\Classes\GasBagBelch.uc" />
+    <CustomBuild Include="..\Classes\GassiusCarcass.uc" />
+    <CustomBuild Include="..\Classes\GESBioRifle.uc" />
+    <CustomBuild Include="..\Classes\GiantGasbag.uc" />
+    <CustomBuild Include="..\Classes\GiantManta.uc" />
+    <CustomBuild Include="..\Classes\GlassFragments.uc" />
+    <CustomBuild Include="..\Classes\GradualMover.uc" />
+    <CustomBuild Include="..\Classes\GreenBlob.uc" />
+    <CustomBuild Include="..\Classes\GreenBloodPuff.uc" />
+    <CustomBuild Include="..\Classes\GreenBook.uc" />
+    <CustomBuild Include="..\Classes\GreenSmokePuff.uc" />
+    <CustomBuild Include="..\Classes\Grenade.uc" />
+    <CustomBuild Include="..\Classes\GuardPoint.uc" />
+    <CustomBuild Include="..\Classes\Health.uc" />
+    <CustomBuild Include="..\Classes\Heart.uc" />
+    <CustomBuild Include="..\Classes\HeavyWallHitEffect.uc" />
+    <CustomBuild Include="..\Classes\HorseFly.uc" />
+    <CustomBuild Include="..\Classes\HorseFlySwarm.uc" />
+    <CustomBuild Include="..\Classes\Human.uc" />
+    <CustomBuild Include="..\Classes\HumanBot.uc" />
+    <CustomBuild Include="..\Classes\HumanCarcass.uc" />
+    <CustomBuild Include="..\Classes\IceSkaarj.uc" />
+    <CustomBuild Include="..\Classes\ImpalerBolt.uc" />
+    <CustomBuild Include="..\Classes\InfoMenu.uc" />
+    <CustomBuild Include="..\Classes\InterpolatingObject.uc" />
+    <CustomBuild Include="..\Classes\IntroNullHud.uc" />
+    <CustomBuild Include="..\Classes\invisibility.uc" />
+    <CustomBuild Include="..\Classes\JumpBoots.uc" />
+    <CustomBuild Include="..\Classes\Jumper.uc" />
+    <CustomBuild Include="..\Classes\KevlarSuit.uc" />
+    <CustomBuild Include="..\Classes\KingOfTheHill.uc" />
+    <CustomBuild Include="..\Classes\KraalBolt.uc" />
+    <CustomBuild Include="..\Classes\Krall.uc" />
+    <CustomBuild Include="..\Classes\KrallCarcass.uc" />
+    <CustomBuild Include="..\Classes\KrallElite.uc" />
+    <CustomBuild Include="..\Classes\Lamp1.uc" />
+    <CustomBuild Include="..\Classes\Lamp4.uc" />
+    <CustomBuild Include="..\Classes\LavaZone.uc" />
+    <CustomBuild Include="..\Classes\Leg1.uc" />
+    <CustomBuild Include="..\Classes\Leg2.uc" />
+    <CustomBuild Include="..\Classes\LeglessKrall.uc" />
+    <CustomBuild Include="..\Classes\LesserBrute.uc" />
+    <CustomBuild Include="..\Classes\LesserBruteCarcass.uc" />
+    <CustomBuild Include="..\Classes\LightWallHitEffect.uc" />
+    <CustomBuild Include="..\Classes\Liver.uc" />
+    <CustomBuild Include="..\Classes\Magma.uc" />
+    <CustomBuild Include="..\Classes\MagmaBurst.uc" />
+    <CustomBuild Include="..\Classes\Male.uc" />
+    <CustomBuild Include="..\Classes\MaleBody.uc" />
+    <CustomBuild Include="..\Classes\MaleBodyThree.uc" />
+    <CustomBuild Include="..\Classes\MaleBodyTwo.uc" />
+    <CustomBuild Include="..\Classes\MaleBot.uc" />
+    <CustomBuild Include="..\Classes\MaleOne.uc" />
+    <CustomBuild Include="..\Classes\MaleOneBot.uc" />
+    <CustomBuild Include="..\Classes\MaleOneCarcass.uc" />
+    <CustomBuild Include="..\Classes\MaleThree.uc" />
+    <CustomBuild Include="..\Classes\MaleThreeBot.uc" />
+    <CustomBuild Include="..\Classes\MaleThreeCarcass.uc" />
+    <CustomBuild Include="..\Classes\MaleTwo.uc" />
+    <CustomBuild Include="..\Classes\MaleTwoBot.uc" />
+    <CustomBuild Include="..\Classes\MaleTwoCarcass.uc" />
+    <CustomBuild Include="..\Classes\Manta.uc" />
+    <CustomBuild Include="..\Classes\MantaCarcass.uc" />
+    <CustomBuild Include="..\Classes\MasterChunk.uc" />
+    <CustomBuild Include="..\Classes\MedWoodBox.uc" />
+    <CustomBuild Include="..\Classes\MercCarcass.uc" />
+    <CustomBuild Include="..\Classes\Mercenary.uc" />
+    <CustomBuild Include="..\Classes\MercenaryElite.uc" />
+    <CustomBuild Include="..\Classes\MercFlare.uc" />
+    <CustomBuild Include="..\Classes\MercRocket.uc" />
+    <CustomBuild Include="..\Classes\Minigun.uc" />
+    <CustomBuild Include="..\Classes\MiniGunSentry.uc" />
+    <CustomBuild Include="..\Classes\MonkStatue.uc" />
+    <CustomBuild Include="..\Classes\Moon.uc" />
+    <CustomBuild Include="..\Classes\Moon2.uc" />
+    <CustomBuild Include="..\Classes\Moon3.uc" />
+    <CustomBuild Include="..\Classes\Nali.uc" />
+    <CustomBuild Include="..\Classes\NaliCarcass.uc" />
+    <CustomBuild Include="..\Classes\NaliFruit.uc" />
+    <CustomBuild Include="..\Classes\NaliPriest.uc" />
+    <CustomBuild Include="..\Classes\NaliRabbit.uc" />
+    <CustomBuild Include="..\Classes\NaliStatue.uc" />
+    <CustomBuild Include="..\Classes\NitrogenSlith.uc" />
+    <CustomBuild Include="..\Classes\NitrogenZone.uc" />
+    <CustomBuild Include="..\Classes\NullAmmo.uc" />
+    <CustomBuild Include="..\Classes\OKMenu.uc" />
+    <CustomBuild Include="..\Classes\parentBlob.uc" />
+    <CustomBuild Include="..\Classes\ParticleBurst.uc" />
+    <CustomBuild Include="..\Classes\ParticleBurst2.uc" />
+    <CustomBuild Include="..\Classes\PawnTeleportEffect.uc" />
+    <CustomBuild Include="..\Classes\PeaceRocket.uc" />
+    <CustomBuild Include="..\Classes\PHeart.uc" />
+    <CustomBuild Include="..\Classes\Plant1.uc" />
+    <CustomBuild Include="..\Classes\Plant2.uc" />
+    <CustomBuild Include="..\Classes\Plant3.uc" />
+    <CustomBuild Include="..\Classes\PlayerChunks.uc" />
+    <CustomBuild Include="..\Classes\PowerShield.uc" />
+    <CustomBuild Include="..\Classes\Pupae.uc" />
+    <CustomBuild Include="..\Classes\PupaeCarcass.uc" />
+    <CustomBuild Include="..\Classes\QuadShot.uc" />
+    <CustomBuild Include="..\Classes\Queen.uc" />
+    <CustomBuild Include="..\Classes\QueenCarcass.uc" />
+    <CustomBuild Include="..\Classes\QueenDest.uc" />
+    <CustomBuild Include="..\Classes\QueenShield.uc" />
+    <CustomBuild Include="..\Classes\QueenTeleportEffect.uc" />
+    <CustomBuild Include="..\Classes\RazorAmmo.uc" />
+    <CustomBuild Include="..\Classes\RazorBlade.uc" />
+    <CustomBuild Include="..\Classes\RazorJack.uc" />
+    <CustomBuild Include="..\Classes\ReSpawn.uc" />
+    <CustomBuild Include="..\Classes\Rifle.uc" />
+    <CustomBuild Include="..\Classes\RifleRound.uc" />
+    <CustomBuild Include="..\Classes\RingExplosion.uc" />
+    <CustomBuild Include="..\Classes\RingExplosion2.uc" />
+    <CustomBuild Include="..\Classes\RingExplosion3.uc" />
+    <CustomBuild Include="..\Classes\RingExplosion4.uc" />
+    <CustomBuild Include="..\Classes\rocket.uc" />
+    <CustomBuild Include="..\Classes\RocketCan.uc" />
+    <CustomBuild Include="..\Classes\RockSlide.uc" />
+    <CustomBuild Include="..\Classes\Sconce.uc" />
+    <CustomBuild Include="..\Classes\ScriptedPawn.uc" />
+    <CustomBuild Include="..\Classes\SCUBAGear.uc" />
+    <CustomBuild Include="..\Classes\Seeds.uc" />
+    <CustomBuild Include="..\Classes\SeekingRocket.uc" />
+    <CustomBuild Include="..\Classes\Shellbox.uc" />
+    <CustomBuild Include="..\Classes\ShellCase.uc" />
+    <CustomBuild Include="..\Classes\Shells.uc" />
+    <CustomBuild Include="..\Classes\Shield.uc" />
+    <CustomBuild Include="..\Classes\ShieldBelt.uc" />
+    <CustomBuild Include="..\Classes\ShortSmokeGen.uc" />
+    <CustomBuild Include="..\Classes\SightLight.uc" />
+    <CustomBuild Include="..\Classes\Sign1.uc" />
+    <CustomBuild Include="..\Classes\SinglePlayer.Uc" />
+    <CustomBuild Include="..\Classes\Skaarj.uc" />
+    <CustomBuild Include="..\Classes\skaarjassassin.uc" />
+    <CustomBuild Include="..\Classes\SkaarjBerserker.uc" />
+    <CustomBuild Include="..\Classes\SkaarjCarcass.uc" />
+    <CustomBuild Include="..\Classes\SkaarjGunner.uc" />
+    <CustomBuild Include="..\Classes\SkaarjInfantry.uc" />
+    <CustomBuild Include="..\Classes\SkaarjLord.uc" />
+    <CustomBuild Include="..\Classes\SkaarjOfficer.uc" />
+    <CustomBuild Include="..\Classes\skaarjplayer.uc" />
+    <CustomBuild Include="..\Classes\SkaarjPlayerBot.uc" />
+    <CustomBuild Include="..\Classes\SkaarjProjectile.uc" />
+    <CustomBuild Include="..\Classes\skaarjscout.uc" />
+    <CustomBuild Include="..\Classes\SkaarjSniper.uc" />
+    <CustomBuild Include="..\Classes\SkaarjTrooper.uc" />
+    <CustomBuild Include="..\Classes\SkaarjWarrior.uc" />
+    <CustomBuild Include="..\Classes\SlimeZone.uc" />
+    <CustomBuild Include="..\Classes\Slith.uc" />
+    <CustomBuild Include="..\Classes\SlithCarcass.uc" />
+    <CustomBuild Include="..\Classes\SlithProjectile.uc" />
+    <CustomBuild Include="..\Classes\SlotMenu.uc" />
+    <CustomBuild Include="..\Classes\Sludge.uc" />
+    <CustomBuild Include="..\Classes\SludgeBarrel.uc" />
+    <CustomBuild Include="..\Classes\SmallSpark.uc" />
+    <CustomBuild Include="..\Classes\SmallSpark2.uc" />
+    <CustomBuild Include="..\Classes\SmallSteelBox.uc" />
+    <CustomBuild Include="..\Classes\SmallWire.uc" />
+    <CustomBuild Include="..\Classes\SmallWoodBox.uc" />
+    <CustomBuild Include="..\Classes\SmokeGenerator.uc" />
+    <CustomBuild Include="..\Classes\SmokePuff.uc" />
+    <CustomBuild Include="..\Classes\SmokeTrail.uc" />
+    <CustomBuild Include="..\Classes\SparkBit.uc" />
+    <CustomBuild Include="..\Classes\Sparks.uc" />
+    <CustomBuild Include="..\Classes\Spawnpoint.uc" />
+    <CustomBuild Include="..\Classes\spectatorhud.uc" />
+    <CustomBuild Include="..\Classes\splash.uc" />
+    <CustomBuild Include="..\Classes\SpriteBallExplosion.uc" />
+    <CustomBuild Include="..\Classes\SpriteExplosion.uc" />
+    <CustomBuild Include="..\Classes\SpriteSmokePuff.uc" />
+    <CustomBuild Include="..\Classes\Squid.uc" />
+    <CustomBuild Include="..\Classes\SquidCarcass.uc" />
+    <CustomBuild Include="..\Classes\StealthCloak.uc" />
+    <CustomBuild Include="..\Classes\SteelBarrel.uc" />
+    <CustomBuild Include="..\Classes\SteelBox.uc" />
+    <CustomBuild Include="..\Classes\Stinger.uc" />
+    <CustomBuild Include="..\Classes\StingerAmmo.uc" />
+    <CustomBuild Include="..\Classes\StingerProjectile.uc" />
+    <CustomBuild Include="..\Classes\StochasticTrigger.uc" />
+    <CustomBuild Include="..\Classes\Stomach.uc" />
+    <CustomBuild Include="..\Classes\StoneTitan.uc" />
+    <CustomBuild Include="..\Classes\Suits.uc" />
+    <CustomBuild Include="..\Classes\SuperHealth.uc" />
+    <CustomBuild Include="..\Classes\Table.uc" />
+    <CustomBuild Include="..\Classes\Tapestry1.uc" />
+    <CustomBuild Include="..\Classes\TarydiumBarrel.uc" />
+    <CustomBuild Include="..\Classes\TarZone.uc" />
+    <CustomBuild Include="..\Classes\TazerBeam.uc" />
+    <CustomBuild Include="..\Classes\Tazerexplosion.uc" />
+    <CustomBuild Include="..\Classes\TazerProj.uc" />
+    <CustomBuild Include="..\Classes\TeamGame.uc" />
+    <CustomBuild Include="..\Classes\TeamInfo.uc" />
+    <CustomBuild Include="..\Classes\TeleportEffect.uc" />
+    <CustomBuild Include="..\Classes\TeleporterZone.uc" />
+    <CustomBuild Include="..\Classes\TeleportProj.uc" />
+    <CustomBuild Include="..\Classes\Tentacle.uc" />
+    <CustomBuild Include="..\Classes\TentacleCarcass.uc" />
+    <CustomBuild Include="..\Classes\TentacleProjectile.uc" />
+    <CustomBuild Include="..\Classes\Thigh.uc" />
+    <CustomBuild Include="..\Classes\ThingFactory.uc" />
+    <CustomBuild Include="..\Classes\thrownbody.uc" />
+    <CustomBuild Include="..\Classes\ThrowStuff.uc" />
+    <CustomBuild Include="..\Classes\TinyBurst.uc" />
+    <CustomBuild Include="..\Classes\Titan.uc" />
+    <CustomBuild Include="..\Classes\TitanCarcass.uc" />
+    <CustomBuild Include="..\Classes\TorchFlame.uc" />
+    <CustomBuild Include="..\Classes\ToxinSuit.uc" />
+    <CustomBuild Include="..\Classes\Tracer.uc" />
+    <CustomBuild Include="..\Classes\Translator.uc" />
+    <CustomBuild Include="..\Classes\TranslatorEvent.uc" />
+    <CustomBuild Include="..\Classes\Tree1.uc" />
+    <CustomBuild Include="..\Classes\TriggerLight.uc" />
+    <CustomBuild Include="..\Classes\troopercarcass.uc" />
+    <CustomBuild Include="..\Classes\TSmoke.uc" />
+    <CustomBuild Include="..\Classes\UnrealBotConfigMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealChooseGameMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealDamageType.uc" />
+    <CustomBuild Include="..\Classes\UnrealDMGameOptionsMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealFavoritesMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealGameInfo.uc" />
+    <CustomBuild Include="..\Classes\UnrealGameMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealGameOptionsMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealHelpMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealHUD.uc" />
+    <CustomBuild Include="..\Classes\UnrealIndivBotMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealIPlayer.uc" />
+    <CustomBuild Include="..\Classes\UnrealJoinGameMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealKeyboardMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealListenMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealLoadMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealMainMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealMeshMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealMultiPlayerMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealNewGameMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealOptionsMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealPlayerMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealQuitMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealSaveMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealScoreBoard.uc" />
+    <CustomBuild Include="..\Classes\UnrealServerMenu.uc" />
+    <CustomBuild Include="..\Classes\unrealslotmenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealSpectator.uc" />
+    <CustomBuild Include="..\Classes\UnrealTeamGameOptionsMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealTestInfo.uc" />
+    <CustomBuild Include="..\Classes\UnrealVideoMenu.uc" />
+    <CustomBuild Include="..\Classes\UnrealWeaponMenu.uc" />
+    <CustomBuild Include="..\Classes\Urn.uc" />
+    <CustomBuild Include="..\Classes\Vase.uc" />
+    <CustomBuild Include="..\Classes\VoiceBox.uc" />
+    <CustomBuild Include="..\Classes\VRikersGame.uc" />
+    <CustomBuild Include="..\Classes\WallFragments.uc" />
+    <CustomBuild Include="..\Classes\WallHitEffect.uc" />
+    <CustomBuild Include="..\Classes\Warlord.uc" />
+    <CustomBuild Include="..\Classes\WarlordCarcass.uc" />
+    <CustomBuild Include="..\Classes\WarlordRocket.uc" />
+    <CustomBuild Include="..\Classes\WaterImpact.uc" />
+    <CustomBuild Include="..\Classes\WaterRing.uc" />
+    <CustomBuild Include="..\Classes\WaterZone.uc" />
+    <CustomBuild Include="..\Classes\WeaponLight.uc" />
+    <CustomBuild Include="..\Classes\WeaponPowerUp.uc" />
+    <CustomBuild Include="..\Classes\Wire.uc" />
+    <CustomBuild Include="..\Classes\WoodenBox.uc" />
+    <CustomBuild Include="..\Classes\WoodFragments.uc" />
+    <CustomBuild Include="..\Classes\YellowBook.uc" />
+    <CustomBuild Include="..\Classes\YesNoMenu.uc" />
+    <CustomBuild Include="DisplayRotate.uc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

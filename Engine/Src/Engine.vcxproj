@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>"$/Unreal/Engine", FAAAAAAA</SccProjectName>
+    <SccLocalPath>..</SccLocalPath>
+    <ProjectGuid>{C14C7FEE-AF96-402D-9C8F-A439BE2C3213}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\..\Lib\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\..\Lib\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\..\Core\Inc;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;ENGINE_API=__declspec(dllexport);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Debug\Engine.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>EnginePrivate.h</PrecompiledHeaderFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+      <AdditionalOptions> /D /Zm256 </AdditionalOptions>
+      <StructMemberAlignment>4Bytes</StructMemberAlignment>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\..\Lib\Engine.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <RedirectOutputAndErrors>NUL</RedirectOutputAndErrors>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\..\Lib\Engine.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LinkDLL>true</LinkDLL>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <IgnoreSpecificDefaultLibraries>LIBC;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <OutputFile>..\..\System\Engine.dll</OutputFile>
+      <ImportLibrary>.\..\Lib\Engine.lib</ImportLibrary>
+      <BaseAddress>0x10300000</BaseAddress>
+      <AdditionalDependencies>..\..\Core\Lib\Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\..\Core\Inc;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;ENGINE_API=__declspec(dllexport);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Release\Engine.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>EnginePrivate.h</PrecompiledHeaderFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+      <AdditionalOptions> /Zm256 </AdditionalOptions>
+      <StructMemberAlignment>4Bytes</StructMemberAlignment>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\..\Lib\Engine.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <RedirectOutputAndErrors>NUL</RedirectOutputAndErrors>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\..\Lib\Engine.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LinkDLL>true</LinkDLL>
+      <SubSystem>Windows</SubSystem>
+      <IgnoreSpecificDefaultLibraries>LIBC;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <OutputFile>..\..\System\Engine.dll</OutputFile>
+      <ImportLibrary>.\..\Lib\Engine.lib</ImportLibrary>
+      <BaseAddress>0x10300000</BaseAddress>
+      <AdditionalDependencies>..\..\Core\Lib\Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnginePrivate.h</PrecompiledHeaderFile>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">EnginePrivate.h</PrecompiledHeaderFile>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnActCol.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnActor.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnAudio.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnBunch.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnCamera.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnCamMgr.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnCanvas.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnChan.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnCon.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnConn.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnDynBsp.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnEngine.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnFont.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnFPoly.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnGame.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnIn.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnLevAct.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnLevel.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnLevTic.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnMath.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnMesh.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnModel.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnMover.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnParams.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnPath.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnPawn.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnPhysic.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnPlayer.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnPrim.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnReach.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnRoute.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnScript.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnTex.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnTrace.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="UnURL.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> /D /Zm256   /D /Zm256 </AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> /Zm256   /Zm256 </AdditionalOptions>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Inc\AActor.h" />
+    <ClInclude Include="..\Inc\ABrush.h" />
+    <ClInclude Include="..\Inc\ACamera.h" />
+    <ClInclude Include="..\Inc\AMover.h" />
+    <ClInclude Include="..\Inc\APawn.h" />
+    <ClInclude Include="..\Inc\APlayerPawn.h" />
+    <ClInclude Include="..\Inc\AZoneInfo.h" />
+    <ClInclude Include="..\Inc\Engine.h" />
+    <ClInclude Include="..\Inc\EngineClasses.h" />
+    <ClInclude Include="..\Inc\UnActor.h" />
+    <ClInclude Include="..\Inc\UnAudio.h" />
+    <ClInclude Include="..\Inc\UnBunch.h" />
+    <ClInclude Include="..\Inc\UnCamera.h" />
+    <ClInclude Include="..\Inc\UnChan.h" />
+    <ClInclude Include="..\Inc\UnConn.h" />
+    <ClInclude Include="..\Inc\UnDynBsp.h" />
+    <ClInclude Include="..\Inc\UnEngine.h" />
+    <ClInclude Include="..\Inc\UnGame.h" />
+    <ClInclude Include="..\Inc\UnIn.h" />
+    <ClInclude Include="..\Inc\UnLevel.h" />
+    <ClInclude Include="..\Inc\UnMath.h" />
+    <ClInclude Include="..\Inc\UnMesh.h" />
+    <ClInclude Include="..\Inc\UnModel.h" />
+    <ClInclude Include="..\Inc\UnNet.h" />
+    <ClInclude Include="..\Inc\UnNetDrv.h" />
+    <ClInclude Include="..\Inc\UnObj.h" />
+    <ClInclude Include="..\Inc\UnParams.h" />
+    <ClInclude Include="..\Inc\UnPlayer.h" />
+    <ClInclude Include="..\Inc\UnPrim.h" />
+    <ClInclude Include="..\Inc\UnReach.h" />
+    <ClInclude Include="..\Inc\UnRender.h" />
+    <ClInclude Include="..\Inc\UnRenDev.h" />
+    <ClInclude Include="..\Inc\UnTex.h" />
+    <ClInclude Include="..\Inc\UnURL.h" />
+    <ClInclude Include="EnginePrivate.h" />
+    <ClInclude Include="UnCon.h" />
+    <ClInclude Include="UnPath.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Classes\Actor.uc" />
+    <CustomBuild Include="..\Classes\AmbientSound.uc" />
+    <CustomBuild Include="..\Classes\Ambushpoint.uc" />
+    <CustomBuild Include="..\Classes\Ammo.uc" />
+    <CustomBuild Include="..\Classes\Bitmap.uc" />
+    <CustomBuild Include="..\Classes\BlockAll.uc" />
+    <CustomBuild Include="..\Classes\BlockMonsters.uc" />
+    <CustomBuild Include="..\Classes\Brush.uc" />
+    <CustomBuild Include="..\Classes\Camera.uc" />
+    <CustomBuild Include="..\Classes\Canvas.uc" />
+    <CustomBuild Include="..\Classes\Carcass.uc" />
+    <CustomBuild Include="..\Classes\Console.uc" />
+    <CustomBuild Include="..\Classes\Counter.uc" />
+    <CustomBuild Include="..\Classes\DamageType.uc" />
+    <CustomBuild Include="..\Classes\Decoration.uc" />
+    <CustomBuild Include="..\Classes\Dispatcher.uc" />
+    <CustomBuild Include="..\Classes\Effects.uc" />
+    <CustomBuild Include="..\Classes\Engine.uc" />
+    <CustomBuild Include="..\Classes\Fragment.uc" />
+    <CustomBuild Include="..\Classes\GameInfo.uc" />
+    <CustomBuild Include="..\Classes\HomeBase.uc" />
+    <CustomBuild Include="..\Classes\HUD.uc" />
+    <CustomBuild Include="..\Classes\Info.uc" />
+    <CustomBuild Include="..\Classes\InterpolationPoint.uc" />
+    <CustomBuild Include="..\Classes\Inventory.uc" />
+    <CustomBuild Include="..\Classes\InventorySpot.uc" />
+    <CustomBuild Include="..\Classes\Keypoint.uc" />
+    <CustomBuild Include="..\Classes\LevelInfo.uc" />
+    <CustomBuild Include="..\Classes\LiftCenter.uc" />
+    <CustomBuild Include="..\Classes\LiftExit.uc" />
+    <CustomBuild Include="..\Classes\Light.uc" />
+    <CustomBuild Include="..\Classes\Menu.uc" />
+    <CustomBuild Include="..\Classes\Mover.uc" />
+    <CustomBuild Include="..\Classes\MusicEvent.uc" />
+    <CustomBuild Include="..\Classes\NavigationPoint.uc" />
+    <CustomBuild Include="..\Classes\Palette.uc" />
+    <CustomBuild Include="..\Classes\PathNode.uc" />
+    <CustomBuild Include="..\Classes\PatrolPoint.uc" />
+    <CustomBuild Include="..\Classes\Pawn.uc" />
+    <CustomBuild Include="..\Classes\Pickup.uc" />
+    <CustomBuild Include="..\Classes\Player.uc" />
+    <CustomBuild Include="..\Classes\PlayerPawn.uc" />
+    <CustomBuild Include="..\Classes\PlayerStart.uc" />
+    <CustomBuild Include="..\Classes\Projectile.uc" />
+    <CustomBuild Include="..\Classes\RoundRobin.uc" />
+    <CustomBuild Include="..\Classes\SavedMove.uc" />
+    <CustomBuild Include="..\Classes\ScoreBoard.uc" />
+    <CustomBuild Include="..\Classes\Scout.uc" />
+    <CustomBuild Include="..\Classes\SpecialEvent.uc" />
+    <CustomBuild Include="..\Classes\Spectator.uc" />
+    <CustomBuild Include="..\Classes\Spotlight.uc" />
+    <CustomBuild Include="..\Classes\Teleporter.uc" />
+    <CustomBuild Include="..\Classes\TestInfo.uc" />
+    <CustomBuild Include="..\Classes\Texture.uc" />
+    <CustomBuild Include="..\Classes\Trigger.uc" />
+    <CustomBuild Include="..\Classes\TriggerLight.uc" />
+    <CustomBuild Include="..\Classes\TriggerMarker.uc" />
+    <CustomBuild Include="..\Classes\Triggers.uc" />
+    <CustomBuild Include="..\Classes\WarpZoneInfo.uc" />
+    <CustomBuild Include="..\Classes\WarpZoneMarker.uc" />
+    <CustomBuild Include="..\Classes\WayBeacon.uc" />
+    <CustomBuild Include="..\Classes\Weapon.uc" />
+    <CustomBuild Include="..\Classes\ZoneInfo.uc" />
+    <CustomBuild Include="..\Classes\ZoneTrigger.uc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Src\Core.vcxproj">
+      <Project>{5685ee16-a0a2-4b45-af5f-88278f40fa95}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

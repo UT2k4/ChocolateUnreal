@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Src">
+      <UniqueIdentifier>{b19eeadb-0782-41c0-a972-3fa7bd123908}</UniqueIdentifier>
+      <Extensions>*.cpp;*.asm</Extensions>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{3defd80f-de79-4145-bc98-f13d67e3b2c2}</UniqueIdentifier>
+      <Extensions>*.uc</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FractalPrivate.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UnFractal.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="UnFire.asm">
+      <Filter>Src</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UnFireP2.asm">
+      <Filter>Src</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UnWater.asm">
+      <Filter>Src</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\FireTexture.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\FractalTexture.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\IceTexture.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\WaterTexture.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\WaveTexture.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\WetTexture.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Src">
+      <UniqueIdentifier>{06bbe2b8-bf70-4be4-90d4-48535fb11031}</UniqueIdentifier>
+      <Extensions>*.cpp</Extensions>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{4d0250a7-2eba-4229-86b4-04d7a498bf71}</UniqueIdentifier>
+      <Extensions>*.uc</Extensions>
+    </Filter>
+    <Filter Include="Inc">
+      <UniqueIdentifier>{21b16813-9820-4ff2-a64a-7a0241cb1b93}</UniqueIdentifier>
+      <Extensions>*.h</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnCache.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnClass.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnCorSc.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnFile.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnMem.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnName.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnObj.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnOutDev.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnPlat.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnProp.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CorePrivate.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="UnLinker.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\Core.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnArc.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnBuild.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnCache.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnCId.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnClass.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnCorObj.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnFile.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnMem.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnName.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnNames.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnObjBas.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnObjVer.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnPlatfm.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnScript.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnStack.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnTemplate.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnType.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\UnVcWin32.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Classes\Object.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\Subsystem.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

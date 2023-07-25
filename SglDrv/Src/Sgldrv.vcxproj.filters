@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Src">
+      <UniqueIdentifier>{5ceadfdb-159e-441b-8a74-c9bf45c7f19d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inc">
+      <UniqueIdentifier>{156a354b-138e-4ac0-ad77-bff85c1cf089}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Ddc.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Ddcerror.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooksgl.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="texcnvrt.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Unsgl.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ddc.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooksgl.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Sgl.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Unsgl.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Src">
+      <UniqueIdentifier>{8423b9a4-c1ea-4c9a-bd24-45f1fe4ace13}</UniqueIdentifier>
+      <Extensions>*.cpp;*.h</Extensions>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{7105716a-0c48-42e0-9f49-45fffcbdabcf}</UniqueIdentifier>
+      <Extensions>*.uc</Extensions>
+    </Filter>
+    <Filter Include="Inc">
+      <UniqueIdentifier>{908fdb7d-9284-40c8-8811-a17e9231a6ed}</UniqueIdentifier>
+      <Extensions>*.h</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Inc\ATcpLink.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="IpDrvPrivate.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\AUdpLink.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\IpDrvClasses.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IpDrv.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="TcpLink.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="UdpLink.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Classes\ClientBeaconReceiver.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\ServerBeacon.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\ServerQuery.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\ServerUplink.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\ServerVerify.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\TcpLink.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\UdpBeacon.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Classes\UdpLink.uc">
+      <Filter>Classes</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

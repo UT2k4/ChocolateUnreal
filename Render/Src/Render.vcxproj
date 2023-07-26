@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Amd3d.h" />
+    <ClInclude Include="RenderClasses.h" />
     <ClInclude Include="RenderPrivate.h" />
     <ClInclude Include="UnSpan.h" />
   </ItemGroup>

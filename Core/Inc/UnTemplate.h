@@ -76,8 +76,8 @@ public:
 		return Data;
 	}
 	void Remove(INT_UNREAL_32S Index, INT_UNREAL_32S Count, INT_UNREAL_32S ElementSize );
+	void Realloc(INT_UNREAL_32S ElementSize);
 protected:
-	void Realloc(INT_UNREAL_32S ElementSize );
 	FArray(INT_UNREAL_32S InNum, INT_UNREAL_32S ElementSize )
 	:	ArrayNum( InNum )
 	,	ArrayMax( InNum )
@@ -91,6 +91,7 @@ protected:
 			appFree( Data );
 	}
 	void* Data;
+public:
 	INT_UNREAL_32S	  ArrayNum;
 	INT_UNREAL_32S	  ArrayMax;
 };
@@ -238,6 +239,7 @@ public:
 		unguardSlow;
 	}
 	void Remove( int Index, int Count=1 );
+	template< class T >
 	friend FArchive& operator<<( FArchive& Ar, TArray& A );
 	void SetNum( INT_UNREAL_32S NewSize )
 	{

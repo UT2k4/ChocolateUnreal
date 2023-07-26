@@ -72,7 +72,7 @@ void UEditorEngine::DrawBoundingBox( FSceneNode* Frame, FBox* Bound, AActor* Act
 		P.X=B[i].X; P.Y=B[j].Y; P.Z=B[k].Z;
 		if( Render->Project( Frame, P, SX, SY, NULL ) )
 		{
-			if( Actor ) PUSH_HIT(Frame,HBrushVertex(CastChecked<ABrush>(Actor),P));
+			if( Actor ) PUSH_HIT(Frame,HBrushVertex,CastChecked<ABrush>(Actor),P);
 			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_ScaleBoxHi.Plane(), LINE_None, SX-1, SY-1, SX+1, SY+1 );
 			if( Actor ) POP_HIT(Frame);
 		}
@@ -225,7 +225,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 			FBox Box = Frame->Viewport->Actor->XLevel->Brush()->Brush->GetRenderBoundingBox( Frame->Viewport->Actor->XLevel->Brush(), 1 );
 			DrawBoundingBox( Frame, &Box, Frame->Viewport->Actor->XLevel->Brush() );
 		}
-		PUSH_HIT(Frame,HActor(Actor));
+		PUSH_HIT(Frame,HActor,Actor);
 	}
 	else if( Actor->IsMovingBrush() )
 	{
@@ -233,7 +233,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 		bDrawPivot    = Actor->bSelected;
 		bDrawVertices = Actor->bSelected;
 		bDrawSelected = Actor->bSelected;	
-		PUSH_HIT(Frame,HActor(Actor));
+		PUSH_HIT(Frame,HActor,Actor);
 	}
 	else if( Actor->IsStaticBrush() )
 	{
@@ -248,7 +248,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 		bDrawPivot    = Actor->bSelected;
 		bDrawVertices = Actor->bSelected;
 		bDrawSelected = Actor->bSelected;
-		PUSH_HIT(Frame,HActor(Actor));
+		PUSH_HIT(Frame,HActor,Actor);
 	}
 
 	// Get the polys.
@@ -311,7 +311,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 			{
       			if( Render->Project( Frame, *V1, X, Y, NULL ) )
 				{
-					PUSH_HIT(Frame,HBrushVertex(Actor,EdPoly->Vertex[j]));
+					PUSH_HIT(Frame,HBrushVertex,Actor,EdPoly->Vertex[j]);
          			Frame->Viewport->RenDev->Draw2DPoint( Frame, VertexColor, LINE_None, X-1, Y-1, X+1, Y+1 );
 					POP_HIT(Frame);
          		}
@@ -323,7 +323,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 		Vertex = -Actor->PrePivot.TransformVectorBy(Coords) + Location;
 		if( Render->Project( Frame, Vertex, X, Y, NULL ) )
 		{
-			PUSH_HIT(Frame,HBrushVertex(Actor,Vertex));
+			PUSH_HIT(Frame,HBrushVertex,Actor,Vertex);
 			Frame->Viewport->RenDev->Draw2DPoint( Frame, VertexColor, LINE_None, X-1, Y-1, X+1, Y+1 );
 			POP_HIT(Frame);
 		}
@@ -423,7 +423,7 @@ void UEditorEngine::DrawWireBackground( FSceneNode* Frame )
 	// If clicked on nothing else, clicked on backdrop.
 	FVector V;
 	Render->Deproject( Frame, Frame->Viewport->HitX+Frame->Viewport->HitXL/2, Frame->Viewport->HitY+Frame->Viewport->HitYL/2, V );
-	PUSH_HIT(Frame,HBackdrop(V));
+	PUSH_HIT(Frame,HBackdrop,V);
 	POP_HIT_FORCE(Frame);
 
 	// Vector defining worldbox lines.

@@ -692,7 +692,7 @@ static DWORD GetPolyFlags( FSceneNode* Frame, AActor* Owner )
 void URender::DrawActorSprite( FSceneNode* Frame, FDynamicSprite* Sprite )
 {
 	guard(URender::DrawActorSprite);
-	PUSH_HIT(Frame,HActor(Sprite->Actor));
+	PUSH_HIT(Frame,HActor,Sprite->Actor);
 	DWORD PolyFlags = GetPolyFlags(Frame,Sprite->Actor);
 
 	// Draw the actor.

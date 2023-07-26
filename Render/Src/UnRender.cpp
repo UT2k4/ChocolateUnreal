@@ -2159,9 +2159,9 @@ void URender::OccludeBsp( FSceneNode* Frame )
 					goto NextCoplanar;
 
 				// Fix facing.
-				if( (!IsFront && (PolyFlags & (PF_TwoSided | PF_Portal))) ^ Frame->Mirror==-1.f )
-					for( INT_UNREAL_32S i=0; i<NumPts/2; i++ )
-						Exchange( Pts[i], Pts[NumPts-i-1] );
+				if ((!IsFront && (PolyFlags & (PF_TwoSided | PF_Portal))) ^ Frame->Mirror == -1.f)
+					for (INT_UNREAL_32S i = 0; i < NumPts / 2; i++)
+						Exchange(Pts[i], Pts[NumPts - i - 1]);
 
 				// Setup.
 				clock(GStat.RasterTime);
@@ -2807,7 +2807,7 @@ void URender::DrawFrame( FSceneNode* Frame )
 			}
 
 			// Draw the surface.
-			PUSH_HIT(Frame,HBspSurf(Draw->iSurf));
+			PUSH_HIT(Frame,HBspSurf,Draw->iSurf);
 			clock(GStat.PolyVTime);
 			Viewport->RenDev->DrawComplexSurface( Frame, Surface, Facet );
 			unclock(GStat.PolyVTime);

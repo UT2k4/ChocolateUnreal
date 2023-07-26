@@ -692,7 +692,8 @@ void UGalaxyAudioSubsystem::Update( FPointRegion Region, FCoords& Coords )
 			&&	FDistSquared(Viewport->Actor->Location,Actor->Location)<=Square(Actor->WorldSoundRadius()) )
 			{
 				INT_UNREAL_32S Id = Actor->GetIndex()*16+SLOT_Ambient*2;
-				for( INT_UNREAL_32S j=0; j<EffectsChannels; j++ )
+				INT_UNREAL_32S j;
+				for( j=0; j<EffectsChannels; j++ )
 					if( PlayingSounds[j].Id==Id )
 						break;
 				if( j==EffectsChannels )

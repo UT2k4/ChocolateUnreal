@@ -217,6 +217,7 @@
     <ClInclude Include="..\Inc\UnTemplate.h" />
     <ClInclude Include="..\Inc\UnType.h" />
     <ClInclude Include="..\Inc\UnVcWin32.h" />
+    <ClInclude Include="CoreClasses.h" />
     <ClInclude Include="CorePrivate.h" />
     <ClInclude Include="UnLinker.h" />
   </ItemGroup>

@@ -9,10 +9,16 @@
       <UniqueIdentifier>{3defd80f-de79-4145-bc98-f13d67e3b2c2}</UniqueIdentifier>
       <Extensions>*.uc</Extensions>
     </Filter>
+    <Filter Include="Inc">
+      <UniqueIdentifier>{f2e0edf3-09cf-4d7f-b090-d62c422f2456}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FractalPrivate.h">
       <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="FireClasses.h">
+      <Filter>Inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

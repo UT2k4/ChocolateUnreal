@@ -5,6 +5,9 @@
       <UniqueIdentifier>{46c3e9a5-0de5-4aa4-ab05-04cbf8e7bb8e}</UniqueIdentifier>
       <Extensions>*.cpp;*.asm;*.inc</Extensions>
     </Filter>
+    <Filter Include="Inc">
+      <UniqueIdentifier>{7e3f119e-3b7d-41f8-95f4-40dd43d17b76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Render.cpp">
@@ -43,5 +46,8 @@
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Amd3d.h" />
+    <ClInclude Include="RenderClasses.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

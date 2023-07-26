@@ -49,6 +49,7 @@ struct FBspDrawList;
 struct FDynamicSprite;
 struct ENGINE_API FSceneNode
 {
+	FSceneNode() {}
 	// Variables.
 	UViewport*		Viewport;	// Viewport the scene frame is attached to.
 	ULevel*			Level;		// Level this scene is being rendered from.

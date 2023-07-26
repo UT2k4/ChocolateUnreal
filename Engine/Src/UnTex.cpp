@@ -734,7 +734,7 @@ void UPalette::Flush()
 	guard(UPalette::Flush);
 
 	GCache.Flush( MakeCacheID(CID_LightingTable,GetIndex(),0,NULL), MakeCacheID(CID_MAX,~0,0,0) );
-	GCache.Flush( MakeCacheID(CID_ColorDepthPalette,0,0,this), MakeCacheID(CID_MAX,0,0,~0) );
+	GCache.Flush( MakeCacheID(CID_ColorDepthPalette,0,0,this), MakeCacheID(CID_MAX,0,0,(UObject*)~0));
 
 	unguard;
 }

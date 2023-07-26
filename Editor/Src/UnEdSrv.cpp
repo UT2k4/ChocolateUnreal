@@ -1974,7 +1974,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			Results->Log("Level validation:\r\n");
 
 			// Make sure it's not empty.
-			if( Level->Model->Nodes->Num == 0 )
+			if( Level->Model->Nodes->Num() == 0)
 			{
 				Results->Log("Error: Level is empty!\r\n");
 				return 1;

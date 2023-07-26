@@ -954,7 +954,7 @@ void UEditorEngine::MouseDelta
 			{
 				BrushActor->TempScale.Scale = Vector;
 				BrushActor->PostScale.Scale = Vector;
-				if( Viewport->Actor->XLevel->Brush()->Brush->Polys->Num==0 )
+				if( Viewport->Actor->XLevel->Brush()->Brush->Polys->Num()==0 )
 					break;
 				FBox Box = BrushActor->Brush->GetRenderBoundingBox( BrushActor, 1 );
 
@@ -1220,7 +1220,7 @@ void DrawTextureBrowser( FSceneNode* Frame )
 			INT_UNREAL_32S Y = (Size+Space+VSkip)*(i/PerRow)+YOfs;
 			if( Y+Size+Space+VSkip>0 && Y<Frame->Y )
 			{
-				PUSH_HIT(Frame,HBrowserTexture(Texture));
+				PUSH_HIT(Frame,HBrowserTexture, Texture);
 				if( Texture==GEditor->CurrentTexture )
 					Frame->Viewport->Canvas->DrawPattern( GEditor->BkgndHi, X+1, Y+1, Size+Space*2-2, Size+Space*2+VSkip-2, 1.0, 0.0, 0.0, NULL, 1.0, FPlane(1.,1.,1.,0), FPlane(0,0,0,0), 0 );
 				FLOAT Scale=0.125;
@@ -1287,12 +1287,12 @@ static void DrawButtons( FSceneNode* Frame )
 	INT_UNREAL_32S ButtonX=2;
 
 	// Menu toggle button.
-	PUSH_HIT(Frame,HMenuToggleButton());
+	PUSH_HIT(Frame,HMenuToggleButton);
 	ButtonX += DrawButton( Frame, (Frame->Viewport->Actor->ShowFlags&SHOW_Menu) ? GEditor->MenuUp : GEditor->MenuDn, ButtonX, 2 );
 	POP_HIT(Frame);
 
 	// Player control button.
-	PUSH_HIT(Frame,HPlayerControlButton());
+	PUSH_HIT(Frame,HPlayerControlButton);
 	if( !Frame->Viewport->IsOrtho() )
 		ButtonX += DrawButton( Frame, (Frame->Viewport->Actor->ShowFlags&SHOW_PlayerCtrl) ? GEditor->PlyrOn : GEditor->PlyrOff, ButtonX, 2 );
 	POP_HIT(Frame);
@@ -1362,7 +1362,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* Hi
 			Actor->bHiddenEd = 1;
 			Actor->bHidden   = 1;
 			UTexture* Texture = (UTexture*)Viewport->MiscRes;
-			PUSH_HIT(Frame,HTextureView(Texture,Frame->X,Frame->Y));
+			PUSH_HIT(Frame,HTextureView,Texture,Frame->X,Frame->Y);
 			Viewport->Canvas->DrawIcon( Texture->Get(Viewport->CurrentTime), 0, 0, Frame->X, Frame->Y, NULL, 1.0, FPlane(1,1,1,0), FPlane(0,0,0,0), PF_TwoSided );
 			POP_HIT(Frame);
 			unguard;
@@ -1402,7 +1402,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* Hi
 
 			// Do coordinates.
 			Frame->ComputeRenderCoords( Viewport->Actor->Location, Viewport->Actor->ViewRotation );
-			PUSH_HIT(Frame,HCoords(Frame));
+			PUSH_HIT(Frame,HCoords,Frame);
 
 			// Remember.
 			OriginalLocation		= Actor->Location;
@@ -1464,7 +1464,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* Hi
 			|| !(Viewport->Actor->ShowFlags & SHOW_Backdrop) )
 				DrawWireBackground( Frame );
 
-			PUSH_HIT(Frame,HCoords(Frame));
+			PUSH_HIT(Frame,HCoords,Frame);
 
 			// Draw the level.
 			UBOOL bStaticBrushes = Viewport->IsWire();
@@ -1516,7 +1516,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* Hi
 								continue;
 						}
 #endif
-						PUSH_HIT(Frame,HActor(Actor));
+						PUSH_HIT(Frame,HActor,Actor);
 						// If this actor is an event source, draw event lines connecting it to
 						// all corresponding event sinks.
 						if
@@ -1581,7 +1581,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* Hi
 						&&	Actor->bDirectional
 						&&	(Actor->IsA(ACamera::StaticClass) || Actor->bSelected) )
 						{
-							PUSH_HIT(Frame,HActor(Actor));
+							PUSH_HIT(Frame,HActor,Actor);
 							FVector V = Actor->Location, A(0,0,0), B(0,0,0);
 							FCoords C = GMath.UnitCoords / Actor->Rotation;
 							Render->Draw3DLine( Frame, C_ActorArrow.Plane(), LINE_None, V + C.XAxis * 48, V );
@@ -1607,7 +1607,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* Hi
 				FVector Location = GSnappedLocation;
 				if( Render->Project( Frame, Location, X, Y, NULL ) )
 				{
-					PUSH_HIT(Frame,HGlobalPivot(Location));
+					PUSH_HIT(Frame,HGlobalPivot,Location);
          			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_BrushWire.Plane(), LINE_None, X-1, Y-1, X+1, Y+1 );
         			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_BrushWire.Plane(), LINE_None, X,   Y-4, X,   Y+4 );
          			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_BrushWire.Plane(), LINE_None, X-4, Y,   X+4, Y   );

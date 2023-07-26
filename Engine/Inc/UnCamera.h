@@ -256,7 +256,7 @@ class ENGINE_API UViewport : public UPlayer
 };
 
 // Viewport hit-testing macros.
-#define PUSH_HIT(frame,expr) if( (frame->Viewport)->HitTesting ) (frame->Viewport)->PushHit(expr,sizeof(expr));
+#define PUSH_HIT(frame,expr,...) if( (frame->Viewport)->HitTesting ) (frame->Viewport)->PushHit(expr(__VA_ARGS__),sizeof(expr));
 #define POP_HIT(frame)       if( (frame->Viewport)->HitTesting ) (frame->Viewport)->PopHit(0);
 #define POP_HIT_FORCE(frame) if( (frame->Viewport)->HitTesting ) (frame->Viewport)->PopHit(1);
 

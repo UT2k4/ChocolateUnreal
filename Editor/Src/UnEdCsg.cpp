@@ -63,7 +63,7 @@ void UEditorEngine::csgCopyBrush
 	check(Src->IsA(ABrush::StaticClass));
 	check(Dest->IsA(ABrush::StaticClass));
 
-	if( Src->Brush->Polys->Num == 0 )
+	if( Src->Brush->Polys->Num() == 0)
 	{
 		Dest->Brush = NULL;
 		return;

@@ -21,7 +21,7 @@
 class CORE_API FOutputDevice
 {
 public:
-	virtual void WriteBinary( const void* Data, INT Length, EName MsgType=NAME_None )=0;
+	virtual void WriteBinary( const void* Data, INT_UNREAL_32S Length, EName MsgType=NAME_None )=0;
 	void Log( EName MsgType, const char* Text );
 	void Log( const char* Text );
 	void VARARGS Logf( EName MsgType, const char* Fmt, ... );
@@ -59,7 +59,7 @@ public:
 	virtual UBOOL YesNof( const char* Fmt, ... )=0;
 	virtual void BeginSlowTask( const char* Task, UBOOL StatusWindow, UBOOL Cancelable )=0;
 	virtual void EndSlowTask()=0;
-	virtual UBOOL VARARGS StatusUpdatef( INT Numerator, INT Denominator, const char* Fmt, ... )=0;
+	virtual UBOOL VARARGS StatusUpdatef(INT_UNREAL_32S Numerator, INT_UNREAL_32S Denominator, const char* Fmt, ... )=0;
 };
 
 /*----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ public:
 	UBOOL YesNof( const char* Fmt, ... );
 	void BeginSlowTask( const char* Task, UBOOL StatusWindow, UBOOL Cancelable );
 	void EndSlowTask();
-	UBOOL VARARGS StatusUpdatef( INT Numerator, INT Denominator, const char* Fmt, ... );
+	UBOOL VARARGS StatusUpdatef(INT_UNREAL_32S Numerator, INT_UNREAL_32S Denominator, const char* Fmt, ... );
 
 	// FExec interface.
 	virtual UBOOL Exec( const char* Cmd, FOutputDevice* Out=GSystem );

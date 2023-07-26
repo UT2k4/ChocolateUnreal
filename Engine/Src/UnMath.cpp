@@ -20,8 +20,9 @@ FGlobalMath::FGlobalMath()
 	ViewCoords			(FVector(0,0,0),FVector(0,1,0),FVector(0,0,-1),FVector(1,0,0)),
 	UnitScale			(FVector(1,1,1),0.0,SHEER_ZX)
 {
+	int i;
 	// Init base angle table.
-	for( int i=0; i<NUM_ANGLES; i++ )
+	for( i=0; i<NUM_ANGLES; i++ )
 		TrigFLOAT[i] = appSin((FLOAT)i * 2.0 * PI / (FLOAT)NUM_ANGLES);
 
 	// Init square root table.
@@ -144,7 +145,7 @@ FSphere::FSphere( const TArray<FVector>& Pts )
 	{
 		FBox Box( Pts );
 		*this = FSphere( (Box.Min+Box.Max)/2, 0 );
-		for( INT i=0; i<Pts.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Pts.Num(); i++ )
 		{
 			FLOAT Dist = (Pts(i) - *this).SizeSquared();
 			if( Dist > W )
@@ -163,7 +164,7 @@ FBox::FBox( const TArray<FVector>& Points )
 : Min(0,0,0), Max(0,0,0), IsValid(0)
 {
 	guard(FBox::FBox);
-	for( INT i=0; i<Points.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Points.Num(); i++ )
 		*this += Points(i);
 	unguard;
 }

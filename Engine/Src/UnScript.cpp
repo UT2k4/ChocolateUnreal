@@ -116,7 +116,7 @@ void AActor::physMovingBrush( FLOAT DeltaTime )
 	if( IsA(AMover::StaticClass) )
 	{
 		AMover* Mover  = (AMover*)this;
-		INT KeyNum     = Clamp( (INT)Mover->KeyNum, (INT)0, (INT)ARRAY_COUNT(Mover->KeyPos) );
+		INT_UNREAL_32S KeyNum     = Clamp( (INT_UNREAL_32S)Mover->KeyNum, (INT_UNREAL_32S)0, (INT_UNREAL_32S)ARRAY_COUNT(Mover->KeyPos) );
 		while( Mover->bInterpolating && DeltaTime>0.0 )
 		{
 			// We are moving.
@@ -1324,7 +1324,7 @@ void AActor::execPlaySound( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 	if( !Sound )
 		return;
-	INT Id = GetIndex()*16 + Slot*2 + bNoOverride;
+	INT_UNREAL_32S Id = GetIndex()*16 + Slot*2 + bNoOverride;
 	FLOAT RadiusSquared = Square( Radius ? Radius : 1600.f );
 	FVector Parameters = FVector(100 * Volume, Radius, 100 * Pitch);
 
@@ -1336,12 +1336,12 @@ void AActor::execPlaySound( FFrame& Stack, BYTE*& Result )
 		UClient* Client = XLevel->Engine->Client;
 		if( Client )
 		{
-			for( INT i=0; i<Client->Viewports.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 			{
 				APlayerPawn* Hearer = Client->Viewports(i)->Actor;
 				if( Hearer && Hearer->XLevel==XLevel )
 				{
-					INT Portals = GetLevel()->ZoneDist[Region.ZoneNumber][Hearer->Region.ZoneNumber];
+					INT_UNREAL_32S Portals = GetLevel()->ZoneDist[Region.ZoneNumber][Hearer->Region.ZoneNumber];
 					FLOAT NewRadiusSquared = RadiusSquared;
 						NewRadiusSquared /= 1.3;
 					if( (Hearer->Location-Location).SizeSquared() < NewRadiusSquared )
@@ -1357,7 +1357,7 @@ void AActor::execPlaySound( FFrame& Stack, BYTE*& Result )
 		{
 			if( Hearer->bIsPlayer )
 			{
-				INT Portals = GetLevel()->ZoneDist[Region.ZoneNumber][Hearer->Region.ZoneNumber];
+				INT_UNREAL_32S Portals = GetLevel()->ZoneDist[Region.ZoneNumber][Hearer->Region.ZoneNumber];
 				FLOAT NewRadiusSquared = RadiusSquared;
 					NewRadiusSquared /= 1.3;
 				if( (Hearer->Location-Location).SizeSquared() < NewRadiusSquared )
@@ -1605,7 +1605,7 @@ void AActor::execAllActors( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iActor=0;
+	INT_UNREAL_32S iActor=0;
 
 	PRE_ITERATOR;
 		// Fetch next actor in the iteration.
@@ -1636,7 +1636,7 @@ void AActor::execChildActors( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iActor=0;
+	INT_UNREAL_32S iActor=0;
 
 	PRE_ITERATOR;
 		// Fetch next actor in the iteration.
@@ -1667,7 +1667,7 @@ void AActor::execBasedActors( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iActor=0;
+	INT_UNREAL_32S iActor=0;
 
 	PRE_ITERATOR;
 		// Fetch next actor in the iteration.
@@ -1698,7 +1698,7 @@ void AActor::execTouchingActors( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iTouching=0;
+	INT_UNREAL_32S iTouching=0;
 
 	PRE_ITERATOR;
 		// Fetch next actor in the iteration.
@@ -1769,7 +1769,7 @@ void AActor::execRadiusActors( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iActor=0;
+	INT_UNREAL_32S iActor=0;
 
 	PRE_ITERATOR;
 		// Fetch next actor in the iteration.
@@ -1805,7 +1805,7 @@ void AActor::execVisibleActors( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iActor=0;
+	INT_UNREAL_32S iActor=0;
 
 	PRE_ITERATOR;
 		// Fetch next actor in the iteration.
@@ -1845,7 +1845,7 @@ void AActor::execVisibleCollidingActors( FFrame& Stack, BYTE*& Result )
 
 	Radius = Radius ? Radius : 1000;
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iActor=0;
+	INT_UNREAL_32S iActor=0;
 	FMemMark Mark(GMem);
 	FCheckResult* Link=GetLevel()->Hash->ActorRadiusCheck( GMem, TraceLocation, Radius, 0 );
 	
@@ -1889,7 +1889,7 @@ void AZoneInfo::execZoneActors( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	BaseClass = BaseClass ? BaseClass : AActor::StaticClass;
-	INT iActor=0;
+	INT_UNREAL_32S iActor=0;
 
 	PRE_ITERATOR;
 		// Fetch next actor in the iteration.
@@ -1942,7 +1942,7 @@ void AActor::ProcessState( FLOAT DeltaSeconds )
 			(this->*GIntrinsics[GetMainFrame()->LatentAction])( *GetMainFrame(), Addr=Buffer );
 
 		// Execute code.
-		INT NumStates=0;
+		INT_UNREAL_32S NumStates=0;
 		while( !bDeleteMe && GetMainFrame()->Code && !GetMainFrame()->LatentAction )
 		{
 			UState* OldStateNode = GetMainFrame()->StateNode;
@@ -2040,8 +2040,9 @@ UBOOL AActor::ProcessRemoteFunction( UFunction* Function, void* Parms, FFrame* S
 	BYTE ParmMask=0, ParmBit=1;
 	if( Stack )
 		appMemset( Parms, 0, Function->ParmsSize );
-	INT Count=0;
-	for( TFieldIterator<UProperty> It(Function); It && (It->PropertyFlags & (CPF_Parm|CPF_ReturnParm))==CPF_Parm; ++It,ParmBit=ParmBit<<1 )
+	INT_UNREAL_32S Count=0;
+	TFieldIterator<UProperty> It(Function);
+	for( It; It && (It->PropertyFlags & (CPF_Parm|CPF_ReturnParm))==CPF_Parm; ++It,ParmBit=ParmBit<<1 )
 	{
 		if( Stack )
 		{

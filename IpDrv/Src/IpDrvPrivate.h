@@ -22,7 +22,7 @@ struct FIpAddr
 	DWORD Port;
 };
 
-char* wsaError( INT Code=-1 );
+char* wsaError( INT_UNREAL_32S Code=-1 );
 UBOOL wsaInit( char* Error256 );
 extern UBOOL GInitialized;
 

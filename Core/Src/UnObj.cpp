@@ -21,12 +21,12 @@
 
 // Static FObjectManager variables.
 UBOOL				FObjectManager::Initialized		 = 0;
-INT					FObjectManager::BeginLoadCount   = 0;
+INT_UNREAL_32S					FObjectManager::BeginLoadCount   = 0;
 UObject*			FObjectManager::AutoRegister     = NULL;
 UPackage*			FObjectManager::TransientPackage = NULL;
 UObject*			FObjectManager::ObjHash[4096];
 TArray<UObject*>    FObjectManager::Objects;
-TArray<INT>         FObjectManager::Available;
+TArray<INT_UNREAL_32S>         FObjectManager::Available;
 TArray<UObject*>	FObjectManager::Loaders;
 TArray<UObject*>	FObjectManager::Root;
 
@@ -193,7 +193,7 @@ void UObject::Destroy()
 //
 // Set the object's linker.
 //
-void UObject::SetLinker( ULinkerLoad* InLinker, INT InLinkerIndex )
+void UObject::SetLinker( ULinkerLoad* InLinker, INT_UNREAL_32S InLinkerIndex )
 {
 	guard(UObject::SetLinker);
 
@@ -216,7 +216,7 @@ class FOutBuffer : public FOutputDevice, public TArray<BYTE>
 public:
 	void WriteBinary( const void* InData, int Length, EName MsgType )
 	{
-		INT Index = Add(Length);
+		INT_UNREAL_32S Index = Add(Length);
 		appMemcpy( &(*this)(Index), InData, Length );
 	}
 };
@@ -230,7 +230,7 @@ const char* UObject::GetPathName( UObject* StopParent, char* Str ) const
 {
 	guard(UObject::GetPathName);
 	static char Results[8][256];
-	static INT i=0;
+	static INT_UNREAL_32S i=0;
 
 	// Return one of 8 circular results.
 	char* Result = Str ? Str : Results[i++%ARRAY_COUNT(Results)];
@@ -376,11 +376,11 @@ public:
 	{
 		Src->Serialize( *this );
 	}
-	INT GetCount()
+	INT_UNREAL_32S GetCount()
 	{
 		return Count;
 	}
-	void CountBytes( INT InCount )
+	void CountBytes( INT_UNREAL_32S InCount )
 	{
 		Count += InCount;
 	}
@@ -400,13 +400,13 @@ public:
 		return *this;
 	}
 protected:
-	INT Count;
+	INT_UNREAL_32S Count;
 };
 
 //
 // Count memory usage.
 //
-INT UObject::MemUsage()
+INT_UNREAL_32S UObject::MemUsage()
 {
 	guard(UObject::MemUsage);
 	return FArchiveCountMem(this).GetCount();
@@ -460,7 +460,7 @@ void UObject::Serialize( FArchive& Ar )
 		else //oldver
 		{
 			UClass* OldClass;
-			INT iOldNode;
+			INT_UNREAL_32S iOldNode;
 			Ar << OldClass;
 			if( OldClass )
 				Ar << iOldNode;
@@ -481,7 +481,7 @@ void UObject::Serialize( FArchive& Ar )
 			Ar.Preload( MainFrame->Node );
 			if( Ar.IsSaving() && MainFrame->Code )
 				check(MainFrame->Code>=&MainFrame->Node->Script(0) && MainFrame->Code<&MainFrame->Node->Script(MainFrame->Node->Script.Num()));
-			INT Offset = MainFrame->Code ? MainFrame->Code - &MainFrame->Node->Script(0) : INDEX_NONE;
+			INT_UNREAL_32S Offset = MainFrame->Code ? MainFrame->Code - &MainFrame->Node->Script(0) : INDEX_NONE;
 			Ar << AR_INDEX(Offset);
 			if( Offset!=INDEX_NONE )
 				if( Offset<0 || Offset>=MainFrame->Node->Script.Num() )
@@ -558,7 +558,7 @@ CORE_API void FObjectManager::ExportProperties
 	UClass*			ObjectClass,
 	BYTE*			Object,
 	FOutputDevice*	Out,
-	INT				Indent,
+	INT_UNREAL_32S				Indent,
 	UClass*			DiffClass,
 	BYTE*			Diff
 )
@@ -571,7 +571,7 @@ CORE_API void FObjectManager::ExportProperties
 		if( It->Port() )
 		{
 			ThisName = It->GetName();
-			for( INT j=0; j<It->ArrayDim; j++ )
+			for( INT_UNREAL_32S j=0; j<It->ArrayDim; j++ )
 			{
 				// Export single element.
 				char Value[4096];
@@ -670,7 +670,7 @@ UBOOL UObject::ScriptConsoleExec( const char* Str, FOutputDevice* Out )
 UField* UObject::FindField( FName InName, UBOOL Global )
 {
 	guardSlow(UObject::FindField);
-	INT iHash = InName.GetIndex() & (UField::HASH_COUNT-1);
+	INT_UNREAL_32S iHash = InName.GetIndex() & (UField::HASH_COUNT-1);
 
 #if 1
 	// Search current state scope.
@@ -752,7 +752,7 @@ void UObject::LoadConfig( FName Type, UClass* Class, const char* Filename )
 	{
 		if( (It->PropertyFlags & Flags)==Flags )
 		{
-			for( INT i=0; i<It->ArrayDim; i++ )
+			for( INT_UNREAL_32S i=0; i<It->ArrayDim; i++ )
 			{
 				char TempKey[256], Value[1024]="";
 				const char* Key = It->GetName();
@@ -781,7 +781,7 @@ void UObject::SaveConfig( DWORD Flags, const char* Filename )
 	{
 		if( (It->PropertyFlags & Flags)==Flags )
 		{
-			for( INT Index=0; Index<It->ArrayDim; Index++ )
+			for( INT_UNREAL_32S Index=0; Index<It->ArrayDim; Index++ )
 			{
 				char TempKey[256], Value[1024]="";
 				const char* Key = It->GetName();
@@ -888,7 +888,7 @@ DWORD STDCALL UObject::Release()
 //
 // Object accessor.
 //
-UObject* FObjectManager::GetIndexedObject( INT Index )
+UObject* FObjectManager::GetIndexedObject( INT_UNREAL_32S Index )
 {
 	guardSlow(FObjectManager::GetObject);
 	if( Index>=0 && Index<Objects.Num() )
@@ -955,13 +955,13 @@ UObject* FObjectManager::FindObjectChecked( UClass* ObjectClass, UObject* Object
 //
 // Binary initialize object properties to zero or defaults.
 //
-void FObjectManager::InitProperties( UClass* Class, BYTE* Data, INT DataCount, UClass* DefaultsClass, BYTE* Defaults, INT DefaultsCount )
+void FObjectManager::InitProperties( UClass* Class, BYTE* Data, INT_UNREAL_32S DataCount, UClass* DefaultsClass, BYTE* Defaults, INT_UNREAL_32S DefaultsCount )
 {
 	guard(FObjectManager::InitProperties);
 	check(DataCount>=sizeof(UObject));
 
 	// Count how much memory has been inited.
-	INT Inited = sizeof(UObject);
+	INT_UNREAL_32S Inited = sizeof(UObject);
 
 	// Find class defaults if no template was specified.
 	guard(FindDefaults);
@@ -1002,7 +1002,7 @@ void FObjectManager::InitProperties( UClass* Class, BYTE* Data, INT DataCount, U
 //
 // Global property setting.
 //
-void FObjectManager::GlobalSetProperty( const char* Value, UClass* Class, UProperty* Property, INT Offset, UBOOL Immediate )
+void FObjectManager::GlobalSetProperty( const char* Value, UClass* Class, UProperty* Property, INT_UNREAL_32S Offset, UBOOL Immediate )
 {
 	guard(FObjectManager::GlobalSetProperty);
 
@@ -1041,7 +1041,7 @@ void FObjectManager::PreRegister( UObject* InObject, FName InPackageName )
 	else
 	{
 		// Add to the autoregistry chain.
-		InObject->LinkerIndex = (INT)AutoRegister;
+		InObject->LinkerIndex = (INT_UNREAL_32S)AutoRegister;
 		*(FName*)&InObject->Linker = InPackageName;
 		AutoRegister = InObject;
 	}
@@ -1094,7 +1094,7 @@ void FObjectManager::Init()
 	check(sizeof(QWORD)==8);
 	check(sizeof(CHAR)==1);
 	check(sizeof(SWORD)==2);
-	check(sizeof(INT)==4);
+	check(sizeof(INT_UNREAL_32S)==4);
 	check(sizeof(SQWORD)==8);
 	check(sizeof(UBOOL)==4);
 	check(sizeof(FLOAT)==4);
@@ -1113,7 +1113,7 @@ void FObjectManager::Init()
 	FName::InitSubsystem();
 
 	// Init hash.
-	for( INT i=0; i<ARRAY_COUNT(ObjHash); i++ )
+	for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(ObjHash); i++ )
 		ObjHash[i] = NULL;
 
 	// Note initialized.
@@ -1150,7 +1150,7 @@ void FObjectManager::Init()
 // Profile comparator.
 //
 #if DO_SLOW_GUARD
-static INT Compare( const UFunction*& A, const UFunction*& B )
+static INT_UNREAL_32S Compare( const UFunction*& A, const UFunction*& B )
 {
 	return B->Cycles - A->Cycles;
 }
@@ -1167,7 +1167,7 @@ void FObjectManager::Exit()
 #if DO_SLOW_GUARD
 	if( ParseParam(appCmdLine(),"PROFILE") )
 	{
-		debugf( "Profile of %i ticks:", (INT)GTicks );
+		debugf( "Profile of %i ticks:", (INT_UNREAL_32S)GTicks );
 		debugf( "                                                    Function  nsec/tick  cyc/call        calls/tick" );
 		debugf( "------------------------------------------------------------  ---------  --------------- ----------" );
 		TArray<UFunction*> List;
@@ -1175,7 +1175,7 @@ void FObjectManager::Exit()
 			if( ItF->Calls!=0 )
 				List.AddItem( *ItF );
 		appSort( &List(0), List.Num() );
-		for( INT i=0; i<List.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<List.Num(); i++ )
 			debugf
 			(
 				"%60s  %8.4f  %12.4f  %8.4f",
@@ -1195,7 +1195,7 @@ void FObjectManager::Exit()
 		It->SetFlags( RF_Unreachable | RF_TagGarbage );
 
 	// Tag all names as unreachable.
-	for( INT i=0; i<FName::GetMaxNames(); i++ )
+	for( INT_UNREAL_32S i=0; i<FName::GetMaxNames(); i++ )
 		if( FName::GetEntry(i) )
 			FName::GetEntry(i)->Flags |= RF_Unreachable;
 
@@ -1264,7 +1264,7 @@ void FObjectManager::ShutdownAfterError()
 	debugf( NAME_Exit, "Executing FObjectManager::ShutdownAfterError" );
 	try
 	{
-		for( INT i=0; i<Objects.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Objects.Num(); i++ )
 			if( Objects(i) )
 				Objects(i)->ConditionalShutdownAfterError();
 	}
@@ -1294,7 +1294,7 @@ private:
 		guard(FArchiveShowReferences<<Obj);
 		if( Obj && Obj->GetParent()!=Parent )
 		{
-			for( INT i=0; i<Exclude.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Exclude.Num(); i++ )
 				if( Exclude(i) == Obj->GetParent() )
 					break;
 			if( i==Exclude.Num() )
@@ -1325,7 +1325,7 @@ public:
 	{
 		Src->Serialize( *this );
 	}
-	INT GetCount()
+	INT_UNREAL_32S GetCount()
 	{
 		return Count;
 	}
@@ -1337,7 +1337,7 @@ public:
 	}
 protected:
 	UObject* Find;
-	INT Count;
+	INT_UNREAL_32S Count;
 };
 
 static void ShowClasses( UClass* Class, FOutputDevice* Out, int Indent )
@@ -1359,7 +1359,7 @@ UBOOL FObjectManager::Exec( const char* Cmd, FOutputDevice* Out )
 	}
 	else if( ParseCommand(&Str,"DUMPINTRINSICS") )
 	{
-		for( INT i=0; i<EX_Max; i++ )
+		for( INT_UNREAL_32S i=0; i<EX_Max; i++ )
 			if( GIntrinsics[i] == UObject::execUndefined )
 				debugf( "Intrinsic %i is available", i );
 		return 1;
@@ -1459,7 +1459,7 @@ UBOOL FObjectManager::Exec( const char* Cmd, FOutputDevice* Out )
 		{
 			// Hash info.
 			FName::DisplayHash(Out);
-			INT ObjCount=0, HashCount=0;
+			INT_UNREAL_32S ObjCount=0, HashCount=0;
 			for( FObjectIterator It; It; ++It )
 				ObjCount++;
 			for( int i=0; i<ARRAY_COUNT(ObjHash); i++ )
@@ -1508,7 +1508,7 @@ UBOOL FObjectManager::Exec( const char* Cmd, FOutputDevice* Out )
 			Out->Log( "Objects:" );
 			for( FObjectIterator It; It; ++It )
 			{
-				INT ThisSize = It->MemUsage();
+				INT_UNREAL_32S ThisSize = It->MemUsage();
 				TotalCount++;
 
 				for( int i=0; i<Num; i++ )
@@ -1535,7 +1535,7 @@ UBOOL FObjectManager::Exec( const char* Cmd, FOutputDevice* Out )
 					TotalSize += ThisSize;
 				}
 			}
-			for( INT i=0; i<Num; i++ )
+			for( INT_UNREAL_32S i=0; i<Num; i++ )
 			{
 				UClass* Type = TypeList[i];
 				if( Type && (CheckType==NULL || CheckType==Type) )
@@ -1587,7 +1587,7 @@ ULinkerLoad* FObjectManager::GetPackageLinker
 	guard(FObjectManager::GetPackageLinker);
 	ULinkerLoad* Result = NULL;
 	if( InParent )
-		for( INT i=0; i<GObj.Loaders.Num() && !Result; i++ )
+		for( INT_UNREAL_32S i=0; i<GObj.Loaders.Num() && !Result; i++ )
 			if( GObj.GetLoader(i)->LinkerRoot == InParent )
 				Result = GObj.GetLoader(i);
 	try
@@ -1642,7 +1642,7 @@ ULinkerLoad* FObjectManager::GetPackageLinker
 				if( !FilenamePkg )
 					appThrowf( LocalizeError("FilenameToPackage"), InFilename );
 				InParent = FilenamePkg;
-				for( INT i=0; i<GObj.Loaders.Num() && !Result; i++ )
+				for( INT_UNREAL_32S i=0; i<GObj.Loaders.Num() && !Result; i++ )
 					if( GObj.GetLoader(i)->LinkerRoot == InParent )
 						Result = GObj.GetLoader(i);
 			}
@@ -1655,7 +1655,7 @@ ULinkerLoad* FObjectManager::GetPackageLinker
 		}
 
 		// Make sure the package is accessible in the sandbox.
-		for( INT i=0; Sandbox && i<Sandbox->Num(); i++ )
+		for( INT_UNREAL_32S i=0; Sandbox && i<Sandbox->Num(); i++ )
 			if( (*Sandbox)(i).Parent == InParent )
 				Sandbox = NULL;
 		if( Sandbox )
@@ -1668,7 +1668,7 @@ ULinkerLoad* FObjectManager::GetPackageLinker
 		// Verify compatibility.
 		if( CompatibleGuid )
 		{
-			for( INT i=0; i<Result->Heritage.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Result->Heritage.Num(); i++ )
 				if( Result->Heritage(i)==*CompatibleGuid )
 					break;
 			if( i==Result->Heritage.Num() )
@@ -1854,7 +1854,7 @@ void FObjectManager::BeginLoad()
 	if( ++BeginLoadCount == 1 )
 	{
 		// Initiate load.
-		for( INT i=0; i<Loaders.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Loaders.Num(); i++ )
 			check(GetLoader(i)->Success);
 	}
 	unguard;
@@ -1900,9 +1900,9 @@ void FObjectManager::EndLoad()
 			// Dissociate all linker object imports, since they may be destroyed,
 			// causing their pointers to become invalid.
 			guard(DissociateImports);
-			for( INT i=0; i<Loaders.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Loaders.Num(); i++ )
 			{
-				for( INT j=0; j<GetLoader(i)->ImportMap.Num(); j++ )
+				for( INT_UNREAL_32S j=0; j<GetLoader(i)->ImportMap.Num(); j++ )
 				{
 					FObjectImport& Import = GetLoader(i)->ImportMap(j);
 					if( Import.Object && !(Import.Object->GetFlags() & RF_Intrinsic) )
@@ -1926,7 +1926,7 @@ void FObjectManager::ResetLoaders( UObject* Pkg )
 {
 	guard(FObjectManager::ResetLoaders);
 
-	for( INT i=Loaders.Num()-1; i>=0; i-- )
+	for( INT_UNREAL_32S i=Loaders.Num()-1; i>=0; i-- )
 		if( Pkg==NULL || GetLoader(i)->LinkerRoot==Pkg )
 			delete GetLoader(i);
 
@@ -1979,15 +1979,15 @@ public:
 // QSort comparators.
 //
 static ULinkerSave* GTempSave;
-INT CDECL LinkerNameSort( const void* A, const void* B )
+INT_UNREAL_32S CDECL LinkerNameSort( const void* A, const void* B )
 {
 	return GTempSave->MapName((FName*)B) - GTempSave->MapName((FName*)A);
 }
-INT CDECL LinkerImportSort( const void* A, const void* B )
+INT_UNREAL_32S CDECL LinkerImportSort( const void* A, const void* B )
 {
 	return GTempSave->MapObject(((FObjectImport*)B)->Object) - GTempSave->MapObject(((FObjectImport*)A)->Object);
 }
-INT CDECL LinkerExportSort( const void* A, const void* B )
+INT_UNREAL_32S CDECL LinkerExportSort( const void* A, const void* B )
 {
 	return GTempSave->MapObject(((FObjectExport*)B)->_Object) - GTempSave->MapObject(((FObjectExport*)A)->_Object);
 }
@@ -2068,7 +2068,7 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 
 	// If we have a load-linker for the package, unload it.
 	guard(UncacheLoader);
-	for( INT i=0; i<Loaders.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Loaders.Num(); i++ )
 	{
 		if( GetLoader(i)->LinkerRoot==InParent )
 		{
@@ -2082,7 +2082,7 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 	guard(Untag);
 	for( FObjectIterator It; It; ++It )
 		It->ClearFlags( RF_TagImp | RF_TagExp | RF_LoadForEdit | RF_LoadForClient | RF_LoadForServer );
-	for( INT i=0; i<FName::GetMaxNames(); i++ )
+	for( INT_UNREAL_32S i=0; i<FName::GetMaxNames(); i++ )
 		if( FName::GetEntry(i) )
 			FName::GetEntry(i)->Flags &= ~(RF_TagImp | RF_TagExp | RF_LoadForEdit | RF_LoadForClient | RF_LoadForServer);
 	unguard;
@@ -2157,7 +2157,7 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 		Linker->Heritage.AddItem( appCreateGuid() );
 		Linker->Summary.HeritageCount = Linker->Heritage.Num();
 		Linker->Summary.HeritageOffset = Linker->Tell();
-		for( INT i=0; i<Linker->Heritage.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Linker->Heritage.Num(); i++ )
 			*Linker << Linker->Heritage(i);
 		unguard;
 
@@ -2184,7 +2184,7 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 
 		// Save names.
 		guard(SaveNames);
-		for( INT i=0; i<Linker->NameMap.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Linker->NameMap.Num(); i++ )
 		{
 			*Linker << *FName::GetEntry( Linker->NameMap(i).GetIndex() );
 			Linker->NameIndices(Linker->NameMap(i).GetIndex()) = i;
@@ -2220,7 +2220,7 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 
 		// Set linker reverse mappings.
 		guard(SetLinkerMappings);
-		for( INT i=0; i<Linker->ExportMap.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Linker->ExportMap.Num(); i++ )
 			Linker->ObjectIndices(Linker->ExportMap(i)._Object->GetIndex()) = i+1;
 		for( i=0; i<Linker->ImportMap.Num(); i++ )
 			Linker->ObjectIndices(Linker->ImportMap(i).Object->GetIndex()) = -i-1;
@@ -2228,7 +2228,7 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 
 		// Save exports.
 		guard(SetExportIndices);
-		for( INT i=0; i<Linker->ExportMap.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Linker->ExportMap.Num(); i++ )
 		{
 			FObjectExport& Export = Linker->ExportMap(i);
 
@@ -2266,7 +2266,7 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 		// Save the import map.
 		guard(SaveImportMap);
 		Linker->Summary.ImportOffset = Linker->Tell();
-		for( INT i=0; i<Linker->ImportMap.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Linker->ImportMap.Num(); i++ )
 		{
 			FObjectImport& Import = Linker->ImportMap( i );
 
@@ -2402,7 +2402,7 @@ void FObjectManager::HashObject( UObject* Obj )
 {
 	guard(FObjectManager::HashObject);
 
-	INT iHash      = Obj->GetHash();
+	INT_UNREAL_32S iHash      = Obj->GetHash();
 	Obj->HashNext  = ObjHash[iHash];
 	ObjHash[iHash] = Obj;
 
@@ -2416,9 +2416,9 @@ void FObjectManager::UnhashObject( UObject* Obj )
 {
 	guard(FObjectManager::UnhashObject);
 
-	INT       iHash   = Obj->GetHash();
+	INT_UNREAL_32S       iHash   = Obj->GetHash();
 	UObject** Hash    = &ObjHash[iHash];
-	INT       Removed = 0;
+	INT_UNREAL_32S       Removed = 0;
 	while( *Hash != NULL )
 	{
 		if( *Hash != Obj )
@@ -2444,7 +2444,7 @@ void FObjectManager::UnhashObject( UObject* Obj )
 //
 // Add an object to the table.
 //
-void FObjectManager::AddObject( UObject* Obj, INT Index )
+void FObjectManager::AddObject( UObject* Obj, INT_UNREAL_32S Index )
 {
 	guard(FObjectManager::AddObject);
 
@@ -2499,8 +2499,8 @@ UObject* FObjectManager::AllocateObject
 
 	// See if object already exists.
 	UObject* Obj  = FindObject( InClass, InParent, *InName );
-	INT Index     = INDEX_NONE;
-	INT ClassSize = 0;
+	INT_UNREAL_32S Index     = INDEX_NONE;
+	INT_UNREAL_32S ClassSize = 0;
 	void (*Constructor)(void*) = NULL;
 	DWORD ClassFlags = 0;
 	if( !Obj )
@@ -2638,7 +2638,7 @@ public:
 			It->SetFlags( RF_Unreachable | RF_TagGarbage );
 
 		// Tag all names as unreachable.
-		for( INT i=0; i<FName::GetMaxNames(); i++ )
+		for( INT_UNREAL_32S i=0; i<FName::GetMaxNames(); i++ )
 			if( FName::GetEntry(i) )
 				FName::GetEntry(i)->Flags |= RF_Unreachable;
 
@@ -2725,7 +2725,7 @@ void FObjectManager::PurgeGarbage( FOutputDevice* Out )
 
 	// Dispatch all Destroy messages.
 	guard(DispatchDestroys);
-	for( INT i=0; i<Objects.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Objects.Num(); i++ )
 	{
 		guard(DispatchDestroy);
 		if
@@ -2746,7 +2746,7 @@ void FObjectManager::PurgeGarbage( FOutputDevice* Out )
 	// Purge all unreachable objects.
 	//warning: Can't use FObjectIterator here because classes may be destroyed before objects.
 	guard(DeleteGarbage);
-	for( INT i=0; i<Objects.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Objects.Num(); i++ )
 	{
 		guard(DeleteObject);
 		if
@@ -2762,7 +2762,7 @@ void FObjectManager::PurgeGarbage( FOutputDevice* Out )
 
 	// Purge all unreachable names.
 	guard(Names);
-	for( INT i=0; i<FName::GetMaxNames(); i++ )
+	for( INT_UNREAL_32S i=0; i<FName::GetMaxNames(); i++ )
 	{
 		FNameEntry* Name = FName::GetEntry(i);
 		if
@@ -2871,7 +2871,7 @@ UObject* FObjectManager::ImportObjectFromFile
 	appFseek( File, 0, USEEK_END );
 	Data.Add( appFtell(File) );
 	appFseek( File, 0, USEEK_SET );
-	INT Count = appFread( &Data(0), 1, Data.Num(), File );
+	INT_UNREAL_32S Count = appFread( &Data(0), 1, Data.Num(), File );
 	appFclose( File );
 	if( Count!=Data.Num() )
 	{
@@ -2918,7 +2918,7 @@ void CacheDrivers( UBOOL ForceRefresh )
 		appStrcpy( CachedLanguage, GetLanguage() );
 		AllPreferences.Empty();
 		AllDrivers.Empty();
-		for( INT i=0; i<ARRAY_COUNT(GSys->Paths); i++ )
+		for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(GSys->Paths); i++ )
 		{
 			if( GSys->Paths[i] )
 			{
@@ -2929,7 +2929,7 @@ void CacheDrivers( UBOOL ForceRefresh )
 				{
 					appStrcpy( Tmp, "*.int" );
 					TArray<FString> Files = appFindFiles( Filename );
-					for( INT j=0; j<Files.Num(); j++ )
+					for( INT_UNREAL_32S j=0; j<Files.Num(); j++ )
 					{
 						appSprintf( Tmp, "%s%s", appBaseDir(), *Files(j) );
 						if( GetConfigSection( "Public", Buffer, ARRAY_COUNT(Buffer), Tmp ) )
@@ -3004,7 +3004,7 @@ void FObjectManager::GetRegistryObjects
 	CacheDrivers( ForceRefresh );
 	const char* ClassName = Class->GetName();
 	const char* MetaClassName = MetaClass ? MetaClass->GetPathName() : "";
-	for( INT i=0; i<AllDrivers.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<AllDrivers.Num(); i++ )
 		if
 		(	appStricmp(AllDrivers(i).Class, ClassName)==0
 		&&	appStricmp(AllDrivers(i).MetaClass, MetaClassName)==0 )
@@ -3017,7 +3017,7 @@ void FObjectManager::GetPreferences( TArray<FPreferencesInfo>& Results, const ch
 	guard(FObjectManager::GetPreferences);
 	CacheDrivers( ForceRefresh );
 	Results.Empty();
-	for( INT i=0; i<AllPreferences.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<AllPreferences.Num(); i++ )
 		if( appStricmp(AllPreferences(i).ParentCaption,ParentCaption)==0 )
 			new(Results)FPreferencesInfo(AllPreferences(i));
 	unguard;
@@ -3037,7 +3037,7 @@ void UTextBuffer::Serialize( FArchive& Ar )
 	Ar << Pos << Top << Text;
 	unguardobj;
 }
-void UTextBuffer::Export( FOutputDevice& Out, const char* FileType, INT Indent )
+void UTextBuffer::Export( FOutputDevice& Out, const char* FileType, INT_UNREAL_32S Indent )
 {
 	guard(UTextBuffer::Export);
 
@@ -3120,7 +3120,7 @@ FArchive& operator<<( FArchive& Ar, FCompactIndex& I )
 	}
 	else
 	{
-		INT   Original = I.Value;
+		INT_UNREAL_32S   Original = I.Value;
 		DWORD V        = Abs(I.Value);
 		BYTE  B0       = ((I.Value>=0) ? 0 : 0x80) + ((V < 0x40) ? V : ((V & 0x3f)+0x40));
 		I.Value        = 0;
@@ -3220,7 +3220,7 @@ void FPackageMap::AddLinker( ULinkerLoad* Linker )
 	guard(FPackageMap::AddLinker);
 
 	// Skip if already on list.
-	for( INT i=0; i<Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Num(); i++ )
 		if( (*this)(i).Parent == Linker->LinkerRoot )
 			return;
 
@@ -3228,7 +3228,7 @@ void FPackageMap::AddLinker( ULinkerLoad* Linker )
 	FPackageInfo* Info = new(*this)FPackageInfo( Linker );
 	for( i=0; i<Linker->ImportMap.Num(); i++ )
 		if( Linker->ImportMap(i).ClassName==NAME_Package && Linker->ImportMap(i).PackageIndex==0 )
-			for( INT j=0; j<GObj.Loaders.Num(); j++ )
+			for( INT_UNREAL_32S j=0; j<GObj.Loaders.Num(); j++ )
 				if( GObj.GetLoader(j)->LinkerRoot->GetFName()==Linker->ImportMap(i).ObjectName )
 					AddLinker( GObj.GetLoader(j) );
 
@@ -3241,7 +3241,7 @@ void FPackageMap::AddLinker( ULinkerLoad* Linker )
 void FPackageMap::Compute()
 {
 	guard(FPackageInfo::Compute);
-	for( INT i=0; i<Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Num(); i++ )
 	{
 		if( (*this)(i).Linker==NULL )
 			(*this)(i).Linker = GObj.GetPackageLinker( (*this)(i).Parent, NULL, LOAD_NoFail | LOAD_KeepImports, NULL, &(*this)(i).Guid );
@@ -3259,7 +3259,7 @@ void FPackageMap::Compute()
 			(*this)(i).ObjectBase = (*this)(i-1).ObjectBase + (*this)(i-1).Linker->ExportMap.Num();
 			(*this)(i).NameBase   = (*this)(i-1).NameBase   + (*this)(i-1).Linker->NameMap.Num();
 		}
-		for( INT j=0; j<(*this)(i).Linker->NameMap.Num(); j++ )
+		for( INT_UNREAL_32S j=0; j<(*this)(i).Linker->NameMap.Num(); j++ )
 			if( NameIndices((*this)(i).Linker->NameMap(j).GetIndex()) == -1 )
 				NameIndices((*this)(i).Linker->NameMap(j).GetIndex()) = (*this)(i).NameBase + j;
 	}
@@ -3269,7 +3269,7 @@ void FPackageMap::Compute()
 //
 // Mapping functions.
 //
-INT FPackageMap::NameToIndex( FName Name )
+INT_UNREAL_32S FPackageMap::NameToIndex( FName Name )
 {
 	guard(FPackageMap::NameToIndex);
 	DOUBLE d=appSeconds();
@@ -3286,17 +3286,17 @@ INT FPackageMap::NameToIndex( FName Name )
 	return -1;
 	unguard;
 }
-INT FPackageMap::ObjectToIndex( UObject* Object )
+INT_UNREAL_32S FPackageMap::ObjectToIndex( UObject* Object )
 {
 	guard(FPackageMap::ObjectToIndex);
 	if( Object && Object->GetLinker() && Object->GetLinkerIndex()!=INDEX_NONE )
-		for( INT i=0; i<Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Num(); i++ )
 			if( (*this)(i).Linker == Object->GetLinker() )
 				return (*this)(i).ObjectBase + Object->GetLinkerIndex();
 	return -1;
 	unguard;
 }
-FName FPackageMap::IndexToName( INT Index )
+FName FPackageMap::IndexToName( INT_UNREAL_32S Index )
 {
 	guard(FPackageMap::PairToName);
 	if( Index<0 )
@@ -3312,9 +3312,9 @@ FName FPackageMap::IndexToName( INT Index )
 	else
 	{
 		// Dynamic name.
-		for( INT i=0; i<Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Num(); i++ )
 		{
-			INT Count = (*this)(i).Linker->NameMap.Num();
+			INT_UNREAL_32S Count = (*this)(i).Linker->NameMap.Num();
 			if( Index < Count )
 				return (*this)(i).Linker->NameMap(Index);
 			Index -= Count;
@@ -3324,14 +3324,14 @@ FName FPackageMap::IndexToName( INT Index )
 	return NAME_None;
 	unguard;
 }
-UObject* FPackageMap::IndexToObject( INT Index, UBOOL Load )
+UObject* FPackageMap::IndexToObject( INT_UNREAL_32S Index, UBOOL Load )
 {
 	guard(FPackageMap::PairToObject);
 	if( Index>=0 )
 	{
-		for( INT i=0; i<Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Num(); i++ )
 		{
-			INT NumExports = (*this)(i).Linker->ExportMap.Num();
+			INT_UNREAL_32S NumExports = (*this)(i).Linker->ExportMap.Num();
 			if( Index < NumExports )
 			{
 				UObject* Result = (*this)(i).Linker->ExportMap(Index)._Object;

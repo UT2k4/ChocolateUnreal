@@ -159,7 +159,7 @@ int USGLRenderDevice::NumLevels(int Dimensions)
 // Creates a 16 bit palette from the supplied FColor palette and texture flags
 //*****************************************************************************
 void USGLRenderDevice::CreateSglPalette(WORD *SglPalette,FColor *SrcPalette,
-										INT PaletteSize,DWORD TextureFlags,
+										INT_UNREAL_32S PaletteSize,DWORD TextureFlags,
 										FColor& MaxColor)
 {
 	guard(USGLRenderDevice::CreateSglPalette);
@@ -329,7 +329,8 @@ void USGLRenderDevice::ConvertTextureData(int Dimensions,
 		int Offsets[8][4];
 	
 		// Set up counts.
-		for (int i=0,Bit=1;i<8;i++,Bit=Bit<<1)
+		int i, Bit;
+		for ( i=0,Bit=1;i<8;i++,Bit=Bit<<1)
 		{
 			if (Bit >= Dimensions)
 				Counts[i]=1;
@@ -425,9 +426,9 @@ void USGLRenderDevice::ConvertLightMapData(int Dimensions,
         
 		DWORD* Tmp = Src.PtrDWORD;
         DWORD  Max = 0x01010101;
-        for( INT i=0; i<YClamp; i++ )
+        for( INT_UNREAL_32S i=0; i<YClamp; i++ )
         {
-                for( INT j=0; j<XClamp; j++ )
+                for( INT_UNREAL_32S j=0; j<XClamp; j++ )
                 {
                         DWORD Flow = (Max - *Tmp) & 0x80808080;
                         if (Flow)
@@ -456,7 +457,7 @@ void USGLRenderDevice::ConvertLightMapData(int Dimensions,
 	// Calculate the scaling value.
 	int ScaleVal=(0x100*255*14/16)/IntensityAdjustTable[MaxI];
 	// Precalculate scaled values.
-	INT ScaleI[128], ColorScaleR[128], ColorScaleG[128], ColorScaleB[128], i;
+	INT_UNREAL_32S ScaleI[128], ColorScaleR[128], ColorScaleG[128], ColorScaleB[128], i;
 
 	for( i=0; i<=MaxI; i++ )
 	{
@@ -470,11 +471,12 @@ void USGLRenderDevice::ConvertLightMapData(int Dimensions,
 	}
 	
 	// Convert the data.
-	for( int y=0,YOffset=0; y<YClamp; y+=YStep,YOffset=(YOffset + UNSGL_INC_Y_ADD) & UNSGL_INC_Y_AND )
+	int y = 0, YOffset = 0, x = 0, XOffset = 0;
+	for( y=0,YOffset=0; y<YClamp; y+=YStep,YOffset=(YOffset + UNSGL_INC_Y_ADD) & UNSGL_INC_Y_AND )
 	{
-		for( int x=0,XOffset=0; x<XClamp; x+=XStep,XOffset=(XOffset + UNSGL_INC_X_ADD) & UNSGL_INC_X_AND)
+		for( x=0,XOffset=0; x<XClamp; x+=XStep,XOffset=(XOffset + UNSGL_INC_X_ADD) & UNSGL_INC_X_AND)
 		{
-			INT I=Max(Src.PtrBYTE[2],Max(Src.PtrBYTE[0],Src.PtrBYTE[1]));
+			INT_UNREAL_32S I=Max(Src.PtrBYTE[2],Max(Src.PtrBYTE[0],Src.PtrBYTE[1]));
 			int R=Src.PtrBYTE[0] * ColorScaleR[I];
 			if (R>0x0000FFFF)
 				R=0x0000FFFF;
@@ -516,14 +518,15 @@ void USGLRenderDevice::ConvertFogMapData(int Dimensions,
 	int PtrStep=YStep*XSize;
 
 	// Convert 8-8-8 fog maps to 5-5-5.
-	for( int y=0,YOffset=0; y<YClamp; y+=YStep,YOffset=(YOffset + UNSGL_INC_Y_ADD) & UNSGL_INC_Y_AND )
+	int y = 0, YOffset = 0, x = 0, XOffset = 0;
+	for( y=0,YOffset=0; y<YClamp; y+=YStep,YOffset=(YOffset + UNSGL_INC_Y_ADD) & UNSGL_INC_Y_AND )
 	{
-		for( int x=0,XOffset=0; x<XClamp; x+=XStep,XOffset=(XOffset + UNSGL_INC_X_ADD) & UNSGL_INC_X_AND)
+		for( x=0,XOffset=0; x<XClamp; x+=XStep,XOffset=(XOffset + UNSGL_INC_X_ADD) & UNSGL_INC_X_AND)
 		{
-			INT B=Src.PtrBYTE[0];
-			INT G=Src.PtrBYTE[1];
-			INT R=Src.PtrBYTE[2];
-			INT I=Max(R,Max(B,G));
+			INT_UNREAL_32S B=Src.PtrBYTE[0];
+			INT_UNREAL_32S G=Src.PtrBYTE[1];
+			INT_UNREAL_32S R=Src.PtrBYTE[2];
+			INT_UNREAL_32S I=Max(R,Max(B,G));
 			if (I==0)
 				I=1;
 			B=B*255/I;

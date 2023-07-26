@@ -52,7 +52,7 @@ UBOOL USoftwareRenderDevice::Init( UViewport* InViewport )
 
 	/*
 	// Log the initialization statistics:
-	INT ColorBits = Viewport->ColorBytes * 8;
+	INT_UNREAL_32S ColorBits = Viewport->ColorBytes * 8;
 	if ((ColorBits == 16) && !(Viewport->Caps & CC_RGB565)) ColorBits--;
 	debugf("Software rendering initialized, Bit depth: %i  XSize %i YSize %i ",ColorBits,Viewport->SizeX,Viewport->SizeY);
 	*/
@@ -84,7 +84,7 @@ UBOOL USoftwareRenderDevice::Exec( const char* Cmd, FOutputDevice* Out )
 
 // Lock - called at the start of every frame.
 
-void USoftwareRenderDevice::Lock( FPlane InFlashScale, FPlane InFlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* InHitData, INT* InHitSize )
+void USoftwareRenderDevice::Lock( FPlane InFlashScale, FPlane InFlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* InHitData, INT_UNREAL_32S* InHitSize )
 {
 	guardSlow(USoftwareRenderDevice::Lock);	
 	check(Viewport);

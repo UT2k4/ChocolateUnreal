@@ -553,17 +553,17 @@ public:
     BYTE StandingCount;
     BYTE MiscNumber;
     BYTE LatentByte;
-    INT LatentInt;
+    INT_UNREAL_32S LatentInt;
     FLOAT LatentFloat;
     class AActor* LatentActor;
     class AActor* Touching[4];
     class AActor* Deleted;
-    INT CollisionTag;
-    INT LightingTag;
-    INT NetTag;
-    INT OtherTag;
-    INT ExtraTag;
-    INT SpecialTag;
+    INT_UNREAL_32S CollisionTag;
+    INT_UNREAL_32S LightingTag;
+    INT_UNREAL_32S NetTag;
+    INT_UNREAL_32S OtherTag;
+    INT_UNREAL_32S ExtraTag;
+    INT_UNREAL_32S SpecialTag;
     FVector Location;
     FRotator Rotation;
     FVector OldLocation;
@@ -764,9 +764,9 @@ public:
         ProcessEvent(FindFunctionChecked(ENGINE_PreTeleport),&Parms);
         return Parms.ReturnValue;
     }
-    void eventTakeDamage(INT Damage, class APawn* EventInstigator, FVector HitLocation, FVector Momentum, FName DamageType)
+    void eventTakeDamage(INT_UNREAL_32S Damage, class APawn* EventInstigator, FVector HitLocation, FVector Momentum, FName DamageType)
     {
-        struct {INT Damage; class APawn* EventInstigator; FVector HitLocation; FVector Momentum; FName DamageType; } Parms;
+        struct {INT_UNREAL_32S Damage; class APawn* EventInstigator; FVector HitLocation; FVector Momentum; FName DamageType; } Parms;
         Parms.Damage=Damage;
         Parms.EventInstigator=EventInstigator;
         Parms.HitLocation=HitLocation;
@@ -1030,12 +1030,12 @@ public:
     FLOAT SplashTime;
     FLOAT OrthoZoom;
     FLOAT FovAngle;
-    INT DieCount;
-    INT ItemCount;
-    INT KillCount;
-    INT SecretCount;
+    INT_UNREAL_32S DieCount;
+    INT_UNREAL_32S ItemCount;
+    INT_UNREAL_32S KillCount;
+    INT_UNREAL_32S SecretCount;
     FLOAT score;
-    INT Health;
+    INT_UNREAL_32S Health;
     FName ReducedDamageType;
     FLOAT ReducedDamagePct;
     class UClass* DropWhenKilled;
@@ -1149,9 +1149,9 @@ public:
         Parms.NoiseMaker=NoiseMaker;
         ProcessEvent(FindFunctionChecked(ENGINE_HearNoise),&Parms);
     }
-    void eventClientHearSound(class AActor* Actor, INT Id, class USound* S, FVector SoundLocation, FVector Parameters)
+    void eventClientHearSound(class AActor* Actor, INT_UNREAL_32S Id, class USound* S, FVector SoundLocation, FVector Parameters)
     {
-        struct {class AActor* Actor; INT Id; class USound* S; FVector SoundLocation; FVector Parameters; } Parms;
+        struct {class AActor* Actor; INT_UNREAL_32S Id; class USound* S; FVector SoundLocation; FVector Parameters; } Parms;
         Parms.Actor=Actor;
         Parms.Id=Id;
         Parms.S=S;
@@ -1190,10 +1190,10 @@ public:
     FLOAT DodgeClickTime;
     FLOAT Bob;
     FLOAT bobtime;
-    INT ShowFlags;
-    INT RendMap;
-    INT Misc1;
-    INT Misc2;
+    INT_UNREAL_32S ShowFlags;
+    INT_UNREAL_32S RendMap;
+    INT_UNREAL_32S Misc1;
+    INT_UNREAL_32S Misc2;
     class AActor* ViewTarget;
     FVector FlashScale;
     FVector FlashFog;
@@ -1212,7 +1212,7 @@ public:
     BYTE CdTrack;
     BYTE Transition;
     FLOAT shaketimer;
-    INT shakemag;
+    INT_UNREAL_32S shakemag;
     FLOAT shakevert;
     FLOAT maxshake;
     FLOAT verttimer;
@@ -1253,7 +1253,7 @@ public:
     CHAR DelayedCommand[255];
     FLOAT MouseSensitivity;
     FName WeaponPriority[20];
-    INT NetSpeed;
+    INT_UNREAL_32S NetSpeed;
     FLOAT SmoothMouseX;
     FLOAT SmoothMouseY;
     FLOAT aBaseX;
@@ -1380,7 +1380,7 @@ public:
     FScale PostScale;
     FScale TempScale;
     FColor BrushColor;
-    INT PolyFlags;
+    INT_UNREAL_32S PolyFlags;
     DWORD bColored:1;
     DECLARE_CLASS(ABrush,AActor,0)
     #include "ABrush.h"
@@ -1424,7 +1424,7 @@ public:
     FLOAT MoveTime;
     FLOAT StayOpenTime;
     FLOAT OtherTime;
-    INT EncroachDamage;
+    INT_UNREAL_32S EncroachDamage;
     DWORD bTriggerOnceOnly:1;
     DWORD bSlave:1;
     DWORD bUseTriggered:1;
@@ -1434,7 +1434,7 @@ public:
     FName BumpEvent;
     class AActor* SavedTrigger;
     FLOAT DamageThreshold;
-    INT numTriggerEvents;
+    INT_UNREAL_32S numTriggerEvents;
     class AMover* Leader;
     class AMover* Follower;
     FName ReturnGroup;
@@ -1492,12 +1492,12 @@ public:
     FLOAT ZoneFluidFriction;
     FLOAT ZoneTerminalVelocity;
     FName ZonePlayerEvent;
-    INT ZonePlayerCount;
-    INT NumCarcasses;
-    INT DamagePerSec;
+    INT_UNREAL_32S ZonePlayerCount;
+    INT_UNREAL_32S NumCarcasses;
+    INT_UNREAL_32S DamagePerSec;
     FName DamageType;
     CHAR DamageString[64];
-    INT MaxCarcasses;
+    INT_UNREAL_32S MaxCarcasses;
     class USound* EntrySound;
     class USound* ExitSound;
     class UClass* EntryActor;
@@ -1524,7 +1524,7 @@ public:
     DWORD bRaytraceReverb:1;
     FLOAT SpeedOfSound;
     BYTE MasterGain;
-    INT CutoffHz;
+    INT_UNREAL_32S CutoffHz;
     BYTE Delay[6];
     BYTE Gain[6];
     void execZoneActors( FFrame& Stack, BYTE*& Result );
@@ -1549,12 +1549,12 @@ class ENGINE_API AWarpZoneInfo : public AZoneInfo
 public:
     CHAR OtherSideURL[80];
     FName ThisTag;
-    INT iWarpZone;
+    INT_UNREAL_32S iWarpZone;
     FCoords WarpCoords;
     class AWarpZoneInfo* OtherSideActor;
     class UObject* OtherSideLevel;
     CHAR Destinations[80][8];
-    INT numDestinations;
+    INT_UNREAL_32S numDestinations;
     void execUnWarp( FFrame& Stack, BYTE*& Result );
     void execWarp( FFrame& Stack, BYTE*& Result );
     void eventForceGenerate()
@@ -1599,14 +1599,14 @@ class ENGINE_API ALevelInfo : public AZoneInfo
 public:
     FLOAT TimeDilation;
     FLOAT TimeSeconds;
-    INT Year;
-    INT Month;
-    INT Day;
-    INT DayOfWeek;
-    INT Hour;
-    INT Minute;
-    INT Second;
-    INT Millisecond;
+    INT_UNREAL_32S Year;
+    INT_UNREAL_32S Month;
+    INT_UNREAL_32S Day;
+    INT_UNREAL_32S DayOfWeek;
+    INT_UNREAL_32S Hour;
+    INT_UNREAL_32S Minute;
+    INT_UNREAL_32S Second;
+    INT_UNREAL_32S Millisecond;
     CHAR Title[64];
     CHAR Author[64];
     CHAR LevelEnterText[64];
@@ -1623,7 +1623,7 @@ public:
     FLOAT PlayerDoppler;
     FLOAT Brightness;
     class UTexture* DefaultTexture;
-    INT HubStackLevel;
+    INT_UNREAL_32S HubStackLevel;
     BYTE LevelAction;
     BYTE NetMode;
     DWORD bInternet:1;
@@ -1645,9 +1645,9 @@ public:
 class ENGINE_API AGameInfo : public AInfo
 {
 public:
-    INT ItemGoals;
-    INT KillGoals;
-    INT SecretGoals;
+    INT_UNREAL_32S ItemGoals;
+    INT_UNREAL_32S KillGoals;
+    INT_UNREAL_32S SecretGoals;
     BYTE Difficulty;
     DWORD bNoMonsters:1;
     DWORD bMuteSpectators:1;
@@ -1664,7 +1664,7 @@ public:
     FLOAT StartTime;
     class UClass* DefaultPlayerClass;
     class UClass* DefaultWeapon;
-    INT MaxSpectators;
+    INT_UNREAL_32S MaxSpectators;
     CHAR AdminPassword[32];
     class AScoreBoard* Scores;
     class UClass* ScoreBoardType;
@@ -1675,7 +1675,7 @@ public:
     CHAR BeaconName[15];
     CHAR SpecialDamageString[64];
     CHAR SwitchLevelMessage[64];
-    INT SentText;
+    INT_UNREAL_32S SentText;
     CHAR DefaultPlayerName[16];
     CHAR LeftMessage[255];
     CHAR FailedSpawnMessage[255];
@@ -1741,8 +1741,8 @@ class ENGINE_API AMenu : public AActor
 {
 public:
     class AMenu* ParentMenu;
-    INT Selection;
-    INT MenuLength;
+    INT_UNREAL_32S Selection;
+    INT_UNREAL_32S MenuLength;
     DWORD bConfigChanged:1;
     DWORD bExitAllMenus:1;
     class APlayerPawn* PlayerOwner;
@@ -1761,8 +1761,8 @@ public:
 class ENGINE_API AHUD : public AActor
 {
 public:
-    INT HudMode;
-    INT Crosshair;
+    INT_UNREAL_32S HudMode;
+    INT_UNREAL_32S Crosshair;
     class UClass* MainMenuType;
     class AMenu* MainMenu;
     DECLARE_CLASS(AHUD,AActor,0|CLASS_Config)
@@ -1831,10 +1831,10 @@ public:
     class UTexture* StatusIcon;
     FName ProtectionType1;
     FName ProtectionType2;
-    INT Charge;
-    INT ArmorAbsorption;
+    INT_UNREAL_32S Charge;
+    INT_UNREAL_32S ArmorAbsorption;
     DWORD bIsAnArmor:1;
-    INT AbsorptionPriority;
+    INT_UNREAL_32S AbsorptionPriority;
     class AInventory* NextArmor;
     FLOAT MaxDesireability;
     class AInventorySpot* myMarker;
@@ -1868,7 +1868,7 @@ public:
     FLOAT MaxTargetRange;
     class UClass* AmmoName;
     BYTE ReloadCount;
-    INT PickupAmmoCount;
+    INT_UNREAL_32S PickupAmmoCount;
     class AAmmo* AmmoType;
     DWORD bPointing:1;
     DWORD bInstantHit:1;
@@ -1914,7 +1914,7 @@ public:
 class ENGINE_API AInterpolationPoint : public AKeypoint
 {
 public:
-    INT Position;
+    INT_UNREAL_32S Position;
     FLOAT RateModifier;
     DWORD bEndOfPath:1;
     class AInterpolationPoint* Prev;
@@ -1929,7 +1929,7 @@ public:
     FLOAT speed;
     FLOAT MaxSpeed;
     FLOAT Damage;
-    INT MomentumTransfer;
+    INT_UNREAL_32S MomentumTransfer;
     class USound* SpawnSound;
     class USound* ImpactSound;
     class USound* MiscSound;
@@ -1948,7 +1948,7 @@ public:
     DWORD bBobbing:1;
     DWORD bWasCarried:1;
     class USound* PushSound;
-    INT numLandings;
+    INT_UNREAL_32S numLandings;
     class UClass* contents;
     class UClass* content2;
     class UClass* content3;
@@ -1967,7 +1967,7 @@ public:
     DWORD bReducedHeight:1;
     DWORD bDecorative:1;
     DWORD bSlidingCarcass:1;
-    INT CumulativeDamage;
+    INT_UNREAL_32S CumulativeDamage;
     class APawn* Bugs;
     DECLARE_CLASS(ACarcass,ADecoration,0)
     NO_DEFAULT_CONSTRUCTOR(ACarcass)
@@ -1978,17 +1978,17 @@ class ENGINE_API ANavigationPoint : public AActor
 public:
     FName ownerTeam;
     DWORD taken:1;
-    INT upstreamPaths[16];
-    INT Paths[16];
-    INT PrunedPaths[16];
-    INT visitedWeight;
+    INT_UNREAL_32S upstreamPaths[16];
+    INT_UNREAL_32S Paths[16];
+    INT_UNREAL_32S PrunedPaths[16];
+    INT_UNREAL_32S visitedWeight;
     class AActor* routeCache;
-    INT bestPathWeight;
+    INT_UNREAL_32S bestPathWeight;
     class ANavigationPoint* nextNavigationPoint;
     class ANavigationPoint* nextOrdered;
     class ANavigationPoint* prevOrdered;
     class ANavigationPoint* startPath;
-    INT cost;
+    INT_UNREAL_32S cost;
     DWORD bPlayerOnly:1;
     DWORD bEndPoint:1;
     DWORD bEndPointOnly:1;

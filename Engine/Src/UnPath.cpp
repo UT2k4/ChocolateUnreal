@@ -122,7 +122,7 @@ int ENGINE_API FPathBuilder::removePaths (ULevel *ownerLevel)
 	Level = ownerLevel;
 	int removed = 0;
 
-	for (INT i=0; i<Level->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Level->Num(); i++)
 	{
 		AActor *Actor = Level->Actors(i); 
 		if (Actor && Actor->IsA(APathNode::StaticClass))
@@ -141,7 +141,7 @@ int ENGINE_API FPathBuilder::showPaths (ULevel *ownerLevel)
 	Level = ownerLevel;
 	int shown = 0;
 
-	for (INT i=0; i<Level->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Level->Num(); i++)
 	{
 		AActor *Actor = Level->Actors(i); 
 		if (Actor && Actor->IsA(APathNode::StaticClass))
@@ -160,7 +160,7 @@ int ENGINE_API FPathBuilder::hidePaths (ULevel *ownerLevel)
 	Level = ownerLevel;
 	int shown = 0;
 
-	for (INT i=0; i<Level->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Level->Num(); i++)
 	{
 		AActor *Actor = Level->Actors(i); 
 		if (Actor && Actor->IsA(APathNode::StaticClass))
@@ -186,7 +186,7 @@ void ENGINE_API FPathBuilder::undefinePaths (ULevel *ownerLevel)
 	Level->GetLevelInfo()->NavigationPointList = NULL;
 
 	//clear pathnodes
-	for (INT i=0; i<Level->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Level->Num(); i++)
 	{
 		AActor *Actor = Level->Actors(i); 
 		if (Actor && Actor->IsA(ANavigationPoint::StaticClass))
@@ -197,7 +197,7 @@ void ENGINE_API FPathBuilder::undefinePaths (ULevel *ownerLevel)
 			else
 			{
 				((ANavigationPoint *)Actor)->nextNavigationPoint = NULL;
-				for (INT i=0; i<16; i++)
+				for (INT_UNREAL_32S i=0; i<16; i++)
 				{
 					((ANavigationPoint *)Actor)->Paths[i] = -1;
 					((ANavigationPoint *)Actor)->upstreamPaths[i] = -1;
@@ -215,10 +215,11 @@ void ENGINE_API FPathBuilder::definePaths (ULevel *ownerLevel)
 	Level = ownerLevel;
 	getScout();
 	Level->GetLevelInfo()->NavigationPointList = NULL;
+	INT_UNREAL_32S i;
 
 	// Add WarpZoneMarkers and InventorySpots
 	debugf( NAME_DevPath, "Add WarpZone and Inventory markers" );
-	for (INT i=0; i<Level->Num(); i++)
+	for ( i=0; i<Level->Num(); i++)
 	{
 		AActor *Actor = Level->Actors(i); 
 		if ( Actor )
@@ -337,7 +338,7 @@ int FPathBuilder::Prune(AActor *Node)
 		while ( (n<16) && (NavNode->Paths[n] != -1) )
 		{
 			part2 = Level->ReachSpecs(NavNode->Paths[n]);
-			INT straightPathIndex = specFor(part1.Start, part2.End);
+			INT_UNREAL_32S straightPathIndex = specFor(part1.Start, part2.End);
 			if (straightPathIndex != -1)
 			{
 				straightPath = Level->ReachSpecs(straightPathIndex);
@@ -417,7 +418,7 @@ int FPathBuilder::specFor(AActor* Start, AActor* End)
 /* insert a reachspec into the array, ordered by longest to shortest distance.
 However, if there is no room left in the array, remove longest first
 */
-int FPathBuilder::insertReachSpec(INT *SpecArray, FReachSpec &Spec)
+int FPathBuilder::insertReachSpec(INT_UNREAL_32S *SpecArray, FReachSpec &Spec)
 {
 	guard(FPathBuilder::insertReachSpec);
 
@@ -465,14 +466,14 @@ int FPathBuilder::insertReachSpec(INT *SpecArray, FReachSpec &Spec)
 	return pos;
 
 	/* Shortest to longest - slower in inner loop of breadpath search
-	INT n = 0;
+	INT_UNREAL_32S n = 0;
 	while ( (n < 16) && (SpecArray[n] != -1) && (Level->ReachSpecs(SpecArray[n]).distance < Spec.distance) )
 		n++;
 	
 	if ( n == 16 )
 		return -1;
 
-	for ( INT i=15; i>n; i-- )
+	for ( INT_UNREAL_32S i=15; i>n; i-- )
 		SpecArray[i] = SpecArray[i-1];
 
 	return n;
@@ -494,7 +495,7 @@ void FPathBuilder::addReachSpecs(AActor *start)
 	if ( node->IsA(ALiftCenter::StaticClass) )
 	{
 		FName myLiftTag = ((ALiftCenter *)node)->LiftTag;
-		for (INT i=0; i<Level->Num(); i++)
+		for (INT_UNREAL_32S i=0; i<Level->Num(); i++)
 		{
 			AActor *Actor = Level->Actors(i); 
 			if ( Actor && Actor->IsA(ALiftExit::StaticClass) && (((ALiftExit *)Actor)->LiftTag == myLiftTag) ) 
@@ -538,7 +539,7 @@ void FPathBuilder::addReachSpecs(AActor *start)
 
 	if ( node->IsA(ATeleporter::StaticClass) || node->IsA(AWarpZoneMarker::StaticClass) )
 	{
-		for (INT i=0; i<Level->Num(); i++)
+		for (INT_UNREAL_32S i=0; i<Level->Num(); i++)
 		{
 			int bFoundMatch = 0;
 			AActor *Actor = Level->Actors(i); 
@@ -574,7 +575,7 @@ void FPathBuilder::addReachSpecs(AActor *start)
 		}
 	}
 
-	for (INT i=0; i<Level->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Level->Num(); i++)
 	{
 		AActor *Actor = Level->Actors(i); 
 		if (Actor && Actor->IsA(ANavigationPoint::StaticClass) && !Actor->IsA(ALiftCenter::StaticClass) 
@@ -610,7 +611,7 @@ int FPathBuilder::createPaths (int optimization)
 
 	//Add a permanent+leftturn+beacon+marked path for every pathnode actor in the level
 	int newMarker;
-	for (INT i=0; i<Level->Num(); i++) 
+	for (INT_UNREAL_32S i=0; i<Level->Num(); i++) 
 	{
 		AActor *Actor = Level->Actors(i);
 		if (Actor)
@@ -735,7 +736,7 @@ void FPathBuilder::newPath(FVector spot)
 	UClass *pathClass = FindObjectChecked<UClass>( ANY_PACKAGE, "PathNode" );
 	APathNode *addedPath = (APathNode *)Level->SpawnActor( pathClass, NAME_None, NULL, NULL, spot );
 	//clear pathnode reachspec lists
-	for (INT i=0; i<16; i++)
+	for (INT_UNREAL_32S i=0; i<16; i++)
 	{
 		addedPath->Paths[i] = -1;
 		addedPath->upstreamPaths[i] = -1;
@@ -753,7 +754,7 @@ void FPathBuilder::getScout()
 {
 	guard(FPathBuilder::findScout);
 	Scout = NULL;
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor *Actor = Level->Actors(i); 
 		if (Actor && Actor->IsA(AScout::StaticClass))
@@ -782,7 +783,7 @@ int FPathBuilder::findScoutStart(FVector start)
 		FCheckResult Hit(1.0);
 		FVector Down = FVector(0,0, -50);
 		Hit.Normal.Z = 0.0;
-		INT iters = 0;
+		INT_UNREAL_32S iters = 0;
 		while (Hit.Normal.Z < 0.7)
 		{
 			Level->MoveActor(Scout, Down, Scout->Rotation, Hit, 1,1);
@@ -837,7 +838,7 @@ void FPathBuilder::createPathsFrom(FVector start)
 adjust the left turn marker out from its corner
 FIXME - use farmoves instead of walk?
 
-void FPathBuilder::adjustPath(INT iMarker)
+void FPathBuilder::adjustPath(INT_UNREAL_32S iMarker)
 {
 	guard(FPathBuilder::adjustPath);
 	
@@ -918,7 +919,7 @@ int FPathBuilder::checkmergeSpot(const FVector &spot, FPathMarker *path1, FPathM
 	int acceptable = 1;
 	FLOAT oldRadius = Scout->CollisionRadius;
 	
-	for (INT i=0; i<numMarkers; i++) //check if reachable path list changed
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) //check if reachable path list changed
 	{
 		if (acceptable && pathMarkers[i].visible && pathMarkers[i].beacon)
 		{
@@ -961,7 +962,7 @@ int FPathBuilder::markReachableFromTwo(FPathMarker *path1, FPathMarker *path2)
 	Scout->CollisionRadius = humanRadius;
 	markReachable(path1->Location);  //mark all markers reachable from marker 1
 	int addedmarkers = 0;
-	for (INT j=0; j<numMarkers; j++) // add those reachable from marker 2
+	for (INT_UNREAL_32S j=0; j<numMarkers; j++) // add those reachable from marker 2
 	{
 		if (!pathMarkers[j].visible && pathMarkers[j].beacon)
 		{
@@ -975,7 +976,7 @@ int FPathBuilder::markReachableFromTwo(FPathMarker *path1, FPathMarker *path2)
 	Scout->SetCollisionSize(Max(path1->radius, path2->radius), Scout->CollisionHeight);
 	if (Scout->CollisionRadius > humanRadius)
 	{
-		for (INT i=0; i<numMarkers; i++) 
+		for (INT_UNREAL_32S i=0; i<numMarkers; i++) 
 		{
 			if (pathMarkers[i].leftTurn) 
 				pathMarkers[i].bigvisible = fullyReachable(path1->Location,pathMarkers[i].Location);
@@ -998,14 +999,14 @@ int FPathBuilder::markReachableFromTwo(FPathMarker *path1, FPathMarker *path2)
 /* premergePath()
 look for other nearby nodes that are identical in terms of reachability, and merge these
 
-void FPathBuilder::premergePath(INT iMarker)
+void FPathBuilder::premergePath(INT_UNREAL_32S iMarker)
 {
 	guard(FPathBuilder::premergePath);
 	
 	FPathMarker *marker = &pathMarkers[iMarker];
 	marker->radius = humanRadius;
 	FLOAT maxmergesqr = MAXCOMMONRADIUS * MAXCOMMONRADIUS; //fixme reduce to just MAXRADIUS squared?
-	for (INT i=0; i<numMarkers; i++) 
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) 
 	{
 		FPathMarker *candidate = &pathMarkers[i];
 		if (candidate->leftTurn && !candidate->permanent && (i != iMarker))
@@ -1092,13 +1093,13 @@ all beacon pathnodes reachable from either can be reached from this point
 To be merged, the candidate point must support full reachability both at a human radius, and at the
 maximum of the two path node radii.
 
-void FPathBuilder::mergePath(INT iMarker)
+void FPathBuilder::mergePath(INT_UNREAL_32S iMarker)
 {
 	guard(FPathBuilder::mergePath);
 	
 	FPathMarker *marker = &pathMarkers[iMarker];
 	FLOAT maxmergesqr = 4 * MAXCOMMONRADIUS * MAXCOMMONRADIUS; //fixme reduce to just MAXRADIUS squared?
-	for (INT i=0; i<numMarkers; i++) 
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) 
 	{
 		FPathMarker *candidate = &pathMarkers[i];
 		if (candidate->leftTurn && !candidate->permanent && (i != iMarker))
@@ -1231,7 +1232,7 @@ void FPathBuilder::checkObstructionFrom(FPathMarker *marker)
 		markLeftReachable(marker->Location);
 		Scout->walkMove(marker->Direction * 16.0); //move to spot where obstruction was observed	
 	
-		for (INT i=0; i<numMarkers; i++) //check if visible+reachable path list changed
+		for (INT_UNREAL_32S i=0; i<numMarkers; i++) //check if visible+reachable path list changed
 		{
 			FPathMarker *checkMarker = &pathMarkers[i];
 			if (checkMarker->visible && checkMarker->leftTurn)
@@ -1287,7 +1288,7 @@ int FPathBuilder::needPath(const FVector &start)
 		return 0;
 
 	int need = 0;
-	for (INT i=0; i<numMarkers; i++) //check if visible+reachable path list changed
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) //check if visible+reachable path list changed
 	{
 		if (!need && pathMarkers[i].visible && pathMarkers[i].beacon)
 			if (!fullyReachable(start,pathMarkers[i].Location))
@@ -1305,7 +1306,7 @@ int FPathBuilder::sawNewLeft(const FVector &start)
 		return 0;
 
 	int seen = 0;
-	for (INT i=0; i<numMarkers; i++) //check if visible+reachable path list changed
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) //check if visible+reachable path list changed
 	{
 		if (!seen && !pathMarkers[i].visible && !pathMarkers[i].routable && pathMarkers[i].leftTurn)
 			if (fullyReachable(start,pathMarkers[i].Location))
@@ -1323,7 +1324,7 @@ void FPathBuilder::markReachable(const FVector &start)
 {
 	guard(FPathBuilder::markReachable);
 
-	for (INT i=0; i<numMarkers; i++) 
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) 
 	{
 		if (pathMarkers[i].beacon) 
 			pathMarkers[i].visible = fullyReachable(start,pathMarkers[i].Location);
@@ -1346,7 +1347,7 @@ void FPathBuilder::markLeftReachable(const FVector &start)
 		return;
 
 	FCheckResult Hit(1.0);
-	for (INT i=0; i<numMarkers; i++) 
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) 
 	{
 		if (pathMarkers[i].leftTurn) 
 		{
@@ -1383,7 +1384,7 @@ int FPathBuilder::oneWaypointTo(const FVector &upstreamSpot)
 	guard(FPathBuilder::oneWaypointTo);
 	int success = 0;
 	FLOAT maxdistSquared = MAXWAYPOINTDIST * MAXWAYPOINTDIST * Scout->CollisionRadius * Scout->CollisionRadius;
-	for (INT i=0; i<numMarkers; i++) 
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++) 
 	{
 		if (!success && pathMarkers[i].leftTurn)
 		{
@@ -1401,7 +1402,7 @@ int FPathBuilder::oneWaypointTo(const FVector &upstreamSpot)
 /* addMarker()
 returns index to a new marker
 
-INT FPathBuilder::addMarker()
+INT_UNREAL_32S FPathBuilder::addMarker()
 {
 	guard(FPathBuilder::addMarker);
 	if (numMarkers < MAXMARKERS - 1)
@@ -1409,7 +1410,7 @@ INT FPathBuilder::addMarker()
 	else  //try to remove an old obstruction marker
 	{
 		int compressed = 0;
-		INT i = 0;
+		INT_UNREAL_32S i = 0;
 		while (!compressed)
 		{
 			if (pathMarkers[i].removable())
@@ -1442,8 +1443,8 @@ void FPathBuilder::followWall(FVector currentDirection)
 	int stillmoving = 1;  //This isn't the case, but I need to find out what it is really
 	FVector newDirection;
 	FLOAT NetYaw = 0.0;
-	INT LastDropped = 0;
-	INT LastRightTurn = 0;
+	INT_UNREAL_32S LastDropped = 0;
+	INT_UNREAL_32S LastRightTurn = 0;
 	int turnedLeft = 0;
 	FVector tempV;
 	int turning = 0;
@@ -1557,7 +1558,7 @@ void FPathBuilder::followWall(FVector currentDirection)
 			turning = 0; //not in a turn
 			//Stop if I touch a marker with the same direction as my current direction
 			FLOAT touchRangeSquared = Scout->CollisionRadius * Scout->CollisionRadius * 0.25 * 0.25;
-			INT i = 0;
+			INT_UNREAL_32S i = 0;
 			while (i<numMarkers) 
 			{
 				if (i != LastDropped) //Don't touch last dropped
@@ -1774,7 +1775,7 @@ int FPathBuilder::tryPathThrough(FPathMarker *Waypoint, const FVector &Destinati
 		FLOAT minTotal;
 		FPathMarker *NextNode;
 
-		for (INT iNext=0; iNext<numMarkers; iNext++)  //check all reachable pathnodes
+		for (INT_UNREAL_32S iNext=0; iNext<numMarkers; iNext++)  //check all reachable pathnodes
 		{
 			NextNode = &pathMarkers[iNext];
 			if (!result && NextNode->leftTurn)	
@@ -1805,7 +1806,7 @@ int FPathBuilder::findPathTo(const FVector &Destination)
 	FLOAT budget = direction.Size() + Scout->CollisionRadius * (1 + 2 * MAXWAYPOINTDIST); 
 		
 	//clear budgets (temp used for storing remaining budget through that pathnode)
-	for (INT i=0; i<numMarkers; i++)  
+	for (INT_UNREAL_32S i=0; i<numMarkers; i++)  
 	{
 			pathMarkers[i].budget = 0.0;	
 	}

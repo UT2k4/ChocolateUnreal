@@ -32,11 +32,11 @@
 //
 // Serialize a string.
 //
-void FArchive::String( char* S, INT MaxLength )
+void FArchive::String( char* S, INT_UNREAL_32S MaxLength )
 {
 	guardSlow(FArchive::String);
 	check(MaxLength>0);
-	for( INT Count=0; Count<MaxLength-1; Count++ )
+	for( INT_UNREAL_32S Count=0; Count<MaxLength-1; Count++ )
 	{
 		Serialize( &S[Count], 1 );
 		if( S[Count] == 0 )
@@ -64,14 +64,14 @@ void FArchive::Printf( const char* Fmt, ... )
 	FArray implementation.
 -----------------------------------------------------------------------------*/
 
-void FArray::Realloc( INT ElementSize )
+void FArray::Realloc( INT_UNREAL_32S ElementSize )
 {
 	guard(FArray::Realloc);
 	Data = appRealloc( Data, ArrayMax*ElementSize, "FArray" );
 	unguardf(( "%i*%i", ArrayMax, ElementSize ));
 }
 
-void FArray::Remove( INT Index, INT Count, INT ElementSize )
+void FArray::Remove( INT_UNREAL_32S Index, INT_UNREAL_32S Count, INT_UNREAL_32S ElementSize )
 {
 	if( Count )
 	{
@@ -142,7 +142,7 @@ public:
 //
 // Add a new allocation to the list of tracked allocations.
 //
-static void AddTrackedAllocation( void* Ptr, INT Size, const char* Name )
+static void AddTrackedAllocation( void* Ptr, INT_UNREAL_32S Size, const char* Name )
 {
 	guard(AddTrackedAllocation);
 	FTrackedAllocation* A = (FTrackedAllocation*)malloc(sizeof(FTrackedAllocation));
@@ -191,7 +191,7 @@ CORE_API void appDumpAllocs( FOutputDevice* Out )
 {
 	guard(DumpTrackedAllocations);
 #if CHECK_ALLOCS
-	INT Count=0;
+	INT_UNREAL_32S Count=0;
 	for( FTrackedAllocation* A = GTrackedAllocations; A; A=A->Next )
 	{
 		//Out->Logf( NAME_Exit, "Unfreed: %s (%i)", A->Name, A->Size );
@@ -203,7 +203,7 @@ CORE_API void appDumpAllocs( FOutputDevice* Out )
 #endif
 	unguard;
 }
-CORE_API void* appMalloc( INT Size, const char* Tag )
+CORE_API void* appMalloc( INT_UNREAL_32S Size, const char* Tag )
 {
 	guard(appMalloc);
 	check(Size>0);
@@ -231,7 +231,7 @@ CORE_API void appFree( void* Ptr )
 
 	unguard;
 }
-CORE_API void* appRealloc( void* Ptr, INT NewSize, const char* Tag )
+CORE_API void* appRealloc( void* Ptr, INT_UNREAL_32S NewSize, const char* Tag )
 {
 	guard(appRealloc);
 	check(NewSize>=0);
@@ -271,7 +271,7 @@ CORE_API void* appRealloc( void* Ptr, INT NewSize, const char* Tag )
 	return realloc( Ptr, NewSize );
 #endif
 
-	unguardf(( "%08X %i %s", (INT)Ptr, NewSize, Tag ));
+	unguardf(( "%08X %i %s", (INT_UNREAL_32S)Ptr, NewSize, Tag ));
 }
 
 /*-----------------------------------------------------------------------------
@@ -322,7 +322,7 @@ CORE_API UBOOL appIsNan( DOUBLE A )
 {
 	return _isnan(A)==1;
 }
-CORE_API INT appRand()
+CORE_API INT_UNREAL_32S appRand()
 {
 	return rand();
 }
@@ -332,14 +332,14 @@ CORE_API FLOAT appFrand()
 }
 
 #if !DEFINED_appFloor
-CORE_API INT DOUBLE appFloor( FLOAT Value )
+CORE_API INT_UNREAL_32S DOUBLE appFloor( FLOAT Value )
 {
 	return floor(Value);
 }
 #endif
 
 #if !DEFINED_appCeil
-CORE_API INT appCeil( FLOAT Value )
+CORE_API INT_UNREAL_32S appCeil( FLOAT Value )
 {
 	return ceil(Value);
 }
@@ -352,7 +352,7 @@ CORE_API INT appCeil( FLOAT Value )
 //
 // Size of a file.  Returns -1 if doesn't exist.
 //
-CORE_API INT appFSize( const char* fname )
+CORE_API INT_UNREAL_32S appFSize( const char* fname )
 {
 	guard(appFSize);
 
@@ -420,50 +420,50 @@ CORE_API FILE* appFopen( const char* Filename, const char* Mode )
 {
 	return fopen(Filename,Mode);
 }
-CORE_API INT appFclose( FILE* Stream )
+CORE_API INT_UNREAL_32S appFclose( FILE* Stream )
 {
 	return fclose(Stream);
 }
-CORE_API INT appFseek( FILE* Stream, INT Offset, INT Origin )
+CORE_API INT_UNREAL_32S appFseek( FILE* Stream, INT_UNREAL_32S Offset, INT_UNREAL_32S Origin )
 {
 	return fseek(Stream,Offset,Origin);
 }
-CORE_API INT appFtell( FILE* Stream )
+CORE_API INT_UNREAL_32S appFtell( FILE* Stream )
 {
 	return ftell(Stream);
 }
-CORE_API INT appFwrite( const void* Buffer, INT Size, INT Count, FILE* Stream )
+CORE_API INT_UNREAL_32S appFwrite( const void* Buffer, INT_UNREAL_32S Size, INT_UNREAL_32S Count, FILE* Stream )
 {
 	return fwrite(Buffer,Size,Count,Stream);
 }
-CORE_API INT appUnlink( const char* Filename )
+CORE_API INT_UNREAL_32S appUnlink( const char* Filename )
 {
 	return unlink(Filename);
 }
-CORE_API INT appFread( void* Buffer, INT Size, INT Count, FILE* Stream )
+CORE_API INT_UNREAL_32S appFread( void* Buffer, INT_UNREAL_32S Size, INT_UNREAL_32S Count, FILE* Stream )
 {
 	return fread(Buffer,Size,Count,Stream);
 }
-CORE_API INT appFerror( FILE* F )
+CORE_API INT_UNREAL_32S appFerror( FILE* F )
 {
 	return ferror(F);
 }
-CORE_API INT appMkdir( const char* Dirname )
+CORE_API INT_UNREAL_32S appMkdir( const char* Dirname )
 {
 	return mkdir( Dirname );
 }
-CORE_API char* appGetcwd( char* Buffer, INT MaxLen )
+CORE_API char* appGetcwd( char* Buffer, INT_UNREAL_32S MaxLen )
 {
 	return getcwd( Buffer, MaxLen );
 }
-CORE_API INT appChdir( const char* Dirname )
+CORE_API INT_UNREAL_32S appChdir( const char* Dirname )
 {
 	return chdir( Dirname );
 }
-CORE_API INT appFprintf( FILE* F, const char* Fmt, ... )
+CORE_API INT_UNREAL_32S appFprintf( FILE* F, const char* Fmt, ... )
 {
 	char Temp[32768];
-	INT Result = GET_VARARGS(Temp,Fmt);
+	INT_UNREAL_32S Result = GET_VARARGS(Temp,Fmt);
 	return appFwrite( Temp, 1, strlen(Temp), F );
 }
 
@@ -474,7 +474,7 @@ CORE_API INT appFprintf( FILE* F, const char* Fmt, ... )
 //
 // Copy a string with length checking.
 //
-char* appStrncpy( char* Dest, const char* Src, INT MaxLen )
+char* appStrncpy( char* Dest, const char* Src, INT_UNREAL_32S MaxLen )
 {
 	guard(appStrncpy);
 
@@ -532,7 +532,7 @@ const char* appSpc( int num )
 //
 // Formatted printing.
 //
-CORE_API INT appSprintf( char* Dest, const char* Fmt, ... )
+CORE_API INT_UNREAL_32S appSprintf( char* Dest, const char* Fmt, ... )
 {
 	return GET_VARARGS(Dest,Fmt);
 }
@@ -540,11 +540,11 @@ CORE_API INT appSprintf( char* Dest, const char* Fmt, ... )
 //
 // Format a variable arguments expression.
 //
-CORE_API INT appGetVarArgs( char* Dest, const char*& Fmt )
+CORE_API INT_UNREAL_32S appGetVarArgs( char* Dest, const char*& Fmt )
 {
 	va_list ArgPtr;
 	va_start( ArgPtr, Fmt );
-	INT Result = vsprintf( Dest, Fmt, ArgPtr );
+	INT_UNREAL_32S Result = vsprintf( Dest, Fmt, ArgPtr );
 	va_end( ArgPtr );
 	return Result;
 }
@@ -565,7 +565,7 @@ CORE_API void appMemswap( void* Ptr1, void* Ptr2, DWORD Size )
 //
 // Standard string functions.
 //
-CORE_API INT appStrlen( const char* String )
+CORE_API INT_UNREAL_32S appStrlen( const char* String )
 {
 	return strlen(String);
 }
@@ -581,15 +581,15 @@ CORE_API char* appStrcat( char* Dest, const char* Src )
 {
 	return strcat(Dest,Src);
 }
-CORE_API INT appStrcmp( const char* String1, const char* String2 )
+CORE_API INT_UNREAL_32S appStrcmp( const char* String1, const char* String2 )
 {
 	return strcmp(String1,String2);
 }
-CORE_API INT appStricmp( const char* String1, const char* String2 )
+CORE_API INT_UNREAL_32S appStricmp( const char* String1, const char* String2 )
 {
 	return stricmp(String1,String2);
 }
-CORE_API INT appMemcmp( const void* Buf1, const void* Buf2, INT Count )
+CORE_API INT_UNREAL_32S appMemcmp( const void* Buf1, const void* Buf2, INT_UNREAL_32S Count )
 {
 	return memcmp(Buf1,Buf2,Count);
 }
@@ -610,7 +610,7 @@ CORE_API char* appStrupr( char* String )
 //
 
 
-CORE_API void* appLargeMemset( void* Dest, int C, INT Count )
+CORE_API void* appLargeMemset( void* Dest, int C, INT_UNREAL_32S Count )
 {
 	// LARGE Count: larger than 64.
 	if (GIsMMX)
@@ -712,7 +712,7 @@ CORE_API void* appLargeMemset( void* Dest, int C, INT Count )
 }
 
 
-CORE_API void* appLargeMemcpy( void* Dest, const void* Src, INT Count )
+CORE_API void* appLargeMemcpy( void* Dest, const void* Src, INT_UNREAL_32S Count )
 {
 
 	if (GIsMMX)
@@ -819,17 +819,17 @@ CORE_API void* appLargeMemcpy( void* Dest, const void* Src, INT Count )
 	}	
 }
 
-CORE_API void* appMemmove( void* Dest, const void* Src, INT Count )
+CORE_API void* appMemmove( void* Dest, const void* Src, INT_UNREAL_32S Count )
 {
 	return memmove( Dest, Src, Count );
 }
 
-CORE_API void  appMemset( void* Dest, int C, INT Count )
+CORE_API void  appMemset( void* Dest, int C, INT_UNREAL_32S Count )
 {
 	memset( Dest, C, Count );
 }
 
-CORE_API void* appMemcpy( void* Dest, const void* Src, INT Count )
+CORE_API void* appMemcpy( void* Dest, const void* Src, INT_UNREAL_32S Count )
 {
 	return memcpy( Dest, Src, Count );
 }
@@ -954,7 +954,7 @@ CORE_API UBOOL appMemIsZero( const void* V, int Count )
 //
 // Conversions.
 //
-CORE_API INT appAtoi( const char* Str )
+CORE_API INT_UNREAL_32S appAtoi( const char* Str )
 {
 	return atoi( Str );
 }
@@ -962,15 +962,15 @@ CORE_API FLOAT appAtof( const char* Str )
 {
 	return atof( Str );
 }
-CORE_API INT appStrtoi( const char* Start, char** End, INT Base )
+CORE_API INT_UNREAL_32S appStrtoi( const char* Start, char** End, INT_UNREAL_32S Base )
 {
 	return strtoul( Start, End, Base );
 }
-CORE_API void appQsort( void* Base, INT Num, INT Width, int(CDECL *Compare)(const void* A, const void* B ) )
+CORE_API void appQsort( void* Base, INT_UNREAL_32S Num, INT_UNREAL_32S Width, int(CDECL *Compare)(const void* A, const void* B ) )
 {
 	qsort( Base, Num, Width, Compare );
 }
-CORE_API INT appStrnicmp( const char* A, const char* B, INT Count )
+CORE_API INT_UNREAL_32S appStrnicmp( const char* A, const char* B, INT_UNREAL_32S Count )
 {
 	return _strnicmp( A, B, Count );
 }
@@ -1032,7 +1032,7 @@ CORE_API UBOOL Parse
 	const char*	Stream, 
 	const char*	Match,
 	char*		Value,
-	INT			MaxLen
+	INT_UNREAL_32S			MaxLen
 )
 {
 	guard(ParseString);
@@ -1230,7 +1230,7 @@ UBOOL CORE_API Parse( const char* Stream, const char* Match, FLOAT& Value )
 //
 // Get a signed double word (4 bytes).
 //
-UBOOL CORE_API Parse( const char* Stream, const char* Match, INT& Value )
+UBOOL CORE_API Parse( const char* Stream, const char* Match, INT_UNREAL_32S& Value )
 {
 	guard(ParseINT);
 	const char* Temp = appStrfind( Stream, Match );
@@ -1344,10 +1344,10 @@ CORE_API void ParseNext( const char** Stream )
 // Grab the next space-delimited string from the input stream.
 // If quoted, gets entire quoted string.
 //
-CORE_API UBOOL ParseToken( const char*& Str, char* Result, INT MaxLen, UBOOL UseEscape )
+CORE_API UBOOL ParseToken( const char*& Str, char* Result, INT_UNREAL_32S MaxLen, UBOOL UseEscape )
 {
 	guard(ParseToken);
-	INT Len=0;
+	INT_UNREAL_32S Len=0;
 
 	// Skip spaces and tabs.
 	while( *Str==' ' || *Str==9 )
@@ -1393,7 +1393,7 @@ CORE_API UBOOL ParseLine
 (
 	const char**	Stream,
 	char*			Result,
-	INT				MaxLen,
+	INT_UNREAL_32S				MaxLen,
 	UBOOL			Exact
 )
 {
@@ -1455,7 +1455,7 @@ CORE_API const char* Localize( const char* Section, const char* Key, const char*
 TryAgain:
 	appSprintf( Filename, "%s%s.%s", appBaseDir(), Package, LangExt );
 	static char Results[8][256];
-	static INT iResult=0;
+	static INT_UNREAL_32S iResult=0;
 	iResult = (iResult+1) % ARRAY_COUNT(Results);
 	if( !GetConfigString( Section, Key, Results[iResult], ARRAY_COUNT(Results[0]), Filename ) )
 	{

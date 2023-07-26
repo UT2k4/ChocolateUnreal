@@ -112,16 +112,16 @@ inline DWORD FLogTwo( DWORD N )
 // and a max (not to cross).  Accounts for funkyness of word angles.
 // Assumes that angle is initially in the desired range.
 //
-inline _WORD FAddAngleConfined( INT Angle, INT Delta, INT MinThresh, INT MaxThresh )
+inline _WORD FAddAngleConfined( INT_UNREAL_32S Angle, INT_UNREAL_32S Delta, INT_UNREAL_32S MinThresh, INT_UNREAL_32S MaxThresh )
 {
 	if( Delta < 0 )
 	{
-		if ( Delta<=-0x10000L || Delta<=-(INT)((_WORD)(Angle-MinThresh)))
+		if ( Delta<=-0x10000L || Delta<=-(INT_UNREAL_32S)((_WORD)(Angle-MinThresh)))
 			return MinThresh;
 	}
 	else if( Delta > 0 )
 	{
-		if( Delta>=0x10000L || Delta>=(INT)((_WORD)(MaxThresh-Angle)))
+		if( Delta>=0x10000L || Delta>=(INT_UNREAL_32S)((_WORD)(MaxThresh-Angle)))
 			return MaxThresh;
 	}
 	return (_WORD)(Angle+Delta);
@@ -130,7 +130,7 @@ inline _WORD FAddAngleConfined( INT Angle, INT Delta, INT MinThresh, INT MaxThre
 //
 // Eliminate all fractional precision from an angle.
 //
-INT ReduceAngle( INT Angle );
+INT_UNREAL_32S ReduceAngle( INT_UNREAL_32S Angle );
 
 
 //
@@ -491,12 +491,12 @@ public:
 
 	// Constructors.
 	FSphere() {}
-	FSphere(INT) : FVector(0,0,0), W(0) {}
+	FSphere(INT_UNREAL_32S) : FVector(0,0,0), W(0) {}
 	FSphere( FVector V, FLOAT W ) : FVector(V) , W(W) {}
 	FSphere( const TArray<FVector>& Pts );
 
 	// Serializer.
-	friend FArchive& operator<<( FArchive &Ar, FPlane &P )
+	friend FArchive& operator<<(FArchive& Ar, FSphere& P)
 	{
 		return Ar << (FVector&)P << P.W;
 	}
@@ -641,9 +641,9 @@ class ENGINE_API FRotator
 {
 public:
 	// Variables.
-	INT Pitch; // Looking up and down (0=Straight Ahead, +Up, -Down).
-	INT Yaw;   // Rotating around (running in circles), 0=East, +North, -South.
-	INT Roll;  // Rotation about axis of screen, 0=Straight, +Clockwise, -CCW.
+	INT_UNREAL_32S Pitch; // Looking up and down (0=Straight Ahead, +Up, -Down).
+	INT_UNREAL_32S Yaw;   // Rotating around (running in circles), 0=East, +North, -South.
+	INT_UNREAL_32S Roll;  // Rotation about axis of screen, 0=Straight, +Clockwise, -CCW.
 
 	// Serializer.
 	friend FArchive& operator<< (FArchive &Ar, FRotator &R )
@@ -653,7 +653,7 @@ public:
 
 	// Constructors.
 	FRotator() {}
-	FRotator( INT InPitch, INT InYaw, INT InRoll )
+	FRotator( INT_UNREAL_32S InPitch, INT_UNREAL_32S InYaw, INT_UNREAL_32S InRoll )
 	:	Pitch(InPitch), Yaw(InYaw), Roll(InRoll) {}
 
 	// Binary arithmetic operators.
@@ -707,14 +707,14 @@ public:
 	{
 		return ((Pitch&65535)==0) && ((Yaw&65535)==0) && ((Roll&65535)==0);
 	}
-	FRotator Add( INT DeltaPitch, INT DeltaYaw, INT DeltaRoll )
+	FRotator Add( INT_UNREAL_32S DeltaPitch, INT_UNREAL_32S DeltaYaw, INT_UNREAL_32S DeltaRoll )
 	{
 		Yaw   += DeltaYaw;
 		Pitch += DeltaPitch;
 		Roll  += DeltaRoll;
 		return *this;
 	}
-	FRotator AddBounded( INT DeltaPitch, INT DeltaYaw, INT DeltaRoll )
+	FRotator AddBounded( INT_UNREAL_32S DeltaPitch, INT_UNREAL_32S DeltaYaw, INT_UNREAL_32S DeltaRoll )
 	{
 		Yaw  += DeltaYaw;
 		Pitch = FAddAngleConfined(Pitch,DeltaPitch,192*0x100,64*0x100);
@@ -750,7 +750,7 @@ public:
 
 	// Constructors.
 	FBox() {}
-	FBox(INT) : Min(0,0,0), Max(0,0,0), IsValid(0) {}
+	FBox(INT_UNREAL_32S) : Min(0,0,0), Max(0,0,0), IsValid(0) {}
 	FBox( const FVector& InMin, const FVector& InMax ) : Min(InMin), Max(InMax), IsValid(1) {}
 	FBox( const TArray<FVector>& Points );
 
@@ -884,7 +884,7 @@ private:
 	FLOAT  LightSqrtFLOAT	[NUM_SQRTS];
 };
 
-inline INT ReduceAngle( INT Angle )
+inline INT_UNREAL_32S ReduceAngle( INT_UNREAL_32S Angle )
 {
 	return Angle & FGlobalMath::ANGLE_MASK;
 };
@@ -1588,7 +1588,7 @@ inline int FIntersectPlanes3( FVector &I, const FPlane &P1, const FPlane &P2, co
 // Compute intersection point and direction of line joining two planes.
 // Return 1 if valid, 0 if infinite.
 //
-inline FIntersectPlanes2( FVector &I, FVector &D, const FPlane &P1, const FPlane &P2 )
+inline int FIntersectPlanes2( FVector &I, FVector &D, const FPlane &P1, const FPlane &P2 )
 {
 	guard(FIntersectPlanes2);
 

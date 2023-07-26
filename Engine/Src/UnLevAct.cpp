@@ -70,7 +70,7 @@ AActor* ULevel::SpawnActor
 	}
 
 	// Add at end of list.
-	INT iActor = Add();
+	INT_UNREAL_32S iActor = Add();
 	ModifyItem( iActor );
     AActor* Actor = Actors(iActor) = (AActor*)GObj.ConstructObject( Class, GetParent(), InName, 0, Template );
 	Actor->SetFlags( RF_Transactional );
@@ -205,7 +205,7 @@ UBOOL ULevel::DestroyActor( AActor* ThisActor, UBOOL bNetForce )
 	unguard;
 
 	// Get index.
-	INT iActor = GetActorIndex( ThisActor );
+	INT_UNREAL_32S iActor = GetActorIndex( ThisActor );
 	guard(ModifyActor);
 	ModifyItem( iActor );
 	ThisActor->Modify();
@@ -230,7 +230,7 @@ UBOOL ULevel::DestroyActor( AActor* ThisActor, UBOOL bNetForce )
 			return 1;
 	}
 	if( ThisActor->StandingCount > 0 )
-		for( INT i=0; i<Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Num(); i++ )
 			if( Actors(i) && Actors(i)->Base == ThisActor ) 
 				Actors(i)->SetBase( NULL );
 	unguard;
@@ -254,7 +254,7 @@ UBOOL ULevel::DestroyActor( AActor* ThisActor, UBOOL bNetForce )
 
 	// Clean up all owned and touching actors.
 	guard(CleanupStandardRefs);
-	for( INT iActor=0; iActor<Num(); iActor++ )
+	for( INT_UNREAL_32S iActor=0; iActor<Num(); iActor++ )
 	{
 		AActor* Other = Actors(iActor);
 		if( Other )
@@ -267,7 +267,7 @@ UBOOL ULevel::DestroyActor( AActor* ThisActor, UBOOL bNetForce )
 			}
 			else
 			{
-				for( INT j=0; j<ARRAY_COUNT(Other->Touching); j++ )
+				for( INT_UNREAL_32S j=0; j<ARRAY_COUNT(Other->Touching); j++ )
 				{
 					if( Other->Touching[j]==ThisActor )
 					{
@@ -295,7 +295,7 @@ UBOOL ULevel::DestroyActor( AActor* ThisActor, UBOOL bNetForce )
 	guard(NotifyNetPlayers);
 	if( NetDriver )
 	{
-		for( INT i=0; i<NetDriver->Connections.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<NetDriver->Connections.Num(); i++ )
 		{
 			UNetConnection* Connection = NetDriver->Connections(i);
 			FActorChannel*  Channel    = Connection->GetActorChannel( ThisActor );
@@ -348,8 +348,8 @@ UBOOL ULevel::DestroyActor( AActor* ThisActor, UBOOL bNetForce )
 void ULevel::CompactActors()
 {
 	guard(ULevel::CompactActors);
-	INT c = iFirstDynamicActor;
-	for( INT i=iFirstDynamicActor; i<Num(); i++ )
+	INT_UNREAL_32S c = iFirstDynamicActor;
+	for( INT_UNREAL_32S i=iFirstDynamicActor; i<Num(); i++ )
 	{
 		if( Actors(i) )
 		{
@@ -383,7 +383,7 @@ void ULevel::CleanupDestroyed( UBOOL bForce )
 
 	// Don't do anything unless a bunch of actors are in line to be destroyed.
 	guard(CheckDeleted);
-	INT c=0;
+	INT_UNREAL_32S c=0;
 	for( AActor* A=FirstDeleted; A; A=A->Deleted )
 		c++;
 	if( c<128 && !bForce )
@@ -392,7 +392,7 @@ void ULevel::CleanupDestroyed( UBOOL bForce )
 
 	// Remove all references to actors tagged for deletion.
 	guard(CleanupRefs);
-	for( INT iActor=0; iActor<Num(); iActor++ )
+	for( INT_UNREAL_32S iActor=0; iActor<Num(); iActor++ )
 	{
 		AActor* Actor = Actors(iActor);
 		if( Actor )
@@ -442,7 +442,7 @@ void ULevel::SpawnViewActor( UViewport* Viewport )
 
 	// Find an existing camera actor.
 	guard(FindExisting);
-	for( INT iActor=0; iActor<Num(); iActor++ )
+	for( INT_UNREAL_32S iActor=0; iActor<Num(); iActor++ )
 	{
 		ACamera* TestActor = Cast<ACamera>( Actors(iActor) );
 		if( TestActor && !TestActor->Player && (Viewport->GetFName()==TestActor->Tag) ) 
@@ -495,6 +495,7 @@ APlayerPawn* ULevel::SpawnPlayActor( UPlayer* Player, ENetRole RemoteRole, const
 	guard(ULevel::SpawnPlayActor);
 	check(Error256);
 	Error256[0]=0;
+	INT_UNREAL_32S i;
 
 	// Get PlayerClass.
 	UClass* PlayerClass=NULL;
@@ -506,7 +507,7 @@ APlayerPawn* ULevel::SpawnPlayActor( UPlayer* Player, ENetRole RemoteRole, const
 
 	// Make the option string.
 	char Options[1024]="";
-	for( INT i=0; i<URL.Op.Num(); i++ )
+	for( i=0; i<URL.Op.Num(); i++ )
 	{
 		appStrcat( Options, "?" );
 		appStrcat( Options, *URL.Op(i) );
@@ -531,7 +532,7 @@ APlayerPawn* ULevel::SpawnPlayActor( UPlayer* Player, ENetRole RemoteRole, const
 	const char* PlayerName = URL.GetOption( "NAME=", *FURL::DefaultName );
 	if( PlayerName )
 	{
-		for( INT i=0; i<TravelNames.Num(); i++ )
+		for( i=0; i<TravelNames.Num(); i++ )
 		{
 			if( appStricmp(*TravelNames(i),PlayerName)==0 )
 			{
@@ -584,7 +585,7 @@ APlayerPawn* ULevel::SpawnPlayActor( UPlayer* Player, ENetRole RemoteRole, const
 	for( i=0; i<Accepted.Num(); i++ )
 	{
 		// Parse all properties.
-		for( INT j=0; j<Accepted(i).Parms.Num(); j++ )
+		for( INT_UNREAL_32S j=0; j<Accepted(i).Parms.Num(); j++ )
 		{
 			const char* Ptr = *Accepted(i).Parms(j);
 			while( *Ptr==' ' )
@@ -593,7 +594,7 @@ APlayerPawn* ULevel::SpawnPlayActor( UPlayer* Player, ENetRole RemoteRole, const
 			while( appIsAlnum(*Ptr) )
 				*VarEnd++ = *Ptr++;
 			*VarEnd=0;
-			INT Element=0;
+			INT_UNREAL_32S Element=0;
 			if( *Ptr=='[' )
 			{
 				Element=appAtoi(++Ptr);
@@ -616,7 +617,7 @@ APlayerPawn* ULevel::SpawnPlayActor( UPlayer* Player, ENetRole RemoteRole, const
 					UObjectProperty* Ref = Cast<UObjectProperty>( *It );
 					if( Ref && Ref->PropertyClass->IsChildOf(AActor::StaticClass) )
 					{
-						for( INT k=0; k<Accepted.Num(); k++ )
+						for( INT_UNREAL_32S k=0; k<Accepted.Num(); k++ )
 						{
 							if( Accepted(k).Name==Ptr )
 							{
@@ -677,6 +678,7 @@ UBOOL ULevel::FindSpot
 )
 {
 	guard(ULevel::FindSpot);
+	int i;
 
 	// trace to all corners to find interpenetrating walls
 	FCheckResult Hit(1.0);
@@ -688,7 +690,7 @@ UBOOL ULevel::FindSpot
 	FVector Adjusted = Location;
 	FLOAT TraceLen = Extent.Size() + 2.0;
 
-	for (int i=-1;i<2;i+=2)
+	for (i=-1;i<2;i+=2)
 	{
 		AdjustSpot(Adjusted, Adjusted + FVector(i * Extent.X,0,0), Extent.X, Hit); 
 		AdjustSpot(Adjusted, Adjusted + FVector(0,i * Extent.Y,0), Extent.Y, Hit); 
@@ -753,7 +755,7 @@ UBOOL ULevel::FarMoveActor( AActor* Actor, FVector DestLocation,  UBOOL test, UB
 		if( !test )
 		{
 			if( Actor->StandingCount > 0 )
-				for( INT i=0; i<Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<Num(); i++ )
 					if( Actors(i) && Actors(i)->Base == Actor ) 
 						Actors(i)->SetBase( NULL );
 			Actor->bJustTeleported = true;
@@ -872,8 +874,8 @@ UBOOL ULevel::MoveActor
 	}
 	FLOAT TestAdjust	   = 2.0;
 	FVector TestDelta      = Delta + TestAdjust * DeltaDir;
-	INT     MaybeTouched   = 0;
-	INT     NumHits        = 0;
+	INT_UNREAL_32S     MaybeTouched   = 0;
+	INT_UNREAL_32S     NumHits        = 0;
 	FCheckResult* FirstHit = NULL;
 
 	// Perform movement collision checking if needed for this actor.
@@ -1027,6 +1029,7 @@ UBOOL ULevel::CheckEncroachment
 {
 	guard(ULevel::CheckEncroachment);
 	check(Actor);
+	FCheckResult* Test;
 
 	// If this actor doesn't need encroachment checking, allow the move.
 	if( !Actor->bCollideActors && !Actor->bBlockActors && !Actor->bBlockPlayers && !Actor->IsMovingBrush() )
@@ -1035,7 +1038,7 @@ UBOOL ULevel::CheckEncroachment
 	// Query the mover about what he wants to do with the actors he is encroaching.
 	FMemMark Mark(GMem);
 	FCheckResult* FirstHit = Hash ? Hash->ActorEncroachmentCheck( GMem, Actor, TestLocation, TestRotation, 0 ) : NULL;	
-	for( FCheckResult* Test = FirstHit; Test!=NULL; Test=Test->GetNext() )
+	for( Test = FirstHit; Test!=NULL; Test=Test->GetNext() )
 	{
 		int noProcess = 0;
 		if
@@ -1078,8 +1081,9 @@ UBOOL ULevel::CheckEncroachment
 	// If bTouchNotify, send Touch and UnTouch notifies.
 	if( bTouchNotify )
 	{
+		int i;
 		// UnTouch notifications.
-		for( int i=0; i<ARRAY_COUNT(Actor->Touching); i++ )
+		for( i=0; i<ARRAY_COUNT(Actor->Touching); i++ )
 			if( Actor->Touching[i] && !Actor->IsOverlapping(Actor->Touching[i]) )
 				Actor->EndTouch( Actor->Touching[i], 0 );
 	}
@@ -1187,6 +1191,7 @@ UBOOL ULevel::SingleLineCheck
 )
 {
 	guard(ULevel::Trace);
+	FCheckResult* Check;
 
 	// Get list of hit actors.
 	FMemMark Mark(GMem);
@@ -1202,7 +1207,7 @@ UBOOL ULevel::SingleLineCheck
 	);
 
 	// Skip owned actors and return the one nearest actor.
-	for( FCheckResult* Check = FirstHit; Check!=NULL; Check=Check->GetNext() )
+	for( Check = FirstHit; Check!=NULL; Check=Check->GetNext() )
 	{
 		if( !SourceActor || !SourceActor->IsOwnedBy( Check->Actor ) )
 		{
@@ -1271,13 +1276,13 @@ FCheckResult* ULevel::MultiLineCheck
 )
 {
 	guard(ULevel::MultiLineCheck);
-	INT NumHits=0;
+	INT_UNREAL_32S NumHits=0;
 	FCheckResult Hits[64];
 
 	// Check for collision with the level, and cull by the end point for speed.
 	FLOAT Dilation = 1.0;
-	INT bOnlyCheckForMovers = 0;
-	INT bHitWorld = 0;
+	INT_UNREAL_32S bOnlyCheckForMovers = 0;
+	INT_UNREAL_32S bHitWorld = 0;
 
 	guard(CheckWithLevel);
 	if( LevelInfo && LevelInfo->XLevel->Model->LineCheck( Hits[NumHits], NULL, End, Start, Extent, ExtraNodeFlags )==0 )

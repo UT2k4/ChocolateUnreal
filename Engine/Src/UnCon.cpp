@@ -55,7 +55,7 @@ void UConsole::_Init( UViewport* InViewport )
 // Print a message on the playing screen.
 // Time = time to keep message going, or 0=until next message arrives, in 60ths sec
 //
-void UConsole::WriteBinary( const void* Data, INT Length, EName ThisType )
+void UConsole::WriteBinary( const void* Data, INT_UNREAL_32S Length, EName ThisType )
 {
 	guard(UConsole::WriteBinary);
 	eventMessage( (const char*)Data, ThisType );
@@ -157,14 +157,14 @@ void UConsole::PostRender( FSceneNode* Frame )
 	if( BigMessage[0] )
 	{
 		appStrupr( BigMessage );
-		INT XL, YL;
+		INT_UNREAL_32S XL, YL;
 		Viewport->Canvas->StrLen( LargeFont, XL, YL, BigMessage );
 		Viewport->Canvas->Printf( LargeFont, Frame->X/2-XL/2, Frame->Y/2-YL/2, "%s", BigMessage );
 	}
 
 	// If the console has changed since the previous frame, draw it.
-	INT YStart	   = BorderLines;
-	INT YEnd	   = Frame->Y - BorderLines;
+	INT_UNREAL_32S YStart	   = BorderLines;
+	INT_UNREAL_32S YEnd	   = Frame->Y - BorderLines;
 	if( ConsoleLines > 0 )
 		Viewport->Canvas->DrawPattern( ConBackground, 0.0, 0.0, Frame->X, ConsoleLines, 1.0, 0.0, ConsoleLines, NULL, 1.0, FPlane(0.7,0.7,0.7,0), FPlane(0,0,0,0), 0 );
 
@@ -189,14 +189,14 @@ void UConsole::PostRender( FSceneNode* Frame )
 	if( ConsoleLines )
 	{
 		// Console is visible; display console view.
-		INT Y = ConsoleLines-1;
+		INT_UNREAL_32S Y = ConsoleLines-1;
 		appSprintf(MsgText[(TopLine + 1 + MAX_LINES) % MAX_LINES],"(> %s_",TypedStr);
-		for( INT i=Scrollback; i<(NumLines+1); i++ )
+		for( INT_UNREAL_32S i=Scrollback; i<(NumLines+1); i++ )
 		{
 			// Display all text in the buffer.
-			INT Line = (TopLine + MAX_LINES*2 - (i-1)) % MAX_LINES;
+			INT_UNREAL_32S Line = (TopLine + MAX_LINES*2 - (i-1)) % MAX_LINES;
 
-			INT XL,YL;
+			INT_UNREAL_32S XL,YL;
 			Viewport->Canvas->WrappedStrLen( Viewport->Canvas->MedFont, XL, YL, Frame->X-8, MsgText[Line] );
 
 			// Half-space blank lines.
@@ -213,11 +213,12 @@ void UConsole::PostRender( FSceneNode* Frame )
 	}
 	else
 	{
+		int i;
 		// Console is hidden; display single-line view.
 		if( TextLines>0 && MsgType!=NAME_None && (!Viewport->Actor->bShowMenu || Viewport->Actor->bShowScores) )
 		{
 			int iLine=TopLine;
-			for( int i=0; i<NumLines; i++ )
+			for( i=0; i<NumLines; i++ )
 			{
 				if( *MsgText[iLine] )
 					break;

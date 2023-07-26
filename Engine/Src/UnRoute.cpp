@@ -41,8 +41,8 @@ inline int APawn::calcMoveFlags()
 	unguard;
 }
 
-void FSortedPathList::FindVisiblePaths(APawn *Searcher, FVector Dest, FSortedPathList *DestPoints, INT bClearPaths,
-							 INT &startanchor, INT &endanchor)
+void FSortedPathList::FindVisiblePaths(APawn *Searcher, FVector Dest, FSortedPathList *DestPoints, INT_UNREAL_32S bClearPaths,
+							 INT_UNREAL_32S &startanchor, INT_UNREAL_32S &endanchor)
 {
 	guard(FSortedPathList::FindVisiblePaths);
 
@@ -102,7 +102,7 @@ void FSortedPathList::FindVisiblePaths(APawn *Searcher, FVector Dest, FSortedPat
 	unguard;
 }
 
-int FSortedPathList::findEndPoint(APawn *Searcher, INT &startanchor) 
+int FSortedPathList::findEndPoint(APawn *Searcher, INT_UNREAL_32S &startanchor) 
 {
 	guard(FSortedPathList::findEndPoint);
 
@@ -165,12 +165,12 @@ void FSortedPathList::expandAnchor(APawn *Searcher)
 	ULevel *MyLevel = Searcher->GetLevel();
 	ANavigationPoint *anchor = (ANavigationPoint *)Path[0];
 	anchor->cost = 1000000.f; //paths shouldn't go through anchor
-	INT j = 0;
+	INT_UNREAL_32S j = 0;
 	FReachSpec *spec;
 	FCheckResult Hit;
-	INT moveFlags = Searcher->calcMoveFlags(); 
-	INT iRadius = (int)(Searcher->CollisionRadius);
-	INT iHeight = (int)(Searcher->CollisionHeight);
+	INT_UNREAL_32S moveFlags = Searcher->calcMoveFlags(); 
+	INT_UNREAL_32S iRadius = (int)(Searcher->CollisionRadius);
+	INT_UNREAL_32S iHeight = (int)(Searcher->CollisionHeight);
 	while (j<16)
 	{
 		if (anchor->Paths[j] == -1)
@@ -202,7 +202,7 @@ int APawn::CanMoveTo(AActor *Anchor, AActor *Dest)
 
 	ULevel *MyLevel = GetLevel();
 	ANavigationPoint *Start = (ANavigationPoint *)Anchor;
-	INT j = 0;
+	INT_UNREAL_32S j = 0;
 	FReachSpec *spec;
 	FCheckResult Hit;
 
@@ -260,8 +260,9 @@ void FSortedPathList::findAltEndPoint(APawn *Searcher, AActor *&bestPath)
 	//check if other paths (beyond Path[0]) might be better destinations
 	int bestDist = ((ANavigationPoint *)Path[0])->visitedWeight + Dist[0]; 
 	FSortedPathList AltEndPoints;
+	int j;
 	AltEndPoints.numPoints = 0;
-	for (int j=1; j<numPoints; j++)
+	for ( j=1; j<numPoints; j++)
 	{
 		int newDist = appSqrt(Dist[j]);
 		newDist += ((ANavigationPoint *)Path[j])->visitedWeight;
@@ -288,7 +289,7 @@ void FSortedPathList::findAltEndPoint(APawn *Searcher, AActor *&bestPath)
 	unguard;
 }
 
-int APawn::findPathToward(AActor *goal, INT bSinglePath, AActor *&bestPath, INT bClearPaths)
+int APawn::findPathToward(AActor *goal, INT_UNREAL_32S bSinglePath, AActor *&bestPath, INT_UNREAL_32S bClearPaths)
 {
 	guard(APawn::findPathToward);
 
@@ -321,8 +322,8 @@ int APawn::findPathToward(AActor *goal, INT bSinglePath, AActor *&bestPath, INT 
 	FSortedPathList DestPoints;
 	EndPoints.numPoints = 0;
 	DestPoints.numPoints = 0; 
-	INT startanchor = 0;
-	INT endanchor = 0;
+	INT_UNREAL_32S startanchor = 0;
+	INT_UNREAL_32S endanchor = 0;
 
 	if ( goal->IsA(ANavigationPoint::StaticClass) )
 	{
@@ -368,7 +369,7 @@ int APawn::findPathToward(AActor *goal, INT bSinglePath, AActor *&bestPath, INT 
 		FCheckResult Hit(1.0);
 		FVector	ViewPoint = Location;
 		ViewPoint.Z += BaseEyeHeight; //look from eyes
-		INT j = 0;
+		INT_UNREAL_32S j = 0;
 		while (j<DestPoints.numPoints)
 		{
 			GetLevel()->SingleLineCheck(Hit, this, goal->Location, DestPoints.Path[j]->Location, TRACE_VisBlocking);
@@ -418,7 +419,7 @@ int APawn::findPathToward(AActor *goal, INT bSinglePath, AActor *&bestPath, INT 
 	Determine the best inventory item goal (weighted by distance and its botdesireability)
 	returns the bestPath
 */
-FLOAT APawn::findPathTowardBestInventory(AActor *&bestPath, INT bClearPaths, FLOAT MinWeight, INT bPredictRespawns)
+FLOAT APawn::findPathTowardBestInventory(AActor *&bestPath, INT_UNREAL_32S bClearPaths, FLOAT MinWeight, INT_UNREAL_32S bPredictRespawns)
 {
 	guard(APawn::findPathTowardBestInventory);
 
@@ -440,8 +441,8 @@ FLOAT APawn::findPathTowardBestInventory(AActor *&bestPath, INT bClearPaths, FLO
 	FSortedPathList DestPoints;
 	EndPoints.numPoints = 0;
 	DestPoints.numPoints = 0; 
-	INT startanchor = 0;
-	INT endanchor = 1;
+	INT_UNREAL_32S startanchor = 0;
+	INT_UNREAL_32S endanchor = 1;
 
 	EndPoints.FindVisiblePaths(this, FVector(0,0,0), &DestPoints, bClearPaths, startanchor, endanchor);
 	if ( EndPoints.numPoints == 0 )
@@ -484,7 +485,7 @@ FLOAT APawn::findPathTowardBestInventory(AActor *&bestPath, INT bClearPaths, FLO
 
 	unguard;
 }
-int APawn::findPathTo(FVector Dest, INT bSinglePath, AActor *&bestPath, INT bClearPaths)
+int APawn::findPathTo(FVector Dest, INT_UNREAL_32S bSinglePath, AActor *&bestPath, INT_UNREAL_32S bClearPaths)
 {
 	guard(APawn::findPathTo);
 
@@ -504,8 +505,8 @@ int APawn::findPathTo(FVector Dest, INT bSinglePath, AActor *&bestPath, INT bCle
 	FSortedPathList DestPoints;
 	EndPoints.numPoints = 0;
 	DestPoints.numPoints = 0; //FIXME - this should be done by FSortedPathList when constructed
-	INT startanchor = 0;
-	INT endanchor = 0;
+	INT_UNREAL_32S startanchor = 0;
+	INT_UNREAL_32S endanchor = 0;
 
 	EndPoints.FindVisiblePaths(this, Dest, &DestPoints, bClearPaths, startanchor, endanchor);
 	//debugf("Visible endpoints = %d", EndPoints.numPoints);
@@ -536,7 +537,7 @@ int APawn::findPathTo(FVector Dest, INT bSinglePath, AActor *&bestPath, INT bCle
 		FCheckResult Hit(1.0);
 		FVector	ViewPoint = Location;
 		ViewPoint.Z += BaseEyeHeight; //look from eyes
-		INT j = 0;
+		INT_UNREAL_32S j = 0;
 		while (j<DestPoints.numPoints)
 		{
 			GetLevel()->SingleLineCheck(Hit, this, Dest, DestPoints.Path[j]->Location, TRACE_VisBlocking);
@@ -624,7 +625,7 @@ int APawn::findRandomDest(AActor *&bestPath)
 	int numReached = 0;
 	int moveFlags = calcMoveFlags(); 
 
-	for(INT i=0; i<EndPoints.numPoints; i++)
+	for(INT_UNREAL_32S i=0; i<EndPoints.numPoints; i++)
 	{
 		if (!((ANavigationPoint *)EndPoints.Path[i])->bEndPoint)
 			if ( actorReachable(EndPoints.Path[i], 1) )
@@ -815,7 +816,7 @@ int APawn::breadthPathFrom(AActor *start, AActor *&bestPath, int bSinglePath, in
 	unguard;
 }
 
-inline void FSortedPathList::addPath(AActor * node, INT dist)
+inline void FSortedPathList::addPath(AActor * node, INT_UNREAL_32S dist)
 {
 	guard(FSortedPathList::addPath);
 	int n=0; 
@@ -876,7 +877,7 @@ starting from path bot is on.
 When encounter inventoryspot, query its item's botdesireability
 keep track of best weight and the nextpath associated with it
 */
-FLOAT APawn::breadthPathToInventory(AActor *start, AActor *&bestPath, int moveFlags, FLOAT bestInventoryWeight, INT bPredictRespawns)
+FLOAT APawn::breadthPathToInventory(AActor *start, AActor *&bestPath, int moveFlags, FLOAT bestInventoryWeight, INT_UNREAL_32S bPredictRespawns)
 {
 	guard(APawn::breadthPathToInventory);
 

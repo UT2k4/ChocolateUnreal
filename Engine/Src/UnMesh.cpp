@@ -62,12 +62,12 @@ FBox UMesh::GetRenderBoundingBox( const AActor* Owner, UBOOL Exact ) const
 	FBox Bound;
 
 	// Get frame indices.
-	INT iFrame1 = 0, iFrame2 = 0;
+	INT_UNREAL_32S iFrame1 = 0, iFrame2 = 0;
 	const FMeshAnimSeq *Seq = GetAnimSeq( Owner->AnimSequence );
 	if( Seq && Owner->AnimFrame>=0.0 )
 	{
 		// Animating, so use bound enclosing two frames' bounds.
-		INT iFrame = appFloor((Owner->AnimFrame+1.0) * Seq->NumFrames);
+		INT_UNREAL_32S iFrame = appFloor((Owner->AnimFrame+1.0) * Seq->NumFrames);
 		iFrame1    = Seq->StartFrame + ((iFrame + 0) % Seq->NumFrames);
 		iFrame2    = Seq->StartFrame + ((iFrame + 1) % Seq->NumFrames);
 		Bound      = BoundingBoxes(iFrame1) + BoundingBoxes(iFrame2);
@@ -137,9 +137,9 @@ UBOOL UMesh::LineCheck
 //
 // K6 3D Optimized version of the interpolation loop of UMesh::GetFrame
 //
-static _inline void DoInterpolateLoop(FMeshVert* MeshVertex1,FMeshVert* MeshVertex2,INT FrameVerts,
+static _inline void DoInterpolateLoop(FMeshVert* MeshVertex1,FMeshVert* MeshVertex2,INT_UNREAL_32S FrameVerts,
 									  FVector& Origin,FLOAT Alpha,FCoords& Coords,
-									  FVector* CachedVerts,FVector* ResultVerts, INT ResultVertSize)
+									  FVector* CachedVerts,FVector* ResultVerts, INT_UNREAL_32S ResultVertSize)
 {
 #if 1
 	FVector CombinedOrigin;
@@ -263,7 +263,7 @@ Done:
 	CombinedOrigin.Z = Origin.Z + Coords.Origin.Z;
 
 	// Do loop.
-	for( INT i=0; i<FrameVerts; i++ )
+	for( INT_UNREAL_32S i=0; i<FrameVerts; i++ )
 	{
 		// Get source points.
 		FVector V1,V2;
@@ -292,9 +292,9 @@ Done:
 // This routine is almost identical to DoInterpolateLoop except CacheVerts is used
 // in place of MeshVertex1
 //
-static _inline void DoTweenLoop(FMeshVert* MeshVertex,INT FrameVerts,
+static _inline void DoTweenLoop(FMeshVert* MeshVertex,INT_UNREAL_32S FrameVerts,
 								FVector& Origin,FLOAT Alpha,FCoords& Coords,
-								FVector* CachedVerts,FVector* ResultVerts, INT ResultVertSize)
+								FVector* CachedVerts,FVector* ResultVerts, INT_UNREAL_32S ResultVertSize)
 {
 #if 1
 	FVector CombinedOrigin;
@@ -402,7 +402,7 @@ Done:
 	CombinedOrigin.Z = Origin.Z + Coords.Origin.Z;
 
 	// Do loop.
-	for( INT i=0; i<FrameVerts; i++ )
+	for( INT_UNREAL_32S i=0; i<FrameVerts; i++ )
 	{
 		// Get source points.
 		FLOAT X2,Y2,Z2;
@@ -432,7 +432,7 @@ Done:
 __inline void UMesh::AMD3DGetFrame
 (
 	FVector*	ResultVerts,
-	INT			Size,
+	INT_UNREAL_32S			Size,
 	FCoords		Coords,
 	AActor*		Owner
 )
@@ -476,11 +476,11 @@ __inline void UMesh::AMD3DGetFrame
 	{
 		// Compute interpolation numbers.
 		FLOAT Alpha=0.0;
-		INT iFrameOffset1=0, iFrameOffset2=0;
+		INT_UNREAL_32S iFrameOffset1=0, iFrameOffset2=0;
 		if( Seq )
 		{
 			FLOAT Frame   = ::Max(Owner->AnimFrame,0.f) * Seq->NumFrames;
-			INT iFrame    = appFloor(Frame);
+			INT_UNREAL_32S iFrame    = appFloor(Frame);
 			Alpha         = Frame - iFrame;
 			iFrameOffset1 = (Seq->StartFrame + ((iFrame + 0) % Seq->NumFrames)) * FrameVerts;
 			iFrameOffset2 = (Seq->StartFrame + ((iFrame + 1) % Seq->NumFrames)) * FrameVerts;
@@ -489,7 +489,7 @@ __inline void UMesh::AMD3DGetFrame
 		// Interpolate two frames.
 		FMeshVert* MeshVertex1 = &Verts( iFrameOffset1 );
 		FMeshVert* MeshVertex2 = &Verts( iFrameOffset2 );
-//		for( INT i=0; i<FrameVerts; i++ )
+//		for( INT_UNREAL_32S i=0; i<FrameVerts; i++ )
 //		{
 //			FVector V1( MeshVertex1[i].X, MeshVertex1[i].Y, MeshVertex1[i].Z );
 //			FVector V2( MeshVertex2[i].X, MeshVertex2[i].Y, MeshVertex2[i].Z );
@@ -505,7 +505,7 @@ __inline void UMesh::AMD3DGetFrame
 	{
 		// Compute tweening numbers.
 		FLOAT StartFrame = Seq ? (-1.0 / Seq->NumFrames) : 0.0;
-		INT iFrameOffset = Seq ? Seq->StartFrame * FrameVerts : 0;
+		INT_UNREAL_32S iFrameOffset = Seq ? Seq->StartFrame * FrameVerts : 0;
 		FLOAT Alpha = 1.0 - Owner->AnimFrame / CachedFrame;
 		if( CachedSeq!=Owner->AnimSequence || Alpha<0.0 || Alpha>1.0)
 		{
@@ -516,7 +516,7 @@ __inline void UMesh::AMD3DGetFrame
 
 		// Tween all points.
 		FMeshVert* MeshVertex = &Verts( iFrameOffset );
-//		for( INT i=0; i<FrameVerts; i++ )
+//		for( INT_UNREAL_32S i=0; i<FrameVerts; i++ )
 //		{
 //			FVector V2( MeshVertex[i].X, MeshVertex[i].Y, MeshVertex[i].Z );
 //			CachedVerts[i] += (V2 - CachedVerts[i]) * Alpha;
@@ -545,7 +545,7 @@ __inline void UMesh::AMD3DGetFrame
 void UMesh::GetFrame
 (
 	FVector*	ResultVerts,
-	INT			Size,
+	INT_UNREAL_32S			Size,
 	FCoords		Coords,
 	AActor*		Owner
 )
@@ -596,11 +596,11 @@ void UMesh::GetFrame
 	{
 		// Compute interpolation numbers.
 		FLOAT Alpha=0.0;
-		INT iFrameOffset1=0, iFrameOffset2=0;
+		INT_UNREAL_32S iFrameOffset1=0, iFrameOffset2=0;
 		if( Seq )
 		{
 			FLOAT Frame   = ::Max(Owner->AnimFrame,0.f) * Seq->NumFrames;
-			INT iFrame    = appFloor(Frame);
+			INT_UNREAL_32S iFrame    = appFloor(Frame);
 			Alpha         = Frame - iFrame;
 			iFrameOffset1 = (Seq->StartFrame + ((iFrame + 0) % Seq->NumFrames)) * FrameVerts;
 			iFrameOffset2 = (Seq->StartFrame + ((iFrame + 1) % Seq->NumFrames)) * FrameVerts;
@@ -609,7 +609,7 @@ void UMesh::GetFrame
 		// Interpolate two frames.
 		FMeshVert* MeshVertex1 = &Verts( iFrameOffset1 );
 		FMeshVert* MeshVertex2 = &Verts( iFrameOffset2 );
-		for( INT i=0; i<FrameVerts; i++ )
+		for( INT_UNREAL_32S i=0; i<FrameVerts; i++ )
 		{
 			FVector V1( MeshVertex1[i].X, MeshVertex1[i].Y, MeshVertex1[i].Z );
 			FVector V2( MeshVertex2[i].X, MeshVertex2[i].Y, MeshVertex2[i].Z );
@@ -622,7 +622,7 @@ void UMesh::GetFrame
 	{
 		// Compute tweening numbers.
 		FLOAT StartFrame = Seq ? (-1.0 / Seq->NumFrames) : 0.0;
-		INT iFrameOffset = Seq ? Seq->StartFrame * FrameVerts : 0;
+		INT_UNREAL_32S iFrameOffset = Seq ? Seq->StartFrame * FrameVerts : 0;
 		FLOAT Alpha = 1.0 - Owner->AnimFrame / CachedFrame;
 		if( CachedSeq!=Owner->AnimSequence || Alpha<0.0 || Alpha>1.0)
 		{
@@ -633,7 +633,7 @@ void UMesh::GetFrame
 
 		// Tween all points.
 		FMeshVert* MeshVertex = &Verts( iFrameOffset );
-		for( INT i=0; i<FrameVerts; i++ )
+		for( INT_UNREAL_32S i=0; i<FrameVerts; i++ )
 		{
 			FVector V2( MeshVertex[i].X, MeshVertex[i].Y, MeshVertex[i].Z );
 			CachedVerts[i] += (V2 - CachedVerts[i]) * Alpha;
@@ -655,7 +655,7 @@ void UMesh::GetFrame
 //
 // UMesh constructor.
 //
-UMesh::UMesh( INT NumPolys, INT NumVerts, INT NumFrames )
+UMesh::UMesh( INT_UNREAL_32S NumPolys, INT_UNREAL_32S NumVerts, INT_UNREAL_32S NumFrames )
 {
 	guard(UMesh::UMesh);
 

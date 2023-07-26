@@ -312,7 +312,7 @@ UEngine* InitEngine()
 		// Autodetect and ask about detected render devices.
 		static TArray<FRegistryObjectInfo> RenderDevices;
 		GObj.GetRegistryObjects( RenderDevices, UClass::StaticClass, URenderDevice::StaticClass, 0 );
-		for( INT i=0; i<RenderDevices.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<RenderDevices.Num(); i++ )
 		{
 			char File1[256], File2[256];
 			appSprintf( File1, "%s\\%s", SysDir, RenderDevices(i).Autodetect );
@@ -416,7 +416,7 @@ WINDOW_API void MainLoop( UEngine* Engine )
 		OldTime = NewTime;
 
 		// Enforce optional maximum tick rate.
-		INT MaxTickRate = Engine->GetMaxTickRate();
+		INT_UNREAL_32S MaxTickRate = Engine->GetMaxTickRate();
 		if( MaxTickRate )
 		{
 			FLOAT Delta = (1.0/MaxTickRate) - (appSeconds()-OldTime);

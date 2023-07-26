@@ -45,7 +45,7 @@ class ENGINE_API URenderDevice : public USubsystem
 	virtual void Exit()=0;
 	virtual void Flush()=0;
 	virtual UBOOL Exec( const char* Cmd, FOutputDevice* Out )=0;
-	virtual void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT* HitSize )=0;
+	virtual void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT_UNREAL_32S* HitSize )=0;
 	virtual void Unlock( UBOOL Blit )=0;
 	virtual void DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Surface, FSurfaceFacet& Facet )=0;
 	virtual void DrawGouraudPolygon( FSceneNode* Frame, FTextureInfo& Info, FTransTexture** Pts, int NumPts, DWORD PolyFlags, FSpanBuffer* Span )=0;
@@ -53,8 +53,8 @@ class ENGINE_API URenderDevice : public USubsystem
 	virtual void Draw2DLine( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FVector P1, FVector P2 )=0;
 	virtual void Draw2DPoint( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FLOAT X1, FLOAT Y1, FLOAT X2, FLOAT Y2 )=0;
 	virtual void ClearZ( FSceneNode* Frame )=0;
-	virtual void PushHit( const BYTE* Data, INT Count )=0;
-	virtual void PopHit( INT Count, UBOOL bForce )=0;
+	virtual void PushHit( const BYTE* Data, INT_UNREAL_32S Count )=0;
+	virtual void PopHit( INT_UNREAL_32S Count, UBOOL bForce )=0;
 	virtual void GetStats( char* Result )=0;
 	virtual void ReadPixels( FColor* Pixels )=0;
 	virtual void EndFlash() {};

@@ -56,7 +56,7 @@ void FSpanBuffer::AllocIndex( int AllocStartY, int AllocEndY, FMemStack* MemStac
 // Allocate a linear span buffer and initialize it to represent
 // the yet-undrawn region of a viewport.
 //
-void FSpanBuffer::AllocIndexForScreen( INT SXR, INT SYR, FMemStack* MemStack )
+void FSpanBuffer::AllocIndexForScreen( INT_UNREAL_32S SXR, INT_UNREAL_32S SYR, FMemStack* MemStack )
 {
     guard(FSpanBuffer::AllocIndexForScreen);
     int  i;
@@ -132,7 +132,7 @@ void FSpanBuffer::GetValidRange( SWORD* ValidStartY, SWORD* ValidEndY )
 //
 // Status: Performance critical.
 //
-INT FSpanBuffer::BoxIsVisible( INT X1, INT Y1, INT X2, INT Y2 )
+INT_UNREAL_32S FSpanBuffer::BoxIsVisible( INT_UNREAL_32S X1, INT_UNREAL_32S Y1, INT_UNREAL_32S X2, INT_UNREAL_32S Y2 )
 {
     guard(FSpanBuffer::BoxIsVisible);
 
@@ -193,7 +193,7 @@ INT FSpanBuffer::BoxIsVisible( INT X1, INT Y1, INT X2, INT Y2 )
 //
 // Status: Extremely performance critical.
 //
-INT FSpanBuffer::CopyFromRasterUpdate( FSpanBuffer& Screen, INT RasterStartY, INT RasterEndY, FRasterSpan* Raster )
+INT_UNREAL_32S FSpanBuffer::CopyFromRasterUpdate( FSpanBuffer& Screen, INT_UNREAL_32S RasterStartY, INT_UNREAL_32S RasterEndY, FRasterSpan* Raster )
 {
     guard(FSpanBuffer::CopyFromRasterUpdate);
 
@@ -338,7 +338,7 @@ INT FSpanBuffer::CopyFromRasterUpdate( FSpanBuffer& Screen, INT RasterStartY, IN
 // Doesn't affect the span buffer no matter what.
 // Returns 1 if poly is all or partially visible, 0 if completely obscured.
 //
-INT FSpanBuffer::CopyFromRaster( FSpanBuffer& Screen, INT RasterStartY, INT RasterEndY, FRasterSpan* Raster )
+INT_UNREAL_32S FSpanBuffer::CopyFromRaster( FSpanBuffer& Screen, INT_UNREAL_32S RasterStartY, INT_UNREAL_32S RasterEndY, FRasterSpan* Raster )
 {
     guard(FSpanBuffer::CopyFromRaster);
 

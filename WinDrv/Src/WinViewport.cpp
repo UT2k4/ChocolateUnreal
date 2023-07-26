@@ -84,6 +84,8 @@ static void TryRenderDevice( UViewport* Viewport, const char* ClassName, UBOOL F
 //
 static HRESULT WINAPI ddEnumModesCallback( DDSURFACEDESC* SurfaceDesc, void* Context )
 {
+	INT_UNREAL_32S i;
+
 	guard(ddEnumModesCallback);
 
 	UWindowsClient* Client = (UWindowsClient *)Context;
@@ -91,7 +93,7 @@ static HRESULT WINAPI ddEnumModesCallback( DDSURFACEDESC* SurfaceDesc, void* Con
 	{
 		Client->ddModeWidth [Client->ddNumModes] = SurfaceDesc->dwWidth;
 		Client->ddModeHeight[Client->ddNumModes] = SurfaceDesc->dwHeight;
-		for( INT i=0; i<Client->ddNumModes; i++ )
+		for( i=0; i<Client->ddNumModes; i++ )
 			if
 			(	((DWORD)Client->ddModeWidth [i]==SurfaceDesc->dwWidth)
 			&&	((DWORD)Client->ddModeHeight[i]==SurfaceDesc->dwHeight))
@@ -292,7 +294,7 @@ void UWindowsViewport::UpdateWindow()
 //
 // Open a viewport window.
 //
-void UWindowsViewport::OpenWindow( DWORD InParentWindow, UBOOL Temporary, INT NewX, INT NewY, INT OpenX, INT OpenY )
+void UWindowsViewport::OpenWindow( DWORD InParentWindow, UBOOL Temporary, INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, INT_UNREAL_32S OpenX, INT_UNREAL_32S OpenY )
 {
 	guard(UWindowsViewport::OpenWindow);
 	check(Actor);
@@ -341,8 +343,8 @@ void UWindowsViewport::OpenWindow( DWORD InParentWindow, UBOOL Temporary, INT Ne
 			OpenX = CW_USEDEFAULT;
 		if( OpenY==-1 )
 			OpenY = CW_USEDEFAULT;
-		INT OpenXL = rTemp.right  - rTemp.left; 
-		INT OpenYL = rTemp.bottom - rTemp.top;
+		INT_UNREAL_32S OpenXL = rTemp.right  - rTemp.left; 
+		INT_UNREAL_32S OpenYL = rTemp.bottom - rTemp.top;
 
 		// Create or update the window.
 		if( !hWnd )
@@ -429,7 +431,7 @@ void UWindowsViewport::CloseWindow()
 // lock failing is not a critical error; it's a sign that a DirectDraw mode
 // has ended or the user has closed a viewport window.
 //
-UBOOL UWindowsViewport::Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT* HitSize )
+UBOOL UWindowsViewport::Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT_UNREAL_32S* HitSize )
 {
 	guard(UWindowsViewport::LockWindow);
 	clock(Client->DrawCycles);
@@ -563,7 +565,7 @@ void UWindowsViewport::UpdateInput( UBOOL Reset )
 		if( Result==JOYERR_NOERROR )
 		{ 
 			// Pass buttons to app.
-			INT Index=0;
+			INT_UNREAL_32S Index=0;
 			for( Index=0; JoyInfo.dwButtons; Index++,JoyInfo.dwButtons/=2 )
 			{
 				if( !Input->KeyDown(Index) && (JoyInfo.dwButtons & 1) )
@@ -621,7 +623,7 @@ void UWindowsViewport::UpdateInput( UBOOL Reset )
 
 	// Keyboard.
 	Reset = Reset && GetFocus()==hWnd;
-	for( INT i=0; i<256; i++ )
+	for( INT_UNREAL_32S i=0; i<256; i++ )
 	{
 		if( !Processed[i] )
 		{
@@ -649,7 +651,7 @@ void UWindowsViewport::MakeCurrent()
 {
 	guard(UWindowsViewport::MakeCurrent);
 	Current = 1;
-	for( INT i=0; i<Client->Viewports.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 	{
 		UViewport* OldViewport = Client->Viewports(i);
 		if( OldViewport->Current && OldViewport!=this )
@@ -709,8 +711,8 @@ void UWindowsViewport::FindAvailableModes()
 		SurfaceDesc.ddpfPixelFormat.dwFlags = DDPF_RGB;
 		SurfaceDesc.ddpfPixelFormat.dwRGBBitCount = ColorBytes*8;
 		Client->dd->EnumDisplayModes( 0, &SurfaceDesc, Client, ddEnumModesCallback );
-		for( INT i=0; i<Client->ddNumModes; i++ )
-			for( INT j=0; j<i; j++ )
+		for( INT_UNREAL_32S i=0; i<Client->ddNumModes; i++ )
+			for( INT_UNREAL_32S j=0; j<i; j++ )
 				if( Client->ddModeWidth[j]>Client->ddModeWidth[i] || (Client->ddModeWidth[j]==Client->ddModeWidth[i] && Client->ddModeHeight[j]>Client->ddModeHeight[i]) )
 					{Exchange(Client->ddModeWidth[i],Client->ddModeWidth[j]); Exchange(Client->ddModeHeight[i],Client->ddModeHeight[j]);}
 		/*
@@ -722,13 +724,14 @@ void UWindowsViewport::FindAvailableModes()
 	}
 
 	// Get menus.
-	INT nMenu = GIsEditor ? 3 : 2;
+	INT_UNREAL_32S nMenu = GIsEditor ? 3 : 2;
 	HMENU hSizes = GetSubMenu( hMenu, nMenu );
 	check(hSizes);
+	int i;
 
 	// Completely rebuild the "Size" submenu based on what modes are available.
 	int n=GetMenuItemCount( hSizes );
-	for( int i=0; i<n; i++ )
+	for( i=0; i<n; i++ )
 		if( !DeleteMenu(hSizes,0,MF_BYPOSITION) )
 			appErrorf( "DeleteMenu failed: %s", winError() );
 
@@ -768,7 +771,7 @@ void UWindowsViewport::FindAvailableModes()
 //
 // Input event router.
 //
-UBOOL UWindowsViewport::CauseInputEvent( INT iKey, EInputAction Action, FLOAT Delta )
+UBOOL UWindowsViewport::CauseInputEvent( INT_UNREAL_32S iKey, EInputAction Action, FLOAT Delta )
 {
 	guard(UWindowsViewport::CauseInputEvent);
 
@@ -846,7 +849,7 @@ void UWindowsViewport::SetMouseCapture( UBOOL Capture, UBOOL Clip, UBOOL OnlyFoc
 //
 // Set the client size (viewport view size) of a viewport.
 //
-void UWindowsViewport::SetClientSize( INT NewX, INT NewY, UBOOL UpdateProfile )
+void UWindowsViewport::SetClientSize( INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, UBOOL UpdateProfile )
 {
 	guard(UWindowsViewport::SetClientSize);
 
@@ -899,7 +902,7 @@ void UWindowsViewport::Repaint()
 //
 // Resize the viewport's frame buffer. Unconditional.
 //
-void UWindowsViewport::SetFrameBufferSize( INT NewX, INT NewY, INT NewColorBytes, EWindowsBlitType BlitType )
+void UWindowsViewport::SetFrameBufferSize( INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, INT_UNREAL_32S NewColorBytes, EWindowsBlitType BlitType )
 {
 	guard(UWindowsViewport::SetFrameBufferSize);
 	check(!OnHold);
@@ -997,9 +1000,10 @@ UViewport* UWindowsClient::NewViewport( class ULevel* InLevel, const FName Name 
 //
 UViewport* UWindowsClient::CurrentViewport()
 {
+	int i;
 	guard(UWindowsClient::CurrentViewport);
 	UWindowsViewport* TestViewport = NULL;
-	for( int i=0; i<Viewports.Num(); i++ )
+	for( i=0; i<Viewports.Num(); i++ )
 	{
 		TestViewport = (UWindowsViewport*)Viewports(i);
      	if( TestViewport->Current )
@@ -1071,7 +1075,7 @@ UBOOL UWindowsClient::Exec( const char* Cmd, FOutputDevice* Out )
 		{
 			// DirectDraw modes.
 			FString Result;
-			for( INT i=0; i<ddNumModes; i++ )
+			for( INT_UNREAL_32S i=0; i<ddNumModes; i++ )
 				Result.Appendf( "%ix%i ", ddModeWidth[i], ddModeHeight[i] );
 			Out->Log( *Result );
 		}
@@ -1113,7 +1117,7 @@ UBOOL UWindowsViewport::Exec( const char* Cmd, FOutputDevice* Out )
 	}
 	else if( ParseCommand(&Cmd,"SetRes") )
 	{
-		INT X=appAtoi(Cmd), Y=appAtoi(appStrchr(Cmd,'x') ? appStrchr(Cmd,'x')+1 : appStrchr(Cmd,'X') ? appStrchr(Cmd,'X')+1 : "");
+		INT_UNREAL_32S X=appAtoi(Cmd), Y=appAtoi(appStrchr(Cmd,'x') ? appStrchr(Cmd,'x')+1 : appStrchr(Cmd,'X') ? appStrchr(Cmd,'X')+1 : "");
 		if( X && Y )
 		{
 			if( Client->FullscreenhWndDD )
@@ -1560,10 +1564,10 @@ void UWindowsClient::ddExit()
 UBOOL UWindowsClient::ddSetViewport
 (
 	UViewport*	InViewport,
-	INT			Width,
-	INT			Height,
-	INT			ColorBytes,
-	INT			RequestedCaps
+	INT_UNREAL_32S			Width,
+	INT_UNREAL_32S			Height,
+	INT_UNREAL_32S			ColorBytes,
+	INT_UNREAL_32S			RequestedCaps
 )
 {
 	guard(UWindowsClient::ddSetViewport);
@@ -1637,7 +1641,7 @@ void UWindowsViewport::SetTopness()
 LONG UWindowsViewport::WndProc( UINT iMessage, WPARAM wParam, LPARAM lParam )
 {
 	guard(UWindowsViewport::WndProc);
-	INT Temp;
+	INT_UNREAL_32S Temp;
 	if( OnHold || !Client->Viewports.FindItem(this,Temp) || !Actor )
 		return DefWindowProc( hWnd, iMessage, wParam, lParam );
 
@@ -2109,11 +2113,11 @@ LONG UWindowsViewport::WndProc( UINT iMessage, WPARAM wParam, LPARAM lParam )
 			// Get mouse cursor position.
 			POINT TempPoint={0,0};
 			ClientToScreen( hWnd, &TempPoint );
-			INT MouseX = SavedCursor.x!=-1 ? SavedCursor.x-TempPoint.x : LOWORD(lParam);
-			INT MouseY = SavedCursor.x!=-1 ? SavedCursor.y-TempPoint.y : HIWORD(lParam);
+			INT_UNREAL_32S MouseX = SavedCursor.x!=-1 ? SavedCursor.x-TempPoint.x : LOWORD(lParam);
+			INT_UNREAL_32S MouseY = SavedCursor.x!=-1 ? SavedCursor.y-TempPoint.y : HIWORD(lParam);
 
 			// Get time interval to determine if a click occured.
-			INT DeltaTime, Button;
+			INT_UNREAL_32S DeltaTime, Button;
 			EInputKey iKey;
 			if( iMessage == WM_LBUTTONUP )
 			{
@@ -2250,15 +2254,15 @@ LONG UWindowsViewport::WndProc( UINT iMessage, WPARAM wParam, LPARAM lParam )
 
 			// Movement accumulators.
 			UBOOL Moved=0;
-			INT Cumulative=0;
+			INT_UNREAL_32S Cumulative=0;
 
 			// Grab all pending mouse movement.
-			INT DX=0, DY=0;
+			INT_UNREAL_32S DX=0, DY=0;
 			Loop:
 			Buttons		  = wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
             POINTS Points = MAKEPOINTS(lParam);
-			INT X         = Points.x - Base.x;
-			INT Y         = Points.y - Base.y;
+			INT_UNREAL_32S X         = Points.x - Base.x;
+			INT_UNREAL_32S Y         = Points.y - Base.y;
 			Cumulative += Abs(X) + Abs(Y);
 			DX += X;
 			DY += Y;
@@ -2323,7 +2327,7 @@ LONG UWindowsViewport::WndProc( UINT iMessage, WPARAM wParam, LPARAM lParam )
 			if( Moved && !IsRealtime() )
 			{
 				if( Input->KeyDown(IK_Space) )
-					for( INT i=0; i<Client->Viewports.Num(); i++ )
+					for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 						Client->Viewports(i)->Repaint();
 				else
 					Repaint();
@@ -2471,7 +2475,7 @@ void UWindowsClient::PostEditChange()
 	ZeroMemory( &JoyCaps, sizeof(JoyCaps) );
 	if( UseJoystick )
 	{
-		INT nJoys = joyGetNumDevs();
+		INT_UNREAL_32S nJoys = joyGetNumDevs();
 		if( nJoys )
 		{
 			if( joyGetDevCaps( JOYSTICKID1, &JoyCaps, sizeof(JoyCaps) )==JOYERR_NOERROR )
@@ -2579,7 +2583,7 @@ void UWindowsClient::ShutdownAfterError()
 		if( Viewport->RenDev )
 			Viewport->RenDev->Exit();
 	}
-	for( INT i=Viewports.Num()-1; i>=0; i-- )
+	for( INT_UNREAL_32S i=Viewports.Num()-1; i>=0; i-- )
    	{
 		UWindowsViewport* Viewport = (UWindowsViewport*)Viewports(i);
 		DestroyWindow( Viewport->hWnd );
@@ -2637,10 +2641,10 @@ void UWindowsClient::EndFullscreen()
 	{
 		// Remember saved info.
 		RECT* Rect		 = &Viewport->SavedWindowRect;
-		INT   SXR		 =  Viewport->SavedX;
-		INT   SYR		 =  Viewport->SavedY;
-		INT   ColorBytes =  Viewport->SavedColorBytes;
-		INT   Caps		 =  Viewport->SavedCaps;
+		INT_UNREAL_32S   SXR		 =  Viewport->SavedX;
+		INT_UNREAL_32S   SYR		 =  Viewport->SavedY;
+		INT_UNREAL_32S   ColorBytes =  Viewport->SavedColorBytes;
+		INT_UNREAL_32S   Caps		 =  Viewport->SavedCaps;
 
 		// Shut down hardware and DirectDraw.
 		Viewport->Hold();
@@ -2688,7 +2692,7 @@ void UWindowsClient::EndFullscreen()
 // mode of the nearest x-size to the current window. If already in
 // fullscreen, returns to non-fullscreen.
 //
-void UWindowsViewport::MakeFullscreen( INT NewX, INT NewY, UBOOL UpdateProfile )
+void UWindowsViewport::MakeFullscreen( INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, UBOOL UpdateProfile )
 {
 	guard(UWindowsViewport::MakeFullscreen);
 
@@ -2719,11 +2723,11 @@ void UWindowsViewport::MakeFullscreen( INT NewX, INT NewY, UBOOL UpdateProfile )
 	else
 	{
 		// Go into fullscreen, matching closest DirectDraw mode to current window size.
-		INT BestMode=-1;
-		INT BestDelta=MAXINT;		
-		for( INT i=0; i<Client->ddNumModes; i++ )
+		INT_UNREAL_32S BestMode=-1;
+		INT_UNREAL_32S BestDelta=MAXINT;		
+		for( INT_UNREAL_32S i=0; i<Client->ddNumModes; i++ )
 		{
-			INT Delta = Abs(Client->ddModeWidth[i]-NewX) + Abs(Client->ddModeHeight[i]-NewY);
+			INT_UNREAL_32S Delta = Abs(Client->ddModeWidth[i]-NewX) + Abs(Client->ddModeHeight[i]-NewY);
 			if( Delta < BestDelta )
 			{
 				BestMode  = i;
@@ -2787,7 +2791,7 @@ void UWindowsClient::Tick()
 
 	// Blit any viewports that need blitting.
 	UWindowsViewport* BestViewport = NULL;
-  	for( INT i=0; i<Viewports.Num(); i++ )
+  	for( INT_UNREAL_32S i=0; i<Viewports.Num(); i++ )
 	{
 		UWindowsViewport* Viewport = CastChecked<UWindowsViewport>(Viewports(i));
 		if( !IsWindow(Viewport->hWnd) )

@@ -29,7 +29,7 @@ void URender::SetupDynamics( FSceneNode* Frame, AActor* Exclude )
 	UBOOL HighDetailActors=Frame->Viewport->RenDev->HighDetailActors;
 
 	// Traverse entire actor list.
-	for( INT iActor=0; iActor<Frame->Level->Num(); iActor++ )
+	for( INT_UNREAL_32S iActor=0; iActor<Frame->Level->Num(); iActor++ )
 	{
 		// Add this actor to dynamics if it's renderable.
 		AActor* Actor = Frame->Level->Actors(iActor);
@@ -60,8 +60,9 @@ void URender::SetupDynamics( FSceneNode* Frame, AActor* Exclude )
 			&&	(Actor->LightRadius) )
 			{
 				// Add the dynamic light.
+				int i;
 				FLOAT MaxRadius = Max( Actor->WorldLightRadius(), Actor->WorldVolumetricRadius() );
-				for( int i=0; i<4; i++ )
+				for( i=0; i<4; i++ )
 					if( Frame->ViewPlanes[i].PlaneDot(Actor->Location) < -MaxRadius )
 						break;
 				if( i==4 )
@@ -84,7 +85,7 @@ void URender::SetupDynamics( FSceneNode* Frame, AActor* Exclude )
 	FDynamicItem implementation.
 ------------------------------------------------------------------------------*/
 
-FDynamicItem::FDynamicItem( INT iNode )
+FDynamicItem::FDynamicItem( INT_UNREAL_32S iNode )
 {
 	guardSlow(FDynamicItem::FDynamicItem);
 
@@ -98,7 +99,7 @@ FDynamicItem::FDynamicItem( INT iNode )
 	FDynamicSprite implementation.
 ------------------------------------------------------------------------------*/
 
-FDynamicSprite::FDynamicSprite( FSceneNode* Frame, INT iNode, AActor* InActor )
+FDynamicSprite::FDynamicSprite( FSceneNode* Frame, INT_UNREAL_32S iNode, AActor* InActor )
 :	FDynamicItem	( iNode )
 ,	Actor			( InActor )
 ,	SpanBuffer		( NULL )
@@ -149,7 +150,7 @@ FDynamicSprite::FDynamicSprite( FSceneNode* Frame, INT iNode, AActor* InActor )
 		Raster->EndY	    = Y2;
 
 		FRasterSpan* Line = &Raster->Lines[0];
-		for( INT i=Raster->StartY; i<Raster->EndY; i++ )
+		for( INT_UNREAL_32S i=Raster->StartY; i<Raster->EndY; i++ )
 		{
 			Line->X[0] = X1;
 			Line->X[1] = X2;
@@ -273,7 +274,7 @@ UBOOL FDynamicSprite::Setup( FSceneNode* Frame )
 	FDynamicChunk implementation.
 ------------------------------------------------------------------------------*/
 
-FDynamicChunk::FDynamicChunk( INT iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster )
+FDynamicChunk::FDynamicChunk( INT_UNREAL_32S iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster )
 :	FDynamicItem	( iNode )
 ,	Raster			( InRaster )
 ,	Sprite			( InSprite )
@@ -288,7 +289,7 @@ FDynamicChunk::FDynamicChunk( INT iNode, FDynamicSprite* InSprite, FRasterPoly* 
 	unguardSlow;
 }
 
-void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, INT Outside )
+void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT_UNREAL_32S iNode, INT_UNREAL_32S Outside )
 {
 	guardSlow(FDynamicChunk::Filter);
 	FBspNode& Node = Frame->Level->Model->Nodes->Element(iNode);
@@ -297,9 +298,9 @@ void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 	FRasterPoly *FrontRaster, *BackRaster;
 
 	// Find point-to-plane distances for all four vertices (side-of-plane classifications).
-	INT Front=0, Back=0;
+	INT_UNREAL_32S Front=0, Back=0;
 	FLOAT Dist[4];
-	for( INT i=0; i<4; i++ )
+	for( INT_UNREAL_32S i=0; i<4; i++ )
 	{
 		Dist[i] = Node.Plane.PlaneDot( Sprite->ProxyVerts[i].Point );
 		Front  += Dist[i] > +0.01;
@@ -314,9 +315,9 @@ void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 		FTransform* V2 = &Sprite->ProxyVerts [0];
 		FLOAT*      D1 = &Dist			     [3];
 		FLOAT*      D2 = &Dist			     [0];
-		INT			NumInt = 0;
+		INT_UNREAL_32S			i, NumInt = 0;
 
-		for( INT i=0; i<4; i++ )
+		for( i=0; i<4; i++ )
 		{
 			if( (*D1)*(*D2) < 0.0 )
 			{	
@@ -335,15 +336,15 @@ void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 			goto NoSplit;
 
 		// Allocate front and back rasters.
-		INT	Size	= sizeof (FRasterPoly) + (Raster->EndY - Raster->StartY) * sizeof( FRasterSpan );
+		INT_UNREAL_32S	Size	= sizeof (FRasterPoly) + (Raster->EndY - Raster->StartY) * sizeof( FRasterSpan );
 		FrontRaster	= (FRasterPoly *)New<BYTE>(GDynMem,Size);
 		BackRaster	= (FRasterPoly *)New<BYTE>(GDynMem,Size);
 
 		// Make sure that first intersection point is on top.
 		if( Intersect[0].ScreenY > Intersect[1].ScreenY )
 			Exchange( Intersect[0], Intersect[1] );
-		INT Y0 = Max( appFloor(Intersect[0].ScreenY), Raster->StartY );
-		INT Y1 = Min( appFloor(Intersect[1].ScreenY), Raster->EndY   );
+		INT_UNREAL_32S Y0 = Max( appFloor(Intersect[0].ScreenY), Raster->StartY );
+		INT_UNREAL_32S Y1 = Min( appFloor(Intersect[1].ScreenY), Raster->EndY   );
 		if( Y0>Y1 )
 			goto NoSplit;
 
@@ -411,8 +412,8 @@ void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 		{
 			FLOAT	FloatYAdjust	= (FLOAT)Y0 + 1.0 - Intersect[0].ScreenY;
 			FLOAT	FloatFixDX 		= 65536.0 * (Intersect[1].ScreenX - Intersect[0].ScreenX) / (Intersect[1].ScreenY - Intersect[0].ScreenY);
-			INT		FixDX			= FloatFixDX;
-			INT		FixX			= 65536.0 * Intersect[0].ScreenX + FloatFixDX * FloatYAdjust;
+			INT_UNREAL_32S		FixDX			= FloatFixDX;
+			INT_UNREAL_32S		FixX			= 65536.0 * Intersect[0].ScreenX + FloatFixDX * FloatYAdjust;
 
 			if( Raster->StartY > Y0 ) 
 			{
@@ -433,7 +434,7 @@ void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 				*LeftLine  = *SourceLine;
 				*RightLine = *SourceLine;
 
-				INT X = Unfix(FixX);
+				INT_UNREAL_32S X = Unfix(FixX);
 				if (X < LeftLine->X[1])    LeftLine->X[1] = X;
 				if (X > RightLine->X[0]) RightLine->X[0] = X;
 
@@ -458,7 +459,7 @@ void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 	}
 
 	// Filter it down.
-	INT CSG = Node.IsCsg();
+	INT_UNREAL_32S CSG = Node.IsCsg();
 	if( Front && FrontRaster )
 	{
 		if( Node.iFront != INDEX_NONE )
@@ -480,7 +481,7 @@ void FDynamicChunk::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 	FDynamicFinalChunk implementation.
 ------------------------------------------------------------------------------*/
 
-FDynamicFinalChunk::FDynamicFinalChunk( INT iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster, INT IsBack )
+FDynamicFinalChunk::FDynamicFinalChunk( INT_UNREAL_32S iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster, INT_UNREAL_32S IsBack )
 :	FDynamicItem( iNode )
 ,	Raster( InRaster )
 ,	Sprite( InSprite )
@@ -490,8 +491,10 @@ FDynamicFinalChunk::FDynamicFinalChunk( INT iNode, FDynamicSprite* InSprite, FRa
 	// Set Z.
 	Z = InSprite->Z;
 
+	FDynamicItem** Item;
+
 	// Add into list z-sorted.
-	for( FDynamicItem** Item=&GRender->Dynamic( iNode, IsBack ); *Item && (*Item)->Z<Z; Item=&(*Item)->FilterNext );
+	for( Item=&GRender->Dynamic( iNode, IsBack ); *Item && (*Item)->Z<Z; Item=&(*Item)->FilterNext );
 	FilterNext = *Item;
 	*Item      = this;
 
@@ -499,7 +502,7 @@ FDynamicFinalChunk::FDynamicFinalChunk( INT iNode, FDynamicSprite* InSprite, FRa
 	unguardSlow;
 }
 
-void FDynamicFinalChunk::PreRender( UViewport* Viewport, FSceneNode* Frame, FSpanBuffer* SpanBuffer, INT iNode, FVolActorLink* Volumetrics )
+void FDynamicFinalChunk::PreRender( UViewport* Viewport, FSceneNode* Frame, FSpanBuffer* SpanBuffer, INT_UNREAL_32S iNode, FVolActorLink* Volumetrics )
 {
 	guardSlow(FDynamicFinalChunk::PreRender);
 	UBOOL Drawn=0;
@@ -545,11 +548,12 @@ void FDynamicFinalChunk::PreRender( UViewport* Viewport, FSceneNode* Frame, FSpa
 	// Add volumetrics to list.
 	if( Drawn )
 	{
+		FActorLink* Link;
 		for( Volumetrics; Volumetrics; Volumetrics=Volumetrics->Next )
 		{
 			if( Volumetrics->Volumetric )
 			{
-				for( FActorLink* Link=Sprite->Volumetrics; Link; Link=Link->Next )
+				for( Link=Sprite->Volumetrics; Link; Link=Link->Next )
 					if( Link->Actor==Volumetrics->Actor )
 						break;
 				if( !Link )
@@ -565,7 +569,7 @@ void FDynamicFinalChunk::PreRender( UViewport* Viewport, FSceneNode* Frame, FSpa
 	FDynamicLight implementation.
 -----------------------------------------------------------------------------*/
 
-FDynamicLight::FDynamicLight( INT iNode, AActor* InActor, UBOOL InIsVol, UBOOL InHitLeaf )
+FDynamicLight::FDynamicLight( INT_UNREAL_32S iNode, AActor* InActor, UBOOL InIsVol, UBOOL InHitLeaf )
 :	FDynamicItem( iNode )
 ,	Actor( InActor )
 ,	IsVol( InIsVol )
@@ -581,7 +585,7 @@ FDynamicLight::FDynamicLight( INT iNode, AActor* InActor, UBOOL InIsVol, UBOOL I
 	unguardSlow;
 }
 
-void FDynamicLight::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, INT Outside )
+void FDynamicLight::Filter( UViewport* Viewport, FSceneNode* Frame, INT_UNREAL_32S iNode, INT_UNREAL_32S Outside )
 {
 	guardSlow(FDynamicLight::Filter);
 
@@ -595,7 +599,7 @@ void FDynamicLight::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 		UBOOL ThisHitLeaf=HitLeaf;
 		if( !HitLeaf )
 		{
-			INT iLeaf=Node.iLeaf[1];
+			INT_UNREAL_32S iLeaf=Node.iLeaf[1];
 			if( iLeaf!=INDEX_NONE )
 			{
 				if( !GRender->LeafLights[iLeaf] )
@@ -610,7 +614,7 @@ void FDynamicLight::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 		// Handle planars.
 		if( Dist < Radius )
 		{
-			for( INT iPlane=iNode; iPlane!=INDEX_NONE; iPlane = Viewport->Actor->XLevel->Model->Nodes->Element(iPlane).iPlane )
+			for( INT_UNREAL_32S iPlane=iNode; iPlane!=INDEX_NONE; iPlane = Viewport->Actor->XLevel->Model->Nodes->Element(iPlane).iPlane )
 			{
 				FBspNode&       Node  = Viewport->Actor->XLevel->Model->Nodes->Element(iPlane);
 				FBspSurf&       Surf  = Viewport->Actor->XLevel->Model->Surfs->Element(Node.iSurf);
@@ -621,8 +625,9 @@ void FDynamicLight::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 				&&	(GRender->NumDynLightSurfs < URender::MAX_DYN_LIGHT_SURFS)
 				&&	(Actor->bSpecialLit ? (Surf.PolyFlags&PF_SpecialLit) : !(Surf.PolyFlags&PF_SpecialLit)) )
 				{
+					FActorLink* Link;
 					// Don't apply a light twice.
-					for( FActorLink* Link = GRender->SurfLights[Node.iSurf]; Link; Link=Link->Next )
+					for( Link = GRender->SurfLights[Node.iSurf]; Link; Link=Link->Next )
 						if( Link->Actor == Actor )
 							break;
 					if( !Link )
@@ -640,7 +645,7 @@ void FDynamicLight::Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, I
 		UBOOL ThisHitLeaf=HitLeaf;
 		if( !HitLeaf )
 		{
-			INT iLeaf=Node.iLeaf[0];
+			INT_UNREAL_32S iLeaf=Node.iLeaf[0];
 			if( iLeaf!=INDEX_NONE )
 			{
 				if( !GRender->LeafLights[iLeaf] )
@@ -711,10 +716,10 @@ void URender::DrawActorSprite( FSceneNode* Frame, FDynamicSprite* Sprite )
 		}
 		if( Sprite->Actor->DrawType==DT_SpriteAnimOnce )
 		{
-			INT Count=1;
+			INT_UNREAL_32S Count=1;
 			for( UTexture* Test=Texture->AnimNext; Test && Test!=Texture; Test=Test->AnimNext )
 				Count++;
-			INT Num = Clamp( appFloor(Sprite->Actor->LifeFraction()*Count), 0, Count-1 );
+			INT_UNREAL_32S Num = Clamp( appFloor(Sprite->Actor->LifeFraction()*Count), 0, Count-1 );
 			while( Num-- > 0 )
 				Texture = Texture->AnimNext;
 			SavedNext         = Texture->AnimNext;//sort of a hack!!

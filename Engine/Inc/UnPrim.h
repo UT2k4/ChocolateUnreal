@@ -39,7 +39,7 @@ struct FCheckResult : public FIteratorActorList
 	FVector		Normal;     // Normal vector in coordinate system of the returner. Zero=none.
 	UPrimitive*	Primitive;  // Actor primitive which was hit, or NULL=none.
 	FLOAT       Time;       // Time until hit, if line check.
-	INT			Item;       // Primitive data item which was hit, INDEX_NONE=none.
+	INT_UNREAL_32S			Item;       // Primitive data item which was hit, INDEX_NONE=none.
 
 	// Functions.
 	FCheckResult()
@@ -54,7 +54,7 @@ struct FCheckResult : public FIteratorActorList
 	{}
 	FCheckResult*& GetNext()
 		{ return *(FCheckResult**)&Next; }
-	friend INT Compare( const FCheckResult& A, const FCheckResult& B )
+	friend INT_UNREAL_32S Compare( const FCheckResult& A, const FCheckResult& B )
 		{ return A.Time<B.Time ? -1 : A.Time>B.Time ? 1 : 0; }
 };
 

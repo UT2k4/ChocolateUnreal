@@ -100,7 +100,7 @@ void UEditorEngine::Init()
 					TArray<FString> Files = appFindFiles( Spec );
 					if( Files.Num() == 0 )
 						appErrorf( "Can't find files matching %s", Spec );
-					for( INT i=0; i<Files.Num(); i++ )
+					for( INT_UNREAL_32S i=0; i<Files.Num(); i++ )
 					{
 						// Import class.
 						appSprintf( Filename, "..\\%s\\Classes\\%s", Pkg, Files(i) );
@@ -120,15 +120,16 @@ void UEditorEngine::Init()
 					Bootstrapping = 1;
 					MakeScripts( 0, 1 );
 					Bootstrapping = 0;
+					TObjectIterator<UClass> It;
 
 					// If desired, export C++ header.
 					if( ParseParam( appCmdLine(), "H" ) )
 					{
 						// Tag AActor-derived classes in this package.
-						for( INT i=0; i<FName::GetMaxNames(); i++ )
+						for( INT_UNREAL_32S i=0; i<FName::GetMaxNames(); i++ )
 							if( FName::GetEntry(i) )
 								FName::GetEntry(i)->Flags &= ~RF_TagExp;
-						for( TObjectIterator<UClass> It; It; ++It )
+						for( It; It; ++It )
 							It->ClearFlags( RF_TagImp | RF_TagExp );
 						for( It=TObjectIterator<UClass>(); It; ++It )
 							if( It->GetParent()==PkgObject )
@@ -153,7 +154,7 @@ void UEditorEngine::Init()
 	{
 		// Load classes for editing.
 		GObj.BeginLoad();
-		for( INT i=0; i<ARRAY_COUNT(EditPackages); i++ )
+		for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(EditPackages); i++ )
 			if( EditPackages[i][0] )
 				if( !GObj.LoadPackage( NULL, EditPackages[i], LOAD_NoWarn|LOAD_KeepImports ) )
 					appErrorf( "Can't find edit package '%s'", EditPackages[i] );
@@ -268,7 +269,7 @@ void UEditorEngine::Tick( float DeltaSeconds )
 
 	// Find active realtime camera.
 	UViewport* RealtimeViewport = NULL;
-	for( INT i=0; i<Client->Viewports.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 	{
 		UViewport* Viewport = Client->Viewports(i);
 		if( Viewport->Current && Viewport->IsRealtime() )
@@ -540,10 +541,10 @@ void ClassTopicHandler::Get( ULevel *Level, const char *Item, FOutputDevice &Out
 		appQsort( Results, NumResults, sizeof(UClass*), ClassSortCompare );
 
 		// Return the results.
-		for( INT i=0; i<NumResults; i++ )
+		for( INT_UNREAL_32S i=0; i<NumResults; i++ )
 		{
 			// See if this item has children.
-			INT Children = 0;
+			INT_UNREAL_32S Children = 0;
 			for( TObjectIterator<UClass> It; It; ++It )
 				if( It->GetSuperClass()==Results[i] )
 					Children++;
@@ -608,7 +609,7 @@ void ActorTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 
 	// Summarize the level actors.
 	int		 n			= 0;
-	INT	    AnyClass	= 0;
+	INT_UNREAL_32S	    AnyClass	= 0;
 	UClass*	AllClass	= NULL;
 	for( int i=0; i<Level->Num(); i++ )
 	{
@@ -648,7 +649,7 @@ void LevTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 {
 	guard(LevTopicHandler::Get);
 
-	INT ItemNum = appAtoi( Item );
+	INT_UNREAL_32S ItemNum = appAtoi( Item );
 	if( ItemNum>=0 && ItemNum<ULevel::NUM_LEVEL_TEXT_BLOCKS && Level->TextBlocks[ItemNum] )
 		Out.Log( *Level->TextBlocks[ItemNum]->Text );
 	unguard;
@@ -686,7 +687,7 @@ void MeshTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 	else if( !appStrnicmp(Item,"ANIMSEQ",7) )
 	{
 		UMesh *Mesh;
-		INT   SeqNum;
+		INT_UNREAL_32S   SeqNum;
 		if( ParseObject<UMesh>(Item,"NAME=",Mesh,ANY_PACKAGE) &&
 			(Parse(Item,"NUM=",SeqNum)) )
 		{
@@ -820,7 +821,7 @@ EDITOR_API const char* ImportProperties
 		if( Property->Port() && appStricmp(Property->GetName(),"Zone")!=0 )//oldver
 		{
 			char LookFor[80];
-			for( INT j=0; j<Property->ArrayDim; j++ )
+			for( INT_UNREAL_32S j=0; j<Property->ArrayDim; j++ )
 			{
 				BYTE* Value = (BYTE*)Object + Property->Offset + j*Property->GetElementSize();
 
@@ -842,7 +843,7 @@ EDITOR_API const char* ImportProperties
 						if( Parse( PropText, LookFor, TempTag, NAME_SIZE ) )
 						{
 							// Map tag to enum index.
-							INT iEnum;
+							INT_UNREAL_32S iEnum;
 							if( ByteProperty->Enum->Names.FindItem( TempTag, iEnum ) )
 								*(BYTE*)Value = iEnum;
 						}
@@ -850,7 +851,7 @@ EDITOR_API const char* ImportProperties
 				}
 				else if( Property->GetClass()==UIntProperty::StaticClass )
 				{
-					Parse( PropText, LookFor, *(INT *)Value );
+					Parse( PropText, LookFor, *(INT_UNREAL_32S *)Value );
 				}
 				else if( BoolProperty )
 				{

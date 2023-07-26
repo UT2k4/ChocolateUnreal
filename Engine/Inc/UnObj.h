@@ -21,8 +21,8 @@
 	typedef TDataType BaseDataType;\
 	enum {StaticRecordSize = sizeof(BaseDataType)};\
 	\
-	INT Num() const { return GetNum(); } \
-	INT Max() const { return GetMax(); } \
+	INT_UNREAL_32S Num() const { return GetNum(); } \
+	INT_UNREAL_32S Max() const { return GetMax(); } \
 	/* Return the type-safe ith element of a database object */\
 	BaseDataType& Element( int i )\
 	{ \
@@ -35,31 +35,31 @@
 		return ((BaseDataType *)GetData())[i]; \
 	} \
 	/* An a new item */ \
-	INT AddItem( BaseDataType Item ) \
+	INT_UNREAL_32S AddItem( BaseDataType Item ) \
 	{ \
-		INT Index = Add(1); \
+		INT_UNREAL_32S Index = Add(1); \
 		Element(Index) = Item; \
 		return Index; \
 	} \
 	/* Remove an item if it exists */ \
 	void RemoveItem( BaseDataType Item ) \
 	{ \
-		for( INT i=Num()-1; i>=0; i-- ) \
+		for( INT_UNREAL_32S i=Num()-1; i>=0; i-- ) \
 			if( appMemcmp( &Element(i), &Item, sizeof(BaseDataType) )==0 ) \
 				Remove( i ); \
 	} \
 	/* Find an item and return 1 if found, 0 if not */ \
-	INT FindItem( BaseDataType Item, INT& Result ) const \
+	INT_UNREAL_32S FindItem( BaseDataType Item, INT_UNREAL_32S& Result ) const \
 	{ \
-		for( INT i=0; i<Num(); i++ ) \
+		for( INT_UNREAL_32S i=0; i<Num(); i++ ) \
 			if( appMemcmp( &Element(i), &Item, sizeof(BaseDataType) )==0 ) \
 				{ Result = i; return 1; } \
 		return 0; \
 	} \
 	/* Add an item if it's not a duplicate of an existing item */ \
-	INT AddUniqueItem( BaseDataType Item ) \
+	INT_UNREAL_32S AddUniqueItem( BaseDataType Item ) \
 	{ \
-		for( INT i=0; i<Num(); i++ ) \
+		for( INT_UNREAL_32S i=0; i<Num(); i++ ) \
 			if( appMemcmp( &Element(i), &Item, sizeof(BaseDataType) )==0 ) \
 				return i; \
 		return AddItem( Item ); \
@@ -74,7 +74,7 @@
 	/* Automatic data serializer. */ \
 	void ClassName::SerializeData(FArchive &Ar) \
 	{ \
-		INT i=-1; \
+		INT_UNREAL_32S i=-1; \
 		guard(ClassName::SerializeData); \
 		if( sizeof(BaseDataType)==1 ) Ar.Serialize(&Element(0),Num()); \
 		else for( i=0; i<Num(); i++ ) Ar << Element(i); \
@@ -121,7 +121,7 @@ class ENGINE_API UDatabase : public UObject
 	// Variables.
 private:
 	void* Data;
-	INT DbNum, DbMax;
+	INT_UNREAL_32S DbNum, DbMax;
 public:
 
 	// UObject interface.
@@ -132,35 +132,35 @@ public:
 	virtual void SerializeData( FArchive& Ar )=0;
 	virtual void Empty();
 	virtual void Shrink();
-	virtual INT Add( INT NumToAdd=1 );
-	virtual void Remove( INT Index, INT Count=1 );
+	virtual INT_UNREAL_32S Add( INT_UNREAL_32S NumToAdd=1 );
+	virtual void Remove( INT_UNREAL_32S Index, INT_UNREAL_32S Count=1 );
 	virtual void* Realloc();
 	virtual void ModifyAllItems();
 
 	// UDatabase accessors.
-	void ModifyItem( INT i )
+	void ModifyItem( INT_UNREAL_32S i )
 	{
 		check(i>=0 && i<GetMax());
 		if( GUndo && (GetFlags() & RF_Transactional) )
 			GUndo->NoteSingleChange( this, i );
 	}
-	virtual UBOOL IsValidIndex( INT i )
+	virtual UBOOL IsValidIndex( INT_UNREAL_32S i )
 	{
 		return i>=0 && i<DbNum;
 	}
-	INT GetNum() const
+	INT_UNREAL_32S GetNum() const
 	{
 		return DbNum;
 	}
-	INT GetMax() const
+	INT_UNREAL_32S GetMax() const
 	{
 		return DbMax;
 	}
-	void SetNum( INT NewNum )
+	void SetNum( INT_UNREAL_32S NewNum )
 	{
 		DbNum = NewNum;
 	}
-	void SetMax( INT NewMax )
+	void SetMax( INT_UNREAL_32S NewMax )
 	{
 		DbMax = NewMax;
 	}
@@ -207,7 +207,7 @@ struct ENGINE_API FPointRegion
 {
 	// Variables.
 	class AZoneInfo* Zone;			// Zone actor.
-	INT				 iLeaf;			// Bsp leaf.
+	INT_UNREAL_32S				 iLeaf;			// Bsp leaf.
 	BYTE             ZoneNumber;	// Zone number.
 
 	// Constructors.
@@ -216,7 +216,7 @@ struct ENGINE_API FPointRegion
 	FPointRegion( class AZoneInfo* InLevel )
 	:	Zone(InLevel), iLeaf(INDEX_NONE), ZoneNumber(0)
 	{}
-	FPointRegion( class AZoneInfo* InZone, INT InLeaf, BYTE InZoneNumber )
+	FPointRegion( class AZoneInfo* InZone, INT_UNREAL_32S InLeaf, BYTE InZoneNumber )
 	:	Zone(InZone), iLeaf(InLeaf), ZoneNumber(InZoneNumber)
 	{}
 };
@@ -244,36 +244,36 @@ public:
 	// Persistent information.
 	FPlane			Plane;			// 16 Plane the node falls into (X, Y, Z, W).
 	QWORD			ZoneMask;		// 8  Bit mask for all zones at or below this node (up to 64).
-	INT				iVertPool;		// 4  Index of first vertex in vertex pool, =iTerrain if NumVertices==0 and NF_TerrainFront.
-	INT				iSurf;			// 4  Index to surface information.
+	INT_UNREAL_32S				iVertPool;		// 4  Index of first vertex in vertex pool, =iTerrain if NumVertices==0 and NF_TerrainFront.
+	INT_UNREAL_32S				iSurf;			// 4  Index to surface information.
 	union
 	{
 		struct
 		{
-			INT		iBack;			// 4  Index to node in front (in direction of Normal).
-			INT		iFront;			// 4  Index to node in back  (opposite direction as Normal).
-			INT		iPlane;			// 4  Index to next coplanar poly in coplanar list.
+			INT_UNREAL_32S		iBack;			// 4  Index to node in front (in direction of Normal).
+			INT_UNREAL_32S		iFront;			// 4  Index to node in back  (opposite direction as Normal).
+			INT_UNREAL_32S		iPlane;			// 4  Index to next coplanar poly in coplanar list.
 		};
 		struct
 		{
-			INT		iChild[3];		// 12 Index representation of children.
+			INT_UNREAL_32S		iChild[3];		// 12 Index representation of children.
 		};
 	};
-	INT				iCollisionBound;// 4  Collision bound.
-	INT				iRenderBound;	// 4  Rendering bound.
+	INT_UNREAL_32S				iCollisionBound;// 4  Collision bound.
+	INT_UNREAL_32S				iRenderBound;	// 4  Rendering bound.
 	BYTE			iZone[2];		// 2  Visibility zone in 1=front, 0=back.
 	BYTE			NumVertices;	// 1  Number of vertices in node.
 	BYTE			NodeFlags;		// 1  Node flags.
 
 	// Valid in memory only.
-	INT				iLeaf[2];		// 4  Leaf in back and front, INDEX_NONE=not a leaf.
+	INT_UNREAL_32S				iLeaf[2];		// 4  Leaf in back and front, INDEX_NONE=not a leaf.
 
 	// Functions.
 	UBOOL IsCsg( DWORD ExtraFlags=0 ) const
 	{
 		return (NumVertices>0) && !(NodeFlags & (NF_IsNew | NF_NotCsg | ExtraFlags));
 	}
-	UBOOL ChildOutside( INT iChild, UBOOL Outside, DWORD ExtraFlags=0 ) const
+	UBOOL ChildOutside( INT_UNREAL_32S iChild, UBOOL Outside, DWORD ExtraFlags=0 ) const
 	{
 		return iChild ? (Outside || IsCsg(ExtraFlags)) : (Outside && !IsCsg(ExtraFlags));
 	}
@@ -329,7 +329,7 @@ class ENGINE_API UBspNodes : public UDatabase
 	enum {MAX_ZONES=64};				// Maximum zones in a Bsp, limited by QWORD bitmask size
 
 	// Variables.
-	INT				NumZones;
+	INT_UNREAL_32S				NumZones;
 	FZoneProperties	Zones[MAX_ZONES];
 
 	// Constructors.
@@ -341,7 +341,7 @@ class ENGINE_API UBspNodes : public UDatabase
 		guard(UBspNodes::Serialize);
 		UDatabase::Serialize(Ar);
 		Ar << AR_INDEX(NumZones);
-		for( INT i=0; i<NumZones; i++ )
+		for( INT_UNREAL_32S i=0; i<NumZones; i++ )
 			Ar << Zones[i];
 		unguardobj;
 	}
@@ -358,15 +358,15 @@ class FLeaf
 {
 public:
 	// Variables.
-	INT iZone;          // The zone this convex volume is in.
-	INT iPermeating;    // Lights permeating this volume considering shadowing.
-	INT iVolumetric;    // Volumetric lights hitting this region, no shadowing.
+	INT_UNREAL_32S iZone;          // The zone this convex volume is in.
+	INT_UNREAL_32S iPermeating;    // Lights permeating this volume considering shadowing.
+	INT_UNREAL_32S iVolumetric;    // Volumetric lights hitting this region, no shadowing.
 	QWORD VisibleZones; // Bit mask of visible zones from this convex volume.
 
 	// Functions.
 	FLeaf()
 	{}
-	FLeaf( INT iInZone, INT InPermeating, INT InVolumetric, QWORD InVisibleZones )
+	FLeaf( INT_UNREAL_32S iInZone, INT_UNREAL_32S InPermeating, INT_UNREAL_32S InVolumetric, QWORD InVisibleZones )
 	:	iZone(iInZone), iPermeating(InPermeating), iVolumetric(InVolumetric), VisibleZones(InVisibleZones)
 	{}
 	friend FArchive& operator<<( FArchive& Ar, FLeaf& L )
@@ -394,12 +394,12 @@ public:
 	// Persistent info.
 	UTexture*	Texture;	// 4 Texture map.
 	DWORD		PolyFlags;  // 4 Polygon flags.
-	INT			pBase;      // 4 Polygon & texture base point index (where U,V==0,0).
-	INT			vNormal;    // 4 Index to polygon normal.
-	INT			vTextureU;  // 4 Texture U-vector index.
-	INT			vTextureV;  // 4 Texture V-vector index.
-	INT			iLightMap;	// 4 Light mesh.
-	INT			iBrushPoly; // 4 Editor brush polygon index.
+	INT_UNREAL_32S			pBase;      // 4 Polygon & texture base point index (where U,V==0,0).
+	INT_UNREAL_32S			vNormal;    // 4 Index to polygon normal.
+	INT_UNREAL_32S			vTextureU;  // 4 Texture U-vector index.
+	INT_UNREAL_32S			vTextureV;  // 4 Texture V-vector index.
+	INT_UNREAL_32S			iLightMap;	// 4 Light mesh.
+	INT_UNREAL_32S			iBrushPoly; // 4 Editor brush polygon index.
 	SWORD		PanU;		// 2 U-Panning value.
 	SWORD		PanV;		// 2 V-Panning value.
 	ABrush*		Actor;		// 4 Brush actor owning this Bsp surface.
@@ -513,11 +513,11 @@ public:
 class ENGINE_API FLightMapIndex
 {
 public:
-	INT		DataOffset;
-	INT		iLightActors;
+	INT_UNREAL_32S		DataOffset;
+	INT_UNREAL_32S		iLightActors;
 	FVector Pan;
 	FLOAT	UScale, VScale;
-	INT     UClamp, VClamp;
+	INT_UNREAL_32S     UClamp, VClamp;
 	BYTE	UBits, VBits;
 	friend FArchive& operator<<( FArchive& Ar, FLightMapIndex& I )
 	{
@@ -527,7 +527,7 @@ public:
 		{
 			Ar << I.Pan.X << I.Pan.Y;
 			Ar << AR_INDEX(I.UClamp) << AR_INDEX(I.VClamp);
-			INT MeshSpacing;
+			INT_UNREAL_32S MeshSpacing;
 			Ar << MeshSpacing;
 			I.UScale = I.VScale = MeshSpacing;
 			Ar << I.iLightActors;
@@ -588,9 +588,9 @@ public:
 	ABrush*		Actor;			// Brush where this originated, or NULL.
 	UTexture*	Texture;		// Texture map.
 	FName		ItemName;		// Item name.
-	INT			NumVertices;	// Number of vertices.
-	INT			iLink;			// iBspSurf, or brush fpoly index of first identical polygon, or MAXWORD.
-	INT			iBrushPoly;		// Index of editor solid's polygon this originated from.
+	INT_UNREAL_32S			NumVertices;	// Number of vertices.
+	INT_UNREAL_32S			iLink;			// iBspSurf, or brush fpoly index of first identical polygon, or MAXWORD.
+	INT_UNREAL_32S			iBrushPoly;		// Index of editor solid's polygon this originated from.
 	SWORD		PanU,PanV;		// Texture panning values.
 
 	// Custom functions.
@@ -601,7 +601,7 @@ public:
 	int   Fix				();
 	int   CalcNormal		();
 	int   SplitWithPlane	(const FVector &Base,const FVector &Normal,FPoly *FrontPoly,FPoly *BackPoly,int VeryPrecise) const;
-	int   SplitWithNode		(const UModel *Model,INT iNode,FPoly *FrontPoly,FPoly *BackPoly,int VeryPrecise) const;
+	int   SplitWithNode		(const UModel *Model,INT_UNREAL_32S iNode,FPoly *FrontPoly,FPoly *BackPoly,int VeryPrecise) const;
 	int   SplitWithPlaneFast(const FPlane Plane,FPoly *FrontPoly,FPoly *BackPoly) const;
 	int   Split				(const FVector &Normal, const FVector &Base, int NoOverflow=0 );
 	int   RemoveColinears	();
@@ -683,8 +683,8 @@ class FVert
 {
 public:
 	// Variables.
-	INT 	pVertex;	// Index of vertex.
-	INT		iSide;		// If shared, index of unique side. Otherwise INDEX_NONE.
+	INT_UNREAL_32S 	pVertex;	// Index of vertex.
+	INT_UNREAL_32S		iSide;		// If shared, index of unique side. Otherwise INDEX_NONE.
 
 	// Functions.
 	friend FArchive& operator<< (FArchive &Ar, FVert &Vert)
@@ -705,7 +705,7 @@ class ENGINE_API UVerts : public UDatabase
 	DECLARE_DB_CLASS(UVerts,UDatabase,FVert)
 
 	// Variables.
-	INT NumSharedSides; // Number of unique iSideIndex's.
+	INT_UNREAL_32S NumSharedSides; // Number of unique iSideIndex's.
 
 	// Constructors.
 	UVerts() {}

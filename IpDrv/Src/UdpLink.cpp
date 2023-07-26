@@ -167,8 +167,8 @@ UBOOL AUdpLink::Tick( FLOAT DeltaTime, enum ELevelTick TickType )
 	{
 		char Buffer[512];
 		sockaddr_in FromAddr;
-		INT FromSize = sizeof(FromAddr);
-		INT Count = recvfrom( GetSocket(), Buffer, ARRAY_COUNT(Buffer)-1, 0, (sockaddr*)&FromAddr, &FromSize );
+		INT_UNREAL_32S FromSize = sizeof(FromAddr);
+		INT_UNREAL_32S Count = recvfrom( GetSocket(), Buffer, ARRAY_COUNT(Buffer)-1, 0, (sockaddr*)&FromAddr, &FromSize );
 		if( Count!=SOCKET_ERROR )
 		{
 			if( UdpMode==UDP_Text )

@@ -82,14 +82,14 @@ public:
 			void Preload( UObject* Object )
 			{
 				guard(FReader::Preload);
-				for( INT i=0; i<Owner.Records.Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<Owner.Records.Num(); i++ )
 					if( Owner.Records(i).Object==Object )
 						Owner.Records(i).Restore();
 				unguard;
 			}
 			FTransaction& Owner;
 			TArray<BYTE>& Bytes;
-			INT Offset;
+			INT_UNREAL_32S Offset;
 		};
 		class FWriter : public FArchive
 		{
@@ -100,21 +100,21 @@ public:
 			{
 				ArIsSaving = ArIsTrans = 1;
 			}
-			FArchive& Serialize( void* Data, INT Num )
+			FArchive& Serialize( void* Data, INT_UNREAL_32S Num )
 			{
-				INT Index = Bytes.Add(Num);
+				INT_UNREAL_32S Index = Bytes.Add(Num);
 				appMemcpy( &Bytes(Index), Data, Num );
 				return *this;
 			}
 			FArchive& operator<<( class FName& N )
 			{			
-				INT Index = Bytes.Add(sizeof(FName));
+				INT_UNREAL_32S Index = Bytes.Add(sizeof(FName));
 				*(FName*)&Bytes(Index) = N;
 				return *this;
 			}
 			FArchive& operator<<( class UObject*& Res )
 			{
-				INT Index = Bytes.Add(sizeof(UObject*));
+				INT_UNREAL_32S Index = Bytes.Add(sizeof(UObject*));
 				*(UObject**)&Bytes(Index) = Res;
 				return *this;
 			}
@@ -129,8 +129,9 @@ public:
 	{}
 	void Restore()
 	{
+		INT_UNREAL_32S i;
 		guard(FTransaction::Restore);
-		for( INT i=0; i<Records.Num(); i++ )
+		for( i=0; i<Records.Num(); i++ )
 			Records(i).Restore();
 		for( i=0; i<Records.Num(); i++ )
 			Records(i).Object->PostLoad();
@@ -186,8 +187,8 @@ static DWORD GConversions[CPT_MAX][CPT_MAX] =
 };
 #undef AC
 #undef TAC
-	INT DestType = Dest.IsVector() ? CPT_Vector : Dest.IsRotator() ? CPT_Rotation : Dest.Type;
-	INT SrcType  = Src .IsVector() ? CPT_Vector : Src .IsRotator() ? CPT_Rotation : Src.Type;
+	INT_UNREAL_32S DestType = Dest.IsVector() ? CPT_Vector : Dest.IsRotator() ? CPT_Rotation : Dest.Type;
+	INT_UNREAL_32S SrcType  = Src .IsVector() ? CPT_Vector : Src .IsRotator() ? CPT_Rotation : Src.Type;
 	return GConversions[DestType][SrcType];
 }
 
@@ -498,7 +499,7 @@ void FScriptCompiler::EmitChainUpdate( FNestInfo* Nest )
 	// If there's a chain address, plug in the current script offset.
 	if( Nest->iCodeChain != INDEX_NONE )
 	{
-		check((INT)Nest->iCodeChain+(INT)sizeof(_WORD)<=TopNode->Script.Num())
+		check((INT_UNREAL_32S)Nest->iCodeChain+(INT_UNREAL_32S)sizeof(_WORD)<=TopNode->Script.Num())
 		*(_WORD*)&TopNode->Script( Nest->iCodeChain ) = TopNode->Script.Num();
 		Nest->iCodeChain = INDEX_NONE;
 	}
@@ -508,7 +509,7 @@ void FScriptCompiler::EmitChainUpdate( FNestInfo* Nest )
 //
 // Emit a variable size, making sure it's within reason.
 //
-void FScriptCompiler::EmitSize( INT Size, const char* Tag )
+void FScriptCompiler::EmitSize( INT_UNREAL_32S Size, const char* Tag )
 {
 	guard(FScriptCompiler::EmitSize);
 
@@ -567,7 +568,7 @@ static const char* CppTags[96] =
 // function, we perform special logic that tries to evaluate Token in the 
 // context of that type. This is how we distinguish enum tags.
 //
-INT FScriptCompiler::GetToken( FToken& Token, const FPropertyBase* Hint, INT NoConsts )
+INT_UNREAL_32S FScriptCompiler::GetToken( FToken& Token, const FPropertyBase* Hint, INT_UNREAL_32S NoConsts )
 {
 	guard(FScriptCompiler::GetToken);
 	Token.TokenName	= NAME_None;
@@ -583,7 +584,7 @@ INT FScriptCompiler::GetToken( FToken& Token, const FPropertyBase* Hint, INT NoC
 	if( (c>='A' && c<='Z') || (c>='a' && c<='z') )
 	{
 		// Alphanumeric token.
-		INT Length=0;
+		INT_UNREAL_32S Length=0;
 		do
 		{
 			Token.Identifier[Length++] = c;
@@ -659,7 +660,7 @@ INT FScriptCompiler::GetToken( FToken& Token, const FPropertyBase* Hint, INT NoC
 		if( Hint && Hint->Type==CPT_Byte && Hint->Enum && Token.TokenName!=NAME_None && !NoConsts )
 		{
 			// Find index into the enumeration.
-			INT EnumIndex=INDEX_NONE;
+			INT_UNREAL_32S EnumIndex=INDEX_NONE;
 			if( Hint->Enum->Names.FindItem( Token.TokenName, EnumIndex ) )
 			{
 				Token.SetConstByte(Hint->Enum,EnumIndex);
@@ -829,7 +830,7 @@ INT FScriptCompiler::GetToken( FToken& Token, const FPropertyBase* Hint, INT NoC
 //
 // Get a raw token until we reach end of line.
 //
-INT FScriptCompiler::GetRawToken( FToken& Token )
+INT_UNREAL_32S FScriptCompiler::GetRawToken( FToken& Token )
 {
 	guard(FScriptCompiler::GetRawToken);
 
@@ -862,7 +863,7 @@ INT FScriptCompiler::GetRawToken( FToken& Token )
 //
 // Get an identifier token, return 1 if gotten, 0 if not.
 //
-INT FScriptCompiler::GetIdentifier( FToken& Token, INT NoConsts )
+INT_UNREAL_32S FScriptCompiler::GetIdentifier( FToken& Token, INT_UNREAL_32S NoConsts )
 {
 	guard(FScriptCompiler::GetIdentifier);
 
@@ -880,7 +881,7 @@ INT FScriptCompiler::GetIdentifier( FToken& Token, INT NoConsts )
 //
 // Get a symbol token, return 1 if gotten, 0 if not.
 //
-INT FScriptCompiler::GetSymbol( FToken& Token )
+INT_UNREAL_32S FScriptCompiler::GetSymbol( FToken& Token )
 {
 	guard(FScriptCompiler::GetSymbol);
 
@@ -898,7 +899,7 @@ INT FScriptCompiler::GetSymbol( FToken& Token )
 //
 // Get an integer constant, return 1 if gotten, 0 if not.
 //
-INT FScriptCompiler::GetConstInt( INT& Result, const char* Tag )
+INT_UNREAL_32S FScriptCompiler::GetConstInt( INT_UNREAL_32S& Result, const char* Tag )
 {
 	guard(FScriptCompiler::GetConstInt);
 
@@ -918,7 +919,7 @@ INT FScriptCompiler::GetConstInt( INT& Result, const char* Tag )
 //
 // Get a real number, return 1 if gotten, 0 if not.
 //
-INT FScriptCompiler::GetConstFloat( FLOAT& Result, const char* Tag )
+INT_UNREAL_32S FScriptCompiler::GetConstFloat( FLOAT& Result, const char* Tag )
 {
 	guard(FScriptCompiler::GetConstFloat);
 
@@ -939,7 +940,7 @@ INT FScriptCompiler::GetConstFloat( FLOAT& Result, const char* Tag )
 // Get a specific identifier and return 1 if gotten, 0 if not.
 // This is used primarily for checking for required symbols during compilation.
 //
-INT	FScriptCompiler::MatchIdentifier( const char* Match )
+INT_UNREAL_32S	FScriptCompiler::MatchIdentifier( const char* Match )
 {
 	guard(FScriptCompiler::MatchIdentifier);
 	FToken Token;
@@ -958,7 +959,7 @@ INT	FScriptCompiler::MatchIdentifier( const char* Match )
 //
 // Get a specific symbol and return 1 if gotten, 0 if not.
 //
-INT	FScriptCompiler::MatchSymbol( const char* Match )
+INT_UNREAL_32S	FScriptCompiler::MatchSymbol( const char* Match )
 {
 	guard(FScriptCompiler::MatchSymbol);
 	FToken Token;
@@ -977,7 +978,7 @@ INT	FScriptCompiler::MatchSymbol( const char* Match )
 //
 // Peek ahead and see if a symbol follows in the stream.
 //
-INT FScriptCompiler::PeekSymbol( const char* Match )
+INT_UNREAL_32S FScriptCompiler::PeekSymbol( const char* Match )
 {
 	guard(FScriptCompiler::PeekSymbol);
 
@@ -993,7 +994,7 @@ INT FScriptCompiler::PeekSymbol( const char* Match )
 //
 // Peek ahead and see if an identifier follows in the stream.
 //
-INT FScriptCompiler::PeekIdentifier( const char* Match )
+INT_UNREAL_32S FScriptCompiler::PeekIdentifier( const char* Match )
 {
 	guard(FScriptCompiler::PeekSymbol);
 
@@ -1174,7 +1175,7 @@ UEnum* FScriptCompiler::CompileEnum( UStruct* Scope )
 	FToken TagToken;
 	while( GetIdentifier(TagToken) )
 	{
-		INT iFound;
+		INT_UNREAL_32S iFound;
 		FName NewTag(TagToken.Identifier);
 		if( Enum->Names.FindItem(NewTag,iFound) )
 			appThrowf( "Duplicate enumeration tag %s", TagToken.Identifier );
@@ -1237,7 +1238,7 @@ UStruct* FScriptCompiler::CompileStruct( UStruct* Scope )
 	RequireSymbol( "{", "'struct'" );
 
 	// Parse all struct variables.
-	INT NumElements=0;
+	INT_UNREAL_32S NumElements=0;
 	FToken Token;
 	do
 	{
@@ -1394,8 +1395,8 @@ void FScriptCompiler::CodeSwitcheroo( FRetryPoint& LowRetry, FRetryPoint& HighRe
 {
 	guardSlow(FScriptCompiler::CodeSwitcheroo);
 	FMemMark Mark(GMem);
-	INT HighSize = TopNode->Script.Num() - HighRetry.CodeTop;
-	INT LowSize  = HighRetry.CodeTop   - LowRetry.CodeTop;
+	INT_UNREAL_32S HighSize = TopNode->Script.Num() - HighRetry.CodeTop;
+	INT_UNREAL_32S LowSize  = HighRetry.CodeTop   - LowRetry.CodeTop;
 
 	BYTE *Temp = new(GMem,HighSize)BYTE;
 	appMemcpy ( Temp,                                          &TopNode->Script(HighRetry.CodeTop),HighSize);
@@ -1521,7 +1522,7 @@ UBOOL FScriptCompiler::CompileFieldExpr
 	{
 		// Enum constant.
 		UEnum* Enum = CastChecked<UEnum>( Field );
-		INT EnumIndex = INDEX_NONE;
+		INT_UNREAL_32S EnumIndex = INDEX_NONE;
 		if( !GetToken(Token) )
 			appThrowf( "Missing enum tag after '%s'", Enum->GetName() );
 		else if( Token.TokenName==NAME_EnumCount )
@@ -1596,8 +1597,9 @@ UBOOL FScriptCompiler::CompileFieldExpr
 
 		// Parse the parameters.
 		FToken ParmToken[MAX_FUNC_PARMS];
-		INT Count=0;
-		for( TFieldIterator<UProperty> It(Function); It && (It->PropertyFlags&(CPF_Parm|CPF_ReturnParm))==CPF_Parm; ++It,++Count )
+		INT_UNREAL_32S Count=0;
+		TFieldIterator<UProperty> It(Function);
+		for( It; It && (It->PropertyFlags&(CPF_Parm|CPF_ReturnParm))==CPF_Parm; ++It,++Count )
 		{
 			// Get parameter.
 			FPropertyBase Parm = FPropertyBase( *It );
@@ -1619,7 +1621,7 @@ UBOOL FScriptCompiler::CompileFieldExpr
 				break;
 			}
 
-			INT Result = CompileExpr( Parm, NULL, &ParmToken[Count] );
+			INT_UNREAL_32S Result = CompileExpr( Parm, NULL, &ParmToken[Count] );
 			if( Result == -1 )
 			{
 				// Type mismatch.
@@ -1742,7 +1744,8 @@ int FScriptCompiler::ConversionCost
 			// The fewer classes traversed in this conversion, the better the quality.
 			check(Dest.Type==CPT_ObjectReference);
 			check(Dest.PropertyClass!=NULL);
-			for( UClass* Test=Source.PropertyClass; Test && Test!=Dest.PropertyClass; Test=Test->GetSuperClass() )
+			UClass* Test;
+			for(Test=Source.PropertyClass; Test && Test!=Dest.PropertyClass; Test=Test->GetSuperClass() )
 				Result++;
 			check(Test!=NULL);
 		}
@@ -1900,7 +1903,7 @@ UBOOL FScriptCompiler::CompileExpr
 	FPropertyBase	RequiredType,
 	const char*		ErrorTag,
 	FToken*			ResultToken,
-	INT				MaxPrecedence,
+	INT_UNREAL_32S				MaxPrecedence,
 	FPropertyBase*	HintType
 )
 {
@@ -2122,7 +2125,7 @@ UBOOL FScriptCompiler::CompileExpr
 	// See if the following character is an operator.
 	Test:
 	FToken OperToken;
-	INT Precedence=0, BestMatch=0, Matches=0, NumParms=3;
+	INT_UNREAL_32S Precedence=0, BestMatch=0, Matches=0, NumParms=3;
 	TArray<UFunction*>OperLinks;
 	UFunction* BestOperLink;
 	UBOOL IsPreOperator = Token.Type==CPT_None;
@@ -2132,7 +2135,7 @@ UBOOL FScriptCompiler::CompileExpr
 		if( OperToken.TokenName != NAME_None )
 		{
 			// Build a list of matching operators.
-			for( INT i=NestLevel-1; i>=1; i-- )
+			for( INT_UNREAL_32S i=NestLevel-1; i>=1; i-- )
 			{
 				for( TFieldIterator<UFunction> It(Nest[i].Node); It; ++It )
 				{
@@ -2143,7 +2146,7 @@ UBOOL FScriptCompiler::CompileExpr
 						// Add this operator to the list.
 						OperLinks.AddItem( *It );
 						Precedence = It->OperPrecedence;
-						NumParms   = Min(NumParms,(INT)It->NumParms);
+						NumParms   = Min(NumParms,(INT_UNREAL_32S)It->NumParms);
 					}
 				}
 			}
@@ -2168,11 +2171,11 @@ UBOOL FScriptCompiler::CompileExpr
 				BestOperLink = NULL;
 				//AddResultText("Oper %s:\r\n",OperLinks[0]->Node().Name());
 				UBOOL AnyLeftValid=0, AnyRightValid=0;
-				for( INT i=0; i<OperLinks.Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<OperLinks.Num(); i++ )
 				{
 					// See how good a match the first parm is.
 					UFunction*  Node      = OperLinks(i);
-					INT			ThisMatch = 0;
+					INT_UNREAL_32S			ThisMatch = 0;
 					TFieldIterator<UProperty> It(Node);
 
 					if( Node->NumParms==3 || !IsPreOperator )
@@ -2180,7 +2183,7 @@ UBOOL FScriptCompiler::CompileExpr
 						// Check match of first parm.
 						UProperty* Parm1 = *It; ++It;
 						//AddResultText("Left  (%s->%s): ",FName(Token.Type)(),FName(Parm1.Type)());
-						INT Cost         = ConversionCost(FPropertyBase(Parm1),Token);
+						INT_UNREAL_32S Cost         = ConversionCost(FPropertyBase(Parm1),Token);
 						ThisMatch        = Cost;
 						AnyLeftValid     = AnyLeftValid || Cost!=MAXINT;
 					}
@@ -2190,7 +2193,7 @@ UBOOL FScriptCompiler::CompileExpr
 						// Check match of second parm.
 						UProperty* Parm2 = *It; ++It;
 						//AddResultText("Right (%s->%s): ",FName(NewResultType.Type)(),FName(Parm2.Type)());
-						INT Cost         = ConversionCost(FPropertyBase(Parm2),NewResultType);
+						INT_UNREAL_32S Cost         = ConversionCost(FPropertyBase(Parm2),NewResultType);
 						ThisMatch        = Max(ThisMatch,Cost);
 						AnyRightValid    = AnyRightValid || Cost!=MAXINT;
 					}
@@ -2456,7 +2459,7 @@ void FScriptCompiler::CheckInScope( UObject* Obj )
 {
 	guard(FScriptCompiler::CheckInScope);
 	check(Obj);
-	//INT i;
+	//INT_UNREAL_32S i;
 	//if( !Class->PackageImports.FindItem( Obj->GetParent()->GetFName(), i ) )
 	//	appThrowf(" '%s' is not accessible to this script", Obj->GetFullName() );
 	unguard;
@@ -2496,7 +2499,7 @@ void FScriptCompiler::PushNest( ENestType NestType, FName ThisName, UStruct* InN
 	TopNest->LabelList		= NULL;
 
 	// Init fixups.
-	for( INT i=0; i<FIXUP_MAX; i++ )
+	for( INT_UNREAL_32S i=0; i<FIXUP_MAX; i++ )
 		TopNest->Fixups[i] = MAXWORD;
 
 	// Prevent overnesting.
@@ -2504,7 +2507,7 @@ void FScriptCompiler::PushNest( ENestType NestType, FName ThisName, UStruct* InN
 		appThrowf( "Maximum nesting limit exceeded" );
 
 	// Inherit info from stack node above us.
-	INT IsNewNode = NestType==NEST_Class || NestType==NEST_State || NestType==NEST_Function;
+	INT_UNREAL_32S IsNewNode = NestType==NEST_Class || NestType==NEST_State || NestType==NEST_Function;
 	if( NestLevel > 1 )
 	{
 		if( Pass == 1 )
@@ -2845,7 +2848,8 @@ void FScriptCompiler::PopNest( ENestType NestType, const char* Descr )
 			if( Fixup->Type == FIXUP_Label )
 			{
 				// Fixup a local label.
-				for( FLabelRecord* LabelRecord = TopNest->LabelList; LabelRecord; LabelRecord=LabelRecord->Next )
+				FLabelRecord* LabelRecord;
+				for(LabelRecord = TopNest->LabelList; LabelRecord; LabelRecord=LabelRecord->Next )
 				{
 					if( LabelRecord->Name == Fixup->Name )
 					{
@@ -2894,7 +2898,7 @@ void FScriptCompiler::PopNest( ENestType NestType, const char* Descr )
 // Find the highest-up nest info of a certain type.
 // Used (for example) for associating Break statements with their Loops.
 //
-INT FScriptCompiler::FindNest( ENestType NestType )
+INT_UNREAL_32S FScriptCompiler::FindNest( ENestType NestType )
 {
 	guard(FScriptCompiler::FindNest);
 	for( int i=NestLevel-1; i>0; i-- )
@@ -3444,7 +3448,7 @@ void FScriptCompiler::CompileAffector()
 //
 // Compile a declaration in Token. Returns 1 if compiled, 0 if not.
 //
-INT FScriptCompiler::CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon )
+INT_UNREAL_32S FScriptCompiler::CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon )
 {
 	guard(FScriptCompiler::CompileDeclaration);
 	if( Token.Matches(NAME_Class) && (TopNest->Allow & ALLOW_Class) )
@@ -3496,13 +3500,13 @@ INT FScriptCompiler::CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon )
 			{
 				// Get the class's GUID.
 				RequireSymbol( "(", "'Guid'" );
-					GetConstInt(*(INT*)&Class->ClassGuid.A);
+					GetConstInt(*(INT_UNREAL_32S*)&Class->ClassGuid.A);
 				RequireSymbol( ",", "'Guid'" );
-					GetConstInt(*(INT*)&Class->ClassGuid.B);
+					GetConstInt(*(INT_UNREAL_32S*)&Class->ClassGuid.B);
 				RequireSymbol( ",", "'Guid'" );
-					GetConstInt(*(INT*)&Class->ClassGuid.C);
+					GetConstInt(*(INT_UNREAL_32S*)&Class->ClassGuid.C);
 				RequireSymbol( ",", "'Guid'" );
-					GetConstInt(*(INT*)&Class->ClassGuid.D);
+					GetConstInt(*(INT_UNREAL_32S*)&Class->ClassGuid.D);
 				RequireSymbol( ")", "'Guid'" );
 			}
 			else if( Token.Matches(NAME_Transient) )
@@ -3902,7 +3906,7 @@ INT FScriptCompiler::CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon )
 		// a return value, and all parameters have the same type as the return value.
 		if( FuncInfo.FunctionFlags & FUNC_Operator )
 		{
-			INT n = TopFunction->NumParms;
+			INT_UNREAL_32S n = TopFunction->NumParms;
 			if( n != FuncInfo.ExpectParms )
 				appThrowf( "%s must have %i parameters", NestName, FuncInfo.ExpectParms-1 );
 
@@ -3934,7 +3938,7 @@ INT FScriptCompiler::CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon )
 		// Verify parameter list and return type compatibility within the 
 		// function, if any, that it overrides.
 		//!!tfieldit
-		for( INT i=NestLevel-2; i>=1; i-- )
+		for( INT_UNREAL_32S i=NestLevel-2; i>=1; i-- )
 		{
 			for( TFieldIterator<UFunction> Function(Nest[i].Node); Function; ++Function )
 			{
@@ -3955,7 +3959,7 @@ INT FScriptCompiler::CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon )
 						appThrowf( "Redefinition of '%s %s' differs from original", NestName, FuncInfo.Function.Identifier );
 
 					// Check all individual parameters.
-					INT Count=0;
+					INT_UNREAL_32S Count=0;
 					for( TFieldIterator<UProperty> It1(TopFunction),It2(*Function); Count<Function->NumParms; ++It1,++It2,++Count )
 					{
 						if( !FPropertyBase(*It1).MatchesType(FPropertyBase(*It2), 1) )
@@ -4188,7 +4192,7 @@ INT FScriptCompiler::CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon )
 			||	IgnoreFunction.TokenName.GetIndex() <  NAME_PROBEMIN
 			||	IgnoreFunction.TokenName.GetIndex() >= NAME_PROBEMAX )
 			{
-				for( INT i=NestLevel-2; i>=1; i-- )
+				for( INT_UNREAL_32S i=NestLevel-2; i>=1; i-- )
 				{
 					for( TFieldIterator<UFunction> Function(Nest[i].Node); Function; ++Function )
 					{
@@ -4396,7 +4400,8 @@ void FScriptCompiler::CompileCommand( FToken& Token, UBOOL& NeedSemicolon )
 		// Only valid from within a function or operator.
 		guard(Return);
 		CheckAllow( "'Return'", ALLOW_Return );
-		for( INT i=NestLevel-1; i>0; i-- )
+		INT_UNREAL_32S i;
+		for( i=NestLevel-1; i>0; i-- )
 		{
 			if( Nest[i].NestType==NEST_Function )
 				break;
@@ -4505,7 +4510,7 @@ void FScriptCompiler::CompileCommand( FToken& Token, UBOOL& NeedSemicolon )
 		CheckAllow( "'Break'", ALLOW_Break );
 		
 		// Find the nearest For or Loop.
-		INT iNest = FindNest(NEST_Loop);
+		INT_UNREAL_32S iNest = FindNest(NEST_Loop);
 		iNest     = Max(iNest,FindNest(NEST_For    ));
 		iNest     = Max(iNest,FindNest(NEST_ForEach));
 		iNest     = Max(iNest,FindNest(NEST_Switch ));
@@ -4605,7 +4610,8 @@ void FScriptCompiler::CompileCommand( FToken& Token, UBOOL& NeedSemicolon )
 		else
 		{
 			// Get label list for this nest level.
-			for( INT iNest=NestLevel-1; iNest>=2; iNest-- )
+			INT_UNREAL_32S iNest;
+			for( iNest=NestLevel-1; iNest>=2; iNest-- )
 				if( Nest[iNest].NestType==NEST_State || Nest[iNest].NestType==NEST_Function || Nest[iNest].NestType==NEST_ForEach )
 					break;
 			if( iNest < 2 )
@@ -4675,7 +4681,8 @@ void FScriptCompiler::CompileCommand( FToken& Token, UBOOL& NeedSemicolon )
 		}
 
 		// Get label list for this nest level.
-		for( INT iNest=NestLevel-1; iNest>=2; iNest-- )
+		INT_UNREAL_32S iNest;
+		for( iNest=NestLevel-1; iNest>=2; iNest-- )
 			if( Nest[iNest].NestType==NEST_State || Nest[iNest].NestType==NEST_Function || Nest[iNest].NestType==NEST_ForEach )
 				break;
 		if( iNest < 2 )
@@ -4762,7 +4769,7 @@ void FScriptCompiler::CompileStatements()
 {
 	guard(FScriptCompiler::CompileStatements);
 
-	INT OriginalNestLevel = NestLevel;
+	INT_UNREAL_32S OriginalNestLevel = NestLevel;
 	do CompileStatement();
 	while( NestLevel > OriginalNestLevel );
 
@@ -4853,7 +4860,7 @@ void FScriptCompiler::CompileSecondPass( UStruct* Node )
 	guard(FScriptCompiler::CompileSecondPass);
 
 	// Restore code pointer to where it was saved in the parsing pass.
-	INT StartNestLevel = NestLevel;
+	INT_UNREAL_32S StartNestLevel = NestLevel;
 
 	// Push this new nesting level.
 	ENestType NewNest=NEST_None;
@@ -5001,7 +5008,7 @@ void FScriptCompiler::CompileSecondPass( UStruct* Node )
 			{
 				// Emit parm size into code stream.
 				UProperty* Property = *It;
-				INT Size = Property->GetSize();
+				INT_UNREAL_32S Size = Property->GetSize();
 				TFieldIterator<UProperty> Next(It);
 				++Next;
 				if( Next && (Next->PropertyFlags&(CPF_Parm|CPF_ReturnParm))==CPF_Parm )
@@ -5082,7 +5089,7 @@ UBOOL FScriptCompiler::CompileScript
 	UClass*		InClass,
 	FMemStack*	InMem,
 	UBOOL		InBooting,
-	INT			InPass
+	INT_UNREAL_32S			InPass
 )
 {
 	guard(FScriptCompiler::CompileScript);
@@ -5407,7 +5414,7 @@ UBOOL UEditorEngine::MakeScripts( UBOOL MakeAll, UBOOL Booting )
 		// If this class has unparsed dependencies, mark it uncompiled.
 		if( It->ScriptText )
 		{
-			for( INT i=1; i<It->Dependencies.Num(); i++ )
+			for( INT_UNREAL_32S i=1; i<It->Dependencies.Num(); i++ )
 			{
 				if( !(It->Dependencies(i).Class->ClassFlags & CLASS_Parsed) )
 				{
@@ -5516,7 +5523,7 @@ int UEditorEngine::CheckScripts( UClass *Class, FOutputDevice &Out )
 	}
 
 	// Check all dependencies.
-	for( INT i=0; i<Class->Dependencies.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Class->Dependencies.Num(); i++ )
 	{
 		if( !Class->Dependencies(i).IsUpToDate() )
 		{

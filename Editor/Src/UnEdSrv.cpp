@@ -180,7 +180,7 @@ UBOOL UEditorEngine::SafeExec( const char* InStr, FOutputDevice* Out )
 			// Mesh texture mapping.
 			UMesh *Mesh;
 			UTexture *Texture;
-			INT Num;
+			INT_UNREAL_32S Num;
 			if
 			(	ParseObject<UMesh>( Str, "MESHMAP=", Mesh, ANY_PACKAGE )
 			&&	ParseObject<UTexture>( Str, "TEXTURE=", Texture, ANY_PACKAGE )
@@ -315,7 +315,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 	UBOOL Processed=0;
 
 	_WORD	 		Word1,Word2,Word4;
-	INT				Index1;
+	INT_UNREAL_32S				Index1;
 	char	 		TempStr[256],TempFname[256],TempName[256],Temp[256];
 
 	if( appStrlen(Stream)<200 )
@@ -478,7 +478,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 		{
 			Trans->Begin(Level,"Brush Add");
 			FinishAllSnaps(Level);
-			INT DWord1=0;
+			INT_UNREAL_32S DWord1=0;
 			Parse( Str, "FLAGS=", DWord1 );
 			Level->Modify();
 			ABrush* NewBrush = csgAddOperation( Level->Brush(), Level, DWord1, CSG_Add );
@@ -616,7 +616,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 				if( Flags )
 					for( Word2=0; Word2<TempModel->Polys->Num(); Word2++ )
 						Brush->Polys->Element(Word2).PolyFlags |= Flags;
-				for( INT i=0; i<Brush->Polys->Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<Brush->Polys->Num(); i++ )
 					Brush->Polys->Element(i).iLink = i;
 				if( Merge )
 				{
@@ -973,9 +973,10 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 				if( Level->Model->Vectors ) Level->Model->Vectors->SetFlags( RF_Transactional );
 				if( Level->Model->Points ) Level->Model->Points->SetFlags( RF_Transactional );
 				if( Level->Model->Polys ) Level->Model->Polys->SetFlags( RF_Transactional );
+				INT_UNREAL_32S i;
 				for( TObjectIterator<AActor> It; It; ++It )
 				{
-					for( INT i=0; i<Level->Num(); i++ )
+					for( i=0; i<Level->Num(); i++ )
 						if( *It==Level->Actors(i) )
 							break;
 					if( i==Level->Num() )
@@ -1002,7 +1003,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			if( Parse(Str,"FILE=",TempFname,79) )
 			{
 				Level->ShrinkLevel();
-				for( INT i=0; i<Level->Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 					if( Cast<APlayerPawn>( Level->Element(i) ) )
 						Cast<APlayerPawn>( Level->Element(i) )->Song = NULL;
 				GSystem->BeginSlowTask( "Saving map", 1, 0 );
@@ -1063,8 +1064,8 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			Trans->Begin		(Level,"Set Brush Properties");
 			//
 			Word1  = 0;  // Properties mask
-			INT DWord1 = 0;  // Set flags
-			INT DWord2 = 0;  // Clear flags
+			INT_UNREAL_32S DWord1 = 0;  // Set flags
+			INT_UNREAL_32S DWord2 = 0;  // Clear flags
 			//
 			FName GroupName=NAME_None;
 			if (Parse(Str,"COLOR=",Word2))			Word1 |= MSB_BrushColor;
@@ -1157,7 +1158,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			Trans->Begin(Level,"Mirroring Actors");
 			FVector V( 1, 1, 1 );
 			GetFVECTOR( Str, V );
-			for( INT i=0; i<Level->Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 			{
 				ABrush* Actor=Cast<ABrush>(Level->Actors(i));
 				if( Actor && Actor->bSelected )
@@ -1337,7 +1338,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 				Location=Rotation=Scale=1;
 				ResetPivot();
 			}
-			for( INT i=0; i<Level->Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 			{
 				AActor* Actor=Level->Element(i);
 				if( Actor && Actor->bSelected )
@@ -1370,11 +1371,11 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 		}
 		else if( ParseCommand(&Str,"KEYFRAME") )
 		{
-			INT Num=0;
+			INT_UNREAL_32S Num=0;
 			Parse(Str,"NUM=",Num);
 			Trans->Begin( Level, "Set mover keyframe" );
 			Level->Modify();
-			for( INT i=0; i<Level->Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 			{
 				AMover* Mover=Cast<AMover>(Level->Element(i));
 				if( Mover && Mover->bSelected )
@@ -1501,8 +1502,8 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 					};
 				};
 			Word4  = 0;
-			INT DWord1 = 0;
-			INT DWord2 = 0;
+			INT_UNREAL_32S DWord1 = 0;
+			INT_UNREAL_32S DWord2 = 0;
 			if (Parse(Str,"SETFLAGS=",DWord1))   Word4=1;
 			if (Parse(Str,"CLEARFLAGS=",DWord2)) Word4=1;
 			if (Word4)  polySetAndClearPolyFlags (Level->Model,DWord1,DWord2,1,1); // Update selected polys' flags
@@ -1564,7 +1565,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			else if (ParseCommand (&Str,"ONETILE"))	TexAlign = TEXALIGN_OneTile;
 			else								goto Skip;
 			{
-				INT DWord1=0;
+				INT_UNREAL_32S DWord1=0;
 				Parse( Str, "TEXELS=", DWord1 );
 				Trans->Begin( Level, "Poly Texalign" );
 				Level->Model->Surfs->ModifySelected( 1 );
@@ -1592,7 +1593,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			FName GroupName=NAME_None;
 			FName PackageName;
 			UClass* TextureClass;
-			INT USize, VSize;
+			INT_UNREAL_32S USize, VSize;
 			if
 			(	Parse( Str, "NAME=",    TempName, NAME_SIZE )
 			&&	ParseObject<UClass>( Str, "CLASS=", TextureClass, ANY_PACKAGE )
@@ -1857,7 +1858,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			DWORD hWndParent=0;
 			Parse(Str,"HWND=",hWndParent);
 
-			INT NewX=Viewport->SizeX, NewY=Viewport->SizeY;
+			INT_UNREAL_32S NewX=Viewport->SizeX, NewY=Viewport->SizeY;
 			Parse( Str, "XR=", NewX ); if( NewX<0 ) NewX=0;
 			Parse( Str, "YR=", NewY ); if( NewY<0 ) NewY=0;
 			Viewport->Actor->FovAngle = FovAngle;
@@ -1896,8 +1897,8 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			}
 			if( DoOpen )
 			{
-				INT OpenX = INDEX_NONE;
-				INT OpenY = INDEX_NONE;
+				INT_UNREAL_32S OpenX = INDEX_NONE;
+				INT_UNREAL_32S OpenY = INDEX_NONE;
 				Parse( Str, "X=", OpenX );
 				Parse( Str, "Y=", OpenY );
 				Viewport->OpenWindow( hWndParent, 0, NewX, NewY, OpenX, OpenY );
@@ -1980,7 +1981,8 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 			}
 
 			// Find playerstart.
-			for( int i=0; i<Level->Num(); i++ )
+			int i;
+			for( i=0; i<Level->Num(); i++ )
 				if( Level->Actors(i) && Level->Actors(i)->IsA(APlayerStart::StaticClass) )
 					break;
 			if( i == Level->Num() )
@@ -2056,7 +2058,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 	{
 		for( int i=0; i<Level->Num(); i++ )
 			if( Level->Actors(i) )
-				Level->Actors(i)->SoundRadius = Clamp(4*(INT)Level->Actors(i)->SoundRadius,0,255);
+				Level->Actors(i)->SoundRadius = Clamp(4*(INT_UNREAL_32S)Level->Actors(i)->SoundRadius,0,255);
 	}
 	else if( ParseCommand(&Str,"MAYBEAUTOSAVE") )
 	{
@@ -2136,7 +2138,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 	{
 		FName FindName=NAME_None;
 		Parse( Str, "NAME=", FindName );
-		for( INT i=0; i<Level->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 			if( Level->Element(i) )
 				Level->Element(i)->bSelected = Level->Element(i)->GetFName()==FindName;
 	}
@@ -2165,7 +2167,7 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 						// Generate localizable class defaults.
 						for( TFieldIterator<UProperty> ItP(Class); ItP; ++ItP )
 							if( ItP->PropertyFlags & CPF_Localized )
-								for( INT i=0; i<ItP->ArrayDim; i++ )
+								for( INT_UNREAL_32S i=0; i<ItP->ArrayDim; i++ )
 									if( ItP->ExportText( i, Value, &Class->Defaults(0), Class->GetSuperClass() ? &Class->GetSuperClass()->Defaults(0) : NULL, 1 ) )
 										SetConfigString( Class->GetName(), ItP->GetName(), Value, Loc );
 					}
@@ -2174,9 +2176,9 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 						// Generate localizable object properties.
 						for( TFieldIterator<UProperty> ItP(It->GetClass()); ItP; ++ItP )
 							if( ItP->PropertyFlags & CPF_Localized )
-								for( INT i=0; i<ItP->ArrayDim; i++ )
+								for( INT_UNREAL_32S i=0; i<ItP->ArrayDim; i++ )
 									if( ItP->ExportText( i, Value, (BYTE*)*It, &It->GetClass()->Defaults(0), 1 ) )
-										for( INT i=0; i<ItP->ArrayDim; i++ )
+										for( INT_UNREAL_32S i=0; i<ItP->ArrayDim; i++ )
 											SetConfigString( It->GetName(), ItP->GetName(), Value, Loc );
 					}
 				}
@@ -2192,15 +2194,15 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 		ParseToken( Str, A, ARRAY_COUNT(A), 0 );
 		ParseToken( Str, B, ARRAY_COUNT(B), 0 );
 		ParseToken( Str, C, ARRAY_COUNT(C), 0 );
-		for( INT i=0; i<Client->Viewports.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 			Client->Viewports(i)->Actor->Location = FVector(appAtoi(A),appAtoi(B),appAtoi(C));
 		return 1;
 	}
 	else if( ParseCommand(&Str,"TESTME") )
 	{
 		/*
-		INT b=0,c=0,d=0;
-		for( INT i=0; i<Level->Model->LightMap.Num(); i++ )
+		INT_UNREAL_32S b=0,c=0,d=0;
+		for( INT_UNREAL_32S i=0; i<Level->Model->LightMap.Num(); i++ )
 		{
 			FLightMapIndex& Index=Level->Model->LightMap(i);
 			d+=Index.UClamp*Index.VClamp;
@@ -2213,8 +2215,8 @@ UBOOL UEditorEngine::Exec( const char* Stream, FOutputDevice* Out )
 		debugf( NAME_Log, "%i lightsurfs, %i surfs, %i elements, %f factor", b, Level->Model->Surfs->Num(), d, (FLOAT)c/(FLOAT)d );
 		*/
 		/*
-		INT a=0,b=0;
-		for( INT i=0; i<Level->Model->LightMap.Num(); i++ )
+		INT_UNREAL_32S a=0,b=0;
+		for( INT_UNREAL_32S i=0; i<Level->Model->LightMap.Num(); i++ )
 		{
 			FLightMapIndex& Index=Level->Model->LightMap(i);
 			a+=Max(Index.UClamp-2,2)*Max(Index.VClamp-2,2);

@@ -95,7 +95,7 @@ class FPropertyBase
 public:
 	// Variables.
 	EPropertyType Type;
-	INT ArrayDim;
+	INT_UNREAL_32S ArrayDim;
 	DWORD PropertyFlags;
 	union
 	{
@@ -103,7 +103,7 @@ public:
 		class UClass* PropertyClass;
 		class UStruct* Struct;
 		DWORD BitMask;
-		INT StringSize;
+		INT_UNREAL_32S StringSize;
 	};
 	UClass* MetaClass;
 
@@ -176,17 +176,17 @@ public:
 	}
 
 	// Functions.
-	INT GetSize() const
+	INT_UNREAL_32S GetSize() const
 	{
 		return GetElementSize() * ArrayDim;
 	}
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
-		static const INT ElementSizes[CPT_MAX] =
+		static const INT_UNREAL_32S ElementSizes[CPT_MAX] =
 		{
 			0,
 			sizeof(BYTE),
-			sizeof(INT),
+			sizeof(INT_UNREAL_32S),
 			sizeof(DWORD),
 			sizeof(FLOAT),
 			sizeof(UObject*),
@@ -311,7 +311,7 @@ public:
 	{
 		// TOKEN_Const values.
 		BYTE	Byte;								// If CPT_Byte.
-		INT		Int;								// If CPT_Int.
+		INT_UNREAL_32S		Int;								// If CPT_Int.
 		UBOOL	Bool;								// If CPT_Bool.
 		FLOAT	Float;								// If CPT_Float.
 		UObject* Object;							// If CPT_ObjectReference.
@@ -357,7 +357,7 @@ public:
 		check(TokenType==TOKEN_Const);
 		switch( NewType.Type )
 		{
-			case CPT_Int:		{INT        V(0);           if( GetConstInt     (V) ) SetConstInt     (V); break;}
+			case CPT_Int:		{INT_UNREAL_32S        V(0);           if( GetConstInt     (V) ) SetConstInt     (V); break;}
 			case CPT_Bool:		{UBOOL      V(0);           if( GetConstBool    (V) ) SetConstBool    (V); break;}
 			case CPT_Float:		{FLOAT      V(0.f);         if( GetConstFloat   (V) ) SetConstFloat   (V); break;}
 			case CPT_Name:		{FName      V(NAME_None);   if( GetConstName    (V) ) SetConstName    (V); break;}
@@ -414,7 +414,7 @@ public:
 		Byte			= InByte;
 		TokenType		= TOKEN_Const;
 	}
-	void SetConstInt( INT InInt )
+	void SetConstInt( INT_UNREAL_32S InInt )
 	{
 		(FPropertyBase&)*this = FPropertyBase(CPT_Int);
 		Int				= InInt;
@@ -485,14 +485,14 @@ public:
 			B = Int;
 			return 1;
 		}
-		else if( TokenType==TOKEN_Const && Type==CPT_Float && Float>=0 && Float<255 && Float==(INT)Float)
+		else if( TokenType==TOKEN_Const && Type==CPT_Float && Float>=0 && Float<255 && Float==(INT_UNREAL_32S)Float)
 		{
 			B = Float;
 			return 1;
 		}
 		else return 0;
 	}
-	int GetConstInt( INT &I )
+	int GetConstInt( INT_UNREAL_32S &I )
 	{
 		if     ( TokenType==TOKEN_Const && Type==CPT_Int )
 		{
@@ -504,7 +504,7 @@ public:
 			I = Byte;
 			return 1;
 		}
-		else if( TokenType==TOKEN_Const && Type==CPT_Float && Float==(INT)Float)
+		else if( TokenType==TOKEN_Const && Type==CPT_Float && Float==(INT_UNREAL_32S)Float)
 		{
 			I=Float;
 			return 1;
@@ -604,9 +604,9 @@ public:
 struct FRetryPoint
 {
 	const char* Input;
-	INT InputPos;
-	INT InputLine;
-	INT CodeTop;
+	INT_UNREAL_32S InputPos;
+	INT_UNREAL_32S InputLine;
+	INT_UNREAL_32S CodeTop;
 };
 
 /*-----------------------------------------------------------------------------
@@ -636,12 +636,12 @@ struct FNestFixupRequest
 {
 	// Variables.
 	EFixupType			Type;			// Type of fixup request.
-	INT					iCode;			// Address in script code to apply the fixup.
+	INT_UNREAL_32S					iCode;			// Address in script code to apply the fixup.
 	FName				Name;			// Label name, if FIXUP_Label.
 	FNestFixupRequest*	Next;			// Next fixup request in nest info's linked list.
 
 	// Constructor.
-	FNestFixupRequest( EFixupType InType, INT iInCode, FName InName, FNestFixupRequest *InNext )
+	FNestFixupRequest( EFixupType InType, INT_UNREAL_32S iInCode, FName InName, FNestFixupRequest *InNext )
 	:	Type	(InType)
 	,	iCode	(iInCode)
 	,	Name	(InName)
@@ -658,7 +658,7 @@ struct FLabelRecord : public FLabelEntry
 	FLabelRecord* Next; // Next label in the nest info's linked list of labels.
 
 	// Constructor.
-	FLabelRecord( FName InName, INT iInCode, FLabelRecord *InNext )
+	FLabelRecord( FName InName, INT_UNREAL_32S iInCode, FLabelRecord *InNext )
 	:	FLabelEntry		( InName, iInCode )
 	,	Next			( InNext )
 	{}
@@ -671,10 +671,10 @@ struct FFuncInfo
 {
 	// Variables;
 	FToken		Function;		// Name of the function or operator.
-	INT			Precedence;		// Binary operator precedence.
+	INT_UNREAL_32S			Precedence;		// Binary operator precedence.
 	DWORD		FunctionFlags;	// Function flags.
-	INT			iIntrinsic;		// Index of intrinsic function.
-	INT			ExpectParms;	// Number of parameters expected for operator.
+	INT_UNREAL_32S			iIntrinsic;		// Index of intrinsic function.
+	INT_UNREAL_32S			ExpectParms;	// Number of parameters expected for operator.
 
 	// Constructor.
 	FFuncInfo()
@@ -694,20 +694,20 @@ struct FNestInfo
 	// Information for all nesting levels.
 	UStruct*		Node;               // Link to the stack node.
 	ENestType		NestType;			// Statement that caused the nesting.
-	INT				Allow;				// Types of statements to allow at this nesting level.
+	INT_UNREAL_32S				Allow;				// Types of statements to allow at this nesting level.
 
 	// Information for nesting levels.
-	INT				Fixups[FIXUP_MAX];	// Fixup addresses for PopNest to use.
+	INT_UNREAL_32S				Fixups[FIXUP_MAX];	// Fixup addresses for PopNest to use.
 	FNestFixupRequest* FixupList;		// Pending fixup requests.
 	FLabelRecord*	LabelList;			// Linked list of labels.
-	INT				iCodeChain;			// Code index for next command, i.e. in strings of if/elseif/elseif...
+	INT_UNREAL_32S				iCodeChain;			// Code index for next command, i.e. in strings of if/elseif/elseif...
 
 	// Command specific info.
 	FToken			SwitchType;			// Type of Switch statement.
 	FRetryPoint		ForRetry;			// Retry point (used in For command).
 
 	// Set a fixup address.
-	void SetFixup( EFixupType Type, INT iCode )
+	void SetFixup( EFixupType Type, INT_UNREAL_32S iCode )
 	{
 		check(Fixups[Type]==MAXWORD);
 		Fixups[Type] = iCode;
@@ -753,22 +753,22 @@ public:
 	FScriptWriter	Writer;					// Script writer.
 	FMemStack*		Mem;					// Pool for temporary allocations.
 	const char*		Input;					// Input text.
-	INT				InputPos;				// Current position in text.
-	INT				InputLine;				// Current line in text.
-	INT				PrevPos;				// Position previous to last GetChar() call.
-	INT				PrevLine;				// Line previous to last GetChar() call.
-	INT				StatementsCompiled;		// Number of statements compiled.
-	INT				LinesCompiled;			// Total number of lines compiled.
-	INT				GotAffector;			// Got an expression that has a side effect?
-	INT				GotIterator;			// Got an iterator.
-	INT				AllowIterator;			// Allow iterators.
-	INT				Booting;				// Bootstrap compiling classes.
-	INT				Pass;					// Compilation pass.
-	INT				NestLevel;				// Current nest level, starts at 0.
+	INT_UNREAL_32S				InputPos;				// Current position in text.
+	INT_UNREAL_32S				InputLine;				// Current line in text.
+	INT_UNREAL_32S				PrevPos;				// Position previous to last GetChar() call.
+	INT_UNREAL_32S				PrevLine;				// Line previous to last GetChar() call.
+	INT_UNREAL_32S				StatementsCompiled;		// Number of statements compiled.
+	INT_UNREAL_32S				LinesCompiled;			// Total number of lines compiled.
+	INT_UNREAL_32S				GotAffector;			// Got an expression that has a side effect?
+	INT_UNREAL_32S				GotIterator;			// Got an iterator.
+	INT_UNREAL_32S				AllowIterator;			// Allow iterators.
+	INT_UNREAL_32S				Booting;				// Bootstrap compiling classes.
+	INT_UNREAL_32S				Pass;					// Compilation pass.
+	INT_UNREAL_32S				NestLevel;				// Current nest level, starts at 0.
 	FNestInfo*		TopNest;				// Top nesting level.
 	UStruct*		TopNode;				// Top stack node.
 	FNestInfo		Nest[MAX_NEST_LEVELS];	// Information about all nesting levels.
-	INT             OriginalPropertiesSize;	// Original intrinsic properties size before compile.
+	INT_UNREAL_32S             OriginalPropertiesSize;	// Original intrinsic properties size before compile.
 	UBOOL			ShowDep;				// Show dependencies when recompiling.
 
 	// Constructor.
@@ -780,14 +780,14 @@ public:
 	void			PostParse( UStruct* Node );
 
 	// High-level compiling functions.
-	INT				CompileScript( UClass* Class, FMemStack* Mem, UBOOL Booting, INT Pass );
-	INT				CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon );
+	INT_UNREAL_32S				CompileScript( UClass* Class, FMemStack* Mem, UBOOL Booting, INT_UNREAL_32S Pass );
+	INT_UNREAL_32S				CompileDeclaration( FToken& Token, UBOOL& NeedSemicolon );
 	void			CompileCommand( FToken& Token, UBOOL& NeedSemicolon );
-	INT				CompileStatement();
+	INT_UNREAL_32S				CompileStatement();
 	void			CompileStatements();
-	INT				CompileExpr( const FPropertyBase RequiredType, const char* ErrorTag=NULL, FToken* ResultType=NULL, INT MaxPrecedence=MAXINT, FPropertyBase* HintType=NULL );
+	INT_UNREAL_32S				CompileExpr( const FPropertyBase RequiredType, const char* ErrorTag=NULL, FToken* ResultType=NULL, INT_UNREAL_32S MaxPrecedence=MAXINT, FPropertyBase* HintType=NULL );
 	UBOOL			CompileFieldExpr( UStruct* Scope, FPropertyBase& RequiredType, FToken Token, FToken& ResultType, UBOOL IsSelf, UBOOL IsConcrete );
-	INT				CompileDynamicCast( FToken Token, FToken& ResultType );
+	INT_UNREAL_32S				CompileDynamicCast( FToken Token, FToken& ResultType );
 	void			CompileAssignment( const char* Tag );
 	void			CompileAffector();
 	void			CompileDirective();
@@ -797,16 +797,16 @@ public:
 	void			CompileConst( UStruct* Owner );
 
 	// High-level parsing functions.
-	INT				GetToken( FToken& Token, const FPropertyBase* Hint=NULL, INT NoConsts=0 );
-	INT				GetRawToken( FToken& Token );
+	INT_UNREAL_32S				GetToken( FToken& Token, const FPropertyBase* Hint=NULL, INT_UNREAL_32S NoConsts=0 );
+	INT_UNREAL_32S				GetRawToken( FToken& Token );
 	void			UngetToken( FToken& Token );
-	INT				GetIdentifier( FToken& Token, INT NoConsts=0 );
+	INT_UNREAL_32S				GetIdentifier( FToken& Token, INT_UNREAL_32S NoConsts=0 );
 	UClass*			GetQualifiedClass( const char* Thing );
 	UBOOL			GetSymbol( FToken& Token );
 	void			CheckAllow( const char* Thing, int AllowFlags );
 	void			CheckInScope( UObject* Obj );
 	UField*			FindField( UStruct* InScope, const char* InIdentifier, UClass* FieldClass=UField::StaticClass, const char* Thing=NULL );
-	INT				ConversionCost( const FPropertyBase& Dest, const FPropertyBase& Source );
+	INT_UNREAL_32S				ConversionCost( const FPropertyBase& Dest, const FPropertyBase& Source );
 	void			SkipStatements( int SubCount, const char* ErrorTag );
 	UBOOL			GetVarType( UStruct* Scope, FPropertyBase& VarProperty, DWORD& ObjectFlags, DWORD Disallow, const char* Thing );
 	UProperty*      GetVarNameAndDim( UStruct* Struct, FPropertyBase& VarProperty, DWORD ObjectFlags, UBOOL NoArrays, UBOOL IsFunction, const char* HardcodedName, const char* Thing, FName Category, UBOOL Skip );
@@ -817,22 +817,22 @@ public:
 	char			PeekChar();
 	char			GetLeadingChar();
 	void			UngetChar();
-	INT				IsEOL( char c );
+	INT_UNREAL_32S				IsEOL( char c );
 	void VARARGS	AddResultText( char* Fmt, ... );
-	INT				GetConstInt( int& Result, const char* Tag=NULL );
-	INT				GetConstFloat( FLOAT& Result, const char* Tag=NULL );
+	INT_UNREAL_32S				GetConstInt( int& Result, const char* Tag=NULL );
+	INT_UNREAL_32S				GetConstFloat( FLOAT& Result, const char* Tag=NULL );
 	const char*		FunctionNameCpp( UFunction* Function );
 
 	// Nest management functions.
 	void			PushNest( ENestType NestType, FName ThisName, UStruct* InNode );
 	void			PopNest( ENestType NestType, const char* Descr );
-	INT				FindNest( ENestType NestType );
+	INT_UNREAL_32S				FindNest( ENestType NestType );
 
 	// Matching predefined text.
-	INT				MatchIdentifier( const char* Match );
-	INT				MatchSymbol( const char* Match );
-	INT				PeekSymbol( const char* Match );
-	INT				PeekIdentifier( const char* Match );
+	INT_UNREAL_32S				MatchIdentifier( const char* Match );
+	INT_UNREAL_32S				MatchSymbol( const char* Match );
+	INT_UNREAL_32S				PeekSymbol( const char* Match );
+	INT_UNREAL_32S				PeekIdentifier( const char* Match );
 
 	// Requiring predefined text.
 	void			RequireIdentifier( const char* Match, const char* Tag );
@@ -860,7 +860,7 @@ public:
 
 inline FArchive& FScriptWriter::Serialize( void* V, int Length )
 {
-	INT iStart = Compiler.TopNode->Script.Add( Length );
+	INT_UNREAL_32S iStart = Compiler.TopNode->Script.Add( Length );
 	appMemcpy( &Compiler.TopNode->Script(iStart), V, Length );
 	return *this;
 }

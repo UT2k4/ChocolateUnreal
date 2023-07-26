@@ -72,11 +72,11 @@
 	void setPhysics(BYTE NewPhysics, AActor *NewFloor = NULL);
 	void FindBase();
 	virtual void performPhysics(FLOAT DeltaSeconds);
-	void physProjectile(FLOAT deltaTime, INT Iterations);
+	void physProjectile(FLOAT deltaTime, INT_UNREAL_32S Iterations);
 	void processHitWall(FVector HitNormal, AActor *HitActor);
-	void processLanded(FVector HitNormal, AActor *HitActor, FLOAT remainingTime, INT Iterations);
-	void physFalling(FLOAT deltaTime, INT Iterations);
-	void physRolling(FLOAT deltaTime, INT Iterations);
+	void processLanded(FVector HitNormal, AActor *HitActor, FLOAT remainingTime, INT_UNREAL_32S Iterations);
+	void physFalling(FLOAT deltaTime, INT_UNREAL_32S Iterations);
+	void physRolling(FLOAT deltaTime, INT_UNREAL_32S Iterations);
 	void physicsRotation(FLOAT deltaTime);
 	int fixedTurn(int current, int desired, int deltaRate); 
 	void TwoWallAdjust(FVector &DesiredDir, FVector &Delta, FVector &HitNormal, FVector &OldHitNormal, FLOAT HitTime);

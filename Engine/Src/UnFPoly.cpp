@@ -270,10 +270,10 @@ int FPoly::SplitWithPlane
 int FPoly::SplitWithNode
 (
 	const UModel	*Model,
-	INT				iNode,
+	INT_UNREAL_32S				iNode,
 	FPoly			*FrontPoly,
 	FPoly			*BackPoly,
-	INT				VeryPrecise
+	INT_UNREAL_32S				VeryPrecise
 ) const
 {
 	guard(FPoly::SplitWithNode);
@@ -302,13 +302,14 @@ int FPoly::SplitWithPlaneFast
 	FPoly*			BackPoly
 ) const
 {
+	int i;
 	guard(FPoly::SplitWithPlaneFast);
 
 	enum {V_FRONT=0,V_BACK=1} Status,PrevStatus,VertStatus[MAX_VERTICES],*StatusPtr;
 	int Front=0,Back=0;
 
 	StatusPtr = &VertStatus[0];
-	for( int i=0; i<NumVertices; i++ )
+	for( i=0; i<NumVertices; i++ )
 	{
 		FLOAT Dist = Plane.PlaneDot(Vertex[i]);
 		if( Dist >= 0.0 )

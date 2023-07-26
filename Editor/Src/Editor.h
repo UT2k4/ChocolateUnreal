@@ -128,8 +128,8 @@ struct HTextureView : public HHitProxy
 {
 	DECLARE_HIT_PROXY(HTextureView,HHitProxy)
 	UTexture* Texture;
-	INT ViewX, ViewY;
-	HTextureView( UTexture* InTexture, INT InX, INT InY ) : Texture(InTexture), ViewX(InX), ViewY(InY) {}
+	INT_UNREAL_32S ViewX, ViewY;
+	HTextureView( UTexture* InTexture, INT_UNREAL_32S InX, INT_UNREAL_32S InY ) : Texture(InTexture), ViewX(InX), ViewY(InY) {}
 	void Click( const FHitCause& Cause );
 };
 
@@ -171,7 +171,7 @@ struct HBackdrop : public HHitProxy
 	FScan.
 -----------------------------------------------------------------------------*/
 
-typedef void (*POLY_CALLBACK)( UModel* Model, INT iSurf );
+typedef void (*POLY_CALLBACK)( UModel* Model, INT_UNREAL_32S iSurf );
 
 /*-----------------------------------------------------------------------------
 	FConstraints.
@@ -233,8 +233,8 @@ class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 	class WObjectProperties* LevelProperties;
 	class WConfigProperties* Preferences;
 	class WProperties*       UseDest;
-	INT                      AutosaveCounter;
-	INT						 Pad[3];
+	INT_UNREAL_32S                      AutosaveCounter;
+	INT_UNREAL_32S						 Pad[3];
 
 	// Graphics.
 	UTexture *MenuUp, *MenuDn;
@@ -251,9 +251,9 @@ class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 	DWORD					Bootstrapping:1;
 
 	// Variables.
-	INT						AutoSaveIndex;
-	INT						AutoSaveCount;
-	INT						Mode;
+	INT_UNREAL_32S						AutoSaveIndex;
+	INT_UNREAL_32S						AutoSaveCount;
+	INT_UNREAL_32S						Mode;
 	DWORD					ClickFlags;
 	FLOAT					MovementSpeed;
 	UObject*				ParentContext;
@@ -325,7 +325,7 @@ class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 	UBOOL HookExec( const char* Cmd, FOutputDevice* Out=GSystem );
 	int Key( UViewport* Viewport, EInputKey Key );
 	void Tick( FLOAT DeltaSeconds );
-	void Draw( UViewport* Viewport, BYTE* HitData=NULL, INT* HitSize=NULL );
+	void Draw( UViewport* Viewport, BYTE* HitData=NULL, INT_UNREAL_32S* HitSize=NULL );
 	void MouseDelta( UViewport* Viewport, DWORD Buttons, FLOAT DX, FLOAT DY );
 	void MousePosition( UViewport* Viewport, DWORD Buttons, FLOAT X, FLOAT Y );
 	void Click( UViewport* Viewport, DWORD Buttons, FLOAT X, FLOAT Y );
@@ -345,7 +345,7 @@ class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 	virtual void UpdatePropertiesWindows();
 
 	// Editor mode virtuals from UnEdCam.cpp.
-	virtual void	edcamSetMode			(INT Mode);
+	virtual void	edcamSetMode			(INT_UNREAL_32S Mode);
 	virtual int		edcamMode				(UViewport *Viewport);
 
 	// Editor CSG virtuals from UnEdCsg.cpp.
@@ -356,12 +356,12 @@ class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 	virtual const char*	csgGetName 			(ECsgOper CsgOper);
 
 	// Editor EdPoly/BspSurf assocation virtuals from UnEdCsg.cpp.
-	virtual int		polyFindMaster			(UModel *Model, INT iSurf, FPoly &Poly);
-	virtual void    polyUpdateMaster		(UModel *Model, INT iSurf, int UpdateTexCoords, int UpdateBase);
+	virtual int		polyFindMaster			(UModel *Model, INT_UNREAL_32S iSurf, FPoly &Poly);
+	virtual void    polyUpdateMaster		(UModel *Model, INT_UNREAL_32S iSurf, int UpdateTexCoords, int UpdateBase);
 
 	// Bsp Poly search virtuals from UnEdCsg.cpp.
 	virtual void	polyFindByFlags 		(UModel *Model,DWORD SetBits, DWORD ClearBits, POLY_CALLBACK Callback);
-	virtual void	polyFindByBrush 		(UModel *Model,ABrush *Actor, INT BrushPoly, POLY_CALLBACK Callback);
+	virtual void	polyFindByBrush 		(UModel *Model,ABrush *Actor, INT_UNREAL_32S BrushPoly, POLY_CALLBACK Callback);
 	virtual void	polySetAndClearPolyFlags(UModel *Model,DWORD SetBits, DWORD ClearBits,int SelectedOnly,int UpdateMaster);
 
 	// Selection.
@@ -422,20 +422,20 @@ class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 #endif
 
 	// Bsp virtuals from UnBsp.cpp.
-	virtual void    bspRepartition      (UModel *Model, INT iNode, INT Simple);
-	virtual INT		bspAddVector		(UModel *Model, FVector *V, int Exact);
-	virtual INT		bspAddPoint			(UModel *Model, FVector *V, int Exact);
-	virtual int		bspNodeToFPoly		(UModel *Model, INT iNode, FPoly *EdPoly);
-	virtual void	bspBuild			(UModel *Model, enum EBspOptimization Opt, INT Balance, INT RebuildSimplePolys, INT iNode );
+	virtual void    bspRepartition      (UModel *Model, INT_UNREAL_32S iNode, INT_UNREAL_32S Simple);
+	virtual INT_UNREAL_32S		bspAddVector		(UModel *Model, FVector *V, int Exact);
+	virtual INT_UNREAL_32S		bspAddPoint			(UModel *Model, FVector *V, int Exact);
+	virtual int		bspNodeToFPoly		(UModel *Model, INT_UNREAL_32S iNode, FPoly *EdPoly);
+	virtual void	bspBuild			(UModel *Model, enum EBspOptimization Opt, INT_UNREAL_32S Balance, INT_UNREAL_32S RebuildSimplePolys, INT_UNREAL_32S iNode );
 	virtual void	bspRefresh			(UModel *Model,int NoRemapSurfs);
 	virtual void	bspCleanup 			(UModel *Model);
 	virtual void	bspBuildBounds		(UModel *Model);
-	virtual void	bspBuildFPolys		(UModel *Model,UBOOL SurfLinks,INT iNode);
+	virtual void	bspBuildFPolys		(UModel *Model,UBOOL SurfLinks,INT_UNREAL_32S iNode);
 	virtual void	bspMergeCoplanars	(UModel *Model, UBOOL RemapLinks, UBOOL MergeDisparateTextures);
 	virtual int		bspBrushCSG 		(ABrush *Actor, UModel *Model, DWORD PolyFlags, ECsgOper CSGOper,int RebuildBounds);
 	virtual void	bspOptGeom			(UModel *Model);
 	virtual void	bspValidateBrush	(UModel *Brush, int ForceValidate, int DoStatusUpdate);
-	virtual INT		bspAddNode			(UModel *Model, INT iParent, enum ENodePlace ENodePlace, DWORD NodeFlags, FPoly *EdPoly);
+	virtual INT_UNREAL_32S		bspAddNode			(UModel *Model, INT_UNREAL_32S iParent, enum ENodePlace ENodePlace, DWORD NodeFlags, FPoly *EdPoly);
 
 	// Shadow virtuals (UnShadow.cpp).
 	virtual void	shadowIlluminateBsp (ULevel *Level, int Selected);
@@ -464,7 +464,7 @@ class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 
 	// Editor rendering functions.
 	virtual void DrawFPoly( struct FSceneNode* Frame, FPoly *Poly, FPlane WireColor, DWORD LineFlags );
-	virtual void DrawGridSection( struct FSceneNode* Frame, INT ViewportLocX, INT ViewportSXR, INT ViewportGridY, FVector* A, FVector* B, FLOAT* AX, FLOAT* BX, INT AlphaCase );
+	virtual void DrawGridSection( struct FSceneNode* Frame, INT_UNREAL_32S ViewportLocX, INT_UNREAL_32S ViewportSXR, INT_UNREAL_32S ViewportGridY, FVector* A, FVector* B, FLOAT* AX, FLOAT* BX, INT_UNREAL_32S AlphaCase );
 	virtual void DrawWireBackground( struct FSceneNode* Frame );
 	virtual void DrawLevelBrushes( struct FSceneNode* Frame, UBOOL bStatic, UBOOL bDynamic, UBOOL bActive );
 	virtual void DrawLevelBrush( struct FSceneNode* Frame, ABrush* Actor, UBOOL bStatic, UBOOL bDynamic, UBOOL bActive );

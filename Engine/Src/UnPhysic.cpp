@@ -410,7 +410,7 @@ physWalking()
 
 */
 
-void APawn::physWalking(FLOAT deltaTime, INT Iterations)
+void APawn::physWalking(FLOAT deltaTime, INT_UNREAL_32S Iterations)
 {
 	guard(APawn::physWalking);
 
@@ -811,11 +811,11 @@ bounds acceleration and velocity, adds effects of friction and momentum
 // fixme - what is right for air turn rate - make it a pawn var?
 // e.g. Max(bFluid * airbraking, friction)
 */
-void APawn::calcVelocity(FVector AccelDir, FLOAT deltaTime, FLOAT maxSpeed, FLOAT friction, INT bFluid, INT bBrake, INT bBuoyant)
+void APawn::calcVelocity(FVector AccelDir, FLOAT deltaTime, FLOAT maxSpeed, FLOAT friction, INT_UNREAL_32S bFluid, INT_UNREAL_32S bBrake, INT_UNREAL_32S bBuoyant)
 {
 	guard(APawn::calcVelocity);
 	float effectiveFriction = ::Max((FLOAT)bFluid,friction); 
-	INT bWalkingPlayer = ( this->IsA(APlayerPawn::StaticClass) && bIsWalking ); 
+	INT_UNREAL_32S bWalkingPlayer = ( this->IsA(APlayerPawn::StaticClass) && bIsWalking ); 
 	if (bBrake && Acceleration.IsZero()) 
 	{
 		FVector OldVel = Velocity;
@@ -950,7 +950,7 @@ void AActor::processHitWall(FVector HitNormal, AActor *HitActor)
 }
 
 #pragma DISABLE_OPTIMIZATION 
-void AActor::processLanded(FVector HitNormal, AActor *HitActor, FLOAT remainingTime, INT Iterations)
+void AActor::processLanded(FVector HitNormal, AActor *HitActor, FLOAT remainingTime, INT_UNREAL_32S Iterations)
 {
 	guard(AActor::processLanded);
 
@@ -1035,7 +1035,7 @@ void AActor::processLanded(FVector HitNormal, AActor *HitActor, FLOAT remainingT
 }
 #pragma ENABLE_OPTIMIZATION 
 
-void AActor::physFalling(FLOAT deltaTime, INT Iterations)
+void AActor::physFalling(FLOAT deltaTime, INT_UNREAL_32S Iterations)
 {
 	guard(AActor::physFalling);
 
@@ -1225,7 +1225,7 @@ void AActor::physFalling(FLOAT deltaTime, INT Iterations)
 	unguard;
 }
 
-void APawn::startSwimming(FVector OldVelocity, FLOAT timeTick, FLOAT remainingTime, INT Iterations)
+void APawn::startSwimming(FVector OldVelocity, FLOAT timeTick, FLOAT remainingTime, INT_UNREAL_32S Iterations)
 {
 	guard(APawn::startSwimming);
 	//debugf("fell into water");
@@ -1258,7 +1258,7 @@ void APawn::startSwimming(FVector OldVelocity, FLOAT timeTick, FLOAT remainingTi
 	unguard;
 }
 
-void APawn::physFlying(FLOAT deltaTime, INT Iterations)
+void APawn::physFlying(FLOAT deltaTime, INT_UNREAL_32S Iterations)
 {
 	guard(APawn::physFlying);
 
@@ -1372,7 +1372,7 @@ void APawn::findWaterLine(FVector Start, FVector &End)
 	unguard;
 }
 
-void APawn::physSwimming(FLOAT deltaTime, INT Iterations)
+void APawn::physSwimming(FLOAT deltaTime, INT_UNREAL_32S Iterations)
 {
 	guard(APawn::physSwimming);
 
@@ -1463,7 +1463,7 @@ void APawn::physSwimming(FLOAT deltaTime, INT Iterations)
 
 /* PhysProjectile is tailored for projectiles 
 */
-void AActor::physProjectile(FLOAT deltaTime, INT Iterations)
+void AActor::physProjectile(FLOAT deltaTime, INT_UNREAL_32S Iterations)
 {
 	guard(AActor::physProjectile);
 
@@ -1530,7 +1530,7 @@ physRolling() - intended for non-pawns which are rolling or sliding along a floo
 
 */
 
-void AActor::physRolling(FLOAT deltaTime, INT Iterations)
+void AActor::physRolling(FLOAT deltaTime, INT_UNREAL_32S Iterations)
 {
 	guard(APawn::physRolling);
 	//bound acceleration
@@ -1714,7 +1714,7 @@ int APawn::findNewFloor(FVector OldLocation, FLOAT deltaTime, FLOAT remainingTim
 }
 
 //#pragma DISABLE_OPTIMIZATION
-void APawn::physSpider(FLOAT deltaTime, INT Iterations)
+void APawn::physSpider(FLOAT deltaTime, INT_UNREAL_32S Iterations)
 {
 	guard(APawn::physSpider);
 

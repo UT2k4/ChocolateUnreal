@@ -172,7 +172,7 @@ class CORE_API FTransactionTracker
 {
 public:
 	virtual void NoteObject( UObject* Res )=0;
-	virtual void NoteSingleChange( UObject* Res, INT Index )=0;
+	virtual void NoteSingleChange( UObject* Res, INT_UNREAL_32S Index )=0;
 	virtual void Reset( const char* Action )=0;
 	virtual void Begin( class ULevel* Level, const char* SessionName )=0;
 	virtual void End()=0;
@@ -225,7 +225,7 @@ public:
 class CORE_API FCompactIndex
 {
 public:
-	INT Value;
+	INT_UNREAL_32S Value;
 	CORE_API friend FArchive& operator<<( FArchive& Ar, FCompactIndex& I );
 };
 
@@ -240,9 +240,9 @@ public:
 	ULinkerLoad*	Linker;			// Pointer to the linker, if loaded.
 	UObject*		Parent;			// The parent package.
 	FGuid			Guid;			// Package identifier.
-	INT				FileSize;		// File size.
-	INT				ObjectBase;		// Net index of first object.
-	INT				NameBase;		// Net index of first name.
+	INT_UNREAL_32S				FileSize;		// File size.
+	INT_UNREAL_32S				ObjectBase;		// Net index of first object.
+	INT_UNREAL_32S				NameBase;		// Net index of first name.
 	DWORD			PackageFlags;	// Package flags.
 
 	// Functions.
@@ -257,15 +257,15 @@ class CORE_API FPackageMap : public TArray<FPackageInfo>
 {
 public:
 	// Functions.
-	INT NameToIndex( FName Name );
-	INT ObjectToIndex( UObject* Object );
-	FName IndexToName( INT Index );
-	UObject* IndexToObject( INT Index, UBOOL Load );
+	INT_UNREAL_32S NameToIndex( FName Name );
+	INT_UNREAL_32S ObjectToIndex( UObject* Object );
+	FName IndexToName(INT_UNREAL_32S Index );
+	UObject* IndexToObject(INT_UNREAL_32S Index, UBOOL Load );
 	void Init( UObject* Base );
 	void AddLinker( ULinkerLoad* Linker );
 	void Compute();
 private:
-	TArray<INT> NameIndices;
+	TArray<INT_UNREAL_32S> NameIndices;
 };
 
 //
@@ -424,7 +424,7 @@ public:
 	virtual UClass* LoadClass( UClass* BaseClass, UObject* InParent, const char* Name, const char* Filename, DWORD LoadFlags, FPackageMap* Sandbox );
 	virtual void BeginLoad();
 	virtual void EndLoad();
-	virtual void InitProperties( UClass* Class, BYTE* Data, INT DataCount, UClass* DefaultsClass, BYTE* Defaults, INT DefaultsCount );
+	virtual void InitProperties( UClass* Class, BYTE* Data, INT_UNREAL_32S DataCount, UClass* DefaultsClass, BYTE* Defaults, INT_UNREAL_32S DefaultsCount );
 	virtual void ResetLoaders( UObject* InParent );
 	virtual UObject* ConstructObject( UClass* Class, UObject* Parent=(UObject*)GObj.GetTransientPackage(), FName Name=NAME_None, DWORD SetFlags=0, UObject* Template=NULL );
 	virtual UObject* AllocateObject( UClass* Class, UObject* Parent=(UObject*)GObj.GetTransientPackage(), FName Name=NAME_None, DWORD SetFlags=0, UObject* Template=NULL );
@@ -432,9 +432,9 @@ public:
 	virtual ULinkerLoad* GetPackageLinker( UObject* InParent, const char* Filename, DWORD LoadFlags, FPackageMap* Sandbox, FGuid* CompatibleGuid );
 	virtual UObject* ImportObjectFromFile( UClass* Class, UObject* InParent, FName Name, const char* Filename, FFeedbackContext* Warn=GSystem );
 	virtual void ShutdownAfterError();
-	virtual UObject* GetIndexedObject( INT Index );
-	virtual void GlobalSetProperty( const char* Value, UClass* Class, UProperty* Property, INT Offset, UBOOL Immediate );
-	virtual void ExportProperties( UClass* ObjectClass, BYTE* Object, FOutputDevice* Out, INT Indent, UClass* DiffClass, BYTE* Diff );
+	virtual UObject* GetIndexedObject(INT_UNREAL_32S Index );
+	virtual void GlobalSetProperty( const char* Value, UClass* Class, UProperty* Property, INT_UNREAL_32S Offset, UBOOL Immediate );
+	virtual void ExportProperties( UClass* ObjectClass, BYTE* Object, FOutputDevice* Out, INT_UNREAL_32S Indent, UClass* DiffClass, BYTE* Diff );
 	virtual void ResetConfig( UClass* Class, const char* SrcFilename=NULL, const char* DestFilename=NULL );
 	virtual void GetRegistryObjects( TArray<FRegistryObjectInfo>& Results, UClass* Class, UClass* MetaClass, UBOOL ForceRefresh );
 	virtual void GetPreferences( TArray<FPreferencesInfo>& Results, const char* Category, UBOOL ForceRefresh );
@@ -444,30 +444,30 @@ public:
 	virtual UPackage* GetTransientPackage() {return TransientPackage;}
 	FName GetTempState() {return TempState;}//oldver
 	FName GetTempGroup() {return TempGroup;}//oldver
-	INT GetTempNum() {return TempNum;}//oldver
-	INT GetTempMax() {return TempMax;}//oldver
+	INT_UNREAL_32S GetTempNum() {return TempNum;}//oldver
+	INT_UNREAL_32S GetTempMax() {return TempMax;}//oldver
 
 private:
 	// Variables.
 	static UBOOL				Initialized;		// Whether initialized.
-	static INT					BeginLoadCount;		// Count for BeginLoad multiple loads.
+	static INT_UNREAL_32S					BeginLoadCount;		// Count for BeginLoad multiple loads.
 	static UObject*				ObjHash[4096];		// Object hash.
 	static UObject*				AutoRegister;		// Objects to automatically register.
 	static TArray<UObject*>		Root;				// Top of active object graph.
 	static TArray<UObject*>		Objects;			// List of all objects.
-	static TArray<INT>          Available;			// Available object indices.
+	static TArray<INT_UNREAL_32S>          Available;			// Available object indices.
 	static TArray<UObject*>		Loaders;			// Array of loaders.
 	static UPackage*			TransientPackage;	// Transient package.
 
 	// Temporary.
 	FName TempState, TempGroup; //oldver
-	INT TempNum, TempMax; //oldver
+	INT_UNREAL_32S TempNum, TempMax; //oldver
 
 	// Internal functions.
-	ULinkerLoad* GetLoader( INT i ) {return (ULinkerLoad*)Loaders(i);}
+	ULinkerLoad* GetLoader(INT_UNREAL_32S i ) {return (ULinkerLoad*)Loaders(i);}
 	FName MakeUniqueObjectName( UObject* Parent, UClass* Class );
 	void Register( UObject* InObject, FName InPackageName );
-	void AddObject( UObject* Res, INT Index );
+	void AddObject( UObject* Res, INT_UNREAL_32S Index );
 	void HashObject( UObject* Res );
 	void UnhashObject( UObject* Res );
 	UBOOL ResolveName( UObject*& ObjectParent, const char*& Name, UBOOL Create, UBOOL Throw );
@@ -496,7 +496,7 @@ class CORE_API UObject : public FUnknown
 
 private:
 	// Variables maintained by FObjectManager.
-	INT			    Index;			// Index of object into FObjectManager's Objects table.
+	INT_UNREAL_32S			    Index;			// Index of object into FObjectManager's Objects table.
 	UObject*		HashNext;		// Next object in this hash bin.
 	FMainFrame*		MainFrame;		// Main script execution stack.
 	ULinkerLoad*	Linker;			// Linker it came from, or NULL if none.
@@ -533,8 +533,8 @@ public:
 	virtual void ProcessState( FLOAT DeltaSeconds );
 	virtual UBOOL ProcessRemoteFunction( UFunction* Function, void* Parms, FFrame* Stack );
 	virtual void ProcessInternal( FFrame& Stack );
-	virtual INT ExportToFile( const char* Filename );
-	virtual INT MemUsage();
+	virtual INT_UNREAL_32S ExportToFile( const char* Filename );
+	virtual INT_UNREAL_32S MemUsage();
 	virtual void Modify();
 	virtual void Export( FOutputDevice& Out, const char* FileType, int Indent );
 	virtual void PostLoad();
@@ -542,7 +542,7 @@ public:
 	virtual void Serialize( FArchive& Ar );
 	virtual UBOOL IsPendingKill() {return 0;}
 	virtual EGotoState GotoState( FName State );
-	virtual INT GotoLabel( FName Label );
+	virtual INT_UNREAL_32S GotoLabel( FName Label );
 	virtual void InitExecution();
 	virtual void ShutdownAfterError();
 	virtual void PostEditChange();
@@ -558,7 +558,7 @@ public:
 	void ConditionalShutdownAfterError();
 	UBOOL IsA( UClass* Parent ) const;
 	UBOOL IsIn( UObject* SomeParent ) const;
-	void SetLinker( ULinkerLoad* L, INT I );
+	void SetLinker( ULinkerLoad* L, INT_UNREAL_32S I );
 	UBOOL IsProbing( FName ProbeName );
 	void Rename();
 	UField* FindField( FName InName, UBOOL Global=0 );
@@ -585,7 +585,7 @@ public:
 		// Note: Must be safe with class-default metaobjects.
 		return ((UObject*)Class)->GetName();
 	}
-	INT	GetHash() const
+	INT_UNREAL_32S	GetHash() const
 	{
 		return Name.GetIndex() & (ARRAY_COUNT(FObjectManager::ObjHash)-1);
 	}
@@ -617,7 +617,7 @@ public:
 	{
 		return Index;
 	}
-	INT GetLinkerIndex()
+	INT_UNREAL_32S GetLinkerIndex()
 	{
 		return LinkerIndex;
 	}
@@ -946,7 +946,7 @@ public:
 	}
 protected:
 	UClass* Class;
-	INT Index;
+	INT_UNREAL_32S Index;
 };
 
 //

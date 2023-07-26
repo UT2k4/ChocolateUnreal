@@ -18,16 +18,16 @@ class CORE_API FArchive
 {
 public:
 	// FArchive interface.
-	virtual FArchive& Serialize ( void* V, INT Length ) {return *this;}
+	virtual FArchive& Serialize ( void* V, INT_UNREAL_32S Length ) {return *this;}
 	virtual FArchive& operator<<( class FName& N      ) {return *this;}
 	virtual FArchive& operator<<( class UObject*& Res ) {return *this;}
 	virtual void Preload( UObject* Object ) {}
-	virtual INT MapName( FName* Name ) {return 0;}
-	virtual INT MapObject( UObject* Object ) {return 0;}
-	virtual void CountBytes( INT Count ) {}
+	virtual INT_UNREAL_32S MapName( FName* Name ) {return 0;}
+	virtual INT_UNREAL_32S MapObject( UObject* Object ) {return 0;}
+	virtual void CountBytes(INT_UNREAL_32S Count ) {}
 
 	// Hardcoded datatype routines that may not be overridden.
-	FArchive& ByteOrderSerialize( void* V, INT Length )
+	FArchive& ByteOrderSerialize( void* V, INT_UNREAL_32S Length )
 	{
 #if __INTEL__
 		Serialize( V, Length );
@@ -35,7 +35,7 @@ public:
 		if( ArIsLoading || ArIsSaving || ArIsNet )
 		{
 			// Transferring between memory and file, so flip the byte order.
-			for( INT i=Length-1; i>=0; i-- )
+			for( INT_UNREAL_32S i=Length-1; i>=0; i-- )
 				Serialize( (BYTE*)V + i, 1 );
 		}
 		else
@@ -48,7 +48,7 @@ public:
 	}
 
 	// Other serialization.
-	void String( char* S, INT MaxLength );
+	void String( char* S, INT_UNREAL_32S MaxLength );
 	void Printf( const char* Fmt, ... );
 
 	// Constructor.
@@ -64,23 +64,19 @@ public:
 	{}
 
 	// Status accessors.
-	INT Ver()			{return ArVer;}
+	INT_UNREAL_32S Ver()			{return ArVer;}
 	UBOOL IsLoading()	{return ArIsLoading;}
 	UBOOL IsSaving()	{return ArIsSaving;}
 	UBOOL IsTrans()	    {return ArIsTrans;}
 	UBOOL ForEdit()		{return ArForEdit;}
 	UBOOL ForClient()	{return ArForClient;}
 	UBOOL ForServer()	{return ArForServer;}
-	virtual INT Tell()	{return -1;}
+	virtual INT_UNREAL_32S Tell()	{return -1;}
 
 	// Friend archivers.
 	friend FArchive& operator<<( FArchive& Ar, BYTE& B )
 	{
 		return Ar.Serialize( &B, 1 );
-	}
-	friend FArchive& operator<<( FArchive& Ar, UBOOL& B )
-	{
-		return Ar.Serialize( &B, sizeof(UBOOL) );
 	}
 	friend FArchive& operator<<( FArchive& Ar, CHAR& C )
 	{
@@ -98,7 +94,7 @@ public:
 	{
 		return Ar.ByteOrderSerialize( &D, sizeof(D) );
 	}
-	friend FArchive& operator<<( FArchive& Ar, INT& I )
+	friend FArchive& operator<<( FArchive& Ar, INT_UNREAL_32S& I )
 	{
 		return Ar.ByteOrderSerialize( &I, sizeof(I) );
 	}

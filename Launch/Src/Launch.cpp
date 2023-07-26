@@ -22,7 +22,7 @@ extern "C" {char GPackage[64]="Launch";}
 //
 // Main window entry point.
 //
-INT WINAPI WinMain( HINSTANCE hInInstance, HINSTANCE hPrevInstance, char* InCmdLine, INT nCmdShow )
+INT_UNREAL_32S WINAPI WinMain( HINSTANCE hInInstance, HINSTANCE hPrevInstance, char* InCmdLine, INT_UNREAL_32S nCmdShow )
 {
 	// Remember instance.
 	GIsStarted = 1;

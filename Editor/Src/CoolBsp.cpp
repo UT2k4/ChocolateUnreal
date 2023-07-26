@@ -28,7 +28,7 @@ enum ESplitWindingFlags
 struct FClassify
 {
 	FLOAT Dist;
-	INT Flags;
+	INT_UNREAL_32S Flags;
 	FClassify( FPlane Cutter, FVector Vector, FLOAT Epsilon )
 	:	Dist	( Cutter.PlaneDot( Vector ) )
 	,	Flags	( Dist<-Epsilon ? SPW_Back : Dist>=Epsilon ? SPW_Front : 0 )
@@ -42,11 +42,11 @@ struct FWinding
 {
 	// Variables.
 	FPlane          Plane;
-	INT             iSurf;
+	INT_UNREAL_32S             iSurf;
 	TArray<FVector> Points;
 
 	// Constructor.
-	FWinding( FPlane InPlane, INT iInSurf )
+	FWinding( FPlane InPlane, INT_UNREAL_32S iInSurf )
 	:	Plane   ( InPlane )
 	,	iSurf	( iInSurf )
 	,	Points	()
@@ -128,7 +128,7 @@ struct FWinding
 	void Reverse()
 	{
 		guardSlow(FWinding::Reverse);
-		for( INT i=0; i<Points.Num()/2; i++ )
+		for( INT_UNREAL_32S i=0; i<Points.Num()/2; i++ )
 			Exchange( Points(i), Points(Points.Num()-i-1) );
 		unguardSlow;
 	}
@@ -141,7 +141,7 @@ struct FWinding
 //
 // Convert the BSP to windings.
 //
-void BspToWindings( UModel* Model, INT iNode, TArray<FWinding>& Windings )
+void BspToWindings( UModel* Model, INT_UNREAL_32S iNode, TArray<FWinding>& Windings )
 {
 	guard(BspToWindings);
 	FBspNode& Node = Model->Nodes->Element(iNode);
@@ -155,7 +155,7 @@ void BspToWindings( UModel* Model, INT iNode, TArray<FWinding>& Windings )
 		if( Node.NumVertices )
 		{
 			FWinding* Winding = new(Windings)FWinding(Node.Plane.Flip(),Node.iSurf);
-			for( INT i=Node.NumVertices-1; i>=0; i-- )
+			for( INT_UNREAL_32S i=Node.NumVertices-1; i>=0; i-- )
 				new(Winding->Points)FVector(Model->Points->Element(Model->Verts->Element(Node.iVertPool+i).pVertex));
 		}
 		iNode = Node.iPlane;
@@ -169,11 +169,11 @@ void BspToWindings( UModel* Model, INT iNode, TArray<FWinding>& Windings )
 void BrushPolysToWindings( UModel* Model, TArray<FWinding>& Windings )
 {
 	guard(BrushPolysToWindings);
-	for( INT i=0; i<Model->Polys->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Model->Polys->Num(); i++ )
 	{
 		FPoly&    Poly    = Model->Polys->Element(i);
 		FWinding* Winding = new(Windings)FWinding(Poly.Normal,INDEX_NONE);
-		for( INT i=0; i<Poly.NumVertices; i++ )
+		for( INT_UNREAL_32S i=0; i<Poly.NumVertices; i++ )
 			new(Winding->Points)FVector(Poly.Vertex[i]);
 	}
 	unguard;
@@ -188,7 +188,7 @@ void WindingsToBrushPolys( const TArray<FWinding>& Windings, UModel* Model )
 	Model->Polys->Empty();
 	for( TConstIterator<FWinding>ItW(Windings); ItW; ++ItW )
 	{
-		INT    Index     = Model->Polys->Add();
+		INT_UNREAL_32S    Index     = Model->Polys->Add();
 		FPoly& Poly      = Model->Polys->Element(Index);
 		Poly.Init();
 		Poly.Normal      = ItW->Plane;
@@ -241,7 +241,7 @@ void TimTim( ULevel* Level )
 	//BrushPolysToWindings( Level->Brush()->Brush, Windings );
 	//BspToWindings( Level->Model, 0, Windings );
 	//WindingsToBrushPolys( Windings, Level->Brush()->Brush );
-	/*INT Id=0,Count=0,i,j;
+	/*INT_UNREAL_32S Id=0,Count=0,i,j;
 	for( FStaticBrushIterator It1(Level); It1; ++It1 )
 	{
 		Count++;

@@ -31,9 +31,9 @@ class ENGINE_API UNetDriver : public USubsystem
 	FLOAT					SimulatedProxyTimeout;
 	FLOAT					SpawnPrioritySeconds;
 	FLOAT					ServerTravelPause;
-	INT						DefaultByteLimit;
-	INT						MaxClientByteLimit;
-	INT						MaxTicksPerSecond;
+	INT_UNREAL_32S						DefaultByteLimit;
+	INT_UNREAL_32S						MaxClientByteLimit;
+	INT_UNREAL_32S						MaxTicksPerSecond;
 	UBOOL					DuplicateClientMoves;
 
 	// Constructors.

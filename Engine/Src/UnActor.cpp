@@ -218,8 +218,10 @@ static UBOOL TouchTo( AActor* Actor, AActor* Other )
 	check(Other);
 	check(Actor!=Other);
 
-	INT Available=-1;
-	for( INT i=0; i<ARRAY_COUNT(Actor->Touching); i++ )
+	INT_UNREAL_32S i;
+	INT_UNREAL_32S Available=-1;
+
+	for( i=0; i<ARRAY_COUNT(Actor->Touching); i++ )
 	{
 		if( Actor->Touching[i] == NULL )
 		{
@@ -316,8 +318,10 @@ void AActor::EndTouch( AActor* Other, UBOOL NoNotifySelf )
 	guard(AActor::EndTouch);
 	check(Other!=this);
 
+	int i;
+
 	// Notify Actor.
-	for( int i=0; i<ARRAY_COUNT(Touching); i++ )
+	for( i=0; i<ARRAY_COUNT(Touching); i++ )
 	{
 		if( Touching[i] == Other )
 		{

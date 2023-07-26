@@ -39,18 +39,18 @@ class FSortedPathList
 {
 public:
 	AActor *Path[MAXSORTED];
-	INT Dist[MAXSORTED];
+	INT_UNREAL_32S Dist[MAXSORTED];
 	int numPoints;
 	int checkPos;
 
-	inline void addPath(AActor * node, INT dist);
+	inline void addPath(AActor * node, INT_UNREAL_32S dist);
 	inline void removePath(int p);
-	int findEndPoint(APawn *Searcher, INT &startanchor); 
+	int findEndPoint(APawn *Searcher, INT_UNREAL_32S &startanchor); 
 	int checkAnchorPath(APawn *Searcher, FVector Dest); 
 	void expandAnchor(APawn *Searcher); 
 	void findAltEndPoint(APawn *Searcher, AActor *&bestPath); 
-	void FindVisiblePaths(APawn *Searcher, FVector Dest, FSortedPathList *DestPoints, INT bClearPaths, 
-							INT &startanchor, INT &endanchor);
+	void FindVisiblePaths(APawn *Searcher, FVector Dest, FSortedPathList *DestPoints, INT_UNREAL_32S bClearPaths, 
+							INT_UNREAL_32S &startanchor, INT_UNREAL_32S &endanchor);
 
 };
 
@@ -107,24 +107,24 @@ private:
 	FPathMarker *pathMarkers;
 	ULevel * Level;
 	APawn * Scout;
-	INT	numMarkers;
+	INT_UNREAL_32S	numMarkers;
 	FLOAT humanRadius;
 	int optlevel;
 
 	int Prune(AActor *Node);
 	void CheckDoor(AActor *Node);
-	INT specFor(AActor* Start, AActor* End);
+	INT_UNREAL_32S specFor(AActor* Start, AActor* End);
 	int createPaths (int optimization);
 	void	newPath(FVector spot);
 	void getScout();
-	INT addMarker();
+	INT_UNREAL_32S addMarker();
 	int findScoutStart(FVector start);
 	void createPathsFrom(FVector start);
 	void checkObstructionFrom(FPathMarker *marker);
 	int checkmergeSpot(const FVector &spot, FPathMarker *path1, FPathMarker *path2);
-	void premergePath(INT iMarker);
-	void mergePath(INT iMarker);
-	void adjustPath(INT iMarker);
+	void premergePath(INT_UNREAL_32S iMarker);
+	void mergePath(INT_UNREAL_32S iMarker);
+	void adjustPath(INT_UNREAL_32S iMarker);
 	void exploreWall(const FVector &moveDirection);
 	inline int walkToward(const FVector &Destination, FLOAT Movesize);
 	void followWall(FVector currentDirection);
@@ -143,5 +143,5 @@ private:
 	int angleNearThirty(FVector dir);
 	void nearestThirtyAngle (FVector &currentDirection);
 	void addReachSpecs(AActor * start);
-	int insertReachSpec(INT *SpecArray, FReachSpec &Spec);
+	int insertReachSpec(INT_UNREAL_32S *SpecArray, FReachSpec &Spec);
 };

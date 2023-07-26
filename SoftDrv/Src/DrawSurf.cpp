@@ -79,12 +79,12 @@ struct FMipSetup
 	DWORD			USize;
 	FRainbowPtr		Data;
 	struct FTexSetup* (*Func)( struct FTexSetup* Setup );
-	INT             TexVRotate; 
-	INT             TexURotate;
-	INT             TexVScale; 
-	INT             TexUScale;
-	INT				LVShift;	
-	INT				HUShift; 
+	INT_UNREAL_32S             TexVRotate; 
+	INT_UNREAL_32S             TexURotate;
+	INT_UNREAL_32S             TexVScale; 
+	INT_UNREAL_32S             TexUScale;
+	INT_UNREAL_32S				LVShift;	
+	INT_UNREAL_32S				HUShift; 
 };
 
 struct FLightMipSetup
@@ -95,9 +95,9 @@ struct FLightMipSetup
 	DWORD			USize;
 	FRainbowPtr		Data;
 	FRainbowPtr     FogData;
-	INT				LVShift;
-	INT				LVShift3;
-	INT				HUShift; 
+	INT_UNREAL_32S				LVShift;
+	INT_UNREAL_32S				LVShift3;
+	INT_UNREAL_32S				HUShift; 
 	//FLOAT           UScale;
 	//FLOAT           VScale;
 	FLOAT			VScale8;
@@ -153,7 +153,7 @@ static FLightMipSetup	LightMip;
 
 struct FTexSetup
 {
-	INT  	X;
+	INT_UNREAL_32S  	X;
 	void*   CoSetup;
 	FMMX	Tex, Lit;
 
@@ -162,7 +162,7 @@ struct FTexSetup
 	//	CoSetup = Mip;
 	//}
 	
-	void InitTexPentium( INT InX, FMipSetup* Mip, DWORD U, DWORD V )
+	void InitTexPentium( INT_UNREAL_32S InX, FMipSetup* Mip, DWORD U, DWORD V )
 	{
     	X	   = InX;
 		DWORD VRotated = _rotl(V, Mip->LVShift);
@@ -185,7 +185,7 @@ struct FTexSetup
 	}
 
 	/*
-	void InitTexMMX( INT InX, FMipSetup* Mip, FLOAT UF, FLOAT VF )
+	void InitTexMMX( INT_UNREAL_32S InX, FMipSetup* Mip, FLOAT UF, FLOAT VF )
 	{   
 		X	   =  InX;
 		Tex.DL =  appRound( VF * Mip->TexVScale );
@@ -193,7 +193,7 @@ struct FTexSetup
 	}
 	*/
 
-	void InitTexMMX( INT InX, FMipSetup* Mip, DWORD U, DWORD V)
+	void InitTexMMX( INT_UNREAL_32S InX, FMipSetup* Mip, DWORD U, DWORD V)
 	{   
 		X	   =  InX;
 		Tex.DL = _rotl(V, Mip->TexVRotate);
@@ -223,7 +223,7 @@ union FTexSetupUnion
 	void*					PtrVOID;
 	FTexSetup*				PtrFTexSetup;
 	//FTexSetupMMX*           PtrFTexSetupMMX;
-	INT*					PtrINT;
+	INT_UNREAL_32S*					PtrINT;
 	DWORD*					PtrDWORD;
 	FMMX*                   PtrFMMX;
 	FTexturePassFunction*	PtrFTexturePassFunction;
@@ -257,9 +257,9 @@ union FTexSetupUnion
 
 // Permanent variables.
 
-static INT KernelDU[4]={  2, 14,  6, 10 };
-static INT KernelDV[4]={ 14,  6, 10,  2 };
-static INT SubScaleTable[258];
+static INT_UNREAL_32S KernelDU[4]={  2, 14,  6, 10 };
+static INT_UNREAL_32S KernelDV[4]={ 14,  6, 10,  2 };
+static INT_UNREAL_32S SubScaleTable[258];
 
 // Tables & MMX Constants
 
@@ -334,7 +334,7 @@ static DWORD		LightUBits;
 // Per-span blitting variables.
 static FRainbowPtr	ScreenDest;
 static DWORD		SavedEBP,SavedESP;
-static INT          Sub;
+static INT_UNREAL_32S          Sub;
 static DWORD        TexSetup; 
 
 // Sampled light values for a span.
@@ -349,7 +349,7 @@ static BYTE         Shade[ LIGHTSHADES * 256 ];
 	Initialization.
 -----------------------------------------------------------------------------*/
 
-void USoftwareRenderDevice::InitMMXFlashes( FLOAT Brightness, INT ColorBytes, DWORD Caps)
+void USoftwareRenderDevice::InitMMXFlashes( FLOAT Brightness, INT_UNREAL_32S ColorBytes, DWORD Caps)
 {
 	guardSlow(USoftwareRenderDevice::InitMMXFlashes);
 	//  FlashScale: screen intensity scaling: 0=none, 128=normal brightness, 255=2X overbright.	
@@ -404,7 +404,7 @@ void USoftwareRenderDevice::InitMMXFlashes( FLOAT Brightness, INT ColorBytes, DW
 // Texture colors: 0..31 for each channel in current implementation.
 //
 
-void USoftwareRenderDevice::InitColorTables( FLOAT Brightness, INT ColorBytes, DWORD Caps)
+void USoftwareRenderDevice::InitColorTables( FLOAT Brightness, INT_UNREAL_32S ColorBytes, DWORD Caps)
 {
 	guardSlow(USoftwareRenderDevice::InitColorTables);
 	//
@@ -494,9 +494,10 @@ static void SetupOverSampling()
 {
 	guardSlow(SetupOverSampling);
 	QWORD Tmp[4];
+	int i, j;
 	for (int ubits = 0; ubits < 12; ubits++)
 	{
-		for( int j,i=0; i<4; i++ )
+		for( j,i=0; i<4; i++ )
 			Tmp[i] = ((QWORD)KernelDV[i] << (32-4)) + ((QWORD)KernelDU[i] << (64-4-ubits));
 
 		for( i=0,j=3; i<4; j=i++ )
@@ -506,7 +507,7 @@ static void SetupOverSampling()
 }
 
 
-static inline void InitBilinearKernel(INT UBits)
+static inline void InitBilinearKernel(INT_UNREAL_32S UBits)
 {
 	//
 	// 'Bilinear dither' approximation trick:  activate according to  !PF_NoSmooth
@@ -536,10 +537,10 @@ static inline void InitBilinearKernel(INT UBits)
 	// since it goes to lower bits with every next mip;
 
 	//  Displacements measured as 1/16th of a texel.
-	INT FuzzFracBits = 4;
+	INT_UNREAL_32S FuzzFracBits = 4;
 	//  Dither scaler for U and V directions:
-	INT UDitherShift = 20 - UBits - FuzzFracBits;
-	INT VDitherShift = 20 - FuzzFracBits; // 
+	INT_UNREAL_32S UDitherShift = 20 - UBits - FuzzFracBits;
+	INT_UNREAL_32S VDitherShift = 20 - FuzzFracBits; // 
 
 	//  A B         -> Our dithering: separate U,V displacements for each pixel in each 2x2 kernel. 
 	//  C D          
@@ -604,12 +605,13 @@ void USoftwareRenderDevice::InitDrawSurf()
 
 	// Divide table.
 	DivTable[0]=0.0;
-	for(INT i=1; i<ARRAY_COUNT(DivTable); i++ )
+	INT_UNREAL_32S i;
+	for( i=1; i<ARRAY_COUNT(DivTable); i++ )
 		DivTable[i] = FixedMult/i;  // 65536/i.....
 
 	// Mipmap depth lookup table.
 	for( i=0; i<512; i++ )
-		MipTbl[i] = &Mips[Clamp( i - 0x85, 0, (INT)ARRAY_COUNT(Mips)-1 )];
+		MipTbl[i] = &Mips[Clamp( i - 0x85, 0, (INT_UNREAL_32S)ARRAY_COUNT(Mips)-1 )];
 
 	for (i = 0; i<16; i++)
 	{ 
@@ -821,7 +823,7 @@ static FTexSetup* LightPassPentium( FTexSetup* Setup )
 {
 	FMMX Lit        = Setup->Lit;
 	DWORD RGB       = LightPentium( Lit );
-	INT X           = Setup->X;
+	INT_UNREAL_32S X           = Setup->X;
 
 	// Todo:
 	// Small spans optimization: just choose some middle value and get ONE coordinate for those.
@@ -831,7 +833,7 @@ static FTexSetup* LightPassPentium( FTexSetup* Setup )
 	while( (++Setup)->X )
 	{
 		FMMX LitD = Setup->Lit;
-		INT  NX   = X + Setup->X;
+		INT_UNREAL_32S  NX   = X + Setup->X;
 
 		// Smooth light with a quick-and-dirty trick in batches of 16 and 8
 
@@ -1025,10 +1027,10 @@ static FTexSetup* LightPassPentium( FTexSetup* Setup )
 	static FTexSetup* TexturePass##ubits##_##imip( FTexSetup* Setup ) \
 	{ \
 		FMMX Tex = Setup->Tex; \
-		INT  X   = Setup->X; \
+		INT_UNREAL_32S  X   = Setup->X; \
 		while( (++Setup)->X ) \
 		{ \
-			INT NX    = X+Setup->X; \
+			INT_UNREAL_32S NX    = X+Setup->X; \
 			FMMX DTex = Setup->Tex; \
 			do \
 			{ \
@@ -1082,7 +1084,7 @@ static FTexturePassFunction TexturePassFunctions[16][16] =
 
 #if !ASM
 
-static void MergePass16( INT Y, INT X, INT InnerX )
+static void MergePass16( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 #if 0 /* Non-dithered unaligned C++ */
 	do
@@ -1184,7 +1186,7 @@ static void MergePass16( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass32Translucent( INT Y, INT X, INT InnerX )
+static void MergePass32Translucent( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	//
 	// #optimize to do 2 or more at a time !
@@ -1213,7 +1215,7 @@ static void MergePass32Translucent( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass32Masked( INT Y, INT X, INT InnerX )
+static void MergePass32Masked( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do 
 	{
@@ -1228,7 +1230,7 @@ static void MergePass32Masked( INT Y, INT X, INT InnerX )
 }
 
 
-static void MergePass32Modulated( INT Y, INT X, INT InnerX )
+static void MergePass32Modulated( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	// 'lit modulation'
 	do 
@@ -1240,7 +1242,7 @@ static void MergePass32Modulated( INT Y, INT X, INT InnerX )
 	while( ++X < InnerX );
 }
 
-static void MergePass32ModulatedUnLit( INT Y, INT X, INT InnerX )
+static void MergePass32ModulatedUnLit( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do 
 	{
@@ -1254,7 +1256,7 @@ static void MergePass32ModulatedUnLit( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass15Translucent( INT Y, INT X, INT InnerX )
+static void MergePass15Translucent( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1280,7 +1282,7 @@ static void MergePass15Translucent( INT Y, INT X, INT InnerX )
 
 
 // Lit, modulated....
-static void MergePass15Modulated( INT Y, INT X, INT InnerX )
+static void MergePass15Modulated( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1298,7 +1300,7 @@ static void MergePass15Modulated( INT Y, INT X, INT InnerX )
 
 
 /*
-static void MergePass32ModulatedUnLit( INT Y, INT X, INT InnerX )
+static void MergePass32ModulatedUnLit( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do 
 	{
@@ -1311,7 +1313,7 @@ static void MergePass32ModulatedUnLit( INT Y, INT X, INT InnerX )
 */
 
 
-static void MergePass15ModulatedUnlit( INT Y, INT X, INT InnerX )
+static void MergePass15ModulatedUnlit( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1326,7 +1328,7 @@ static void MergePass15ModulatedUnlit( INT Y, INT X, INT InnerX )
 };
 
 
-static void MergePass16ModulatedUnlit( INT Y, INT X, INT InnerX )
+static void MergePass16ModulatedUnlit( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1342,7 +1344,7 @@ static void MergePass16ModulatedUnlit( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass16Translucent( INT Y, INT X, INT InnerX )
+static void MergePass16Translucent( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1366,7 +1368,7 @@ static void MergePass16Translucent( INT Y, INT X, INT InnerX )
 };
 
 
-static void MergePass16Modulated( INT Y, INT X, INT InnerX )
+static void MergePass16Modulated( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1383,7 +1385,7 @@ static void MergePass16Modulated( INT Y, INT X, INT InnerX )
 
 #if !ASM
 
-static void MergePass1516Masked( INT Y, INT X, INT InnerX )
+static void MergePass1516Masked( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1401,7 +1403,7 @@ static void MergePass1516Masked( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass1516( INT Y, INT X, INT InnerX )
+static void MergePass1516( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	do
 	{
@@ -1414,7 +1416,7 @@ static void MergePass1516( INT Y, INT X, INT InnerX )
 };
 
 
-static void MergePass1516Stippled( INT Y, INT X, INT InnerX )
+static void MergePass1516Stippled( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 	X += (Y ^ X) & 1;
 
@@ -1474,7 +1476,7 @@ enum { // orig: 120 302 201  010    = RGB RGB RGB RGB dithers
 };
 
 
-static void MergePass1516( INT Y, INT X, INT InnerX )
+static void MergePass1516( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 
 	if (Y & 1)
@@ -1765,7 +1767,7 @@ __asm
 // Stippled merge pass: instead of dithering, just skip pixels in a checkerboard-pattern.
 //
 
-static void MergePass1516Stippled( INT Y, INT X, INT InnerX )
+static void MergePass1516Stippled( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 
     __asm
@@ -1855,7 +1857,7 @@ static void MergePass1516Stippled( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass1516Masked( INT Y, INT X, INT InnerX )
+static void MergePass1516Masked( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
     __asm
 	{
@@ -1944,7 +1946,7 @@ static void MergePass1516Masked( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass32Stippled( INT Y, INT X, INT InnerX )
+static void MergePass32Stippled( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 #if !ASM
 
@@ -2060,7 +2062,7 @@ static void MergePass32Stippled( INT Y, INT X, INT InnerX )
 
 
 
-static void MergePass32( INT Y, INT X, INT InnerX )
+static void MergePass32( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {
 
 #if !ASM
@@ -2135,7 +2137,7 @@ static void MergePass32( INT Y, INT X, INT InnerX )
 #endif
 }
 
-static void MergeNone( INT Y, INT X, INT InnerX )
+static void MergeNone( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX )
 {}
 
 
@@ -19882,7 +19884,7 @@ inline UBOOL DifferenceIsSmall(const FLOAT P1, const FLOAT P2 )
 
 
 
-inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT TaskStartY, INT TaskEndY)
+inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT_UNREAL_32S TaskStartY, INT_UNREAL_32S TaskEndY)
 {
 	guardSlow(USoftwareRenderDevice::RenderSurfSpansMMX32);
 
@@ -19890,7 +19892,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 	{
 		if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 			guardSlow(UnlitStippled32);
 				MMXUnlitLight8();
@@ -19901,7 +19903,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX32TranslucentRender8(); 
@@ -19910,7 +19912,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX32ModulatedRender8(); 
@@ -19919,7 +19921,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX32MaskedRender8(); 
@@ -19928,7 +19930,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWNORMAL)// normal Unlit surface
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 			guardSlow(UnlitNormal32);
 				MMXUnlitLight8();
@@ -19944,7 +19946,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		{
 			if (TextureSmooth)
 			{
-				for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+				for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 				{
 					MMXFogLight8();
 					if (YR & 1) MMX32FogRender8A(); else MMX32FogRender8B(); //MMX32FogRender8(); 
@@ -19953,7 +19955,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 			}
 			else
 			{
-				for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+				for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 				{
 					MMXFogLight8();
 					//MMX32Render8RawNewFog(); //&&&&&&&&&&&&&&&&&&&&
@@ -19964,7 +19966,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXScaledFogLight8();
 				MMX32TranslucentRender8(); 
@@ -19973,7 +19975,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				MMX32FogStippledRender8(); 
@@ -19982,7 +19984,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8(); 
 				MMX32FogModulatedRender8(); 
@@ -19991,7 +19993,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				MMX32FogMaskedRender8(); 
@@ -20007,7 +20009,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		{
 			if (TextureSmooth)
 			{
-				for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+				for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 				{
 					MMXLight8();							
 					if (YR & 1) MMX32Render8A(); else MMX32Render8B(); 
@@ -20016,7 +20018,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 			}
 			else
 			{
-				for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+				for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 				{
 					MMXLight8();							
 					MMX32Render8UnrolledFaster(); 
@@ -20026,7 +20028,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX32TranslucentRender8(); 
@@ -20035,7 +20037,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 			guardSlow(LitStippled32);
 				MMXLight8();
@@ -20046,7 +20048,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX32ModulatedRender8(); 
@@ -20055,7 +20057,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX32MaskedRender8(); 
@@ -20067,7 +20069,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX32(FRainbowPtr& DestPtr, FS
 }
 
 
-inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT TaskStartY, INT TaskEndY)
+inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT_UNREAL_32S TaskStartY, INT_UNREAL_32S TaskEndY)
 {
 	guardSlow(USoftwareRenderDevice::RenderSurfSpansMMX15);
 
@@ -20075,7 +20077,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 	{
 		if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX15StippledRender8(); 
@@ -20084,7 +20086,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX15TranslucentRender8(); 
@@ -20093,7 +20095,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX15ModulatedRender8(); 
@@ -20102,7 +20104,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				if (YR & 1) MMX15MaskedRender8A(); else MMX15MaskedRender8B(); 
@@ -20111,7 +20113,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWNORMAL)// normal Unlit surface
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				if (YR & 1) MMX15Render8A();  else MMX15Render8B(); 
@@ -20124,7 +20126,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 	{
 		if (RenderMode == DRAWNORMAL)// normal fog surface
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				if (YR & 1) MMX15FogRender8CoolA();  else MMX15FogRender8CoolB(); 
@@ -20133,7 +20135,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXScaledFogLight8();
 				MMX15TranslucentRender8(); 
@@ -20142,7 +20144,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				MMX15FogStippledRender8(); 
@@ -20151,7 +20153,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8(); 
 				MMX15FogModulatedRender8(); 
@@ -20160,7 +20162,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if  (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				if (YR & 1) MMX15FogMaskedRender8A(); else MMX15FogMaskedRender8B();
@@ -20172,7 +20174,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 	{
 		if (RenderMode == DRAWNORMAL) // normal surface
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();							
 				if (YR & 1) MMX15Render8A(); else MMX15Render8B(); 
@@ -20181,7 +20183,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX15TranslucentRender8(); 
@@ -20190,7 +20192,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX15StippledRender8(); 
@@ -20199,7 +20201,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX15ModulatedRender8(); 
@@ -20208,7 +20210,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				if (YR & 1) MMX15MaskedRender8A();  else MMX15MaskedRender8B();
@@ -20219,7 +20221,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX15(FRainbowPtr& DestPtr, FS
 	unguardSlow;
 }
 
-inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT TaskStartY, INT TaskEndY)
+inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT_UNREAL_32S TaskStartY, INT_UNREAL_32S TaskEndY)
 {
 	guardSlow(USoftwareRenderDevice::RenderSurfSpansMMX16);
 
@@ -20227,7 +20229,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 	{
 		if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX16StippledRender8(); 
@@ -20236,7 +20238,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX16TranslucentRender8(); 
@@ -20245,7 +20247,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				MMX16ModulatedRender8(); 
@@ -20254,7 +20256,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				if (YR & 1) MMX16MaskedRender8A(); else MMX16MaskedRender8B(); 
@@ -20263,7 +20265,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWNORMAL)// normal Unlit surface
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXUnlitLight8();
 				if (YR & 1) MMX16Render8A();  else MMX16Render8B(); 
@@ -20276,7 +20278,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 	{
 		if (RenderMode == DRAWNORMAL)// normal fog surface
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				if (YR & 1) MMX16FogRender8CoolA();  else MMX16FogRender8CoolB(); 
@@ -20285,7 +20287,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXScaledFogLight8();
 				MMX16TranslucentRender8(); 
@@ -20294,7 +20296,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				MMX16FogStippledRender8(); 
@@ -20303,7 +20305,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8(); 
 				MMX16FogModulatedRender8(); 
@@ -20312,7 +20314,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if  (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXFogLight8();
 				if (YR & 1) MMX16FogMaskedRender8A(); else MMX16FogMaskedRender8B();
@@ -20324,7 +20326,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 	{
 		if (RenderMode == DRAWNORMAL) // normal surface
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();							
 				if (YR & 1) MMX16Render8A(); else MMX16Render8B(); 
@@ -20333,7 +20335,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWTRANSLUCENT)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX16TranslucentRender8(); 
@@ -20342,7 +20344,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWSTIPPLED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX16StippledRender8(); 
@@ -20351,7 +20353,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMODULATED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				MMX16ModulatedRender8(); 
@@ -20360,7 +20362,7 @@ inline void USoftwareRenderDevice::RenderSurfSpansMMX16(FRainbowPtr& DestPtr, FS
 		}
 		else if (RenderMode == DRAWMASKED)
 		{
-			for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+			for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 			{
 				MMXLight8();
 				if (YR & 1) MMX16MaskedRender8A();  else MMX16MaskedRender8B();
@@ -20379,16 +20381,16 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 	FMemMark Mark(GMem);
 
 
-	void (*MergePass)( INT Y, INT X, INT InnerX ) = NULL;
+	void (*MergePass)( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX ) = NULL;
 
 	//#debug simplify flag-detection!
 
-	INT IsModulated   = (Surface.PolyFlags & PF_Modulated);
-	INT IsTranslucent = (Surface.PolyFlags & PF_Translucent);
-	INT IsMasked      = (Surface.PolyFlags & PF_Masked);
-	INT IsStippled    = (IsTranslucent) && (FastTranslucency);
+	INT_UNREAL_32S IsModulated   = (Surface.PolyFlags & PF_Modulated);
+	INT_UNREAL_32S IsTranslucent = (Surface.PolyFlags & PF_Translucent);
+	INT_UNREAL_32S IsMasked      = (Surface.PolyFlags & PF_Masked);
+	INT_UNREAL_32S IsStippled    = (IsTranslucent) && (FastTranslucency);
 
-	INT RefreshSetupFlag = 0;
+	INT_UNREAL_32S RefreshSetupFlag = 0;
 
 	// Warning: order is important; these options aren't simply mutually exclusive !
 
@@ -20439,7 +20441,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 		static int MaxSub;
 
 		// Check only ONCE each new frame, for framesize/depth specific setup tasks.
-		static INT OldFrameLocks = -1;
+		static INT_UNREAL_32S OldFrameLocks = -1;
 		if (FrameLocksCounter != OldFrameLocks) 
 		{
 			OldFrameLocks = FrameLocksCounter;
@@ -20501,9 +20503,9 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 				for( int i=0; i<NUM_PAL_COLORS; i++ )
 				{   
 					// Promote 8-bit palette to MMX packed signed words 15:15:15:15 format.
-					MMXColors[i].R = (INT)Surface.Texture->Palette[i].B << 7;
-					MMXColors[i].G = (INT)Surface.Texture->Palette[i].G << 7;
-					MMXColors[i].B = (INT)Surface.Texture->Palette[i].R << 7;
+					MMXColors[i].R = (INT_UNREAL_32S)Surface.Texture->Palette[i].B << 7;
+					MMXColors[i].G = (INT_UNREAL_32S)Surface.Texture->Palette[i].G << 7;
+					MMXColors[i].B = (INT_UNREAL_32S)Surface.Texture->Palette[i].R << 7;
 					// MMXColors[i].A = 0;
 				}
 			}
@@ -20619,7 +20621,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 			{		
 				for( int i=0; i<ARRAY_COUNT(Mips); i++ )
 				{
-					INT iMip            = Min(i,Surface.Texture->NumMips-1);
+					INT_UNREAL_32S iMip            = Min(i,Surface.Texture->NumMips-1);
 					FMipmap& Src		= *Surface.Texture->Mips[iMip];
 					Mips[i].Data		= Src.DataPtr;
 					Mips[i].TexURotate  = 32 - iMip + (FixedBits - 12) - Src.UBits;	// 16:16 -> 12:Vshift:fractional
@@ -20633,7 +20635,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 			{
 				for( int i=0; i<ARRAY_COUNT(Mips); i++ )
 				{					
-					INT iMip            = Min(i,Surface.Texture->NumMips-1);
+					INT_UNREAL_32S iMip            = Min(i,Surface.Texture->NumMips-1);
 					FMipmap& Src		= *Surface.Texture->Mips[iMip];
 					Mips[i].Data		= Src.DataPtr;
 					Mips[i].Mask.DH		= Src.VSize-1;
@@ -20654,7 +20656,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 				TextureDataID = Surface.Texture->CacheID;
 				for( int i=0; i<ARRAY_COUNT(Mips); i++ )
 				{
-					INT iMip            = Min(i,Surface.Texture->NumMips-1);
+					INT_UNREAL_32S iMip            = Min(i,Surface.Texture->NumMips-1);
 					FMipmap& Src		= *Surface.Texture->Mips[iMip];
 					Mips[i].Data		= Src.DataPtr;
 				}
@@ -20694,9 +20696,9 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 		// Light SetupWalker.
 		//
 
-		static INT LastWasUnlit = 0;
+		static INT_UNREAL_32S LastWasUnlit = 0;
 
-		INT LightUF=0.f, LightVF=0.f;
+		INT_UNREAL_32S LightUF=0.f, LightVF=0.f;
 
 		// BYTE LightShift=0, LightShift3=0;
 		// FOG: dimensions and coordinates are those of the lightmap.
@@ -20764,8 +20766,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 				//	Lightmap fudge needed because of the oversampling kernel asymmetries
 				//	relative to the MMX code, also taking into account the 0th oversampling-offset.
 				//
-				//  LightU -= (INT)(DU[0]-2) * (65536/16) << LightShift;  
-				//  LightV -= (INT)(DV[0]-2) * (65536/16) << LightShift;  
+				//  LightU -= (INT_UNREAL_32S)(DU[0]-2) * (65536/16) << LightShift;  
+				//  LightV -= (INT_UNREAL_32S)(DV[0]-2) * (65536/16) << LightShift;  
 
 				// -2 -4 -8 ?? -> adjust for lightmap misalignment....
 				LightUF -= (FLOAT)(KernelDU[0]-2) * (UScaleFixedMult/16.f) * Surface.LightMap->UScale;  
@@ -20773,8 +20775,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 
 				//	LightUF -= appRound( ((FLOAT)(KernelDU[0]-2)) * 4096.f * Surface.LightMap->UScale );
 				//	LightVF -= appRound( ((FLOAT)(KernelDV[0]-2)) * 4096.f * Surface.LightMap->VScale );
-				//	LightUF -= (INT) ( ((INT)DU[0])-2.f) * (65536.f/16.f) * Surface.LightMap->UScale;  
-				//	LightVF -= (INT) ( ((INT)DV[0])-2.f) * (65536.f/16.f) * Surface.LightMap->VScale;  
+				//	LightUF -= (INT_UNREAL_32S) ( ((INT_UNREAL_32S)DU[0])-2.f) * (65536.f/16.f) * Surface.LightMap->UScale;  
+				//	LightVF -= (INT_UNREAL_32S) ( ((INT_UNREAL_32S)DV[0])-2.f) * (65536.f/16.f) * Surface.LightMap->VScale;  
 			}
 		}
 		else
@@ -20828,7 +20830,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 
 		// Initial minimum subdivision setup (must be a multiple of 8).
 		// Sub = Frame->X<400 ? 8 : Frame->X<800 ? 16 : 24; // 8 for <400, 16 for <800, 24 for all over...
-		INT MainSub = Frame->X<800 ? 16 : 24; 
+		INT_UNREAL_32S MainSub = Frame->X<800 ? 16 : 24; 
 
 
 		// #debug make faster if it gives noticeable overhead.
@@ -20862,7 +20864,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 		// Initialize bilinear-ish texel fuzzing: Only for first mip;
 		// 
 
-		static INT Bilinearset = -1;
+		static INT_UNREAL_32S Bilinearset = -1;
 
 		if ( TextureSmooth && (RenderMode == DRAWNORMAL) && (!(Surface.PolyFlags & PF_NoSmooth)))
 		{
@@ -20888,8 +20890,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 		// Setup and Rendering: from Draw->Span.StartY up to Draw->Span.EndY
 		//
 		
-		INT Y,TaskStartY,TaskEndY;
-		INT Sub,CoherentSubdiv,SharedSubdivs;
+		INT_UNREAL_32S Y,TaskStartY,TaskEndY;
+		INT_UNREAL_32S Sub,CoherentSubdiv,SharedSubdivs;
 		SharedSubdivs = 0;
 		CoherentSubdiv = 0;
 
@@ -20943,10 +20945,10 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 					{
 
 						// Start coords SetupWalker.
-						INT EndX     = Span->End;
-						INT X		 = Span->Start;
+						INT_UNREAL_32S EndX     = Span->End;
+						INT_UNREAL_32S X		 = Span->Start;
 
-						INT XSize    = EndX-X;
+						INT_UNREAL_32S XSize    = EndX-X;
 						NUMSIZE XF1  = X;
 
 						#if DO_SLOW_GUARD
@@ -20965,8 +20967,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 						FLOAT UF = FX * UScaleFixedMult + TexBase.X;
 						FLOAT VF = FY * VScaleFixedMult + TexBase.Y;
 
-						INT U = appRound(UF);
-						INT V = appRound(VF);
+						INT_UNREAL_32S U = appRound(UF);
+						INT_UNREAL_32S V = appRound(VF);
 
 						// End coords SetupWalker.
 						NUMSIZE XF2   = EndX;
@@ -21080,8 +21082,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 
 								FLOAT DUF  = ( GX - FX ) * DivSub * InvTexUScale;
 								FLOAT DVF  = ( GY - FY ) * DivSub * InvTexVScale;
-								INT DU	   = appRound(DUF);		// 16:16 texture format -> convert to !!!
-								INT DV	   = appRound(DVF);
+								INT_UNREAL_32S DU	   = appRound(DUF);		// 16:16 texture format -> convert to !!!
+								INT_UNREAL_32S DV	   = appRound(DVF);
 
 								FMipSetup* NewMip = CalcMip(MipMult*GZ);
 								
@@ -21113,8 +21115,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 									Mip = NewMip;
 									FLOAT UF = FX*UScaleFixedMult + TexBase.X;
 									FLOAT VF = FY*VScaleFixedMult + TexBase.Y;
-									INT U = appRound(UF);
-									INT V = appRound(VF);
+									INT_UNREAL_32S U = appRound(UF);
+									INT_UNREAL_32S V = appRound(VF);
 
 									SetupWalker.PtrFTexSetup->CoSetup = Mip;
 									SetupWalker.PtrFTexSetup->InitTexMMX( X, Mip, U, V );
@@ -21125,7 +21127,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 								}
 							}	while( (X+Sub) < EndX );
 
-							INT XLastSize = EndX-X;
+							INT_UNREAL_32S XLastSize = EndX-X;
 							DivEnd = DivTable[XLastSize];
 						}
 						else // no Subdivision needed, set up for entire span.
@@ -21138,8 +21140,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 						// Process last Subdivided span.
 						FLOAT DUF		= (HX - FX) * DivEnd * InvTexUScale;
 						FLOAT DVF		= (HY - FY) * DivEnd * InvTexVScale;
-						INT DU			= appRound( DUF );
-						INT DV			= appRound( DVF );
+						INT_UNREAL_32S DU			= appRound( DUF );
+						INT_UNREAL_32S DV			= appRound( DVF );
 
 						SetupWalker.PtrFTexSetup->InitTexMMX( EndX-X, Mip, DU, DV );
 
@@ -21237,10 +21239,10 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 					while (Span)
 					{
 						// Start coords SetupWalker.
-						INT EndX     = Span->End;
-						INT X		 = Span->Start;
+						INT_UNREAL_32S EndX     = Span->End;
+						INT_UNREAL_32S X		 = Span->Start;
 
-						INT XSize    = EndX-X;
+						INT_UNREAL_32S XSize    = EndX-X;
 						NUMSIZE XF1  = X;
 
 						#if DO_SLOW_GUARD
@@ -21259,8 +21261,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 						FLOAT UF = FX*UScaleFixedMult + TexBase.X;
 						FLOAT VF = FY*VScaleFixedMult + TexBase.Y;
 
-						INT U = appRound(UF);
-						INT V = appRound(VF);
+						INT_UNREAL_32S U = appRound(UF);
+						INT_UNREAL_32S V = appRound(VF);
 
 						// End coords SetupWalker.
 						NUMSIZE XF2   = EndX;
@@ -21364,8 +21366,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 
 								FLOAT DUF  = ( GX - FX ) * DivSub * InvTexUScale;
 								FLOAT DVF  = ( GY - FY ) * DivSub * InvTexVScale;
-								INT DU	   = appRound(DUF);		// 16:16 texture format -> convert to !!!
-								INT DV	   = appRound(DVF);
+								INT_UNREAL_32S DU	   = appRound(DUF);		// 16:16 texture format -> convert to !!!
+								INT_UNREAL_32S DV	   = appRound(DVF);
 
 								FMipSetup* NewMip = CalcMip(MipMult*GZ);
 								
@@ -21396,8 +21398,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 									Mip = NewMip;
 									FLOAT UF = FX * UScaleFixedMult + TexBase.X;
 									FLOAT VF = FY * VScaleFixedMult + TexBase.Y;
-									INT U = appRound(UF);
-									INT V = appRound(VF);
+									INT_UNREAL_32S U = appRound(UF);
+									INT_UNREAL_32S V = appRound(VF);
 
 									*SetupWalker.PtrFTexturePassFunction++ = Mip->Func;
 									SetupWalker.PtrFTexSetup->InitTexPentium( X, Mip, U, V );
@@ -21408,7 +21410,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 								}
 							}	while( (X+Sub) < EndX );
 
-							INT XLastSize = EndX-X;
+							INT_UNREAL_32S XLastSize = EndX-X;
 
 							DivEnd = DivTable[XLastSize];
 						}
@@ -21422,8 +21424,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 						// Process last Subdivided span.
 						FLOAT DUF		= (HX - FX) * DivEnd * InvTexUScale;
 						FLOAT DVF		= (HY - FY) * DivEnd * InvTexVScale;
-						INT DU			= appRound( DUF );
-						INT DV			= appRound( DVF );
+						INT_UNREAL_32S DU			= appRound( DUF );
+						INT_UNREAL_32S DV			= appRound( DVF );
 
 						SetupWalker.PtrFTexSetup->InitTexPentium( EndX-X, Mip, DU, DV );
 
@@ -21454,7 +21456,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 				SetupWalker.PtrBYTE = &TexSetupHeap[0];
 				ScreenDest.PtrBYTE = Frame->Screen(0,TaskStartY);
 				
-				for( INT YR = TaskStartY;  YR < TaskEndY; YR++ )
+				for( INT_UNREAL_32S YR = TaskStartY;  YR < TaskEndY; YR++ )
 				{
 					for( FSpan* Span=Facet.Span->Index[YR-Facet.Span->StartY]; Span; Span=Span->Next )
 					{
@@ -21487,7 +21489,7 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 	if( GIsEditor && (Surface.PolyFlags & PF_Selected) )
 	{
 		FColor SelectColor(0,127,255);
-		INT     Y     = (Facet.Span->StartY+1)&~1;
+		INT_UNREAL_32S     Y     = (Facet.Span->StartY+1)&~1;
 		FSpan** Index = Facet.Span->Index;
 		if( Viewport->ColorBytes==2 )
 		{
@@ -21498,8 +21500,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 				FSpan* Span = *Index;
 				while( Span )
 				{
-					INT XOfs      = (Y & 2) * 2;
-					INT X         = (((int)Span->Start + XOfs + 7) & ~7) - XOfs;
+					INT_UNREAL_32S XOfs      = (Y & 2) * 2;
+					INT_UNREAL_32S X         = (((int)Span->Start + XOfs + 7) & ~7) - XOfs;
 					_WORD* Screen = Line+X;
 					while( X < Span->End )
 					{
@@ -21523,8 +21525,8 @@ void USoftwareRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo&
 				FSpan* Span = *Index;
 				while( Span )
 				{
-					INT    XOfs   = (Y & 2) * 2;
-					INT    X      = (((int)Span->Start + XOfs + 7) & ~7) - XOfs;
+					INT_UNREAL_32S    XOfs   = (Y & 2) * 2;
+					INT_UNREAL_32S    X      = (((int)Span->Start + XOfs + 7) & ~7) - XOfs;
 					DWORD* Screen = Line+X;
 					while( X < Span->End )
 					{

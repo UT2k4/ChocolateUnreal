@@ -197,9 +197,9 @@ BYTE CORE_API GRegisterIntrinsic( int iIntrinsic, void* Func );
 //
 // Macros for grabbing parameters for intrinsic functions.
 //
-#define P_GET_INT(var)              INT           var;   {INT *Ptr=&var;       Stack.Step( Stack.Object, *(BYTE**)&Ptr ); var=*Ptr;}
-#define P_GET_INT_OPT(var,def)      INT       var=def;   {INT *Ptr=&var;       Stack.Step( Stack.Object, *(BYTE**)&Ptr ); var=*Ptr;}
-#define P_GET_INT_REF(var)          INT   a##var=0,*var=&a##var;              {Stack.Step( Stack.Object, *(BYTE**)&var );          }
+#define P_GET_INT(var)              INT_UNREAL_32S           var;   {INT_UNREAL_32S *Ptr=&var;       Stack.Step( Stack.Object, *(BYTE**)&Ptr ); var=*Ptr;}
+#define P_GET_INT_OPT(var,def)      INT_UNREAL_32S       var=def;   {INT_UNREAL_32S *Ptr=&var;       Stack.Step( Stack.Object, *(BYTE**)&Ptr ); var=*Ptr;}
+#define P_GET_INT_REF(var)          INT_UNREAL_32S   a##var=0,*var=&a##var;              {Stack.Step( Stack.Object, *(BYTE**)&var );          }
 #define P_GET_UBOOL(var)            DWORD         var;   {DWORD *Ptr=&var;     Stack.Step( Stack.Object, *(BYTE**)&Ptr ); var=*Ptr;}
 #define P_GET_UBOOL_OPT(var,def)    DWORD     var=def;   {DWORD *Ptr=&var;     Stack.Step( Stack.Object, *(BYTE**)&Ptr ); var=*Ptr;}
 #define P_GET_UBOOL_REF(var)        DWORD a##var=0,*var=&a##var;              {Stack.Step( Stack.Object, *(BYTE**)&var );          }
@@ -237,7 +237,7 @@ BYTE CORE_API GRegisterIntrinsic( int iIntrinsic, void* Func );
 // Iterator macros.
 //
 #define PRE_ITERATOR \
-	INT wEndOffset = Stack.ReadWord(); \
+	INT_UNREAL_32S wEndOffset = Stack.ReadWord(); \
 	BYTE B=0, *Addr, Buffer[MAX_CONST_SIZE]; \
 	BYTE *StartCode = Stack.Code; \
 	do {
@@ -258,7 +258,7 @@ inline FFrame::FFrame( UObject* InObject )
 ,	Code		(NULL)
 ,	Locals		(NULL)
 {}
-inline FFrame::FFrame( UObject* InObject, UStruct* InNode, INT CodeOffset, BYTE* InLocals )
+inline FFrame::FFrame( UObject* InObject, UStruct* InNode, INT_UNREAL_32S CodeOffset, BYTE* InLocals )
 :	Node		(InNode)
 ,	Object		(InObject)
 ,	Code		(&InNode->Script(CodeOffset))
@@ -271,10 +271,10 @@ inline void FFrame::Step( UObject* Context, BYTE*& Result )
 	(Context->*GIntrinsics[B])( *this, Result );
 	unguardSlow;
 }
-inline INT FFrame::ReadInt()
+inline INT_UNREAL_32S FFrame::ReadInt()
 {
-	INT Result = *(INT*)Code;
-	Code += sizeof(INT);
+	INT_UNREAL_32S Result = *(INT_UNREAL_32S*)Code;
+	Code += sizeof(INT_UNREAL_32S);
 	return Result;
 }
 inline FLOAT FFrame::ReadFloat()
@@ -283,9 +283,9 @@ inline FLOAT FFrame::ReadFloat()
 	Code += sizeof(FLOAT);
 	return Result;
 }
-inline INT FFrame::ReadWord()
+inline INT_UNREAL_32S FFrame::ReadWord()
 {
-	INT Result = *(_WORD*)Code;
+	INT_UNREAL_32S Result = *(_WORD*)Code;
 	Code += sizeof(_WORD);
 	return Result;
 }

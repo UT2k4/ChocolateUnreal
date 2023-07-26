@@ -113,7 +113,7 @@ public:
 	// Moving brush functions.
 	void Flush( AActor *Actor );
 	void Update( AActor *Actor );
-	int  SurfIsDynamic( INT iSurf );
+	int  SurfIsDynamic( INT_UNREAL_32S iSurf );
 
 	///////////////////////////////////
 	// FMovingBrushTracker interface //
@@ -128,17 +128,17 @@ public:
 	// Private functions.
 	inline int  NewPointIndex(AActor *Actor);
 	inline int  NewVectorIndex(AActor *Actor);
-	inline int  NewNodeIndex(AActor *Actor,INT iParent);
+	inline int  NewNodeIndex(AActor *Actor,INT_UNREAL_32S iParent);
 	inline int  NewSurfIndex(AActor *Actor);
 	inline int  NewVertPoolIndex(AActor *Actor,int NumVerts);
 	inline int	NewBrushMapIndex(AActor *Actor);
 
-	inline void FreePointIndex(INT i);
-	inline void FreeVectorIndex(INT i);
-	inline void FreeNodeIndex(INT i);
-	inline void FreeSurfIndex(INT i);
+	inline void FreePointIndex(INT_UNREAL_32S i);
+	inline void FreeVectorIndex(INT_UNREAL_32S i);
+	inline void FreeNodeIndex(INT_UNREAL_32S i);
+	inline void FreeSurfIndex(INT_UNREAL_32S i);
 	inline void FreeVertPoolIndex(DWORD i,int NumVerts);
-	inline void FreeBrushMapIndex(INT i);
+	inline void FreeBrushMapIndex(INT_UNREAL_32S i);
 
 	void SetupActorBrush(AActor *Actor);
 	void RemoveActorBrush(AActor *Actor);
@@ -146,10 +146,10 @@ public:
 	void AddActorBrush(AActor *Actor);
 	void FlushActorBrush(AActor *Actor,int Group);
 
-	inline void ForceGroupFlush(INT iNode);
+	inline void ForceGroupFlush(INT_UNREAL_32S iNode);
 
-	void FilterFPoly( INT iNode, INT iCoplanarParent, FPoly *EdPoly, int Outside );
-	void AddPolyFragment( INT iNode, INT iCoplanarParent, int IsFront, FPoly *EdPoly );
+	void FilterFPoly( INT_UNREAL_32S iNode, INT_UNREAL_32S iCoplanarParent, FPoly *EdPoly, int Outside );
+	void AddPolyFragment( INT_UNREAL_32S iNode, INT_UNREAL_32S iCoplanarParent, int IsFront, FPoly *EdPoly );
 
 	///////////////////////////////////
 	// FMovingBrushTracker internals //
@@ -165,12 +165,12 @@ private:
 
 	int iTopNode,iTopSurf,iTopPoint,iTopVector,iTopVertPool,iTopBrushMap;
 	AActor *AddActor;
-	INT iAddSurf;
+	INT_UNREAL_32S iAddSurf;
 
 	// Mechanism to pair actor indices with Bsp surfaces:
 	AActor **BrushMapOwners;
-	INT  *iBrushMapSurfs;
-	INT  *iNodeParents;
+	INT_UNREAL_32S  *iBrushMapSurfs;
+	INT_UNREAL_32S  *iNodeParents;
 
 	// Owner actor indices for things that are deleted and realllocated whenever a brush moves.
 	AActor **NodeOwners;
@@ -189,7 +189,7 @@ private:
 	int NumTouchActors;
 
 	// Used by AddPolyFragment.
-	INT* iActorNodePrevLink;
+	INT_UNREAL_32S* iActorNodePrevLink;
 };
 
 /*---------------------------------------------------------------------------------------
@@ -201,11 +201,11 @@ private:
 // Num to Max.  These elements of level objects are reserved for use by moving 
 // brush pieces.
 //
-INT* AllocDbIndex( UDatabase* Res, char* Descr )
+INT_UNREAL_32S* AllocDbIndex( UDatabase* Res, char* Descr )
 {
 	guard(FMovingBrushTracker::AllocDbIndex);
 
-	INT* Result = (INT *)MallocArray(Res->GetMax() - Res->GetNum(),INT,Descr);
+	INT_UNREAL_32S* Result = (INT_UNREAL_32S *)MallocArray(Res->GetMax() - Res->GetNum(),INT_UNREAL_32S,Descr);
 
 	for( int i=Res->GetNum(); i<Res->GetMax(); i++ )
 		Result[i - Res->GetNum()] = INDEX_NONE;
@@ -273,7 +273,7 @@ void FMovingBrushTracker::Update( AActor* Actor )
 //
 // Return whether a surface belongs to a moving brush.
 //
-int FMovingBrushTracker::SurfIsDynamic( INT iSurf )
+int FMovingBrushTracker::SurfIsDynamic( INT_UNREAL_32S iSurf )
 {
 	guard(FMovingBrushTracker::SurfIsDynamic);
 	
@@ -296,6 +296,8 @@ int FMovingBrushTracker::SurfIsDynamic( INT iSurf )
 //
 FMovingBrushTracker::FMovingBrushTracker( ULevel* ThisLevel )
 {
+	INT_UNREAL_32S i;
+
 	guard(FMovingBrushTracker::FMovingBrushTracker);
 
 	Level				= ThisLevel;
@@ -308,7 +310,7 @@ FMovingBrushTracker::FMovingBrushTracker( ULevel* ThisLevel )
 	iTopBrushMap		= 0;
 
 	// Note that all actors are unassimilated.
-	for( INT i=0; i<Level->Num(); i++ )
+	for( i=0; i<Level->Num(); i++ )
 		if( Level->Actors(i) )
 			Level->Actors(i)->bAssimilated = 0;
 
@@ -316,7 +318,7 @@ FMovingBrushTracker::FMovingBrushTracker( ULevel* ThisLevel )
 	for( i=0; i<MAX_MOVING_BRUSH_POLYS; i++ )
 		BrushMapOwners[i] = NULL;
 
-	iBrushMapSurfs		= (INT *)MallocArray(MAX_MOVING_BRUSH_POLYS,INT,"BrushMapSurfs");
+	iBrushMapSurfs		= (INT_UNREAL_32S *)MallocArray(MAX_MOVING_BRUSH_POLYS,INT_UNREAL_32S,"BrushMapSurfs");
 
 	VertPoolOwners		= (AActor **)MallocArray(Level->Model->Verts->Max() - Level->Model->Verts->Num(),AActor*,"VertPoolOwners");
 	for( i=0; i<(Level->Model->Verts->Max() - Level->Model->Verts->Num()); i++ )
@@ -444,11 +446,11 @@ inline int NewThingActor
 ---------------------------------------------------------------------------------------*/
 
 // Get a new Bsp node index.
-inline int FMovingBrushTracker::NewNodeIndex( AActor* Actor, INT iParent )
+inline int FMovingBrushTracker::NewNodeIndex( AActor* Actor, INT_UNREAL_32S iParent )
 {
 	guardSlow(FMovingBrushTracker::NewNodeIndex);
 
-	INT Result = NewThingActor( iTopNode, Level->Model->Nodes->Num(), Level->Model->Nodes->Max(), NodeOwners, Actor );
+	INT_UNREAL_32S Result = NewThingActor( iTopNode, Level->Model->Nodes->Num(), Level->Model->Nodes->Max(), NodeOwners, Actor );
 
 	if( Result!=INDEX_NONE )
 	{
@@ -556,7 +558,7 @@ inline int FMovingBrushTracker::NewVertPoolIndex( AActor* Actor, int NumVerts )
 ---------------------------------------------------------------------------------------*/
 
 // Free a point index.
-inline void FMovingBrushTracker::FreePointIndex( INT i )
+inline void FMovingBrushTracker::FreePointIndex( INT_UNREAL_32S i )
 {
 #if CHECK_ALL
 		if( PointOwners[i-Level->Model->Points->Num()]==NULL )
@@ -566,7 +568,7 @@ inline void FMovingBrushTracker::FreePointIndex( INT i )
 }
 
 // Free a vector index.
-inline void FMovingBrushTracker::FreeVectorIndex( INT i )
+inline void FMovingBrushTracker::FreeVectorIndex( INT_UNREAL_32S i )
 {
 #if CHECK_ALL
 		if( VectorOwners[i-Level->Model->Vectors->Num()]==NULL )
@@ -576,7 +578,7 @@ inline void FMovingBrushTracker::FreeVectorIndex( INT i )
 }
 
 // Free a Bsp node index.
-inline void FMovingBrushTracker::FreeNodeIndex( INT i )
+inline void FMovingBrushTracker::FreeNodeIndex( INT_UNREAL_32S i )
 {
 #if CHECK_ALL
 		if( NodeOwners[i-Level->Model->Nodes->Num()]==NULL )
@@ -590,7 +592,7 @@ inline void FMovingBrushTracker::FreeNodeIndex( INT i )
 }
 
 // Free a Bsp surface index.
-inline void FMovingBrushTracker::FreeSurfIndex( INT i )
+inline void FMovingBrushTracker::FreeSurfIndex( INT_UNREAL_32S i )
 {
 #if CHECK_ALL
 		if( SurfOwners[i-Level->Model->Surfs->Num()]==NULL )
@@ -614,7 +616,7 @@ inline void FMovingBrushTracker::FreeVertPoolIndex( DWORD i, int NumVerts )
 }
 
 // Free a brush-map index.
-inline void FMovingBrushTracker::FreeBrushMapIndex( INT i )
+inline void FMovingBrushTracker::FreeBrushMapIndex( INT_UNREAL_32S i )
 {
 #if CHECK_ALL
 	if( BrushMapOwners[i]==NULL )
@@ -641,12 +643,12 @@ void FMovingBrushTracker::SetupActorBrush( AActor* Actor )
 	UModel* Brush = Actor->Brush;
 
 	Actor->bAssimilated = 1;
-	*(INT*)&Brush->MoverLink = INDEX_NONE;
+	*(INT_UNREAL_32S*)&Brush->MoverLink = INDEX_NONE;
 
 	// Create permanent maps for all moving brush FPolys.
 	FBspSurf* Surf;
-	INT       iSurf;
-	for( INT i=0; i<Brush->Polys->Num(); i++ )
+	INT_UNREAL_32S       iSurf;
+	for( INT_UNREAL_32S i=0; i<Brush->Polys->Num(); i++ )
 	{
 		FPoly *Poly = &Brush->Polys->Element(i);
 
@@ -732,7 +734,7 @@ void FMovingBrushTracker::RemoveActorBrush( AActor* Actor )
 		if( *BrushMapOwner == Actor )
 		{
 			// Free all stuff owned by this surface.
-			INT iSurf = iBrushMapSurfs[i];
+			INT_UNREAL_32S iSurf = iBrushMapSurfs[i];
 			FBspSurf* Surf = &Level->Model->Surfs->Element(iSurf);
 #if CHECK_ALL
 				if( Surf->vNormal  ==INDEX_NONE ) appError("Bad vNormal");
@@ -759,8 +761,8 @@ void FMovingBrushTracker::RemoveActorBrush( AActor* Actor )
 
 void FMovingBrushTracker::AddPolyFragment
 (
-	INT		iParent,
-	INT		iCoplanarParent,
+	INT_UNREAL_32S		iParent,
+	INT_UNREAL_32S		iCoplanarParent,
 	int		IsFront,
 	FPoly*	EdPoly
 )
@@ -769,7 +771,7 @@ void FMovingBrushTracker::AddPolyFragment
 
 	FBspNode	*Node,*Parent,*ZoneParent,*FirstParent;
 	FVert		*VertPool;
-	INT			iNode;
+	INT_UNREAL_32S			iNode;
 	int			i,iVertPool;
 
 	int ZoneFront = IsFront;
@@ -822,7 +824,7 @@ void FMovingBrushTracker::AddPolyFragment
 	}
 	else
 	{
-		INT IsFlipped  = (Node->Plane|Parent->Plane)<0.0;
+		INT_UNREAL_32S IsFlipped  = (Node->Plane|Parent->Plane)<0.0;
 		Node->iZone[0] = Parent->iZone[IsFlipped  ]; Node->iLeaf[0] = Parent->iLeaf[IsFlipped  ];
 		Node->iZone[1] = Parent->iZone[1-IsFlipped]; Node->iLeaf[1] = Parent->iLeaf[1-IsFlipped];
 	}
@@ -844,7 +846,7 @@ void FMovingBrushTracker::AddPolyFragment
 
 	for( i=0; i<EdPoly->NumVertices; i++ )
 	{
-		INT pVertex = NewPointIndex(AddActor);
+		INT_UNREAL_32S pVertex = NewPointIndex(AddActor);
 		if( pVertex==INDEX_NONE )
 			goto Over3;
 
@@ -885,8 +887,8 @@ void FMovingBrushTracker::AddPolyFragment
 
 void FMovingBrushTracker::FilterFPoly
 (
-	INT		iNode, 
-	INT		iCoplanarParent,
+	INT_UNREAL_32S		iNode, 
+	INT_UNREAL_32S		iCoplanarParent,
 	FPoly*	EdPoly, 
 	int		Outside
 )
@@ -1001,7 +1003,7 @@ void FMovingBrushTracker::AddActorBrush( AActor* Actor )
 
 	FMemMark Mark(GMem);
 
-	iActorNodePrevLink = (INT *)(&Actor->Brush->MoverLink);
+	iActorNodePrevLink = (INT_UNREAL_32S *)(&Actor->Brush->MoverLink);
 	AddActor           = Actor;
 	UModel *Brush      = Actor->Brush;
 
@@ -1039,7 +1041,8 @@ void FMovingBrushTracker::AddActorBrush( AActor* Actor )
 	FLOAT Orientation = ((ABrush*)Actor)->BuildCoords(&Coords,NULL);
 
 	int Total=0;
-	for( int i=0; i<Brush->Polys->Num(); i++ )
+	int i;
+	for( i=0; i<Brush->Polys->Num(); i++ )
 		Total += Brush->Polys->Element(i).NumVertices;
 
 	FPoly	*TransformedPolys = new( GMem, Brush->Polys->Num() )FPoly;
@@ -1065,7 +1068,7 @@ void FMovingBrushTracker::AddActorBrush( AActor* Actor )
 	FPoly *Poly = &TransformedPolys[0];
 	for( i=0; i<Brush->Polys->Num(); i++ )
 	{
-		INT      iSurf  = Poly->iLink;
+		INT_UNREAL_32S      iSurf  = Poly->iLink;
 		FBspSurf *Surf  = &Level->Model->Surfs->Element(iSurf);
 
 #if CHECK_ALL
@@ -1094,7 +1097,7 @@ void FMovingBrushTracker::AddActorBrush( AActor* Actor )
 	*iActorNodePrevLink = INDEX_NONE;
 
 	// Tag all newly-added nodes as non-new.
-	INT iNode = *(INT*)&Brush->MoverLink;
+	INT_UNREAL_32S iNode = *(INT_UNREAL_32S*)&Brush->MoverLink;
 	while( iNode != INDEX_NONE )
 	{
 		FBspNode *Node   = &Level->Model->Nodes->Element(iNode);
@@ -1116,7 +1119,7 @@ void FMovingBrushTracker::AddActorBrush( AActor* Actor )
 // Force the brush that owns a specified Bsp node to be flushed and later
 // updated as part of a group flushing operation.
 //
-void FMovingBrushTracker::ForceGroupFlush( INT iNode )
+void FMovingBrushTracker::ForceGroupFlush( INT_UNREAL_32S iNode )
 {
 	guard(FMovingBrushTracker::ForceGroupFlush);
 
@@ -1137,17 +1140,17 @@ void FMovingBrushTracker::ForceGroupFlush( INT iNode )
 // the level.  If Group is true, expects that NumGroupActors and GroupActors 
 // are valid.
 //
-void FMovingBrushTracker::FlushActorBrush( AActor* Actor, INT Group )
+void FMovingBrushTracker::FlushActorBrush( AActor* Actor, INT_UNREAL_32S Group )
 {
 	guard(FMovingBrushTracker::FlushActorBrush);
 	check(Actor->bAssimilated);
 
 	// Go through all sporadic nodes in the Bsp and find ones owned by this actor.
-	INT iNode = Actor->Brush->MoverLink;
+	INT_UNREAL_32S iNode = Actor->Brush->MoverLink;
 	while( iNode != INDEX_NONE )
 	{
 		FBspNode* Node   = &Level->Model->Nodes->Element(iNode);
-		INT iParent      = iNodeParents[iNode-Level->Model->Nodes->Num()];
+		INT_UNREAL_32S iParent      = iNodeParents[iNode-Level->Model->Nodes->Num()];
 		FBspNode* Parent = &Level->Model->Nodes->Element(iParent);
 
 #if CHECK_ALL
@@ -1227,7 +1230,7 @@ void FMovingBrushTracker::RemoveAllBrushes()
 
 	// Flush all sporadic data.
 	guard(FlushSporadics);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if( Actor && Actor->IsMovingBrush() && Actor->bAssimilated )
@@ -1238,8 +1241,8 @@ void FMovingBrushTracker::RemoveAllBrushes()
 	// Verify that all dynamic nodes were actually removed.
 #if CHECK_ALL
 	guard(CheckSporadics);
-	INT n = Level->Model->Nodes->Num();
-	for( INT i=0; i<n; i++ )
+	INT_UNREAL_32S n = Level->Model->Nodes->Num();
+	for( INT_UNREAL_32S i=0; i<n; i++ )
 	{
 		FBspNode* Node = &Level->Model->Nodes(i);
 		if( Node->iFront!=INDEX_NONE && Node->iFront>=n )
@@ -1254,7 +1257,7 @@ void FMovingBrushTracker::RemoveAllBrushes()
 
 	// Remove all permanent data.
 	guard(RemoveSporadics);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor *Actor = Level->Actors(i);
 		if( Actor && Actor->IsMovingBrush() && Actor->bAssimilated )
@@ -1273,14 +1276,14 @@ void FMovingBrushTracker::RemoveAllBrushes()
 void FMovingBrushTracker::UpdateBrushes( AActor** Actors, int Num )
 {
 	guard(FMovingBrushTracker::UpdateBrushes);
-	INT Group;
+	INT_UNREAL_32S Group;
 
 	if( Actors == NULL )
 	{
 		// Update all actor brushes.
 		Group = 0;
 		NumGroupActors = 0;
-		for( INT iActor=0; iActor<Level->Num(); iActor++ )
+		for( INT_UNREAL_32S iActor=0; iActor<Level->Num(); iActor++ )
 		{
 			AActor* Actor = Level->Actors(iActor);
 			if( Actor && Actor->IsMovingBrush() )
@@ -1301,9 +1304,10 @@ void FMovingBrushTracker::UpdateBrushes( AActor** Actors, int Num )
 
 	// Init touch actors so that they can be added back later.
 	NumTouchActors = 0;
+	INT_UNREAL_32S i;
 
 	// Eliminate actors that haven't moved.
-	for( INT i=0; i<NumGroupActors; i++ )
+	for( i=0; i<NumGroupActors; i++ )
 	{
 		AMover* Actor = GroupActors[i];
 		if( Actor->SavedPos==Actor->Location && Actor->SavedRot==Actor->Rotation )

@@ -214,7 +214,7 @@ UBOOL URender::Project( FSceneNode* Frame, const FVector& V, FLOAT& ScreenX, FLO
 // unless UseEdScan=1 and the user just clicked on a wall (a Bsp polygon).
 // Sets V to location and returns 1, or returns 0 if couldn't perform conversion.
 //
-UBOOL URender::Deproject( FSceneNode* Frame, INT ScreenX, INT ScreenY, FVector& V )
+UBOOL URender::Deproject( FSceneNode* Frame, INT_UNREAL_32S ScreenX, INT_UNREAL_32S ScreenY, FVector& V )
 {
 	guard(URender::Deproject);
 

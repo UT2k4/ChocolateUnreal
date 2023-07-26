@@ -36,7 +36,7 @@ enum EPolyNodeFilter
 typedef void (*BSP_FILTER_FUNC)
 (
 	UModel			*Model,
-	INT			    iNode,
+	INT_UNREAL_32S			    iNode,
 	FPoly			*EdPoly,
 	EPolyNodeFilter Leaf,
 	ENodePlace	ENodePlace
@@ -48,8 +48,8 @@ typedef void (*BSP_FILTER_FUNC)
 class FCoplanarInfo
 {
 public:
-	INT	    iOriginalNode;
-	INT     iBackNode;
+	INT_UNREAL_32S	    iOriginalNode;
+	INT_UNREAL_32S     iBackNode;
 	int	    BackNodeOutside;
 	int	    FrontLeafOutside;
 	int     ProcessingBack;
@@ -63,7 +63,7 @@ void FilterEdPoly
 (
 	BSP_FILTER_FUNC FilterFunc, 
 	UModel			*Model,
-	INT  			iNode, 
+	INT_UNREAL_32S  			iNode, 
 	FPoly			*EdPoly, 
 	FCoplanarInfo	CoplanarInfo, 
 	int				Outside
@@ -93,11 +93,11 @@ public:
 // Global variables shared between bspBrushCSG and AddWorldToBrushFunc.  These are very
 // tightly tied into the function AddWorldToBrush, not general-purpose.
 //
-INT         GErrors;        // Errors encountered in Csg operation.
-INT			GDiscarded;		// Number of polys discarded and not added.
-INT         GNode;          // Node AddBrushToWorld is adding to.
-INT         GLastCoplanar;	// Last coplanar beneath GNode at start of AddWorldToBrush.
-INT         GNumNodes;		// Number of Bsp nodes at start of AddWorldToBrush.
+INT_UNREAL_32S         GErrors;        // Errors encountered in Csg operation.
+INT_UNREAL_32S			GDiscarded;		// Number of polys discarded and not added.
+INT_UNREAL_32S         GNode;          // Node AddBrushToWorld is adding to.
+INT_UNREAL_32S         GLastCoplanar;	// Last coplanar beneath GNode at start of AddWorldToBrush.
+INT_UNREAL_32S         GNumNodes;		// Number of Bsp nodes at start of AddWorldToBrush.
 UModel		*GModel;		// Level map Model we're adding to.
 
 /*-----------------------------------------------------------------------------
@@ -108,12 +108,12 @@ UModel		*GModel;		// Level map Model we're adding to.
 // Add a new point to the model (preventing duplicates) and return its
 // index.
 //
-INT AddThing( UVectors* Vectors, FVector& V, FLOAT Thresh, int Check )
+INT_UNREAL_32S AddThing( UVectors* Vectors, FVector& V, FLOAT Thresh, int Check )
 {
 	if( Check )
 	{
 		// See if this is very close to an existing point/vector.		
-		for( INT i=0; i<Vectors->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Vectors->Num(); i++ )
 		{
 			const FVector &TableVect = Vectors->Element(i);
 			FLOAT Temp=(V.X - TableVect.X);
@@ -142,7 +142,7 @@ INT AddThing( UVectors* Vectors, FVector& V, FLOAT Thresh, int Check )
 //
 // Add a new vector to the model, merging near-duplicates,  and return its index.
 //
-INT UEditorEngine::bspAddVector( UModel *Model, FVector *V, int Normal )
+INT_UNREAL_32S UEditorEngine::bspAddVector( UModel *Model, FVector *V, int Normal )
 {
 	guard(UEditorEngine::bspAddVector);
 	return AddThing
@@ -158,7 +158,7 @@ INT UEditorEngine::bspAddVector( UModel *Model, FVector *V, int Normal )
 //
 // Add a new point to the model, merging near-duplicates,  and return its index.
 //
-INT UEditorEngine::bspAddPoint( UModel *Model, FVector *V, int Exact )
+INT_UNREAL_32S UEditorEngine::bspAddPoint( UModel *Model, FVector *V, int Exact )
 {
 	guard(UEditorEngine::bspAddPoint);
 	FLOAT Thresh = Exact ? THRESH_POINTS_ARE_SAME : THRESH_POINTS_ARE_NEAR;
@@ -166,7 +166,7 @@ INT UEditorEngine::bspAddPoint( UModel *Model, FVector *V, int Exact )
 	// Try to find a match quickly from the Bsp. This finds all potential matches
 	// except for any dissociated from nodes/surfaces during a rebuild.
 	FVector Temp;
-	INT pVertex;
+	INT_UNREAL_32S pVertex;
 	FLOAT NearestDist = Model->FindNearestVertex(*V,Temp,Thresh,pVertex);
 	if( (NearestDist >= 0.0) && (NearestDist <= Thresh) )
 	{
@@ -193,10 +193,10 @@ INT UEditorEngine::bspAddPoint( UModel *Model, FVector *V, int Exact )
 // Returns: Index to newly-created node of Bsp.  If several nodes were created because
 // of split polys, returns the parent (highest one up in the Bsp).
 //
-INT UEditorEngine::bspAddNode
+INT_UNREAL_32S UEditorEngine::bspAddNode
 (
 	UModel*		Model, 
-	INT         iParent, 
+	INT_UNREAL_32S         iParent, 
 	ENodePlace	NodePlace,
 	DWORD		NodeFlags, 
 	FPoly*		EdPoly
@@ -264,8 +264,8 @@ INT UEditorEngine::bspAddNode
 			&EdPoly->Vertex [FBspNode::MAX_NODE_VERTICES - 1],
 			(EdPoly->NumVertices + 1 - FBspNode::MAX_NODE_VERTICES) * sizeof (FVector)
 		);
-		INT iNode = bspAddNode( Model, iParent, NodePlace, NodeFlags, EdPoly1 ); // Add this poly first.
-		INT iTemp = bspAddNode( Model, iNode,   NODE_Plane, NodeFlags, EdPoly2 ); // Then add other (may be bigger).
+		INT_UNREAL_32S iNode = bspAddNode( Model, iParent, NodePlace, NodeFlags, EdPoly1 ); // Add this poly first.
+		INT_UNREAL_32S iTemp = bspAddNode( Model, iNode,   NODE_Plane, NodeFlags, EdPoly2 ); // Then add other (may be bigger).
 
 		Mark.Pop();
 		return iNode; // Return coplanar "parent" node (not coplanar child)
@@ -275,7 +275,7 @@ INT UEditorEngine::bspAddNode
 		// Add node.
 		if( NodePlace!=NODE_Root )
 			Model->Nodes->ModifyItem( iParent );
-		INT iNode			 = Model->Nodes->Add();
+		INT_UNREAL_32S iNode			 = Model->Nodes->Add();
 		FBspNode& Node       = Model->Nodes->Element(iNode);
 
 		// Tell transaction tracking system that parent is about to be modified.
@@ -303,7 +303,7 @@ INT UEditorEngine::bspAddNode
 		}
 		else if( NodePlace==NODE_Front || NodePlace==NODE_Back )
 		{
-			INT ZoneFront=NodePlace==NODE_Front;
+			INT_UNREAL_32S ZoneFront=NodePlace==NODE_Front;
 			Node.iLeaf[0]	 = Parent->iLeaf[ZoneFront];
 			Node.iLeaf[1] 	 = Parent->iLeaf[ZoneFront];
 			Node.iZone[0]	 = Parent->iZone[ZoneFront];
@@ -311,7 +311,7 @@ INT UEditorEngine::bspAddNode
 		}
 		else
 		{
-			INT IsFlipped    = (Node.Plane|Parent->Plane)<0.0;
+			INT_UNREAL_32S IsFlipped    = (Node.Plane|Parent->Plane)<0.0;
 			Node.iLeaf[0]    = Parent->iLeaf[IsFlipped  ];
 			Node.iLeaf[1]    = Parent->iLeaf[1-IsFlipped];
 			Node.iZone[0]    = Parent->iZone[IsFlipped  ];
@@ -460,9 +460,9 @@ FPoly *FindBestSplit
 void SplitPolyList
 (
 	UModel				*Model,
-	INT                 iParent,
+	INT_UNREAL_32S                 iParent,
 	ENodePlace			NodePlace,
-	INT                 NumPolys,
+	INT_UNREAL_32S                 NumPolys,
 	FPoly				**PolyList,
 	EBspOptimization	Opt,
 	int					Balance,
@@ -483,8 +483,8 @@ void SplitPolyList
 	if( RebuildSimplePolys )
 		SplitPoly->iLink = Model->Surfs->Num();
 
-	INT iOurNode	 = GEditor->bspAddNode(Model,iParent,NodePlace,0,SplitPoly);
-	INT iPlaneNode = iOurNode;
+	INT_UNREAL_32S iOurNode	 = GEditor->bspAddNode(Model,iParent,NodePlace,0,SplitPoly);
+	INT_UNREAL_32S iPlaneNode = iOurNode;
 
 	// Now divide all polygons in the pool into (A) polygons that are
 	// in front of Poly, and (B) polygons that are in back of Poly.
@@ -495,7 +495,7 @@ void SplitPolyList
 
 	FPoly *FrontEdPoly = new(GMem)FPoly;
 	FPoly *BackEdPoly  = new(GMem)FPoly;
-	for( INT i=0; i<NumPolys; i++ )
+	for( INT_UNREAL_32S i=0; i<NumPolys; i++ )
 	{
 		FPoly *EdPoly = PolyList[i];
 		if( EdPoly == SplitPoly )
@@ -564,13 +564,13 @@ void UEditorEngine::bspBuild
 (
 	UModel*				Model, 
 	EBspOptimization	Opt, 
-	INT					Balance, 
-	INT					RebuildSimplePolys,
-	INT					iNode
+	INT_UNREAL_32S					Balance, 
+	INT_UNREAL_32S					RebuildSimplePolys,
+	INT_UNREAL_32S					iNode
 )
 {
 	guard(UEditorEngine::bspBuild);
-	INT OriginalPolys = Model->Polys->Num();
+	INT_UNREAL_32S OriginalPolys = Model->Polys->Num();
 
 	// Empty the model's tables.
 	if( RebuildSimplePolys==1 )
@@ -581,7 +581,7 @@ void UEditorEngine::bspBuild
 	else if( RebuildSimplePolys==0 )
 	{
 		// Empty node vertices.
-		for( INT i=0; i<Model->Nodes->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Model->Nodes->Num(); i++ )
 			Model->Nodes->Element(i).NumVertices = 0;
 
 		// Refresh the Bsp.
@@ -645,22 +645,23 @@ void UEditorEngine::bspValidateBrush
 	UBOOL	DoStatusUpdate
 )
 {
+	INT_UNREAL_32S i;
 	guard(UEditorEngine::bspValidateBrush);
 	Brush->Modify();
 	if( ForceValidate || !Brush->Linked )
 	{
 		Brush->Linked = 1;
-		for( INT i=0; i<Brush->Polys->Num(); i++ )
+		for( i=0; i<Brush->Polys->Num(); i++ )
 		{
 			Brush->Polys->Element(i).iLink = i;
 		}
-		INT n=0;
+		INT_UNREAL_32S n=0;
 		for( i=0; i<Brush->Polys->Num(); i++ )
 		{
 			FPoly* EdPoly = &Brush->Polys->Element(i);
 			if( EdPoly->iLink==i )
 			{
-				for( INT j=i+1; j<Brush->Polys->Num(); j++ )
+				for( INT_UNREAL_32S j=i+1; j<Brush->Polys->Num(); j++ )
 				{
 					FPoly* OtherPoly = &Brush->Polys->Element(j);
 					if
@@ -703,7 +704,7 @@ int TryToMerge( FPoly *Poly1, FPoly *Poly2 )
 		return 0;
 
 	// Find one overlapping point.
-	INT Start1=0, Start2=0;
+	INT_UNREAL_32S Start1=0, Start2=0;
 	for( Start1=0; Start1<Poly1->NumVertices; Start1++ )
 		for( Start2=0; Start2<Poly2->NumVertices; Start2++ )
 			if( FPointsAreSame(Poly1->Vertex[Start1], Poly2->Vertex[Start2]) )
@@ -712,10 +713,10 @@ int TryToMerge( FPoly *Poly1, FPoly *Poly2 )
 	FoundOverlap:
 
 	// Wrap around trying to merge.
-	INT End1  = Start1;
-	INT End2  = Start2;
-	INT Test1 = Start1+1; if (Test1>=Poly1->NumVertices) Test1 = 0;
-	INT Test2 = Start2-1; if (Test2<0)                   Test2 = Poly2->NumVertices-1;
+	INT_UNREAL_32S End1  = Start1;
+	INT_UNREAL_32S End2  = Start2;
+	INT_UNREAL_32S Test1 = Start1+1; if (Test1>=Poly1->NumVertices) Test1 = 0;
+	INT_UNREAL_32S Test2 = Start2-1; if (Test2<0)                   Test2 = Poly2->NumVertices-1;
 	if( FPointsAreSame(Poly1->Vertex[Test1],Poly2->Vertex[Test2]) )
 	{
 		End1   = Test1;
@@ -736,8 +737,9 @@ int TryToMerge( FPoly *Poly1, FPoly *Poly2 )
 	// Build a new edpoly containing both polygons merged.
 	FPoly NewPoly = *Poly1;
 	NewPoly.NumVertices = 0;
-	INT Vertex = End1;
-	for( INT i=0; i<Poly1->NumVertices; i++ )
+	INT_UNREAL_32S Vertex = End1;
+	INT_UNREAL_32S i;
+	for( i=0; i<Poly1->NumVertices; i++ )
 	{
 		NewPoly.Vertex[NewPoly.NumVertices++] = Poly1->Vertex[Vertex];
 		if( ++Vertex >= Poly1->NumVertices )
@@ -769,19 +771,19 @@ int TryToMerge( FPoly *Poly1, FPoly *Poly2 )
 //
 // Merge all polygons in coplanar list that can be merged convexly.
 //
-void MergeCoplanars( UModel* Model, INT* PolyList, INT PolyCount )
+void MergeCoplanars( UModel* Model, INT_UNREAL_32S* PolyList, INT_UNREAL_32S PolyCount )
 {
 	guard(MergeCoplanars);
-	INT MergeAgain = 1;
+	INT_UNREAL_32S MergeAgain = 1;
 	while( MergeAgain )
 	{
 		MergeAgain = 0;
-		for( INT i=0; i<PolyCount; i++ )
+		for( INT_UNREAL_32S i=0; i<PolyCount; i++ )
 		{
 			FPoly& Poly1 = Model->Polys->Element(PolyList[i]);
 			if( Poly1.NumVertices > 0 )
 	        {
-				for( INT j=i+1; j<PolyCount; j++ )
+				for( INT_UNREAL_32S j=i+1; j<PolyCount; j++ )
 				{
 					FPoly& Poly2 = Model->Polys->Element(PolyList[j]);
 					if( Poly2.NumVertices > 0 )
@@ -799,7 +801,7 @@ void MergeCoplanars( UModel* Model, INT* PolyList, INT PolyCount )
 //
 // Convert a Bsp node's polygon to an EdPoly, add it to the list, and recurse.
 //
-void MakeEdPolys( UModel* Model, INT iNode )
+void MakeEdPolys( UModel* Model, INT_UNREAL_32S iNode )
 {
 	FBspNode* Node = &Model->Nodes->Element(iNode);
 
@@ -815,7 +817,7 @@ void MakeEdPolys( UModel* Model, INT iNode )
 //
 // Build EdPoly list from a model's Bsp. Not transactional.
 //
-void UEditorEngine::bspBuildFPolys( UModel* Model, UBOOL SurfLinks, INT iNode )
+void UEditorEngine::bspBuildFPolys( UModel* Model, UBOOL SurfLinks, INT_UNREAL_32S iNode )
 {
 	guard(UEditorEngine::bspBuildFPolys);
 
@@ -823,7 +825,7 @@ void UEditorEngine::bspBuildFPolys( UModel* Model, UBOOL SurfLinks, INT iNode )
 	if( Model->Nodes->Num() )
 		MakeEdPolys( Model, iNode );
 	if( !SurfLinks )
-		for( INT i=0; i<Model->Polys->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Model->Polys->Num(); i++ )
 			Model->Polys->Element(i).iLink=i;
 
 	unguard;
@@ -836,25 +838,26 @@ void UEditorEngine::bspBuildFPolys( UModel* Model, UBOOL SurfLinks, INT iNode )
 void UEditorEngine::bspMergeCoplanars( UModel* Model, UBOOL RemapLinks, UBOOL MergeDisparateTextures )
 {
 	guard(UEditorEngine::bspMergeCoplanars);
-	INT OriginalNum = Model->Polys->Num();
+	INT_UNREAL_32S OriginalNum = Model->Polys->Num();
+	INT_UNREAL_32S i;
 
 	// Mark all polys as unprocessed.
-	for( INT i=0; i<Model->Polys->Num(); i++ )
+	for( i=0; i<Model->Polys->Num(); i++ )
 		Model->Polys->Element(i).PolyFlags &= ~PF_EdProcessed;
 
 	// Find matching coplanars and merge them.
 	FMemMark Mark(GMem);
-	INT* PolyList = new(GMem,Model->Polys->Max())INT;
-	INT n=0;
+	INT_UNREAL_32S* PolyList = new(GMem,Model->Polys->Max())INT_UNREAL_32S;
+	INT_UNREAL_32S n=0;
 	for( i=0; i<Model->Polys->Num(); i++ )
 	{
 		FPoly* EdPoly = &Model->Polys->Element(i);
 		if( EdPoly->NumVertices>0 && !(EdPoly->PolyFlags & PF_EdProcessed) )
 		{
-			INT PolyCount         =  0;
+			INT_UNREAL_32S PolyCount         =  0;
 			PolyList[PolyCount++] =  i;
 			EdPoly->PolyFlags    |= PF_EdProcessed;
-			for( INT j=i+1; j<Model->Polys->Num(); j++ )
+			for( INT_UNREAL_32S j=i+1; j<Model->Polys->Num(); j++ )
 	        {
 				FPoly* OtherPoly = &Model->Polys->Element(j);
 				if( OtherPoly->iLink == EdPoly->iLink )
@@ -884,8 +887,8 @@ void UEditorEngine::bspMergeCoplanars( UModel* Model, UBOOL RemapLinks, UBOOL Me
 	Mark.Pop();
 
 	// Get rid of empty EdPolys while remapping iLinks.
-	INT j=0;
-	INT* Remap = new(GMem,Model->Polys->Num())INT;
+	INT_UNREAL_32S j=0;
+	INT_UNREAL_32S* Remap = new(GMem,Model->Polys->Num())INT_UNREAL_32S;
 	for( i=0; i<Model->Polys->Num(); i++ )
 	{
 		if( Model->Polys->Element(i).NumVertices )
@@ -912,7 +915,7 @@ void UEditorEngine::bspMergeCoplanars( UModel* Model, UBOOL RemapLinks, UBOOL Me
 //
 // Recursive worker function called by BspCleanup.
 //
-void CleanupNodes( UModel *Model, INT iNode, INT iParent )
+void CleanupNodes( UModel *Model, INT_UNREAL_32S iNode, INT_UNREAL_32S iParent )
 {
 	FBspNode *Node = &Model->Nodes->Element(iNode);
 
@@ -970,7 +973,7 @@ void CleanupNodes( UModel *Model, INT iNode, INT iParent )
 		// Delete empty nodes with no fronts or backs.
 		// Replace empty nodes with only fronts.
 		// Replace empty nodes with only backs.
-		INT iReplacementNode;
+		INT_UNREAL_32S iReplacementNode;
 		if     ( Node->iFront != INDEX_NONE ) iReplacementNode = Node->iFront;
 		else if( Node->iBack  != INDEX_NONE ) iReplacementNode = Node->iBack;
 		else                                  iReplacementNode = INDEX_NONE;
@@ -1018,7 +1021,7 @@ void UEditorEngine::bspCleanup( UModel *Model )
    CSG leaf filter callbacks.
 ----------------------------------------------------------------------------*/
 
-void AddBrushToWorldFunc( UModel* Model, INT iNode, FPoly* EdPoly,
+void AddBrushToWorldFunc( UModel* Model, INT_UNREAL_32S iNode, FPoly* EdPoly,
 	EPolyNodeFilter Filter, ENodePlace ENodePlace )
 {
 	guard(AddBrushToWorldFunc);
@@ -1040,7 +1043,7 @@ void AddBrushToWorldFunc( UModel* Model, INT iNode, FPoly* EdPoly,
 	unguard;
 }
 
-void AddWorldToBrushFunc( UModel* Model, INT iNode, FPoly* EdPoly,
+void AddWorldToBrushFunc( UModel* Model, INT_UNREAL_32S iNode, FPoly* EdPoly,
 	EPolyNodeFilter Filter, ENodePlace ENodePlace )
 {
 	guard(AddWorldToBrushFunc);
@@ -1068,7 +1071,7 @@ void AddWorldToBrushFunc( UModel* Model, INT iNode, FPoly* EdPoly,
 	unguard;
 }
 
-void SubtractBrushFromWorldFunc( UModel* Model, INT iNode, FPoly* EdPoly,
+void SubtractBrushFromWorldFunc( UModel* Model, INT_UNREAL_32S iNode, FPoly* EdPoly,
 	EPolyNodeFilter Filter, ENodePlace ENodePlace )
 {
 	guard(SubtractBrushFromWorldFunc);
@@ -1089,7 +1092,7 @@ void SubtractBrushFromWorldFunc( UModel* Model, INT iNode, FPoly* EdPoly,
 	unguard;
 }
 
-void SubtractWorldToBrushFunc( UModel* Model, INT iNode, FPoly* EdPoly,
+void SubtractWorldToBrushFunc( UModel* Model, INT_UNREAL_32S iNode, FPoly* EdPoly,
 	EPolyNodeFilter Filter, ENodePlace ENodePlace )
 {
 	guard(SubtractWorldToBrushFunc);
@@ -1117,7 +1120,7 @@ void SubtractWorldToBrushFunc( UModel* Model, INT iNode, FPoly* EdPoly,
 	unguard;
 }
 
-void IntersectBrushWithWorldFunc( UModel* Model, INT iNode, FPoly *EdPoly,
+void IntersectBrushWithWorldFunc( UModel* Model, INT_UNREAL_32S iNode, FPoly *EdPoly,
 	EPolyNodeFilter Filter,ENodePlace ENodePlace )
 {
 	guard(IntersectBrushWithWorldFunc);
@@ -1138,7 +1141,7 @@ void IntersectBrushWithWorldFunc( UModel* Model, INT iNode, FPoly *EdPoly,
 	unguard;
 }
 
-void IntersectWorldWithBrushFunc( UModel *Model, INT iNode, FPoly *EdPoly,
+void IntersectWorldWithBrushFunc( UModel *Model, INT_UNREAL_32S iNode, FPoly *EdPoly,
 	EPolyNodeFilter Filter,ENodePlace ENodePlace )
 {
 	guard(IntersectWorldWithBrushFunc);
@@ -1159,7 +1162,7 @@ void IntersectWorldWithBrushFunc( UModel *Model, INT iNode, FPoly *EdPoly,
 	unguard;
 }
 
-void DeIntersectBrushWithWorldFunc( UModel* Model, INT iNode, FPoly* EdPoly,
+void DeIntersectBrushWithWorldFunc( UModel* Model, INT_UNREAL_32S iNode, FPoly* EdPoly,
 	EPolyNodeFilter Filter,ENodePlace ENodePlace )
 {
 	guard(DeIntersectBrushWithWorldFunc);
@@ -1180,7 +1183,7 @@ void DeIntersectBrushWithWorldFunc( UModel* Model, INT iNode, FPoly* EdPoly,
 	unguard;
 }
 
-void DeIntersectWorldWithBrushFunc( UModel* Model, INT iNode, FPoly* EdPoly,
+void DeIntersectWorldWithBrushFunc( UModel* Model, INT_UNREAL_32S iNode, FPoly* EdPoly,
 	EPolyNodeFilter Filter,ENodePlace ENodePlace )
 {
 	guard(DeIntersectWorldWithBrushFunc);
@@ -1216,10 +1219,10 @@ void FilterLeaf
 (
 	BSP_FILTER_FUNC FilterFunc, 
 	UModel*			Model,
-	INT			    iNode, 
+	INT_UNREAL_32S			    iNode, 
 	FPoly*			EdPoly, 
 	FCoplanarInfo	CoplanarInfo, 
-	INT				LeafOutside, 
+	INT_UNREAL_32S				LeafOutside, 
 	ENodePlace		ENodePlace
 )
 {
@@ -1280,16 +1283,16 @@ void FilterEdPoly
 (
 	BSP_FILTER_FUNC	FilterFunc, 
 	UModel			*Model,
-	INT			    iNode, 
+	INT_UNREAL_32S			    iNode, 
 	FPoly			*EdPoly, 
 	FCoplanarInfo	CoplanarInfo, 
-	INT				Outside
+	INT_UNREAL_32S				Outside
 )
 {
 	guard(FilterEdPoly);
 
-	INT            SplitResult,iOurFront,iOurBack;
-	INT			   NewFrontOutside,NewBackOutside;
+	INT_UNREAL_32S            SplitResult,iOurFront,iOurBack;
+	INT_UNREAL_32S			   NewFrontOutside,NewBackOutside;
 
 	FilterLoop:
 	if( EdPoly->NumVertices >= FPoly::VERTEX_THRESHOLD )
@@ -1538,7 +1541,7 @@ void BspFilterFPoly( BSP_FILTER_FUNC FilterFunc, UModel *Model, FPoly *EdPoly )
 int UEditorEngine::bspNodeToFPoly
 (
 	UModel	*Model,
-	INT	    iNode,
+	INT_UNREAL_32S	    iNode,
 	FPoly	*EdPoly
 )
 {
@@ -1603,7 +1606,7 @@ void FilterWorldThroughBrush
 	UModel*		Model,
 	UModel*		Brush,
 	ECsgOper	CSGOper,
-	INT		    iNode,
+	INT_UNREAL_32S		    iNode,
 	FSphere*	BrushSphere
 )
 {
@@ -1613,7 +1616,7 @@ void FilterWorldThroughBrush
 	while( iNode != INDEX_NONE )
 	{
 		// Get surface.
-		INT iSurf = Model->Nodes->Element(iNode).iSurf;
+		INT_UNREAL_32S iSurf = Model->Nodes->Element(iNode).iSurf;
 
 		// Skip new nodes and their children, which are guaranteed new.
 		if( Model->Nodes->Element(iNode).NodeFlags & NF_IsNew )
@@ -1717,7 +1720,7 @@ int UEditorEngine::bspBrushCSG
 	UModel*		Model, 
 	DWORD		PolyFlags, 
 	ECsgOper	CSGOper, 
-	INT			BuildBounds
+	INT_UNREAL_32S			BuildBounds
 )
 {
 	guard(UEditorEngine::bspBrushCSG);
@@ -1945,11 +1948,11 @@ int UEditorEngine::bspBrushCSG
 // IsFront: 1=front node of parent, 0=back node of parent
 // Depth:   Depth of node in the Bsp, 0=root.
 //
-void CalcBspNodeStats (UModel *Model, INT iNode, FBspStats *Stats,
+void CalcBspNodeStats (UModel *Model, INT_UNREAL_32S iNode, FBspStats *Stats,
 	int IsFront, int Depth)
 	{
 	FBspNode    *Node = &Model->Nodes->Element(iNode);
-	INT       i;
+	INT_UNREAL_32S       i;
 	//
 	Stats->DepthCount++;
 	//
@@ -2065,8 +2068,8 @@ void BspTopicHandler::Set(ULevel *Level, const char *Item, const char *Data)
 class FPointVert 
 {
 public:
-	INT		    iNode;
-	INT		    nVertex;
+	INT_UNREAL_32S		    iNode;
+	INT_UNREAL_32S		    nVertex;
 	FPointVert* Next;
 };
 
@@ -2104,16 +2107,16 @@ public:
 	}
 
 	// Add all of a node's vertices to a node-vertex list.
-	void AddNode( INT iNode )
+	void AddNode( INT_UNREAL_32S iNode )
 	{
 		guard(FPointVertList::AddNode);
 
 		FBspNode&	Node 	 =  Model->Nodes->Element(iNode);
 		FVert*		VertPool =  &Model->Verts->Element(Node.iVertPool);
 
-		for( INT i=0; i < Node.NumVertices; i++ )
+		for( INT_UNREAL_32S i=0; i < Node.NumVertices; i++ )
 		{
-			INT pVertex = VertPool[i].pVertex;
+			INT_UNREAL_32S pVertex = VertPool[i].pVertex;
 
 			// Add new point/vertex pair to array, and insert new array entry
 			// between index and first entry.
@@ -2133,14 +2136,14 @@ public:
 	{
 		guard(FPointVertList::AddAllNodes);
 
-		for( INT iNode=0; iNode < Model->Nodes->Num(); iNode++ )
+		for( INT_UNREAL_32S iNode=0; iNode < Model->Nodes->Num(); iNode++ )
 			AddNode( iNode );
 
 		unguard;
 	}
 
 	// Remove all of a node's vertices from a node-vertex list.
-	void RemoveNode( INT iNode )
+	void RemoveNode( INT_UNREAL_32S iNode )
 	{
 		guard(FPointVertList::RemoveNode);
 
@@ -2150,9 +2153,9 @@ public:
 		// Loop through all of the node's vertices and search through the
 		// corresponding point's node-vert list, and delink this node.
 		int Count=0;
-		for( INT i = 0; i < Node.NumVertices; i++ )
+		for( INT_UNREAL_32S i = 0; i < Node.NumVertices; i++ )
 		{
-			INT pVertex = VertPool[i].pVertex;
+			INT_UNREAL_32S pVertex = VertPool[i].pVertex;
 
 			for( FPointVert **PrevLink = &Index[pVertex]; *PrevLink; PrevLink=&(*PrevLink)->Next )
 			{
@@ -2192,9 +2195,9 @@ void AddPointToNode
 (
 	UModel*         Model,
 	FPointVertList* PointVerts,
-	INT			    iNode, 
-	INT			    VertexNumber, 
-	INT			    pVertex 
+	INT_UNREAL_32S			    iNode, 
+	INT_UNREAL_32S			    VertexNumber, 
+	INT_UNREAL_32S			    pVertex 
 )
 {
 	guard(AddPointToNode);
@@ -2211,11 +2214,13 @@ void AddPointToNode
 	if( PointVerts )
 		PointVerts->RemoveNode( iNode );
 
-	INT iOldVert = Node.iVertPool;
+	INT_UNREAL_32S iOldVert = Node.iVertPool;
+	INT_UNREAL_32S i;
+
 	Node.iVertPool = Model->Verts->Add(Node.NumVertices+1);;
 
 	// Make sure this node doesn't already contain the vertex.
-	for( INT i=0; i<Node.NumVertices; i++ )
+	for( i=0; i<Node.NumVertices; i++ )
 		check( Model->Verts->Element(iOldVert + i).pVertex != pVertex );
 
 	// Copy the old vertex pool to the new one.
@@ -2249,12 +2254,13 @@ int DistributePoint
 (
 	UModel*         Model,
 	FPointVertList* PointVerts,	
-	INT			    iNode,
-	INT			    pVertex
+	INT_UNREAL_32S			    iNode,
+	INT_UNREAL_32S			    pVertex
 )
 {
 	guard(DistributePoint);
-	INT Count = 0;
+	INT_UNREAL_32S Count = 0;
+	INT_UNREAL_32S i;
 
 	// Handle front, back, and plane.
 	FLOAT Dist = Model->Nodes->Element(iNode).Plane.PlaneDot(Model->Points->Element(pVertex));
@@ -2279,7 +2285,7 @@ int DistributePoint
 			FVert *VertPool = &Model->Verts->Element(Model->Nodes->Element(iNode).iVertPool);
 
 			// Skip this node if it already contains the point in question.
-			for( INT i=0; i<Model->Nodes->Element(iNode).NumVertices; i++ )
+			for( i=0; i<Model->Nodes->Element(iNode).NumVertices; i++ )
 				if( VertPool[i].pVertex == pVertex )
 					break;
 			if( i != Model->Nodes->Element(iNode).NumVertices )
@@ -2287,13 +2293,13 @@ int DistributePoint
 
 			// Loop through all sides and see if (A) side is colinear with point, and
 			// (B) point falls within inside of this side.
-			INT FoundSide       = -1;
-			INT SkippedColinear = 0;
-			INT SkippedInside   = 0;
+			INT_UNREAL_32S FoundSide       = -1;
+			INT_UNREAL_32S SkippedColinear = 0;
+			INT_UNREAL_32S SkippedInside   = 0;
 
 			for( i=0; i<Model->Nodes->Element(iNode).NumVertices; i++ )
 			{
-				INT j = (i>0) ? (i-1) : (Model->Nodes->Element(iNode).NumVertices-1);
+				INT_UNREAL_32S j = (i>0) ? (i-1) : (Model->Nodes->Element(iNode).NumVertices-1);
 
 				// Create cutting plane perpendicular to both this side and the polygon's normal.
 				FVector Side            = Model->Points->Element(VertPool[i].pVertex) - Model->Points->Element(VertPool[j].pVertex);
@@ -2382,15 +2388,16 @@ void MergeNearPoints( UModel *Model, FLOAT Dist )
 {
 	guard(MergeNearPoints);
 	FMemMark Mark(GMem);
-	INT *PointRemap = new(GMem,Model->Points->Num())INT;
+	INT_UNREAL_32S *PointRemap = new(GMem,Model->Points->Num())INT_UNREAL_32S;
 	int Merged=0,Collapsed=0;
+	INT_UNREAL_32S i;
 
 	// Find nearer point for all points.
-	for( INT i=0; i<Model->Points->Num(); i++ )
+	for( i=0; i<Model->Points->Num(); i++ )
 	{
 		PointRemap[i] = i;
 		FVector &Point = Model->Points->Element(i);
-		for( INT j=0; j<i; j++ )
+		for( INT_UNREAL_32S j=0; j<i; j++ )
 		{
 			FVector &TestPoint = Model->Points->Element(j);
 			if( (TestPoint - Point).SizeSquared() < Dist*Dist )
@@ -2457,21 +2464,22 @@ void UEditorEngine::bspOptGeom( UModel *Model )
 	bspRefresh				(Model,0);
 	PointVerts.Alloc		(Model);
 	PointVerts.AddAllNodes	();
+	int i;
 
 	// First four entries are reserved for view-clipped sides.
 	Model->Verts->NumSharedSides = 4;
 	
 	// Mark all sides as unlinked.
-	for( int i=0; i<Model->Verts->Num(); i++ )
+	for( i=0; i<Model->Verts->Num(); i++ )
 		Model->Verts->Element(i).iSide = INDEX_NONE;
 
-	INT TeesFound = 0, Distributed = 0;
+	INT_UNREAL_32S TeesFound = 0, Distributed = 0;
 
 	// Eliminate T-joints on each node by finding all vertices that aren't attached to
 	// two shared sides, then filtering them down through the BSP and adding them to
 	// the sides they belong on.
 	guard(1);
-	for( INT iNode=0; iNode < Model->Nodes->Num(); iNode++ )
+	for( INT_UNREAL_32S iNode=0; iNode < Model->Nodes->Num(); iNode++ )
 	{
 		FBspNode &Node = Model->Nodes->Element(iNode);
 		
@@ -2509,7 +2517,7 @@ void UEditorEngine::bspOptGeom( UModel *Model )
 	PointVerts.AddAllNodes	();
 
 	guard(2);
-	for( INT iNode=0; iNode < Model->Nodes->Num(); iNode++ )
+	for( INT_UNREAL_32S iNode=0; iNode < Model->Nodes->Num(); iNode++ )
 	{
 		FBspNode &Node = Model->Nodes->Element(iNode);		
 		for( BYTE ThisVert=0; ThisVert < Node.NumVertices; ThisVert++ )
@@ -2526,18 +2534,18 @@ void UEditorEngine::bspOptGeom( UModel *Model )
 						{
 							// Make sure that the other node's two vertices are adjacent and
 							// ordered opposite this node's vertices.
-							INT		    iOtherNode	= PV2->iNode;
+							INT_UNREAL_32S		    iOtherNode	= PV2->iNode;
 							FBspNode	&OtherNode	= Model->Nodes->Element(iOtherNode);
 
-							INT Delta = 
+							INT_UNREAL_32S Delta = 
 								(OtherNode.NumVertices + PV2->nVertex - PV1->nVertex) % 
 								OtherNode.NumVertices;
 
 							if( Delta==1 )
 							{
 								// Side is properly linked!
-								INT OtherVert = PV2->nVertex;
-								INT iSide;
+								INT_UNREAL_32S OtherVert = PV2->nVertex;
+								INT_UNREAL_32S iSide;
 								if( Model->Verts->Element(OtherNode.iVertPool+OtherVert).iSide==INDEX_NONE )
 									iSide = Model->Verts->NumSharedSides++;
 								else
@@ -2568,7 +2576,7 @@ void UEditorEngine::bspOptGeom( UModel *Model )
 	// Gather stats.
 	i=0; int j=0;
 	guard(3);
-	for( INT iNode=0; iNode < Model->Nodes->Num(); iNode++ )
+	for( INT_UNREAL_32S iNode=0; iNode < Model->Nodes->Num(); iNode++ )
 	{
 		FBspNode	&Node		= Model->Nodes->Element(iNode);
 		FVert		*VertPool	= &Model->Verts->Element(Node.iVertPool);
@@ -2592,7 +2600,7 @@ void UEditorEngine::bspOptGeom( UModel *Model )
    Bsp point/vector refreshing.
 ---------------------------------------------------------------------------------------*/
 
-void TagReferencedNodes( UModel *Model, INT *NodeRef, INT *PolyRef, INT iNode )
+void TagReferencedNodes( UModel *Model, INT_UNREAL_32S *NodeRef, INT_UNREAL_32S *PolyRef, INT_UNREAL_32S iNode )
 {
 	FBspNode &Node = Model->Nodes->Element(iNode);
 
@@ -2613,17 +2621,17 @@ void UEditorEngine::bspRefresh( UModel *Model, int NoRemapSurfs )
 	guard(UEditorEngine::bspRefresh);
 
 	FMemMark Mark(GMem);
-	INT *VectorRef, *PointRef, *NodeRef, *PolyRef, i;
+	INT_UNREAL_32S *VectorRef, *PointRef, *NodeRef, *PolyRef, i;
 	BYTE  B;
 
 	// Remove unreferenced Bsp surfs.
-	NodeRef		= new(GMem,MEM_Oned,Model->Nodes->Num())INT;
-	PolyRef		= new(GMem,MEM_Oned,Model->Surfs->Num())INT;
+	NodeRef		= new(GMem,MEM_Oned,Model->Nodes->Num())INT_UNREAL_32S;
+	PolyRef		= new(GMem,MEM_Oned,Model->Surfs->Num())INT_UNREAL_32S;
 	if( Model->Nodes->Num() > 0 )
 		TagReferencedNodes( Model, NodeRef, PolyRef, 0 );
 
 	if( NoRemapSurfs )
-		appMemset(PolyRef,0,Model->Surfs->Num() * sizeof (INT));
+		appMemset(PolyRef,0,Model->Surfs->Num() * sizeof (INT_UNREAL_32S));
 
 	// Remap Bsp nodes and surfs.
 	int n=0;
@@ -2655,8 +2663,8 @@ void UEditorEngine::bspRefresh( UModel *Model, int NoRemapSurfs )
 	}
 
 	// Remove unreferenced points and vectors.
-	VectorRef = new(GMem,MEM_Oned,Model->Vectors->Num())INT;
-	PointRef  = new(GMem,MEM_Oned,Model->Points->Num ())INT;
+	VectorRef = new(GMem,MEM_Oned,Model->Vectors->Num())INT_UNREAL_32S;
+	PointRef  = new(GMem,MEM_Oned,Model->Points->Num ())INT_UNREAL_32S;
 
 	// Check Bsp surfs.
 	for( i=0; i<Model->Surfs->Num(); i++ )

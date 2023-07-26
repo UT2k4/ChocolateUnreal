@@ -43,7 +43,7 @@ public:
 		{
 			return Data;
 		}
-		INT GetSize()
+		INT_UNREAL_32S GetSize()
 		{
 			debug(LinearNext);
 			return LinearNext->Data - Data;
@@ -64,7 +64,7 @@ public:
 		TCacheTime	Time;			// Last Get() time.
 		BYTE		Segment;		// Number of the segment this item resides in.
 		BYTE		Extra;			// Extra space for use.
-		INT			Cost;			// Cost to flush this item.
+		INT_UNREAL_32S			Cost;			// Cost to flush this item.
 		FCacheItem*	LinearNext;		// Next cache item in linear list, or NULL if last.
 		FCacheItem*	LinearPrev;		// Previous cache item in linear list, or NULL if first.
 		FCacheItem*	HashNext;		// Next cache item in hash table, or NULL if last.
@@ -72,15 +72,15 @@ public:
 
 	// FMemCache interface.
 	FMemCache() {Initialized=0;}
-    void Init( INT BytesToAllocate, INT MaxItems, void* Start=NULL, INT SegSize=0 );
-	void Exit( INT FreeMemory );
+    void Init(INT_UNREAL_32S BytesToAllocate, INT_UNREAL_32S MaxItems, void* Start=NULL, INT_UNREAL_32S SegSize=0 );
+	void Exit(INT_UNREAL_32S FreeMemory );
 	void Flush( QWORD Id=0, DWORD Mask=~0, UBOOL IgnoreLocked=0 );
-	BYTE* Create( QWORD Id, FCacheItem *&Item, INT CreateSize, INT Alignment=DEFAULT_ALIGNMENT, INT SafetyPad=0 );
+	BYTE* Create( QWORD Id, FCacheItem *&Item, INT_UNREAL_32S CreateSize, INT_UNREAL_32S Alignment=DEFAULT_ALIGNMENT, INT_UNREAL_32S SafetyPad=0 );
 	void Tick();
 	void CheckState();
 	UBOOL Exec( const char* Cmd, FOutputDevice* Out=GSystem );
 	void Status( char* Msg );
-	INT GetTime() {return Time;}
+	INT_UNREAL_32S GetTime() {return Time;}
 
 	// FMemCache inlines.
 #if ASM
@@ -89,7 +89,7 @@ public:
 	{
 		return (Val ^ (Val>>12) ^ (Val>>24)) & (HASH_COUNT-1);
 	}
-	BYTE* Get( QWORD Id, FCacheItem*& Item, INT Alignment=DEFAULT_ALIGNMENT )
+	BYTE* Get( QWORD Id, FCacheItem*& Item, INT_UNREAL_32S Alignment=DEFAULT_ALIGNMENT )
 	{	
 		guardSlow(FMemCache::Get);
 		clockSlow(GetCycles);
@@ -124,7 +124,7 @@ public:
 	{
 		return (Val ^ (Val>>12) ^ (Val>>24)) & (HASH_COUNT-1);
 	}
-	BYTE* Get( QWORD Id, FCacheItem*& Item, INT Alignment=DEFAULT_ALIGNMENT )
+	BYTE* Get( QWORD Id, FCacheItem*& Item, INT_UNREAL_32S Alignment=DEFAULT_ALIGNMENT )
 	{	
 		guardSlow(FMemCache::Get);
 		clockSlow(GetCycles);
@@ -154,22 +154,22 @@ private:
 	enum {IGNORE_SIZE=256};
 
 	// Variables.
-	INT Initialized;
-	INT Time;
+	INT_UNREAL_32S Initialized;
+	INT_UNREAL_32S Time;
 	QWORD MruId;
 	FCacheItem* MruItem;
 
 	// Stats.
-	INT NumGets,NumCreates,CreateCycles,GetCycles,TickCycles;
-	INT ItemsFresh,ItemsStale,ItemsTotal,ItemGaps;
-	INT MemFresh,MemStale,MemTotal;
+	INT_UNREAL_32S NumGets,NumCreates,CreateCycles,GetCycles,TickCycles;
+	INT_UNREAL_32S ItemsFresh,ItemsStale,ItemsTotal,ItemGaps;
+	INT_UNREAL_32S MemFresh,MemStale,MemTotal;
 
 	// Linked list of item associated with cache memory, linked via LinearNext and
 	// LinearPrev order of memory.
 	void*       ItemMemory;
 	FCacheItem* CacheItems;
 	FCacheItem* LastItem;
-	void CreateNewFreeSpace( BYTE* Start, BYTE* End, FCacheItem* Prev, FCacheItem* Next, INT Segment );
+	void CreateNewFreeSpace( BYTE* Start, BYTE* End, FCacheItem* Prev, FCacheItem* Next, INT_UNREAL_32S Segment );
 
 	// First item in unused item list (these items are not associated with cache
 	// memory). Linked via LinearNext in FIFO order.

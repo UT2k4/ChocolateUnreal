@@ -55,9 +55,9 @@ struct ENGINE_API FSceneNode
 	FSceneNode*		Parent;		// Frame from whence this was created, NULL=top level.
 	FSceneNode*		Sibling;	// Next sibling scene frame.
 	FSceneNode*		Child;		// Next child scene frame.
-	INT				iSurf;		// Surface seen through (Parent,iSurface pair is unique).
-	INT				ZoneNumber;	// Inital rendering zone of viewport in destination level (NOT the zone of the viewpoint!)
-	INT				Recursion;	// Recursion depth, 0 if initial.
+	INT_UNREAL_32S				iSurf;		// Surface seen through (Parent,iSurface pair is unique).
+	INT_UNREAL_32S				ZoneNumber;	// Inital rendering zone of viewport in destination level (NOT the zone of the viewpoint!)
+	INT_UNREAL_32S				Recursion;	// Recursion depth, 0 if initial.
 	FLOAT			Mirror;		// Mirror value, 1.0 or -1.0.
 	FPlane			NearClip;	// Near-clipping plane in screenspace.
 	FCoords			Coords;		// Transform coordinate system.
@@ -67,8 +67,8 @@ struct ENGINE_API FSceneNode
 	FDynamicSprite* Sprite;		// Sprites to draw.
 
 	// Precomputes.
-	INT			X, Y;			// Frame size.
-	INT         XB, YB;         // Offset of top left active viewport.
+	INT_UNREAL_32S			X, Y;			// Frame size.
+	INT_UNREAL_32S         XB, YB;         // Offset of top left active viewport.
 	FLOAT		FX, FY;			// Floating point X,Y.
 	FLOAT		FX15, FY15;		// (Floating point SXR + 1.0001)/2.0.
 	FLOAT		FX1, FY1;		// Floating point SXR-1.
@@ -98,7 +98,7 @@ struct ENGINE_API FSceneNode
 	FPlane		ViewPlanes[4];	// 4 planes indicating view frustrum extent planes.
 
 	// Functions.
-	BYTE* Screen( INT X, INT Y ) {return Viewport->ScreenPointer + (X+XB+(Y+YB)*Viewport->Stride)*Viewport->ColorBytes;}
+	BYTE* Screen( INT_UNREAL_32S X, INT_UNREAL_32S Y ) {return Viewport->ScreenPointer + (X+XB+(Y+YB)*Viewport->Stride)*Viewport->ColorBytes;}
 	void ComputeRenderSize();
 	void ComputeRenderCoords( FVector& Location, FRotator& Rotation );
 };
@@ -123,7 +123,7 @@ struct FTransform : public FOutVector
 {
 	FLOAT ScreenX;
 	FLOAT ScreenY;
-	INT   IntY;
+	INT_UNREAL_32S   IntY;
 	FLOAT RZ;
 	void Project( const FSceneNode* Frame )
 	{
@@ -331,7 +331,7 @@ struct FSavedPoly
 {
 	FSavedPoly* Next;
 	void*       User;
-	INT         NumPts;
+	INT_UNREAL_32S         NumPts;
 	FTransform* Pts[];
 };
 
@@ -396,7 +396,7 @@ class ENGINE_API URenderBase : public USubsystem
 
 	// Scene frame management.
 	virtual FSceneNode* CreateMasterFrame( UViewport* Viewport, FVector Location, FRotator Rotation, FScreenBounds* Bounds )=0;
-	virtual FSceneNode* CreateChildFrame( FSceneNode* Parent, FSpanBuffer* Span, ULevel* Level, INT iSurf, INT iZone, FLOAT Mirror, const FPlane& NearClip, const FCoords& Coords, FScreenBounds* Bounds )=0;
+	virtual FSceneNode* CreateChildFrame( FSceneNode* Parent, FSpanBuffer* Span, ULevel* Level, INT_UNREAL_32S iSurf, INT_UNREAL_32S iZone, FLOAT Mirror, const FPlane& NearClip, const FCoords& Coords, FScreenBounds* Bounds )=0;
 
 	// Major rendering functions.
 	virtual void DrawWorld( FSceneNode* Frame )=0;
@@ -404,9 +404,9 @@ class ENGINE_API URenderBase : public USubsystem
 
 	// Other functions.
 	virtual UBOOL Project( FSceneNode* Frame, const FVector &V, FLOAT &ScreenX, FLOAT &ScreenY, FLOAT* Scale )=0;
-	virtual UBOOL Deproject( FSceneNode* Frame, INT ScreenX, INT ScreenY, FVector& V )=0;
+	virtual UBOOL Deproject( FSceneNode* Frame, INT_UNREAL_32S ScreenX, INT_UNREAL_32S ScreenY, FVector& V )=0;
 	virtual UBOOL BoundVisible( FSceneNode* Frame, FBox* Bound, FSpanBuffer* SpanBuffer, FScreenBounds& Results )=0;
-	virtual void GetVisibleSurfs( UViewport* Viewport, TArray<INT>& iSurfs )=0;
+	virtual void GetVisibleSurfs( UViewport* Viewport, TArray<INT_UNREAL_32S>& iSurfs )=0;
 	virtual void GlobalLighting( UBOOL Realtime, AActor* Owner, FLOAT& Brightness, FPlane& Color )=0;
 
 	// High level primitive drawing.
@@ -424,8 +424,8 @@ class ENGINE_API URenderBase : public USubsystem
 struct ENGINE_API HBspSurf : public HHitProxy
 {
 	DECLARE_HIT_PROXY(HBspSurf,HHitProxy)
-	INT iSurf;
-	HBspSurf( INT iInSurf ) : iSurf( iInSurf ) {}
+	INT_UNREAL_32S iSurf;
+	HBspSurf( INT_UNREAL_32S iInSurf ) : iSurf( iInSurf ) {}
 };
 
 // Hit an actor.

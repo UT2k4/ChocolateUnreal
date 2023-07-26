@@ -50,19 +50,19 @@ struct LitPalette
 
 struct SpriteTexSetup
 {
-	INT VCo;
-	INT UCo;
-	INT UCoDelta;
-	INT VCoDelta;
-	INT UMask;
-	INT VMask;
-	INT USize;
-	INT VSize;
-	INT UBits;
+	INT_UNREAL_32S VCo;
+	INT_UNREAL_32S UCo;
+	INT_UNREAL_32S UCoDelta;
+	INT_UNREAL_32S VCoDelta;
+	INT_UNREAL_32S UMask;
+	INT_UNREAL_32S VMask;
+	INT_UNREAL_32S USize;
+	INT_UNREAL_32S VSize;
+	INT_UNREAL_32S UBits;
 	BYTE* TexBase;
 	FRainbowPtr Palette;
 	FRainbowPtr Screen;
-	INT MinX,SizeX,MinY,SizeY,MaxX,MaxY;
+	INT_UNREAL_32S MinX,SizeX,MinY,SizeY,MaxX,MaxY;
 };
 
 static SpriteTexSetup Spr;
@@ -76,7 +76,7 @@ void USoftwareRenderDevice::ReadPixels( FColor* Pixels )
 {
 	guardSlow(USoftwareRenderDevice::ReadPixels);
 	Lock( FPlane(0,0,0,0), FPlane(0,0,0,0), FPlane(0,0,0,0), 0, NULL, NULL );
-	for( INT i=0; i<Viewport->SizeY; i++ )
+	for( INT_UNREAL_32S i=0; i<Viewport->SizeY; i++ )
 	{
 		if (Viewport->ColorBytes==2)
 		{
@@ -84,7 +84,7 @@ void USoftwareRenderDevice::ReadPixels( FColor* Pixels )
 			{
 				// 565
 				_WORD* W = (_WORD*)Viewport->_Screen(0,i);
-				for( INT j=0; j<Viewport->SizeX; j++ )
+				for( INT_UNREAL_32S j=0; j<Viewport->SizeX; j++ )
 				{			
 					_WORD WCol = *W++;
 					*Pixels++ = FColor( (WCol << 3) & 0xF8, (WCol >> 3) & 0xFC, (WCol >> 8) & 0xF8 );
@@ -94,7 +94,7 @@ void USoftwareRenderDevice::ReadPixels( FColor* Pixels )
 			{
 				// 555
 				_WORD* W = (_WORD*)Viewport->_Screen(0,i);
-				for( INT j=0; j<Viewport->SizeX; j++ )
+				for( INT_UNREAL_32S j=0; j<Viewport->SizeX; j++ )
 				{	
 					_WORD WCol = *W++;
 					*Pixels++ = FColor( (WCol << 3) & 0xF8, (WCol >> 2) & 0xF8, (WCol >> 7) & 0xF8 );
@@ -104,7 +104,7 @@ void USoftwareRenderDevice::ReadPixels( FColor* Pixels )
 		else if( Viewport->ColorBytes==4 )
 		{
 			DWORD* D = (DWORD*)Viewport->_Screen(0,i);
-			for( INT j=0; j<Viewport->SizeX; j++ )
+			for( INT_UNREAL_32S j=0; j<Viewport->SizeX; j++ )
 			{
 				FColor C = *(FColor*)D++;
 				*Pixels++ = C;   //FColor(C.R,C.G,C.B);
@@ -386,9 +386,9 @@ void USoftwareRenderDevice::ClearScreenFast16(_WORD* Dest, DWORD Color)
 
 //
 // Not implemented - no advantages over current ones ???
-// void FlashSprite15ModulatedMMX( FSpanBuffer* Span, INT GByteStride)
+// void FlashSprite15ModulatedMMX( FSpanBuffer* Span, INT_UNREAL_32S GByteStride)
 // {}
-// void FlashSprite16ModulatedMMX( FSpanBuffer* Span, INT GByteStride)
+// void FlashSprite16ModulatedMMX( FSpanBuffer* Span, INT_UNREAL_32S GByteStride)
 // {}
 //
 
@@ -410,12 +410,12 @@ void USoftwareRenderDevice::BlitTile32(FSpanBuffer* Span)
 
 			// Wrapping C++
 #if !ASM
-			for ( INT L = Spr.MinY; L < Spr.MaxY; L++, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.MinY; L < Spr.MaxY; L++, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 				Spr.VCo = ( ++Spr.VCo & Spr.VMask );
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk];
 					UWalk = ( (++UWalk) & Spr.UMask );
@@ -427,7 +427,7 @@ void USoftwareRenderDevice::BlitTile32(FSpanBuffer* Span)
 			// Wrapping, ASM
 #if ASM
 			static DWORD Stride, TexMapMask;
-			static INT NegativeXPixels;
+			static INT_UNREAL_32S NegativeXPixels;
 			static BYTE* TexelLimit;
 
 			Spr.Screen.PtrDWORD += Spr.MinX;
@@ -519,11 +519,11 @@ void USoftwareRenderDevice::BlitTile32(FSpanBuffer* Span)
 			//non-wrapping ASM
 #if  !ASM	
 
-			for ( INT L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo++ << Spr.UBits );
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk++]; 
 					Spr.Screen.PtrDWORD[J] = Spr.Palette.PtrDWORD[Texel]; 
@@ -536,7 +536,7 @@ void USoftwareRenderDevice::BlitTile32(FSpanBuffer* Span)
 			BYTE* TexelPtr = &Spr.TexBase[0] + (Spr.VCo << Spr.UBits ) + Spr.UCo +  Spr.SizeX;
 			DWORD Stride = GByteStride;
 			Spr.Screen.PtrDWORD += Spr.MinX;
-			INT NegativeXPixels = -Spr.SizeX + 1;
+			INT_UNREAL_32S NegativeXPixels = -Spr.SizeX + 1;
 			
 			__asm
 			{
@@ -597,17 +597,17 @@ void USoftwareRenderDevice::BlitTile32(FSpanBuffer* Span)
 
 		FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-		for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 		{
 			BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 			Spr.VCo = ( (++Spr.VCo) & Spr.VMask );
 
-			INT UWalk = Spr.UCo;
+			INT_UNREAL_32S UWalk = Spr.UCo;
 		
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{ 
-				INT SpanX0 = Spr.MinX;  
-				INT SpanX1 = Spr.MaxX;
+				INT_UNREAL_32S SpanX0 = Spr.MinX;  
+				INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -619,7 +619,7 @@ void USoftwareRenderDevice::BlitTile32(FSpanBuffer* Span)
 
 				if (SpanX1 > SpanX0) // Any to draw ?
 				{
-					for ( INT J = SpanX0; J < SpanX1; J++)
+					for ( INT_UNREAL_32S J = SpanX0; J < SpanX1; J++)
 					{
 						BYTE Texel = TexelPtr[UWalk]; 
 						UWalk = ( (++UWalk) & Spr.UMask );
@@ -649,13 +649,13 @@ void USoftwareRenderDevice::BlitMask32(FSpanBuffer* Span)
 		if (  ( (Spr.UCo + Spr.SizeX) > (Spr.USize) ) || ( (Spr.VCo+Spr.SizeY) > (Spr.VSize) ) ) 
 		{
 			// wrapping version
-			for ( INT L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 				Spr.VCo = ( ++Spr.VCo & Spr.VMask );
 				
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk]; 
 					UWalk = ( (++UWalk) & Spr.UMask );
@@ -670,11 +670,11 @@ void USoftwareRenderDevice::BlitMask32(FSpanBuffer* Span)
 
 #if  !ASM	
 
-			for ( INT L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo++ << Spr.UBits );
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk++]; 
 					if (Texel) Spr.Screen.PtrDWORD[J] = Spr.Palette.PtrDWORD[Texel]; 
@@ -687,7 +687,7 @@ void USoftwareRenderDevice::BlitMask32(FSpanBuffer* Span)
 			BYTE* TexelPtr = &Spr.TexBase[0] + (Spr.VCo << Spr.UBits ) + Spr.UCo +  Spr.SizeX;
 			DWORD Stride = GByteStride;
 			Spr.Screen.PtrDWORD += Spr.MinX;
-			INT NegativeXPixels = -Spr.SizeX + 1;
+			INT_UNREAL_32S NegativeXPixels = -Spr.SizeX + 1;
 			
 			__asm
 			{
@@ -775,17 +775,17 @@ void USoftwareRenderDevice::BlitMask32(FSpanBuffer* Span)
 
 		FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-		for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 		{
 			BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 			Spr.VCo = ( (++Spr.VCo) & Spr.VMask );
 
-			INT UWalk = Spr.UCo;
+			INT_UNREAL_32S UWalk = Spr.UCo;
 		
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{ 
-				INT SpanX0 = Spr.MinX;  
-				INT SpanX1 = Spr.MaxX;
+				INT_UNREAL_32S SpanX0 = Spr.MinX;  
+				INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -797,7 +797,7 @@ void USoftwareRenderDevice::BlitMask32(FSpanBuffer* Span)
 
 				if (SpanX1 > SpanX0) // Any to draw ?
 				{
-					for ( INT J = SpanX0; J < SpanX1; J++)
+					for ( INT_UNREAL_32S J = SpanX0; J < SpanX1; J++)
 					{
 						BYTE Texel = TexelPtr[UWalk]; 
 						UWalk = ( (++UWalk) & Spr.UMask );
@@ -828,12 +828,12 @@ void USoftwareRenderDevice::BlitTile1516(FSpanBuffer* Span)
 
 			// Wrapping C++
 #if !ASM
-			for ( INT L = Spr.MinY; L < Spr.MaxY; L++, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.MinY; L < Spr.MaxY; L++, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 				Spr.VCo = ( ++Spr.VCo & Spr.VMask );
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk]; 
 					UWalk = ( (++UWalk) & Spr.UMask );
@@ -845,7 +845,7 @@ void USoftwareRenderDevice::BlitTile1516(FSpanBuffer* Span)
 			// Wrapping, ASM
 #if ASM
 			static DWORD Stride, TexMapMask;
-			static INT NegativeXPixels;
+			static INT_UNREAL_32S NegativeXPixels;
 			static BYTE* TexelLimit;
 
 			Spr.Screen.PtrWORD += Spr.MinX;
@@ -937,11 +937,11 @@ void USoftwareRenderDevice::BlitTile1516(FSpanBuffer* Span)
 			//non-wrapping ASM
 #if  !ASM	
 
-			for ( INT L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo++ << Spr.UBits );
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk++]; 
 					Spr.Screen.PtrWORD[J] = Spr.Palette.PtrDWORD[Texel]; 
@@ -954,7 +954,7 @@ void USoftwareRenderDevice::BlitTile1516(FSpanBuffer* Span)
 			BYTE* TexelPtr = &Spr.TexBase[0] + (Spr.VCo << Spr.UBits ) + Spr.UCo +  Spr.SizeX;
 			DWORD Stride = GByteStride;
 			Spr.Screen.PtrWORD += Spr.MinX;
-			INT NegativeXPixels = -Spr.SizeX + 1;
+			INT_UNREAL_32S NegativeXPixels = -Spr.SizeX + 1;
 			
 			__asm
 			{
@@ -1015,17 +1015,17 @@ void USoftwareRenderDevice::BlitTile1516(FSpanBuffer* Span)
 
 		FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-		for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 		{
 			BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 			Spr.VCo = ( (++Spr.VCo) & Spr.VMask );
 
-			INT UWalk = Spr.UCo;
+			INT_UNREAL_32S UWalk = Spr.UCo;
 		
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{ 
-				INT SpanX0 = Spr.MinX;  
-				INT SpanX1 = Spr.MaxX;
+				INT_UNREAL_32S SpanX0 = Spr.MinX;  
+				INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1037,7 +1037,7 @@ void USoftwareRenderDevice::BlitTile1516(FSpanBuffer* Span)
 
 				if (SpanX1 > SpanX0) // Any to draw ?
 				{
-					for ( INT J = SpanX0; J < SpanX1; J++)
+					for ( INT_UNREAL_32S J = SpanX0; J < SpanX1; J++)
 					{
 						BYTE Texel = TexelPtr[UWalk]; 
 						UWalk = ( (++UWalk) & Spr.UMask );
@@ -1067,13 +1067,13 @@ void USoftwareRenderDevice::BlitMask1516(FSpanBuffer* Span)
 
 		if ( ( (Spr.UCo + Spr.SizeX) > (Spr.USize) ) || ( (Spr.VCo+Spr.SizeY) > (Spr.VSize) ) ) 
 		{
-			for ( INT L = Spr.MinY; L < Spr.MaxY; L++, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.MinY; L < Spr.MaxY; L++, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 				Spr.VCo = ( ++Spr.VCo & Spr.VMask );
 				
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk]; 
 					UWalk = ( (++UWalk) & Spr.UMask );
@@ -1086,11 +1086,11 @@ void USoftwareRenderDevice::BlitMask1516(FSpanBuffer* Span)
 			// non-wrapping versions
 		
 #if !ASM
-			for ( INT L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
+			for ( INT_UNREAL_32S L = Spr.SizeY; L > 0; L--, Spr.Screen.PtrBYTE += GByteStride )
 			{								
-				INT UWalk = Spr.UCo;
+				INT_UNREAL_32S UWalk = Spr.UCo;
 				BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo++ << Spr.UBits );
-				for ( INT J = Spr.MinX; J < Spr.MaxX; J++ )
+				for ( INT_UNREAL_32S J = Spr.MinX; J < Spr.MaxX; J++ )
 				{
 					BYTE Texel = TexelPtr[UWalk++]; 
 					if (Texel) Spr.Screen.PtrWORD[J] = Spr.Palette.PtrDWORD[Texel]; 
@@ -1103,7 +1103,7 @@ void USoftwareRenderDevice::BlitMask1516(FSpanBuffer* Span)
 			BYTE* TexelPtr = &Spr.TexBase[0] + (Spr.VCo << Spr.UBits ) + Spr.UCo +  Spr.SizeX;
 			DWORD Stride = GByteStride;
 			Spr.Screen.PtrWORD += Spr.MinX;
-			INT NegativeXPixels = -Spr.SizeX + 1;
+			INT_UNREAL_32S NegativeXPixels = -Spr.SizeX + 1;
 			
 			__asm
 			{
@@ -1192,17 +1192,17 @@ void USoftwareRenderDevice::BlitMask1516(FSpanBuffer* Span)
 
 		FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-		for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 		{
 			BYTE* TexelPtr = &Spr.TexBase[0] + ( Spr.VCo << Spr.UBits );
 			Spr.VCo = ( (++Spr.VCo) & Spr.VMask );
 
-			INT UWalk = Spr.UCo;
+			INT_UNREAL_32S UWalk = Spr.UCo;
 		
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{ 
-				INT SpanX0 = Spr.MinX;  
-				INT SpanX1 = Spr.MaxX;
+				INT_UNREAL_32S SpanX0 = Spr.MinX;  
+				INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1214,7 +1214,7 @@ void USoftwareRenderDevice::BlitMask1516(FSpanBuffer* Span)
 
 				if (SpanX1 > SpanX0) // Any to draw ?
 				{
-					for ( INT J = SpanX0; J < SpanX1; J++)
+					for ( INT_UNREAL_32S J = SpanX0; J < SpanX1; J++)
 					{
 						BYTE Texel = TexelPtr[UWalk]; 
 						UWalk = ( (++UWalk) & Spr.UMask );
@@ -1237,22 +1237,22 @@ void USoftwareRenderDevice::BlitMask1516(FSpanBuffer* Span)
 inline void FlashSprite32Normal
 (
 	 FSpanBuffer* Span,
-	 INT GByteStride
+	 INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite32Normal);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1264,11 +1264,11 @@ inline void FlashSprite32Normal
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 					Spr.Screen.PtrDWORD[ J+SpanX0 ] = Spr.Palette.PtrDWORD[Texel];
@@ -1339,22 +1339,22 @@ inline void FlashSprite32Normal
 inline void FlashSprite32Masked
 (
 	FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite32Masked);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1366,11 +1366,11 @@ inline void FlashSprite32Masked
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 					if (Texel) Spr.Screen.PtrDWORD[ J+SpanX0 ] = Spr.Palette.PtrDWORD[Texel];							
@@ -1466,20 +1466,20 @@ inline void FlashSprite32Masked
 
 
 
-inline void FlashSprite32Modulated(FSpanBuffer* Span, INT GByteStride)
+inline void FlashSprite32Modulated(FSpanBuffer* Span, INT_UNREAL_32S GByteStride)
 {
 	guardSlow(FlashSprite32Modulated);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1491,12 +1491,12 @@ inline void FlashSprite32Modulated(FSpanBuffer* Span, INT GByteStride)
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if (1) //!ASM
 			
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 					if (1) //(Texel)
@@ -1526,22 +1526,22 @@ inline void FlashSprite32Modulated(FSpanBuffer* Span, INT GByteStride)
 inline void FlashSprite32TranslucentMMX
 (
 	FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite32TranslucentMMX);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1553,12 +1553,12 @@ inline void FlashSprite32TranslucentMMX
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{					
 
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
@@ -1674,22 +1674,22 @@ inline void FlashSprite32TranslucentMMX
 inline void FlashSprite32ModulatedMMX
 (
 	 FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite32ModulatedMMX);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1701,11 +1701,11 @@ inline void FlashSprite32ModulatedMMX
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 					if (1) //(Texel)
@@ -1843,7 +1843,7 @@ inline void FlashSprite32ModulatedMMX
 inline void FlashSprite32TranslucentPentium
 (
     FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite32TranslucentPentium);
@@ -1851,15 +1851,15 @@ inline void FlashSprite32TranslucentPentium
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -1871,11 +1871,11 @@ inline void FlashSprite32TranslucentPentium
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{					
 
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
@@ -2009,22 +2009,22 @@ inline void FlashSprite32TranslucentPentium
 inline void FlashSprite1516Normal
 (
 	FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite1516Normal);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -2036,11 +2036,11 @@ inline void FlashSprite1516Normal
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 					Spr.Screen.PtrWORD[ J+SpanX0 ] = (_WORD) Spr.Palette.PtrDWORD[Texel];							
@@ -2111,22 +2111,22 @@ inline void FlashSprite1516Normal
 inline void FlashSprite1516Masked
 (
 	 FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite1516Masked);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -2138,11 +2138,11 @@ inline void FlashSprite1516Masked
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 					if (Texel) Spr.Screen.PtrWORD[ J+SpanX0 ] = (_WORD) Spr.Palette.PtrDWORD[Texel];							
@@ -2235,22 +2235,22 @@ inline void FlashSprite1516Masked
 inline void FlashSprite15Translucent
 (
 	FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite15Translucent);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -2262,11 +2262,11 @@ inline void FlashSprite15Translucent
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 
@@ -2396,22 +2396,22 @@ inline void FlashSprite15Translucent
 inline void FlashSprite15Modulated
 (
 	FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite15Modulated);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -2423,10 +2423,10 @@ inline void FlashSprite15Modulated
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 #if (1)
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
@@ -2456,22 +2456,22 @@ inline void FlashSprite15Modulated
 inline void FlashSprite16Translucent
 (
 	FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite16Translucent);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -2483,11 +2483,11 @@ inline void FlashSprite16Translucent
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 
 #if !ASM
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
 
@@ -2616,22 +2616,22 @@ inline void FlashSprite16Translucent
 inline void FlashSprite16Modulated
 (
 	FSpanBuffer* Span,
-	INT GByteStride
+	INT_UNREAL_32S GByteStride
 )
 {
 	guardSlow(FlashSprite16Modulated);
 
 	FSpan** Index   = Span->Index + Spr.MinY - Span->StartY;
 
-	for( INT L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S L=Spr.MinY; L<Spr.MaxY; L++, Spr.Screen.PtrBYTE+= GByteStride )
 	{
 			
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{ 
-			INT SpanX0 = Spr.MinX;  
-			INT SpanX1 = Spr.MaxX;
+			INT_UNREAL_32S SpanX0 = Spr.MinX;  
+			INT_UNREAL_32S SpanX1 = Spr.MaxX;
 
-			INT UIndex = 0;
+			INT_UNREAL_32S UIndex = 0;
 
 			if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
@@ -2643,10 +2643,10 @@ inline void FlashSprite16Modulated
 
 			if (SpanX1 > SpanX0)
 			{
-				INT VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
+				INT_UNREAL_32S VOffset = ( (Spr.VCo >> 18) & Spr.VMask) << Spr.UBits ;						
 #if (1)
-				INT JSize = SpanX1 - SpanX0;
-				for (INT J = 0; J < JSize; J++)
+				INT_UNREAL_32S JSize = SpanX1 - SpanX0;
+				for (INT_UNREAL_32S J = 0; J < JSize; J++)
 				{
 
 					BYTE Texel = Spr.TexBase[ VOffset + UCoordTable[J+UIndex]];
@@ -2711,7 +2711,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 	//   >> One concern: UnCache speed !! if needed, use custom caching routines, or even adapt stuff -
 	//   -> keep stuff locked in cache, possibly ?
 
-	// Stats. Static INT RemakeCalled = 0;
+	// Stats. Static INT_UNREAL_32S RemakeCalled = 0;
 	// if (!(FrameLocksCounter & 63)) debugf(NAME_Log," Palette remake: %i  Framelocks: %i  Surfpals: %i", RemakeCalled,FrameLocksCounter,SurfPalBuilds);
 
 	FSpanBuffer* InitialSpan = Span;
@@ -2752,7 +2752,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 	if ( !Span ) 
 	{
 		static FSpanBuffer TempSpanBuffer;
-		static INT SavedX=0, SavedY=0;
+		static INT_UNREAL_32S SavedX=0, SavedY=0;
 		static FSpan *SpanIndex[1200], DefaultSpan;
 		if( SavedX!=Viewport->SizeX || SavedY!=Viewport->SizeY )
 		{
@@ -2764,7 +2764,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 			DefaultSpan.Start = 0;
 			DefaultSpan.End   = Viewport->SizeX;
 			DefaultSpan.Next  = 0;
-			for( INT i=0; i<Viewport->SizeY; i++ ) SpanIndex[i]  = &DefaultSpan;
+			for( INT_UNREAL_32S i=0; i<Viewport->SizeY; i++ ) SpanIndex[i]  = &DefaultSpan;
 		}
 		Span = &TempSpanBuffer;
 	}
@@ -2812,20 +2812,20 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		// - some floating-point dependency ?????   
 		//
 
-		INT MinY = Span->StartY;
-		INT MaxY = Span->EndY;
+		INT_UNREAL_32S MinY = Span->StartY;
+		INT_UNREAL_32S MaxY = Span->EndY;
 
 		FSpan** Index   = Span->Index;
 
 		if (MinY < 0) appErrorf(" SpanStartY negative!");
 		if (MaxY > Viewport->SizeY) appErrorf(" SpanEndY bigger than ViewportSizeY!");
 
-		for( INT Y=MinY; Y<MaxY; Y++ )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++ )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT X0 = Span->Start;
-				INT X1 = Span->End;	
+				INT_UNREAL_32S X0 = Span->Start;
+				INT_UNREAL_32S X1 = Span->End;	
 
 				if ( (X0 <0) || ( X1 > Viewport->SizeX))
 					appErrorf( "Span out of bounds. Ypos: %i XStart: %i XEnd: %i",Y, Span->Start,Span->End);
@@ -2835,9 +2835,9 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 #endif
 
 	
-	INT OldMinY = Spr.MinY;
+	INT_UNREAL_32S OldMinY = Spr.MinY;
 	Spr.MinY	= Max( Spr.MinY,Span->StartY);
-	INT ClipY   = Spr.MinY - OldMinY;
+	INT_UNREAL_32S ClipY   = Spr.MinY - OldMinY;
 	Spr.MaxY	= Min( Spr.MaxY,Span->EndY);
 
 	Spr.SizeX	= Spr.MaxX-Spr.MinX;  
@@ -2847,8 +2847,8 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 	if ( (Spr.SizeX <= 0) || (Spr.SizeY <= 0) || (! (&Texture)) || (! Texture.Palette) )  return;
 
 	LitPalette* SpritePalet = NULL;
-	INT RemakeColors = 0;
-	INT NewPaletteSize = NUM_PAL_COLORS * 4;
+	INT_UNREAL_32S RemakeColors = 0;
+	INT_UNREAL_32S NewPaletteSize = NUM_PAL_COLORS * 4;
 	
 	FCacheItem* Item; 
 
@@ -2923,7 +2923,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		
 		if (PaletteCID == CID_LitTileMMX)
 		{
-			for (INT C=0; C<NUM_PAL_COLORS; C++)
+			for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 			{
 				SpritePalet->OutPalette.PtrWORD[C*4+0] = Min( appRound(FinalLight.B * Texture.Palette[C].B + FinalFog.B),255) << 7;
 				SpritePalet->OutPalette.PtrWORD[C*4+1] = Min( appRound(FinalLight.G * Texture.Palette[C].G + FinalFog.G),255) << 7;
@@ -2932,7 +2932,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		}
 		else if (PaletteCID == CID_LitTileMod) 
 		{
-			for (INT C=0; C<NUM_PAL_COLORS; C++)
+			for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 			{
 				// integer color palette.
 				SpritePalet->OutPalette.PtrBYTE[C*4+0] = Texture.Palette[C].B ;
@@ -2944,14 +2944,14 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		else if (Viewport->ColorBytes == 4)
 		{	
 			if (PaletteCID == CID_LitTilePal)
-				for (INT C=0; C<NUM_PAL_COLORS; C++)
+				for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 				{
 					SpritePalet->OutPalette.PtrBYTE[C*4+0] = Min( appRound(FinalLight.B * Texture.Palette[C].B + FinalFog.B),255);
 					SpritePalet->OutPalette.PtrBYTE[C*4+1] = Min( appRound(FinalLight.G * Texture.Palette[C].G + FinalFog.G),255);
 					SpritePalet->OutPalette.PtrBYTE[C*4+2] = Min( appRound(FinalLight.R * Texture.Palette[C].R + FinalFog.R),255);
 				}
 			else if (PaletteCID == CID_LitTileTrans)
-				for (INT C=0; C<NUM_PAL_COLORS; C++)
+				for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 				{
 					SpritePalet->OutPalette.PtrBYTE[C*4+0] =       Min( appRound(FinalLight.B * Texture.Palette[C].B + FinalFog.B),255);
 					SpritePalet->OutPalette.PtrBYTE[C*4+1] = 254 & Min( appRound(FinalLight.G * Texture.Palette[C].G + FinalFog.G),255);
@@ -2962,7 +2962,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		else if (Viewport->Caps & CC_RGB565) 
 		{
 			if (PaletteCID == CID_LitTilePal)			
-				for (INT C=0; C<NUM_PAL_COLORS; C++)
+				for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 				{
 					DWORD R = Min( appRound(FinalLight.R * Texture.Palette[C].R + FinalFog.R),255);
 					DWORD G = Min( appRound(FinalLight.G * Texture.Palette[C].G + FinalFog.G),255);
@@ -2970,7 +2970,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 					SpritePalet->OutPalette.PtrDWORD[C] = (_WORD) ( (DWORD)((R&0xf8)<<8 ) + (DWORD)((G&0xfc)<< 3) + (DWORD)((B&0xf8)>>3) );
 				}
 			else if (PaletteCID == CID_LitTileTrans)
-				for (INT C=0; C<NUM_PAL_COLORS; C++)
+				for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 				{
 					DWORD R = Min( appRound(FinalLight.R * Texture.Palette[C].R + FinalFog.R),255);
 					DWORD G = Min( appRound(FinalLight.G * Texture.Palette[C].G + FinalFog.G),255);
@@ -2981,7 +2981,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		else
 		{
 			if (PaletteCID == CID_LitTilePal)			
-				for (INT C=0; C<NUM_PAL_COLORS; C++)
+				for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 				{
 					DWORD R = Min( appRound(FinalLight.R * Texture.Palette[C].R + FinalFog.R),255);
 					DWORD G = Min( appRound(FinalLight.G * Texture.Palette[C].G + FinalFog.G),255);
@@ -2989,7 +2989,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 					SpritePalet->OutPalette.PtrDWORD[C] = (_WORD) ( (DWORD)((R&0xf8)<<7 ) + (DWORD)((G&0xf8)<< 2) + (DWORD)((B&0xf8)>>3) );
 				}
 			else if (PaletteCID == CID_LitTileTrans)
-				for (INT C=0; C<NUM_PAL_COLORS; C++)
+				for (INT_UNREAL_32S C=0; C<NUM_PAL_COLORS; C++)
 				{
 					DWORD R = Min( appRound(FinalLight.R * Texture.Palette[C].R + FinalFog.R),255);
 					DWORD G = Min( appRound(FinalLight.G * Texture.Palette[C].G + FinalFog.G),255);
@@ -3070,7 +3070,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		// Conclude mipmap only IF any are available.
 		if (Texture.NumMips > 1)
 		{
-			INT MipFactor = Max( ( ( (*(DWORD*)&FUDelta) &0x7FFFFFFF) + 0x600000 ) >> 23, 
+			INT_UNREAL_32S MipFactor = Max( ( ( (*(DWORD*)&FUDelta) &0x7FFFFFFF) + 0x600000 ) >> 23, 
 				                 ( ( (*(DWORD*)&FVDelta) &0x7FFFFFFF) + 0x600000 ) >> 23 );
 			iMip = Clamp( (MipFactor-127), 0, Texture.NumMips-1 );
 		}
@@ -3092,7 +3092,7 @@ void USoftwareRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, 
 		Spr.Palette     = SpritePalet->OutPalette;
 		Spr.Screen      = Frame->Screen(0,Spr.MinY);
 			
-		INT UCoWalk		= Spr.UCo;
+		INT_UNREAL_32S UCoWalk		= Spr.UCo;
 
 		for (int CS	= 0; CS <= ( Spr.MaxX - Spr.MinX); CS++ ) // total pixels + 1 to do
 		{

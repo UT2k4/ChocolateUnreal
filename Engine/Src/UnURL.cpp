@@ -22,7 +22,7 @@ FString FURL::DefaultHost;
 FString FURL::DefaultPortal;
 FString FURL::DefaultMapExt;
 FString FURL::DefaultSaveExt;
-INT		FURL::DefaultPort=0;
+INT_UNREAL_32S		FURL::DefaultPort=0;
 
 // Static init.
 void FURL::Init()
@@ -114,7 +114,7 @@ FURL::FURL( FURL* Base, const char* TextURL, ETravelType Type )
 	if( Type==TRAVEL_Relative || Type==TRAVEL_Partial )
 	{
 		check(Base);
-		for( INT i=0; i<Base->Op.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Base->Op.Num(); i++ )
 		{
 			if
 			(	appStricmp(*Base->Op(i),"PUSH")!=0
@@ -318,7 +318,7 @@ void FURL::String( FString& Result, UBOOL FullyQualified ) const
 		Result.Appendf( "%s", Map );
 
 	// Emit options.
-	for( INT i=0; i<Op.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Op.Num(); i++ )
 	{
 		Result.Appendf( "?"         );
 		Result.Appendf( "%s", Op(i) );
@@ -360,8 +360,9 @@ UBOOL FURL::IsLocalInternal() const
 void FURL::AddOption( const char* Str )
 {
 	guard(FURL::AddOption);
+	int i;
 	int Match = appStrchr(Str,'=') ? appStrchr(Str,'=')+1-Str : appStrlen(Str)+1;
-	for( int i=0; i<Op.Num(); i++ )
+	for( i=0; i<Op.Num(); i++ )
 		if( appStrnicmp( *Op(i), Str, Match )==0 )
 			break;
 	if( i==Op.Num() )	new( Op )FString( Str );

@@ -43,7 +43,7 @@ struct FActorPriority
 			Priority -= 100000.0;
 		}
 	}
-	friend inline INT Compare( const FActorPriority& A, const FActorPriority& B )
+	friend inline INT_UNREAL_32S Compare( const FActorPriority& A, const FActorPriority& B )
 	{
 		return B.Priority - A.Priority;
 	}
@@ -65,7 +65,7 @@ UBOOL AActor::Tick( FLOAT DeltaSeconds, ELevelTick TickType )
 		return 1;
 
 	// Handle owner-first updating.
-	if( Owner && (INT)Owner->bTicked!=XLevel->Ticked )
+	if( Owner && (INT_UNREAL_32S)Owner->bTicked!=XLevel->Ticked )
 	{
 		XLevel->NewlySpawned = new(GDynMem)FActorLink(this,XLevel->NewlySpawned);
 		return 0;
@@ -76,10 +76,10 @@ UBOOL AActor::Tick( FLOAT DeltaSeconds, ELevelTick TickType )
 	if( bIsPawn )
 		Pawn = Cast<APawn>(this);
 
-	INT bSimulatedPawn = ( Pawn && (Role == ROLE_SimulatedProxy) );
+	INT_UNREAL_32S bSimulatedPawn = ( Pawn && (Role == ROLE_SimulatedProxy) );
 
 	// Update all animation, including multiple passes if necessary.
-	INT Iterations = 0;
+	INT_UNREAL_32S Iterations = 0;
 	FLOAT Seconds = DeltaSeconds;
 	//if ( bSimulatedPawn )
 	//	debugf("Animation %s frame %f rate %f tween %f",*AnimSequence,AnimFrame, AnimRate, TweenRate);
@@ -110,7 +110,7 @@ UBOOL AActor::Tick( FLOAT DeltaSeconds, ELevelTick TickType )
 				{
 					FLOAT BestElapsedFrames = 100000.0;
 					const FMeshAnimNotify* BestNotify = NULL;
-					for( INT i=0; i<Seq->Notifys.Num(); i++ )
+					for( INT_UNREAL_32S i=0; i<Seq->Notifys.Num(); i++ )
 					{
 						const FMeshAnimNotify& Notify = Seq->Notifys(i);
 						if( OldAnimFrame<Notify.Time && AnimFrame>=Notify.Time )
@@ -215,7 +215,7 @@ UBOOL AActor::Tick( FLOAT DeltaSeconds, ELevelTick TickType )
 			if( (TimerRate>0.0) && (TimerCounter+=DeltaSeconds)>=TimerRate )
 			{
 				// Normalize the timer count.
-				INT TimerTicksPassed = 1;
+				INT_UNREAL_32S TimerTicksPassed = 1;
 				if( TimerRate > 0.0 )
 				{
 					TimerTicksPassed     = (int)(TimerCounter/TimerRate);
@@ -268,7 +268,7 @@ UBOOL AActor::Tick( FLOAT DeltaSeconds, ELevelTick TickType )
 		if( TimerRate>0.0 && (TimerCounter+=DeltaSeconds)>=TimerRate )
 		{
 			// Normalize the timer count.
-			INT TimerTicksPassed = 1;
+			INT_UNREAL_32S TimerTicksPassed = 1;
 			if( TimerRate > 0.0 )
 			{
 				TimerTicksPassed     = (int)(TimerCounter/TimerRate);
@@ -406,11 +406,11 @@ void ULevel::TickNetClient( FLOAT DeltaSeconds )
 	Network server ticking individual client.
 -----------------------------------------------------------------------------*/
 
-INT ULevel::ServerTickClient( UNetConnection* Connection, FLOAT DeltaSeconds )
+INT_UNREAL_32S ULevel::ServerTickClient( UNetConnection* Connection, FLOAT DeltaSeconds )
 {
 	guard(ULevel::ServerTickClient);
 	check(Connection->State==USOCK_Pending || Connection->State==USOCK_Open || Connection->State==USOCK_Closed);
-	INT Updated=0;
+	INT_UNREAL_32S Updated=0;
 
 	// Handle closed channel.
 	if( Connection->State==USOCK_Closed )
@@ -429,7 +429,8 @@ INT ULevel::ServerTickClient( UNetConnection* Connection, FLOAT DeltaSeconds )
 
 	// Get list of visible/relevant actors.
 	AActor* Relevant[256];
-	INT NumRelevant = GetRelevantActors( Connection->Actor, Relevant, ARRAY_COUNT(Relevant) );
+	INT_UNREAL_32S NumRelevant = GetRelevantActors( Connection->Actor, Relevant, ARRAY_COUNT(Relevant) );
+	INT_UNREAL_32S j;
 
 	// If an actor's relevence has timed out, delete its channel; otherwise
 	// treat it as relevant for now.
@@ -466,7 +467,7 @@ INT ULevel::ServerTickClient( UNetConnection* Connection, FLOAT DeltaSeconds )
 	// Make priority-sorted list.
 	FMemMark Mark(GMem);
 	FActorPriority* PriorityActors = new(GMem,NumRelevant)FActorPriority;
-	for( INT j=0; j<NumRelevant; j++ )
+	for( j=0; j<NumRelevant; j++ )
 		PriorityActors[j] = FActorPriority( Connection, Relevant[j] );
 	appSort( PriorityActors, NumRelevant );
 
@@ -512,8 +513,10 @@ void ULevel::TickNetServer( FLOAT DeltaSeconds )
 
 	// Update all clients.
 	clock(NetTickCycles);
-	INT Updated=0;
-	for( INT i=0; i<NetDriver->Connections.Num(); i++ )
+	INT_UNREAL_32S Updated=0;
+	INT_UNREAL_32S i;
+
+	for( i=0; i<NetDriver->Connections.Num(); i++ )
 		Updated += ServerTickClient( NetDriver->Connections(i), DeltaSeconds );
 	unclock(NetTickCycles);
 
@@ -528,8 +531,8 @@ void ULevel::TickNetServer( FLOAT DeltaSeconds )
 		{
 			// Send stats.
 			char Stats[256];
-			INT NumActors=0;
-			for( INT i=0; i<Num(); i++ )
+			INT_UNREAL_32S NumActors=0;
+			for( INT_UNREAL_32S i=0; i<Num(); i++ )
 				NumActors += Actors(i)!=NULL;
 			appSprintf
 			(
@@ -599,8 +602,8 @@ void ULevel::Tick( ELevelTick TickType, FLOAT DeltaSeconds )
 		// Tick all actors, owners before owned.
 		clock(ActorTickCycles);
 		NewlySpawned=NULL;
-		INT Updated=0;
-		for( INT iActor=iFirstDynamicActor; iActor<Num(); iActor++ )
+		INT_UNREAL_32S Updated=0;
+		for( INT_UNREAL_32S iActor=iFirstDynamicActor; iActor<Num(); iActor++ )
 			if( Actors(iActor) )
 				Updated += Actors(iActor)->Tick(DeltaSeconds,TickType);
 		while( NewlySpawned && Updated )
@@ -615,7 +618,7 @@ void ULevel::Tick( ELevelTick TickType, FLOAT DeltaSeconds )
 	else if( Info->Pauser[0] )
 	{
 		// Absorb input if paused.
-		for( INT iActor=iFirstDynamicActor; iActor<Num(); iActor++ )
+		for( INT_UNREAL_32S iActor=iFirstDynamicActor; iActor<Num(); iActor++ )
 		{
 			APlayerPawn* PlayerPawn=Cast<APlayerPawn>(Actors(iActor));
 			if( PlayerPawn && PlayerPawn->Player )

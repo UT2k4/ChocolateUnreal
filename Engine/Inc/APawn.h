@@ -37,13 +37,13 @@
 	void SuggestJumpVelocity(FVector Dest, FVector &Vel);
 
 	// Path finding
-	int findPathTo(FVector Dest, INT bSinglePath, AActor *&bestPath, INT bClearPaths);
-	int findPathToward(AActor *goal, INT bSinglePath, AActor *&bestPath, INT bClearPaths);
-	FLOAT findPathTowardBestInventory(AActor *&bestPath, INT bClearPaths, FLOAT MinWeight, INT bPredictRespawns);
+	int findPathTo(FVector Dest, INT_UNREAL_32S bSinglePath, AActor *&bestPath, INT_UNREAL_32S bClearPaths);
+	int findPathToward(AActor *goal, INT_UNREAL_32S bSinglePath, AActor *&bestPath, INT_UNREAL_32S bClearPaths);
+	FLOAT findPathTowardBestInventory(AActor *&bestPath, INT_UNREAL_32S bClearPaths, FLOAT MinWeight, INT_UNREAL_32S bPredictRespawns);
 	int findRandomDest(AActor *&bestPath);
 	int TraverseFrom(AActor *startnode, int moveFlags);
 	int breadthPathFrom(AActor *startnode, AActor *&bestPath, int bSinglePath, int moveFlags);
-	FLOAT breadthPathToInventory(AActor *startnode, AActor *&bestPath, int moveFlags, FLOAT bestInventoryWeight, INT bPredictRespawns);
+	FLOAT breadthPathToInventory(AActor *startnode, AActor *&bestPath, int moveFlags, FLOAT bestInventoryWeight, INT_UNREAL_32S bPredictRespawns);
 	inline int calcMoveFlags();
 	void clearPaths();
 	void clearPath(ANavigationPoint *node);
@@ -51,11 +51,11 @@
 	int CanMoveTo(AActor *Anchor, AActor *Dest);
 
 	// Pawn physics modes
-	void physWalking(FLOAT deltaTime, INT Iterations);
-	void physFlying(FLOAT deltaTime, INT Iterations);
-	void physSwimming(FLOAT deltaTime, INT Iterations);
-	void physSpider(FLOAT deltaTime, INT Iterations);
-	void startSwimming(FVector OldVelocity, FLOAT timeTick, FLOAT remainingTime, INT Iterations);
+	void physWalking(FLOAT deltaTime, INT_UNREAL_32S Iterations);
+	void physFlying(FLOAT deltaTime, INT_UNREAL_32S Iterations);
+	void physSwimming(FLOAT deltaTime, INT_UNREAL_32S Iterations);
+	void physSpider(FLOAT deltaTime, INT_UNREAL_32S Iterations);
+	void startSwimming(FVector OldVelocity, FLOAT timeTick, FLOAT remainingTime, INT_UNREAL_32S Iterations);
 	void physicsRotation(FLOAT deltaTime, FVector OldVelocity);
 	void performPhysics(FLOAT DeltaSeconds);
 
@@ -72,8 +72,8 @@ private:
 	FLOAT Swim(FVector Delta, FCheckResult &Hit); 
 	void findWaterLine(FVector Start, FVector &End);
 	void stepUp(FVector GravDir, FVector DesiredDir, FVector Delta, FCheckResult &Hit);
-	void calcVelocity(FVector AccelDir, FLOAT deltaTime, FLOAT maxSpeed, FLOAT friction, INT bFluid, INT bBrake, INT bBuoyant);
-	int findNewFloor(FVector OldLocation, FLOAT deltaTime, FLOAT remainingTime, INT Iterations);
+	void calcVelocity(FVector AccelDir, FLOAT deltaTime, FLOAT maxSpeed, FLOAT friction, INT_UNREAL_32S bFluid, INT_UNREAL_32S bBrake, INT_UNREAL_32S bBuoyant);
+	int findNewFloor(FVector OldLocation, FLOAT deltaTime, FLOAT remainingTime, INT_UNREAL_32S Iterations);
 	inline int checkFloor(FVector Dir, FCheckResult &Hit);
 
 /*-----------------------------------------------------------------------------

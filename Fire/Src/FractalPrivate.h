@@ -46,12 +46,12 @@ __int64  TotalTime2;
 __int64  TotalTime3;
 __int64  TotalTime4;
 __int64  TotalPixels;
-  INT    TotalFrames;
+  INT_UNREAL_32S    TotalFrames;
 
 int CycleCount()
 {
 #if ASM
-    INT OutCyc;
+    INT_UNREAL_32S OutCyc;
     __asm
    {
         xor edx,edx
@@ -84,11 +84,11 @@ class DLL_EXPORT UFractalTexture : public UTexture
 	DECLARE_ABSTRACT_CLASS(UFractalTexture,UTexture,0)
 
 	// Variables (all transient)
-	INT     UMask;        // 
-	INT     VMask;        //
-	INT     LightOutput;  //
-    INT     SoundOutput;  //
-    INT     GlobalPhase;  // 
+	INT_UNREAL_32S     UMask;        // 
+	INT_UNREAL_32S     VMask;        //
+	INT_UNREAL_32S     LightOutput;  //
+    INT_UNREAL_32S     SoundOutput;  //
+    INT_UNREAL_32S     GlobalPhase;  // 
     BYTE    DrawPhase;    //
     BYTE    AuxPhase;     //
 
@@ -101,10 +101,10 @@ class DLL_EXPORT UFractalTexture : public UTexture
 	void PostEditChange() {PostLoad();}
 
 	// UTexture interface.
-	void Init( INT InUSize, INT InVSize );
+	void Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize );
 
 	// UFractalTexture interface.
-	virtual void TouchTexture(INT UPos, INT VPos, FLOAT Magnitude) {}; 
+	virtual void TouchTexture(INT_UNREAL_32S UPos, INT_UNREAL_32S VPos, FLOAT Magnitude) {}; 
 
 };
 
@@ -210,14 +210,14 @@ class DLL_EXPORT UFireTexture : public UFractalTexture
 	BYTE		FX_VertSpeed;
 	// Edit-time drawing modes
 	BYTE        DrawMode;
-	INT         SparksLimit;
+	INT_UNREAL_32S         SparksLimit;
 
 	// Sparks
-	INT         ActiveSparkNum;
+	INT_UNREAL_32S         ActiveSparkNum;
 	TArray<FSpark> Sparks;
 
 	// Transient variables.
-	INT         OldRenderHeat;
+	INT_UNREAL_32S         OldRenderHeat;
     BYTE        RenderTable[1028];
     BYTE        StarStatus;
 	BYTE        PenDownX;
@@ -231,22 +231,22 @@ class DLL_EXPORT UFireTexture : public UFractalTexture
 	void Serialize( FArchive& Ar );
 
 	// UTexture interface.
-	void Init( INT InUSize, INT InVSize );
+	void Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize );
 	void Clear( DWORD ClearFlags );
 	void ConstantTimeTick();
 	void MousePosition( DWORD Buttons, FLOAT X, FLOAT Y );
 	void Click( DWORD Buttons, FLOAT X, FLOAT Y );
 
 	// UFractalTexture interface.
-	void TouchTexture(INT UPos, INT VPos, FLOAT Magnitude);
+	void TouchTexture(INT_UNREAL_32S UPos, INT_UNREAL_32S VPos, FLOAT Magnitude);
 
 	// UFireTexture interface. 
 	private:
-	void AddSpark(INT SparkX, INT SparkY);
-	void DrawSparkLine( INT StartX, INT StartY, INT DestX, INT DestY, INT Density );
-	void FirePaint( INT MouseX, INT MouseY, DWORD Buttons );
-	void CloseSpark( INT SparkX, INT SparkY );
-	void DeleteSparks( INT SparkX, INT SparkY, INT AreaWidth );
+	void AddSpark(INT_UNREAL_32S SparkX, INT_UNREAL_32S SparkY);
+	void DrawSparkLine( INT_UNREAL_32S StartX, INT_UNREAL_32S StartY, INT_UNREAL_32S DestX, INT_UNREAL_32S DestY, INT_UNREAL_32S Density );
+	void FirePaint( INT_UNREAL_32S MouseX, INT_UNREAL_32S MouseY, DWORD Buttons );
+	void CloseSpark( INT_UNREAL_32S SparkX, INT_UNREAL_32S SparkY );
+	void DeleteSparks( INT_UNREAL_32S SparkX, INT_UNREAL_32S SparkY, INT_UNREAL_32S AreaWidth );
 	void DrawFlashRamp( LineSeg LL, BYTE Color1, BYTE Color2 );
 	void MoveSpark( FSpark* Spark );
 	void MoveSparkTwo( FSpark* Spark );
@@ -254,7 +254,7 @@ class DLL_EXPORT UFireTexture : public UFractalTexture
 	void MoveSparkAngle( FSpark* Spark, BYTE Direction );
 	void RedrawSparks();
 	void PostDrawSparks();
-	void TempDrawSpark (INT PosX, INT PosY, INT Intensity );
+	void TempDrawSpark (INT_UNREAL_32S PosX, INT_UNREAL_32S PosY, INT_UNREAL_32S Intensity );
 
 };
 
@@ -331,7 +331,7 @@ class DLL_EXPORT UWaterTexture : public UFractalTexture
 	BYTE		FX_Depth;
 	BYTE        FX_Time;
 	// Drops.
-    INT			NumDrops;
+    INT_UNREAL_32S			NumDrops;
     FDrop		Drops[MaxDrops];
 
     // Non-Persistent variables:
@@ -339,7 +339,7 @@ class DLL_EXPORT UWaterTexture : public UFractalTexture
     BYTE    RenderTable[1028];
     BYTE	WaveTable[1536];
     BYTE	WaveParity;
-	INT     OldWaveAmp;
+	INT_UNREAL_32S     OldWaveAmp;
 	
 	// Constructors.
 	UWaterTexture();
@@ -349,22 +349,22 @@ class DLL_EXPORT UWaterTexture : public UFractalTexture
 	void Destroy();
 
 	// UTexture interface.
-	void Init( INT InUSize, INT InVSize );
+	void Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize );
 	void Clear( DWORD ClearFlags );
 	//void ConstantTimeTick();
 	void MousePosition( DWORD Buttons, FLOAT X, FLOAT Y );
 	void Click( DWORD Buttons, FLOAT X, FLOAT Y );
 
 	// UFractalTexture interface.
-	void TouchTexture(INT UPos, INT VPos, FLOAT Magnitude);
+	void TouchTexture(INT_UNREAL_32S UPos, INT_UNREAL_32S VPos, FLOAT Magnitude);
 
 	// UWaterTexture interface.
 	void CalculateWater();
 	void WaterRedrawDrops();
 	private:
-	void AddDrop( INT DropX, INT DropY );
-	void WaterPaint( INT MouseX, INT MouseY, DWORD Buttons );
-	void DeleteDrops( INT DropX, INT DropY, INT AreaWidth );
+	void AddDrop( INT_UNREAL_32S DropX, INT_UNREAL_32S DropY );
+	void WaterPaint( INT_UNREAL_32S MouseX, INT_UNREAL_32S MouseY, DWORD Buttons );
+	void DeleteDrops( INT_UNREAL_32S DropX, INT_UNREAL_32S DropY, INT_UNREAL_32S AreaWidth );
 
 	//void SetWaveLight( BYTE ViewerAngle, BYTE LightAngle );
 };
@@ -399,7 +399,7 @@ class DLL_EXPORT UWaveTexture : public UWaterTexture
     /* void Destroy(); */
 
 	// UTexture interface.
-	void Init( INT InUSize, INT InVSize );
+	void Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize );
 	void Clear( DWORD ClearFlags );
 	void ConstantTimeTick();
 	/* void MousePosition( DWORD Buttons, FLOAT X, FLOAT Y ); */
@@ -439,7 +439,7 @@ class DLL_EXPORT UWetTexture : public UWaterTexture
 	void Destroy();
 
 	// UTexture interface.
-	void Init( INT InUSize, INT InVSize );
+	void Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize );
 	void Clear( DWORD ClearFlags );
 	void ConstantTimeTick();
 
@@ -519,12 +519,12 @@ class DLL_EXPORT UIceTexture : public UFractalTexture
 
 	// Transient IceTexture Parameters.
 	FLOAT       TickAccu;
-	INT         OldUDisp;
-	INT         OldVDisp;
+	INT_UNREAL_32S         OldUDisp;
+	INT_UNREAL_32S         OldVDisp;
 	UTexture*   OldGlassTex;
 	UTexture*	OldSourceTex;
 	BYTE*       LocalSourceBitmap;
-	INT         ForceRefresh;
+	INT_UNREAL_32S         ForceRefresh;
 
 	// Constructors.
 	UIceTexture();
@@ -534,7 +534,7 @@ class DLL_EXPORT UIceTexture : public UFractalTexture
     void Destroy(); 
 
 	// UTexture interface.
-	void Init( INT InUSize, INT InVSize );
+	void Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize );
 	void Clear( DWORD ClearFlags );
 	void ConstantTimeTick();
 	void Tick(FLOAT DeltaSeconds);

@@ -34,7 +34,7 @@ template< class T > inline T Clamp( const T X, const T Min, const T Max )
 {
 	return X<Min ? Min : X<Max ? X : Max;
 }
-template< class T > inline T Align( const T Ptr, INT Alignment )
+template< class T > inline T Align( const T Ptr, INT_UNREAL_32S Alignment )
 {
 	return (T)(((DWORD)Ptr + Alignment - 1) & ~(Alignment-1));
 }
@@ -75,10 +75,10 @@ public:
 	{
 		return Data;
 	}
-	void Remove( INT Index, INT Count, INT ElementSize );
+	void Remove(INT_UNREAL_32S Index, INT_UNREAL_32S Count, INT_UNREAL_32S ElementSize );
 protected:
-	void Realloc( INT ElementSize );
-	FArray( INT InNum, INT ElementSize )
+	void Realloc(INT_UNREAL_32S ElementSize );
+	FArray(INT_UNREAL_32S InNum, INT_UNREAL_32S ElementSize )
 	:	ArrayNum( InNum )
 	,	ArrayMax( InNum )
 	,	Data    ( NULL  )
@@ -91,8 +91,8 @@ protected:
 			appFree( Data );
 	}
 	void* Data;
-	INT	  ArrayNum;
-	INT	  ArrayMax;
+	INT_UNREAL_32S	  ArrayNum;
+	INT_UNREAL_32S	  ArrayMax;
 };
 
 //
@@ -102,7 +102,7 @@ protected:
 template< class T > class TArray : public FArray
 {
 public:
-	TArray( INT InNum=0 )
+	TArray(INT_UNREAL_32S InNum=0 )
 	:	FArray( InNum, sizeof(T) )
 	{}
 	TArray( const TArray& Other )
@@ -110,7 +110,7 @@ public:
 	{
 		guardSlow(TArray::copyctor);
 		ArrayNum=0;
-		for( INT i=0; i<Other.ArrayNum; i++ )
+		for( INT_UNREAL_32S i=0; i<Other.ArrayNum; i++ )
 			new(*this)T(Other(i));
 		unguardSlow;
 	}
@@ -122,7 +122,7 @@ public:
 			ArrayNum = 0;
 			ArrayMax = Other.ArrayNum;
 			Realloc( sizeof(T) );
-			for( INT i=0; i<Other.ArrayNum; i++ )
+			for( INT_UNREAL_32S i=0; i<Other.ArrayNum; i++ )
 				new(*this)T(Other(i));
 		}
 		return *this;
@@ -150,7 +150,7 @@ public:
 		checkarray(ArrayMax>=ArrayNum);
 		return ((T*)Data)[i];
 	}
-	INT Num() const
+	INT_UNREAL_32S Num() const
 	{
 		checkarray(ArrayNum>=0);
 		checkarray(ArrayMax>=ArrayNum);
@@ -178,21 +178,21 @@ public:
 		}
 		unguardSlow;
 	}
-	INT AddItem( const T& Item )
+	INT_UNREAL_32S AddItem( const T& Item )
 	{
 		guardSlow(TArray::AddItem);
-		INT Index=Add();
+		INT_UNREAL_32S Index=Add();
 		(*this)(Index)=Item;
 		return Index;
 		unguardSlow;
 	}
-	INT Add( INT n=1 )
+	INT_UNREAL_32S Add( INT_UNREAL_32S n=1 )
 	{
 		guardSlow(TArray::Add);
 		checkarray(n>=0);
 		checkarray(ArrayNum>=0);
 		checkarray(ArrayMax>=ArrayNum);
-		INT Index=ArrayNum;
+		INT_UNREAL_32S Index=ArrayNum;
 		if( (ArrayNum+=n)>ArrayMax )
 		{
 			ArrayMax = ArrayNum + ArrayNum/4 + 32;
@@ -201,24 +201,24 @@ public:
 		return Index;
 		unguardSlow;
 	}
-	INT AddZeroed( INT n=1 )
+	INT_UNREAL_32S AddZeroed( INT_UNREAL_32S n=1 )
 	{
 		guardSlow(TArray::AddZeroed);
-		INT Index = Add(n);
+		INT_UNREAL_32S Index = Add(n);
 		appMemset( &(*this)(Index), 0, n*sizeof(T) );
 		return Index;
 		unguardSlow;
 	}
-	INT AddUniqueItem( const T& Item )
+	INT_UNREAL_32S AddUniqueItem( const T& Item )
 	{
 		guardSlow(TArray::AddUniqueItem);
-		for( INT Index=0; Index<ArrayNum; Index++ )
+		for( INT_UNREAL_32S Index=0; Index<ArrayNum; Index++ )
 			if( (*this)(Index)==Item )
 				return Index;
 		return AddItem( Item );
 		unguardSlow;
 	}
-	UBOOL FindItem( const T& Item, INT& Index ) const
+	UBOOL FindItem( const T& Item, INT_UNREAL_32S& Index ) const
 	{
 		guardSlow(TArray::FindItem);
 		for( Index=0; Index<ArrayNum; Index++ )
@@ -227,11 +227,11 @@ public:
 		return 0;
 		unguardSlow;
 	}
-	INT RemoveItem( const T& Item )
+	inline INT_UNREAL_32S RemoveItem( const T& Item )
 	{
 		guardSlow(TArray::RemoveItem);
-		INT OriginalNum=ArrayNum;
-		for( INT Index=0; Index<ArrayNum; Index++ )
+		INT_UNREAL_32S OriginalNum=ArrayNum;
+		for( INT_UNREAL_32S Index=0; Index<ArrayNum; Index++ )
 			if( (*this)(Index)==Item )
 				Remove( Index-- );
 		return OriginalNum - ArrayNum;
@@ -239,7 +239,7 @@ public:
 	}
 	void Remove( int Index, int Count=1 );
 	friend FArchive& operator<<( FArchive& Ar, TArray& A );
-	void SetNum( INT NewSize )
+	void SetNum( INT_UNREAL_32S NewSize )
 	{
 		guardSlow(TArray::SetNum);
 		if( ArrayNum!=NewSize || ArrayMax!=NewSize )
@@ -254,7 +254,7 @@ public:
 template <class T> void* operator new( size_t Size, TArray<T>& Array )
 {
 	guardSlow(TArray::operator new);
-	INT Index = Array.Add();
+	INT_UNREAL_32S Index = Array.Add();
 	return &Array(Index);
 	unguardSlow;
 }
@@ -339,7 +339,7 @@ public:
 	{
 		checkstr(Str);
 		checkstr(Num());
-		INT Index = Num()-1;
+		INT_UNREAL_32S Index = Num()-1;
 		checkstr((*this)(Index)==0);
 		Add(appStrlen(Str));
 		appStrcpy( &(*this)(Index), Str );
@@ -354,7 +354,7 @@ public:
 	{
 		checkstr(Str.Num());
 		checkstr(Num());
-		INT Index = Num()-1;
+		INT_UNREAL_32S Index = Num()-1;
 		checkstr((*this)(Index)==0);
 		Add(Str.Length());
 		appMemcpy( &(*this)(Index), &Str(0), Str.Num() );
@@ -401,7 +401,7 @@ public:
 	}
 
 	// Functions.
-	INT Length() const
+	INT_UNREAL_32S Length() const
 	{
 		checkstr(Num());
 		checkstr((*this)(Num()-1)==0);
@@ -431,7 +431,7 @@ template <class T> class TIterator
 public:
 	TIterator( TArray<T>& InArray ) : Array(InArray), Index(-1) { ++*this;      }
 	void operator++()      { ++Index;                                           }
-	INT GetIndex()   const { return Index;                                      }
+	INT_UNREAL_32S GetIndex()   const { return Index;                                      }
 	operator UBOOL() const { return Index < Array.Num();                        }
 	T& operator*()   const { return Array(Index);                               }
 	T* operator->()  const { return &Array(Index);                              }
@@ -440,14 +440,14 @@ public:
 	T& GetNext()     const { return Array( Index<Array.Num()-1 ? Index+1 : 0 ); }
 private:
 	TArray<T>& Array;
-	INT Index;
+	INT_UNREAL_32S Index;
 };
 template <class T> class TPtrIterator
 {
 public:
 	TPtrIterator( TArray<T*>& InArray ) : Array(InArray), Index(-1) { ++*this;  }
 	void operator++()      { ++Index;                                           }
-	INT GetIndex()   const { return Index;                                      }
+	INT_UNREAL_32S GetIndex()   const { return Index;                                      }
 	operator UBOOL() const { return Index < Array.Num();                        }
 	T* operator*()   const { return Array(Index);                               }
 	T* operator->()  const { return Array(Index);                               }
@@ -456,14 +456,14 @@ public:
 	T& GetNext()     const { return Array( Index<Array.Num()-1 ? Index+1 : 0 ); }
 private:
 	TArray<T*>& Array;
-	INT Index;
+	INT_UNREAL_32S Index;
 };
 template <class T> class TConstIterator
 {
 public:
 	TConstIterator( const TArray<T>& InArray ) : Array(InArray), Index(-1) { ++*this; }
 	void operator++()            { ++Index;                                           }
-	INT GetIndex()         const { return Index;                                      }
+	INT_UNREAL_32S GetIndex()         const { return Index;                                      }
 	operator UBOOL()       const { return Index < Array.Num();                        }
 	const T& operator*()   const { return Array(Index);                               }
 	const T* operator->()  const { return &Array(Index);                              }
@@ -472,7 +472,7 @@ public:
 	const T& GetNext()     const { return Array( Index<Array.Num()-1 ? Index+1 : 0 ); }
 private:
 	const TArray<T>& Array;
-	INT Index;
+	INT_UNREAL_32S Index;
 };
 
 /*----------------------------------------------------------------------------
@@ -487,7 +487,8 @@ template< class TK, class TI > class TMap
 public:
 	void Add( const TK& Key, const TI& Value )
 	{
-		for( INT i=0; i<Pairs.Num(); i++ )
+		INT_UNREAL_32S i;
+		for( i=0; i<Pairs.Num(); i++ )
 			if( Pairs(i).Key==Key )
 				break;
 		if( i==Pairs.Num() )
@@ -497,7 +498,8 @@ public:
 	}
 	UBOOL Find( const TK& Key, TI& Value ) const
 	{
-		for( INT i=0; i<Pairs.Num(); i++ )
+		INT_UNREAL_32S i;
+		for( i=0; i<Pairs.Num(); i++ )
 			if( Pairs(i).Key==Key )
 				break;
 		if( i<Pairs.Num() )

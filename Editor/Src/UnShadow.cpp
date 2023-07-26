@@ -33,15 +33,15 @@ public:
 	ULevel*			Level;
 	UVectors*		Vectors;
 	UVectors*		Points;
-	INT				NumLights, PolysLit, ActivePolys, RaysTraced, Pairs, Oversample;
+	INT_UNREAL_32S				NumLights, PolysLit, ActivePolys, RaysTraced, Pairs, Oversample;
 	typedef TArray<AActor*> FActorArray;
 	TArray<FActorArray> Lights;
 
 	// Functions.
 	void ComputeLightVisibility( UViewport* Viewport, AActor* Actor );
-	INT ComputeAllLightVisibility( UBOOL Selected );
-	void LightBspSurf( AMover* Mover, INT iSurf, INT iPoly );
-	void BuildSurfList( INT iNode );
+	INT_UNREAL_32S ComputeAllLightVisibility( UBOOL Selected );
+	void LightBspSurf( AMover* Mover, INT_UNREAL_32S iSurf, INT_UNREAL_32S iPoly );
+	void BuildSurfList( INT_UNREAL_32S iNode );
 	void SetupIndex( FLightMapIndex* Index, DWORD PolyFlags, FLOAT MinU, FLOAT MinV, FLOAT MaxU, FLOAT MaxV );
 };
 
@@ -118,7 +118,7 @@ void FMeshIlluminator::SetupIndex( FLightMapIndex* Index, DWORD PolyFlags, FLOAT
 // Compute visibility between each light in the world and each polygon.
 // Returns number of lights to be applied.
 //
-INT FMeshIlluminator::ComputeAllLightVisibility( UBOOL Selected )
+INT_UNREAL_32S FMeshIlluminator::ComputeAllLightVisibility( UBOOL Selected )
 {
 	guard(FMeshIlluminator::ComputeAllLightVisibility);
 
@@ -130,9 +130,9 @@ INT FMeshIlluminator::ComputeAllLightVisibility( UBOOL Selected )
 	Viewport->Lock( FPlane(0,0,0,0), FPlane(0,0,0,0), FPlane(0,0,0,0), 0 );
 
 	// Compute all light visibility.
-	INT n=0;	
+	INT_UNREAL_32S n=0;	
 	DOUBLE Time = appSeconds();
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		if( (i&15)==0 )
 			GSystem->StatusUpdatef( i, Level->Num(), "%s", "Computing visibility" );
@@ -154,10 +154,10 @@ INT FMeshIlluminator::ComputeAllLightVisibility( UBOOL Selected )
 				n++;
 
 				// Process all surfaces hit by this light.
-				TArray<INT> iSurfs;
+				TArray<INT_UNREAL_32S> iSurfs;
 				GEditor->Render->GetVisibleSurfs( Viewport, iSurfs );
 
-				for( INT i=0; i<iSurfs.Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<iSurfs.Num(); i++ )
 				{
 					check(iSurfs(i)>=0);
 					check(iSurfs(i)<Level->Model->Surfs->GetMax());
@@ -196,7 +196,7 @@ INT FMeshIlluminator::ComputeAllLightVisibility( UBOOL Selected )
 // Apply all lights to one poly, generating its lighting mesh and updating
 // the tables:
 //
-void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
+void FMeshIlluminator::LightBspSurf( AMover* Mover, INT_UNREAL_32S iSurf, INT_UNREAL_32S iPoly )
 {
 	guard(FMeshIlluminator::LightBspSurf );
 	FBspSurf& Surf = Level->Model->Surfs->Element(iSurf);
@@ -219,7 +219,7 @@ void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
 	{
 		// Compute extent.
 		FPoly& Poly = Mover->Brush->Polys->Element( iPoly );
-		for( INT k=0; k<Poly.NumVertices; k++ )
+		for( INT_UNREAL_32S k=0; k<Poly.NumVertices; k++ )
 		{
 			// Find extent in untransformed brush space.
 			FVector Vertex	= Poly.Vertex[k] - Poly.Base;
@@ -235,7 +235,7 @@ void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
 	else
 	{
 		guard(SetupNormalExtent);
-		for( INT i=0; i<Level->Model->Nodes->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Model->Nodes->Num(); i++ )
 		{
 			FBspNode& Node = Level->Model->Nodes->Element(i);
 			if( Node.iSurf==iSurf && Node.NumVertices>0 )
@@ -259,7 +259,7 @@ void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
 
 	// Calculate coordinates.
 	FVector		NewBase		 = Points->Element(Surf.pBase) + Normal * 4.0;
-	INT			ByteSize	 = ((Index->UClamp+7)>>3) * Index->VClamp;
+	INT_UNREAL_32S			ByteSize	 = ((Index->UClamp+7)>>3) * Index->VClamp;
 	FCoords		TexCoords    = FCoords( FVector(0,0,0), TextureU, TextureV, Normal ).Inverse().Transpose();
 
 	// Raytrace each lightsource.
@@ -272,7 +272,7 @@ void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
 		// Perform raytracing.
 		TArray<BYTE> Data;
 		Data.Add( ByteSize );
-		for( INT i=0; i<Lights(iSurf).Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Lights(iSurf).Num(); i++ )
 		{
 			// Prepare.
 			AActor* Actor       = Lights(iSurf)(i);
@@ -294,20 +294,20 @@ void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
 
 			// Perform raytracing.
 			guard(Raytrace);
-			INT Count=0;
+			INT_UNREAL_32S Count=0;
 			FCheckResult Hit(0.0);
 			BYTE NodeFlags = NF_NotVisBlocking;
 			if( Surf.PolyFlags & PF_BrightCorners )
 				NodeFlags |= NF_BrightCorners;
-			for( INT VCounter=0; VCounter<Index->VClamp; VCounter++ )
+			for( INT_UNREAL_32S VCounter=0; VCounter<Index->VClamp; VCounter++ )
 			{
 				FVector Vertex=Vertex0;
-				for( INT UCounter=0; UCounter<Index->UClamp; UCounter+=8 )
+				for( INT_UNREAL_32S UCounter=0; UCounter<Index->UClamp; UCounter+=8 )
 				{
 					BYTE B = 0;
 					BYTE M = 1;
 					UBOOL Prev = 0;
-					for( INT SubU=UCounter; SubU<Index->UClamp && M; SubU++,M=M<<1 )
+					for( INT_UNREAL_32S SubU=UCounter; SubU<Index->UClamp && M; SubU++,M=M<<1 )
 					{
 						if( FDistSquared(Actor->Location,Vertex) < SqRadius )
 							if( (Prev=Level->Model->LineCheck( Hit, NULL, Actor->Location, Vertex, FVector(0,0,0), NodeFlags ))!=NULL )
@@ -330,7 +330,7 @@ void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
 			if( DidHit )
 			{
 				Model->Lights.AddItem( Actor );
-				for( INT i=0; i<ByteSize; i++ )
+				for( INT_UNREAL_32S i=0; i<ByteSize; i++ )
 					Model->LightBits.AddItem( Data(i) );
 			}
 			unguard;
@@ -348,7 +348,7 @@ void FMeshIlluminator::LightBspSurf( AMover* Mover, INT iSurf, INT iPoly )
 // Recursively go through the Bsp nodes and build a list of active Bsp surfs,
 // allocating their light map indices.
 //
-void FMeshIlluminator::BuildSurfList( INT iNode )
+void FMeshIlluminator::BuildSurfList( INT_UNREAL_32S iNode )
 {
 	guard(FMeshIlluminator::BuildSurfList);
 	FBspNode& Node = Level->Model->Nodes->Element(iNode);
@@ -374,7 +374,7 @@ void FMeshIlluminator::BuildSurfList( INT iNode )
    High-level lighting routine
 ---------------------------------------------------------------------------------------*/
 
-void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT Selected )
+void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT_UNREAL_32S Selected )
 {
 	guard(UEditorEngine::shadowIlluminateBsp);
 	FMeshIlluminator Illum;
@@ -404,14 +404,14 @@ void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT Selected )
 
 		// Clear all surface light mesh indices.
 		guard(ClearSurfs);
-		for( INT i=0; i<Level->Model->Surfs->Max(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Model->Surfs->Max(); i++ )
 			Level->Model->Surfs->Element(i).iLightMap = INDEX_NONE;
 		unguard;
 
 		// Tell all actors that we're about to raytrace the world.
 		// This enables movable brushes to set their positions for raytracing.
 		guard(PreRaytrace);
-		for( INT i=0; i<Level->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 		{
 			if( (i&15)==0 )
 				GSystem->StatusUpdatef( i, Illum.Level->Num(), "%s", "Allocating meshes" );
@@ -424,7 +424,7 @@ void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT Selected )
 				if( Model && Model->Polys )
 				{
 					Model->LightMap.Empty();
-					for( INT j=0; j<Model->Polys->Num(); j++ )
+					for( INT_UNREAL_32S j=0; j<Model->Polys->Num(); j++ )
 					{
 						FPoly& Poly = Model->Polys->Element(j);
 						if( !(Poly.PolyFlags & PF_NoShadows) )
@@ -443,8 +443,9 @@ void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT Selected )
 
 		// Compute light visibility and update index with it.
 		Level->BrushTracker = GNewBrushTracker( Level );
+		INT_UNREAL_32S i;
 		Illum.BuildSurfList( 0 );
-		for( INT i=0; i<Level->Model->Surfs->Max(); i++ )
+		for( i=0; i<Level->Model->Surfs->Max(); i++ )
 			new(Illum.Lights)TArray<AActor*>;
 		Illum.NumLights = Illum.ComputeAllLightVisibility( Selected );
 
@@ -456,7 +457,7 @@ void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT Selected )
 			Level->Model->LightMap(i).iLightActors=INDEX_NONE;
 
 		// Count raytraceable surfs.
-		INT n=0, c=0;
+		INT_UNREAL_32S n=0, c=0;
 		for( i=0; i<Level->Model->Surfs->Num(); i++ )
 			n += (Level->Model->Surfs->Element(i).iLightMap != INDEX_NONE);
 
@@ -472,14 +473,14 @@ void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT Selected )
 
 		// Raytrace the movers.
 		guard(RaytraceMoverSurfs);
-		for( INT i=0; i<Level->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 		{
 			AMover* Actor = Cast<AMover>( Level->Actors(i) );
 			if( Actor && Actor->Brush && Actor->Brush->Polys )
 			{
 				Actor->SetBrushRaytraceKey();
 				Level->BrushTracker->Flush( Actor );
-				for( INT j=0; j<Actor->Brush->Polys->Num(); j++ )
+				for( INT_UNREAL_32S j=0; j<Actor->Brush->Polys->Num(); j++ )
 				{
 					FPoly& Poly = Actor->Brush->Polys->Element(j);
 					if( Poly.iLink!=INDEX_NONE && Poly.iBrushPoly!=INDEX_NONE )
@@ -496,7 +497,7 @@ void UEditorEngine::shadowIlluminateBsp( ULevel* Level, INT Selected )
 
 		// Tell all actors that we're done raytracing the world.
 		guard(PostRaytrace);
-		for( INT i=0; i<Level->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 		{
 			AActor* Actor = Illum.Level->Actors(i);
 			if( Actor )
@@ -545,7 +546,7 @@ void LightTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 	}
 	else
 	{
-		for( INT i=0; i<Level->Model->LightMap.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Model->LightMap.Num(); i++ )
 		{
 			Size       = (int)Level->Model->LightMap(i).UClamp * (int)Level->Model->LightMap(i).VClamp;
 			MeshPts   += Size;

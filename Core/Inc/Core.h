@@ -96,7 +96,7 @@ CORE_API extern char				    GErrorHist[4096];
 CORE_API extern char                    GComputerName[32];
 CORE_API extern	DOUBLE					GSecondsPerCycle;
 CORE_API extern SQWORD					GTicks;
-CORE_API extern INT                     GScriptCycles;
+CORE_API extern INT_UNREAL_32S                     GScriptCycles;
 CORE_API extern DWORD					GPageSize;
 CORE_API extern DWORD					GProcessorCount;
 CORE_API extern DWORD					GPhysicalMemory;
@@ -161,7 +161,7 @@ template< class T > inline FArchive& operator<<( FArchive& Ar, TArray<T>& A )
 		A.Empty();
 		Ar << AR_INDEX(A.ArrayMax);
 		A.Realloc( sizeof(T) );
-		for( INT i=0; i<A.ArrayMax; i++ )
+		for( INT_UNREAL_32S i=0; i<A.ArrayMax; i++ )
 			Ar << *new(A)T;
 		check(A.ArrayNum==A.ArrayMax);
 	}
@@ -169,13 +169,13 @@ template< class T > inline FArchive& operator<<( FArchive& Ar, TArray<T>& A )
 	{
 		// Save array.
 		Ar << AR_INDEX(A.ArrayNum);
-		for( INT i=0; i<A.ArrayNum; i++ )
+		for( INT_UNREAL_32S i=0; i<A.ArrayNum; i++ )
 			Ar << A( i );
 	}
 	return Ar;
 	unguard;
 }
-template< class T > inline void TArray<T>::Remove( INT Index, INT Count )
+template< class T > inline void TArray<T>::Remove(INT_UNREAL_32S Index, INT_UNREAL_32S Count )
 {
 	guard(TArray::Remove);
 	check(Index>=0);
@@ -183,7 +183,7 @@ template< class T > inline void TArray<T>::Remove( INT Index, INT Count )
 	check(Index+Count<=ArrayNum);
 
 	// Do destruction.
-	for( INT i=Index; i<Index+Count; i++ )
+	for( INT_UNREAL_32S i=Index; i<Index+Count; i++ )
 		(&(*this)(i))->~T();
 
 	// Move binary data around.
@@ -198,7 +198,7 @@ template< class T > inline void TArray<T>::Remove( INT Index, INT Count )
 
 class FStringOut : public FString, public FOutputDevice
 {
-	void WriteBinary( const void* Data, INT Length, EName MsgType=NAME_None )
+	void WriteBinary( const void* Data, INT_UNREAL_32S Length, EName MsgType=NAME_None )
 	{
 		*this += (char*)Data;
 	}

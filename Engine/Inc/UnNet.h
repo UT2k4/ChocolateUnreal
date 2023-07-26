@@ -46,7 +46,7 @@ class UPendingLevel : public ULevelBase
 	UBOOL		Success;
 	UBOOL		SentJoin;
 	UBOOL		LonePlayer;
-	INT			FilesNeeded;
+	INT_UNREAL_32S			FilesNeeded;
 	char		Error256[256];
 
 	// Constructors.
@@ -58,7 +58,7 @@ class UPendingLevel : public ULevelBase
 	UBOOL NotifyAcceptingChannel( class FChannel* Channel );
 	ULevel* NotifyGetLevel();
 	void NotifyReceivedText( UNetConnection* Connection, const char* Text );
-	void NotifyReceivedFile( UNetConnection* Connection, INT PackageIndex, const char* Error );
+	void NotifyReceivedFile( UNetConnection* Connection, INT_UNREAL_32S PackageIndex, const char* Error );
 	UBOOL NotifySendingFile( UNetConnection* Connection, FGuid Guid );
 
 	// UPendingLevel interface.

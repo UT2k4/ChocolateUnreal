@@ -43,7 +43,7 @@ UBOOL FEditorConstraints::Snap( ULevel* Level, FVector& Location, FVector GridBa
 	if( Level && SnapVertices )
 	{
 		FVector	DestPoint;
-		INT Temp;
+		INT_UNREAL_32S Temp;
 		if( Level->Model->FindNearestVertex( Location, DestPoint, SnapDistance, Temp ) >= 0.0)
 		{
 			Location = DestPoint;

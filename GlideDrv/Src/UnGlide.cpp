@@ -82,14 +82,14 @@ void GlideErrorHandler( const char* String, FxBool Fatal )
 static struct FGlideStats
 {
 	// Stat variables.
-	INT DownloadsPalette;
-	INT Downloads8;
-	INT Downloads16;
-	INT PolyVTime;
-	INT PolyCTime;
-	INT PaletteTime;
-	INT Download8Time;
-	INT Download16Time;
+	INT_UNREAL_32S DownloadsPalette;
+	INT_UNREAL_32S Downloads8;
+	INT_UNREAL_32S Downloads16;
+	INT_UNREAL_32S PolyVTime;
+	INT_UNREAL_32S PolyCTime;
+	INT_UNREAL_32S PaletteTime;
+	INT_UNREAL_32S Download8Time;
+	INT_UNREAL_32S Download16Time;
 	DWORD Surfs, Polys, Tris;
 } Stats;
 
@@ -110,7 +110,7 @@ class DLL_EXPORT UGlideRenderDevice : public URenderDevice
 
 	// Variables.
 	GrHwConfiguration	hwconfig;
-	INT					NumTmu, X, Y;
+	INT_UNREAL_32S					NumTmu, X, Y;
 	FPlane				FlashScale;
 	FPlane				FlashFog;
 	DWORD				LockFlags;
@@ -129,7 +129,7 @@ class DLL_EXPORT UGlideRenderDevice : public URenderDevice
 	UBOOL Init( UViewport* InViewport );
 	void Exit();
 	void Flush();
-	void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT* HitSize );
+	void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT_UNREAL_32S* HitSize );
 	void Unlock( UBOOL Blit );
 	void DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Surface, FSurfaceFacet& Facet );
 	void DrawGouraudPolygon( FSceneNode* Frame, FTextureInfo& Info, FTransTexture** Pts, int NumPts, DWORD PolyFlags, FSpanBuffer* Span );
@@ -139,13 +139,13 @@ class DLL_EXPORT UGlideRenderDevice : public URenderDevice
 	void Draw2DPoint( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FLOAT X1, FLOAT Y1, FLOAT X2, FLOAT Y2 );
 	void GetStats( char* Result );
 	void ClearZ( FSceneNode* Frame );
-	void PushHit( const BYTE* Data, INT Count );
-	void PopHit( INT Count, UBOOL bForce );
+	void PushHit( const BYTE* Data, INT_UNREAL_32S Count );
+	void PopHit( INT_UNREAL_32S Count, UBOOL bForce );
 	void ReadPixels( FColor* Pixels );
 	void EndFlash();
 
 	// Functions.
-	UBOOL TryRes( INT X, INT Y, UBOOL Force, GrScreenRefresh_t Ref );
+	UBOOL TryRes( INT_UNREAL_32S X, INT_UNREAL_32S Y, UBOOL Force, GrScreenRefresh_t Ref );
 
 	// State of a texture map unit.
 	struct FGlideTMU
@@ -154,7 +154,7 @@ class DLL_EXPORT UGlideRenderDevice : public URenderDevice
 		UGlideRenderDevice* Glide;
 
 		// Texture map unit.
-		INT tmu;
+		INT_UNREAL_32S tmu;
 
 		// Memory cache for the tmu.
 		FMemCache Cache;
@@ -169,11 +169,11 @@ class DLL_EXPORT UGlideRenderDevice : public URenderDevice
 		FLOAT		UScale, VScale;
 
 		// tmu download functions.
-		DWORD DownloadTexture( FTextureInfo& TextureInfo, DWORD Address, DWORD GlideFlags, INT iFirstMip, INT iLastMip, GrTexInfo* texinfo, QWORD CacheID, FCacheItem*& Item, INT USize, INT VSize );
+		DWORD DownloadTexture( FTextureInfo& TextureInfo, DWORD Address, DWORD GlideFlags, INT_UNREAL_32S iFirstMip, INT_UNREAL_32S iLastMip, GrTexInfo* texinfo, QWORD CacheID, FCacheItem*& Item, INT_UNREAL_32S USize, INT_UNREAL_32S VSize );
 		void DownloadPalette( FTextureInfo& TextureInfo, FColor InPaletteMaxColor );
 
 		// State functions.
-		void Init( INT Intmu, UGlideRenderDevice* InGlide )
+		void Init( INT_UNREAL_32S Intmu, UGlideRenderDevice* InGlide )
 		{
 			guard(FGlideTMU::Init);
 
@@ -240,11 +240,11 @@ class DLL_EXPORT UGlideRenderDevice : public URenderDevice
 				texinfo.format      = (GlideFlags & GF_Alpha    ) ? GR_TEXFMT_ARGB_1555
 									: (GlideFlags & GF_NoPalette) ? GR_TEXFMT_RGB_565
 									:                               GR_TEXFMT_P_8;
-				INT GlideUBits      = Max( (INT)Info.Mips[0]->UBits, (INT)Info.Mips[0]->VBits-3);
-				INT GlideVBits      = Max( (INT)Info.Mips[0]->VBits, (INT)Info.Mips[0]->UBits-3);
-				INT MaxDim          = Max(GlideUBits,GlideVBits);
-				INT FirstMip        = Max(MaxDim,8) - 8;
-				INT LastMip			= Min(FirstMip+8,Info.NumMips-1);
+				INT_UNREAL_32S GlideUBits      = Max( (INT_UNREAL_32S)Info.Mips[0]->UBits, (INT_UNREAL_32S)Info.Mips[0]->VBits-3);
+				INT_UNREAL_32S GlideVBits      = Max( (INT_UNREAL_32S)Info.Mips[0]->VBits, (INT_UNREAL_32S)Info.Mips[0]->UBits-3);
+				INT_UNREAL_32S MaxDim          = Max(GlideUBits,GlideVBits);
+				INT_UNREAL_32S FirstMip        = Max(MaxDim,8) - 8;
+				INT_UNREAL_32S LastMip			= Min(FirstMip+8,Info.NumMips-1);
 				if( FirstMip >= Info.NumMips )
 					appErrorf( "Encountered texture over 256x256 without sufficient mipmaps" );
 				texinfo.aspectRatio = GlideVBits + 3 - GlideUBits;
@@ -283,7 +283,7 @@ class DLL_EXPORT UGlideRenderDevice : public URenderDevice
 	} States[MAX_TMUS];
 
 	// Glide specific functions.
-	void UpdateModulation( FColor& FinalColor, FColor Color, INT& Count )
+	void UpdateModulation( FColor& FinalColor, FColor Color, INT_UNREAL_32S& Count )
 	{
 		FinalColor.R = (FinalColor.R * Color.R) >> 8;
 		FinalColor.G = (FinalColor.G * Color.G) >> 8;
@@ -374,13 +374,13 @@ IMPLEMENT_CLASS(UGlideRenderDevice);
 //
 // Try a resolution.
 //
-UBOOL UGlideRenderDevice::TryRes( INT X, INT Y, UBOOL Force, GrScreenRefresh_t Ref )
+UBOOL UGlideRenderDevice::TryRes( INT_UNREAL_32S X, INT_UNREAL_32S Y, UBOOL Force, GrScreenRefresh_t Ref )
 {
 	guard(UGlideRenderDevice::TryRes);
 	UBOOL Result = 1;
 
 	// Pick an appropriate resolution.
-	INT Res;
+	INT_UNREAL_32S Res;
 	if      ( X<=512		   ) Res=GR_RESOLUTION_512x384;
 	else if ( X<=640 && Y<=400 ) Res=GR_RESOLUTION_640x400;
 	else if ( X<=640 && Y<=480 ) Res=GR_RESOLUTION_640x480;
@@ -392,7 +392,7 @@ UBOOL UGlideRenderDevice::TryRes( INT X, INT Y, UBOOL Force, GrScreenRefresh_t R
 	GGlideCheckErrors=0;
 	if( !grSstWinOpen
 	( 
-		(INT)Viewport->GetWindow(),
+		(INT_UNREAL_32S)Viewport->GetWindow(),
 		hwconfig.SSTs[0].type!=GR_SSTTYPE_SST96 ? Res : GR_RESOLUTION_NONE,
 		Ref,
 		GR_COLORFORMAT_ABGR, GR_ORIGIN_UPPER_LEFT,
@@ -433,7 +433,7 @@ UBOOL UGlideRenderDevice::TryRes( INT X, INT Y, UBOOL Force, GrScreenRefresh_t R
 
 		// Fog.
 		GrFog_t fog[GR_FOG_TABLE_SIZE];
-		for( INT i=0; i<GR_FOG_TABLE_SIZE; i++ )
+		for( INT_UNREAL_32S i=0; i<GR_FOG_TABLE_SIZE; i++ )
 		{
 			float W = guFogTableIndexToW(i);
 			fog[i]  = Clamp( 0.1f * W, 0.f, 255.f );
@@ -443,7 +443,7 @@ UBOOL UGlideRenderDevice::TryRes( INT X, INT Y, UBOOL Force, GrScreenRefresh_t R
 		grFogMode(GR_FOG_DISABLE);
 
 		// Init all TMU's.
-		for( INT tmu=0; tmu<NumTmu; tmu++ )
+		for( INT_UNREAL_32S tmu=0; tmu<NumTmu; tmu++ )
 		{
 			grTexLodBiasValue( tmu, Clamp( DetailBias, -3.f, 3.f ) );
 			grTexClampMode( tmu, GR_TEXTURECLAMP_WRAP, GR_TEXTURECLAMP_WRAP );
@@ -504,11 +504,11 @@ UBOOL UGlideRenderDevice::Init( UViewport* InViewport )
 	GGlideCheckErrors=1;
 
 	// Init pyramic-compressed scaling tables.
-	for( INT A=0; A<128; A++ )
+	for( INT_UNREAL_32S A=0; A<128; A++ )
 	{
-		for( INT B=0; B<=A; B++ )
+		for( INT_UNREAL_32S B=0; B<=A; B++ )
 		{
-			INT M=Max(A,1);
+			INT_UNREAL_32S M=Max(A,1);
 			RScale[PYR(A)+B] = Min(((B*0x10000)/M),0xf800) & 0xf800;
 			GScale[PYR(A)+B] = Min(((B*0x00800)/M),0x07e0) & 0x07e0;
 			BScale[PYR(A)+B] = Min(((B*0x00020)/M),0x001f) & 0x001f;
@@ -528,7 +528,7 @@ UBOOL UGlideRenderDevice::Init( UViewport* InViewport )
 	);
 	NumTmu = Min(hwconfig.SSTs[0].sstBoard.VoodooConfig.nTexelfx,(int)MAX_TMUS);
 	check(NumTmu>0);
-	for( INT tmu=0; tmu<NumTmu; tmu++ )
+	for( INT_UNREAL_32S tmu=0; tmu<NumTmu; tmu++ )
 		debugf
 		(
 			NAME_Init,
@@ -545,7 +545,7 @@ UBOOL UGlideRenderDevice::Init( UViewport* InViewport )
 	UBOOL Result = TryRes( Viewport->SizeX, Viewport->SizeY, 0, RefreshRate );
 	if( Result )
 	{
-		for( INT tmu=0; tmu<NumTmu; tmu++ )
+		for( INT_UNREAL_32S tmu=0; tmu<NumTmu; tmu++ )
 		{
 			States[tmu].Cache.Init
 			(
@@ -601,7 +601,7 @@ void UGlideRenderDevice::InternalClassInitializer( UClass* Class )
 void UGlideRenderDevice::PostEditChange()
 {
 	guard(UGlideRenderDevice::PostEditChange);
-	RefreshRate = Clamp((INT)RefreshRate,0,GR_REFRESH_120Hz);
+	RefreshRate = Clamp((INT_UNREAL_32S)RefreshRate,0,GR_REFRESH_120Hz);
 	DetailBias  = Clamp(DetailBias,-3.f,3.f);
 	unguard;
 }
@@ -618,7 +618,7 @@ void UGlideRenderDevice::Exit()
 	grSstWinClose();
 
 	// Shut down each texture mapping unit.
-	for( INT i=0; i<NumTmu; i++ )
+	for( INT_UNREAL_32S i=0; i<NumTmu; i++ )
 		States[i].Exit();
 
 	// Shut down Glide.
@@ -635,7 +635,7 @@ void UGlideRenderDevice::Flush()
 {
 	guard(UGlideRenderDevice::Flush);
 
-	for( INT i=0; i<NumTmu; i++ )
+	for( INT_UNREAL_32S i=0; i<NumTmu; i++ )
 		States[i].Flush();
 	grGammaCorrectionValue( 0.5 + 1.5*Viewport->Client->Brightness );
 
@@ -654,21 +654,21 @@ DWORD UGlideRenderDevice::FGlideTMU::DownloadTexture
 	FTextureInfo&	Info,
 	DWORD			Address,
 	DWORD			GlideFlags,
-	INT				iFirstMip,
-	INT				iLastMip,
+	INT_UNREAL_32S				iFirstMip,
+	INT_UNREAL_32S				iLastMip,
 	GrTexInfo*		texinfo,
 	QWORD			TestID,
 	FCacheItem*&	Item,
-	INT				USize,
-	INT				VSize
+	INT_UNREAL_32S				USize,
+	INT_UNREAL_32S				VSize
 )
 {
 	guard(UGlideRenderDevice::DownloadTexture);
 	FMemMark Mark(GMem);
-	INT MaxSize = USize * VSize;
+	INT_UNREAL_32S MaxSize = USize * VSize;
 
 	// Create cache entry.
-	INT GlideSize = grTexCalcMemRequired( texinfo->smallLod, texinfo->largeLod, texinfo->aspectRatio, texinfo->format );
+	INT_UNREAL_32S GlideSize = grTexCalcMemRequired( texinfo->smallLod, texinfo->largeLod, texinfo->aspectRatio, texinfo->format );
 	if( !Address )
 		Address = (DWORD)Cache.Create( TestID, Item, GlideSize, ALIGNMENT );//!!
 	//!!
@@ -685,9 +685,9 @@ DWORD UGlideRenderDevice::FGlideTMU::DownloadTexture
 		{
 			DWORD* Tmp = (DWORD*)Info.Mips[0]->DataPtr;
 			DWORD  Max = 0x01010101;
-			for( INT i=0; i<Info.VClamp; i++ )
+			for( INT_UNREAL_32S i=0; i<Info.VClamp; i++ )
 			{
-				for( INT j=0; j<Info.UClamp; j++ )
+				for( INT_UNREAL_32S j=0; j<Info.UClamp; j++ )
 				{
 					DWORD Flow = (Max - *Tmp) & 0x80808080;
 					if( Flow )
@@ -708,15 +708,15 @@ DWORD UGlideRenderDevice::FGlideTMU::DownloadTexture
 		_WORD* GPtr  = GScale + PYR(Info.MaxColor->G);
 		_WORD* BPtr  = BScale + PYR(Info.MaxColor->R);
 		_WORD* Space = New<_WORD>(GMem,MaxSize), *Ptr=Space;
-		for( INT c=0; c<VSize; c+=Info.VSize )
+		for( INT_UNREAL_32S c=0; c<VSize; c+=Info.VSize )
 		{
 			FRainbowPtr Src = Info.Mips[0]->DataPtr;
-			for( INT i=0; i<Info.VClamp; i++ )
+			for( INT_UNREAL_32S i=0; i<Info.VClamp; i++ )
 			{
-				for( INT d=0; d<USize; d+=Info.USize )
+				for( INT_UNREAL_32S d=0; d<USize; d+=Info.USize )
 				{
 					FRainbowPtr InnerSrc=Src;
-					for( INT j=0; j<Info.UClamp; j++ )
+					for( INT_UNREAL_32S j=0; j<Info.UClamp; j++ )
 					{
 						*Ptr++
 						=	BPtr[InnerSrc.PtrBYTE[0]]
@@ -762,7 +762,7 @@ DWORD UGlideRenderDevice::FGlideTMU::DownloadTexture
 		{
 			AlphaPalette = New<FGlideColor>( GMem, NUM_PAL_COLORS );
 			Alpha        = New<FGlideColor>( GMem, MaxSize        );
-			for( INT i=0; i<NUM_PAL_COLORS; i++ )
+			for( INT_UNREAL_32S i=0; i<NUM_PAL_COLORS; i++ )
 			{
 				AlphaPalette[i].Color5551.R = Info.Palette[i].R >> (8-5);
 				AlphaPalette[i].Color5551.G = Info.Palette[i].G >> (8-5);
@@ -779,7 +779,7 @@ DWORD UGlideRenderDevice::FGlideTMU::DownloadTexture
 		{
 			AlphaPalette = New<FGlideColor>( GMem, NUM_PAL_COLORS );
 			Alpha        = New<FGlideColor>( GMem, MaxSize        );
-			for( INT i=0; i<NUM_PAL_COLORS; i++ )
+			for( INT_UNREAL_32S i=0; i<NUM_PAL_COLORS; i++ )
 			{
 				AlphaPalette[i].Color565.R = Info.Palette[i].R >> (8-5);
 				AlphaPalette[i].Color565.G = Info.Palette[i].G >> (8-6);
@@ -793,19 +793,19 @@ DWORD UGlideRenderDevice::FGlideTMU::DownloadTexture
 		}
 
 		// Download the texture's mips.
-		for( INT iMip=iFirstMip; iMip<=iLastMip; iMip++,MaxSize/=4 )
+		for( INT_UNREAL_32S iMip=iFirstMip; iMip<=iLastMip; iMip++,MaxSize/=4 )
 		{
 			FMipmap*  Mip = Info.Mips[iMip];
 			BYTE*     Src = Mip->DataPtr;
 			if( Copy )
 			{
 				BYTE* To = Copy;
-				for( INT j=0; j<VSize; j+=Mip->VSize )
+				for( INT_UNREAL_32S j=0; j<VSize; j+=Mip->VSize )
 				{
 					BYTE* From = Src;
-					for( INT k=0; k<Mip->VSize; k++ )
+					for( INT_UNREAL_32S k=0; k<Mip->VSize; k++ )
 					{
-						for( INT l=0; l<USize; l+=Mip->USize )
+						for( INT_UNREAL_32S l=0; l<USize; l+=Mip->USize )
 						{
 							memcpy( To, From, Mip->USize );
 							To += Mip->USize;
@@ -817,7 +817,7 @@ DWORD UGlideRenderDevice::FGlideTMU::DownloadTexture
 			}
 			if( Alpha )
 			{
-				for( INT i=0; i<MaxSize; i++ )
+				for( INT_UNREAL_32S i=0; i<MaxSize; i++ )
 					Alpha[i] = AlphaPalette[Src[i]];
 				Src = (BYTE*)Alpha;
 			}
@@ -866,7 +866,7 @@ void UGlideRenderDevice::FGlideTMU::DownloadPalette
 		FLOAT ScaleR = 255.0 / Max(PaletteMaxColor.R, (BYTE)1);
 		FLOAT ScaleG = 255.0 / Max(PaletteMaxColor.G, (BYTE)1);
 		FLOAT ScaleB = 255.0 / Max(PaletteMaxColor.B, (BYTE)1);
-		for( INT i=0; i<NUM_PAL_COLORS; i++ )
+		for( INT_UNREAL_32S i=0; i<NUM_PAL_COLORS; i++ )
 		{
 			GlidePal[i].R = appFloor(TextureInfo.Palette[i].R * ScaleR);
 			GlidePal[i].G = appFloor(TextureInfo.Palette[i].G * ScaleG);
@@ -890,7 +890,7 @@ void UGlideRenderDevice::FGlideTMU::DownloadPalette
 //
 // Lock the Glide device.
 //
-void UGlideRenderDevice::Lock( FPlane InFlashScale, FPlane InFlashFog, FPlane ScreenClear, DWORD InLockFlags, BYTE* HitData, INT* HitSize )
+void UGlideRenderDevice::Lock( FPlane InFlashScale, FPlane InFlashFog, FPlane ScreenClear, DWORD InLockFlags, BYTE* HitData, INT_UNREAL_32S* HitSize )
 {
 	guard(UGlideRenderDevice::Lock);
 
@@ -965,7 +965,7 @@ void UGlideRenderDevice::Unlock( UBOOL Blit )
 	guard(UGlideRenderDevice::Unlock);
 
 	// Tick each of the states.
-	for( INT i=0; i<NumTmu; i++ )
+	for( INT_UNREAL_32S i=0; i<NumTmu; i++ )
 		States[i].Tick();
 
 	// Blit it.
@@ -1011,11 +1011,12 @@ void UGlideRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Su
 	|	((Surface.PolyFlags & (PF_Modulated|PF_Translucent))||(Surface.Texture->TextureFlags&TF_Realtime) ? GF_NoScale : 0);
 
 	// Set up all poly vertices.
-	for( FSavedPoly* Poly=Facet.Polys; Poly; Poly=Poly->Next )
+	FSavedPoly* Poly;
+	for( Poly=Facet.Polys; Poly; Poly=Poly->Next )
 	{
 		// Set up vertices.
 		Poly->User = New<GrVertex>(GMem,Poly->NumPts);
-		for( INT i=0; i<Poly->NumPts; i++ )
+		for( INT_UNREAL_32S i=0; i<Poly->NumPts; i++ )
 		{
 			VERTS(Poly)[i].MASTER_S = Facet.MapCoords.XAxis | (*(FVector*)Poly->Pts[i] - Facet.MapCoords.Origin);
 			VERTS(Poly)[i].MASTER_T = Facet.MapCoords.YAxis | (*(FVector*)Poly->Pts[i] - Facet.MapCoords.Origin);
@@ -1030,7 +1031,7 @@ void UGlideRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Su
 	FColor FinalColor(255,255,255,0);
 
 	// Count things to draw.
-	INT ModulateThings = (Surface.Texture!=NULL) + (Surface.LightMap!=NULL) + (Surface.MacroTexture!=NULL) + (Surface.BumpMap!=NULL);
+	INT_UNREAL_32S ModulateThings = (Surface.Texture!=NULL) + (Surface.LightMap!=NULL) + (Surface.MacroTexture!=NULL) + (Surface.BumpMap!=NULL);
 	if( ModulateThings > 1 )
 		guColorCombineFunction( GR_COLORCOMBINE_DECAL_TEXTURE );
 
@@ -1043,7 +1044,7 @@ void UGlideRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Su
 		UpdateModulation( FinalColor, States[0].MaxColor, ModulateThings ); 
 		for( Poly=Facet.Polys; Poly; Poly=Poly->Next )
 		{
-			for( INT i=0; i<Poly->NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<Poly->NumPts; i++ )
 			{
 				VERTS(Poly)[i].tmuvtx[0].sow = VERTS(Poly)[i].oow * (VERTS(Poly)[i].MASTER_S - Surface.Texture->Pan.X) * States[GR_TMU0].UScale;
 				VERTS(Poly)[i].tmuvtx[0].tow = VERTS(Poly)[i].oow * (VERTS(Poly)[i].MASTER_T - Surface.Texture->Pan.Y) * States[GR_TMU0].VScale;
@@ -1086,7 +1087,7 @@ void UGlideRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Su
 		UpdateModulation( FinalColor, States[0].MaxColor, ModulateThings ); 
 		for( Poly=Facet.Polys; Poly; Poly=Poly->Next )
 		{
-			for( INT i=0; i<Poly->NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<Poly->NumPts; i++ )
 			{
 				VERTS(Poly)[i].tmuvtx[0].sow = VERTS(Poly)[i].oow * (VERTS(Poly)[i].MASTER_S - Surface.MacroTexture->Pan.X) * States[GR_TMU0].UScale;
 				VERTS(Poly)[i].tmuvtx[0].tow = VERTS(Poly)[i].oow * (VERTS(Poly)[i].MASTER_T - Surface.MacroTexture->Pan.Y) * States[GR_TMU0].VScale;
@@ -1103,7 +1104,7 @@ void UGlideRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Su
 		UpdateModulation( FinalColor, States[0].MaxColor, ModulateThings ); 
 		for( Poly=Facet.Polys; Poly; Poly=Poly->Next )
 		{
-			for( INT i=0; i<Poly->NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<Poly->NumPts; i++ )
 			{
 				VERTS(Poly)[i].tmuvtx[0].sow = VERTS(Poly)[i].oow * (VERTS(Poly)[i].MASTER_S - Surface.LightMap->Pan.X + 0.5*Surface.LightMap->UScale) * States[GR_TMU0].UScale;
 				VERTS(Poly)[i].tmuvtx[0].tow = VERTS(Poly)[i].oow * (VERTS(Poly)[i].MASTER_T - Surface.LightMap->Pan.Y + 0.5*Surface.LightMap->VScale) * States[GR_TMU0].VScale;
@@ -1125,10 +1126,10 @@ void UGlideRenderDevice::DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Su
 			}
 			if( CountNear )
 			{
-				INT NumNear=0;
+				INT_UNREAL_32S i, j, NumNear=0;
 				States[GR_TMU0].SetTexture( *Surface.DetailTexture, GF_NoPalette | GF_NoScale );
 				GrVertex Near[32];
-				for( INT i=0,j=Poly->NumPts-1; i<Poly->NumPts; j=i++ )
+				for( i=0,j=Poly->NumPts-1; i<Poly->NumPts; j=i++ )
 				{
 					if( IsNear[i] ^ IsNear[j] )
 					{
@@ -1208,7 +1209,7 @@ void UGlideRenderDevice::DrawGouraudPolygon
 	FSceneNode*		Frame,
 	FTextureInfo&	Texture,
 	FTransTexture**	Pts,
-	INT				NumPts,
+	INT_UNREAL_32S				NumPts,
 	DWORD			PolyFlags,
 	FSpanBuffer*	Span
 )
@@ -1220,7 +1221,7 @@ void UGlideRenderDevice::DrawGouraudPolygon
 	// Set up verts.
 	static GrVertex Verts[32];
 	States[GR_TMU0].SetTexture( Texture, GF_NoScale | ((PolyFlags&PF_Masked)?GF_Alpha:0) );
-	for( INT i=0; i<NumPts; i++ )
+	for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 	{
 		Verts[i].x	 			= Mask(Pts[i]->ScreenX + Frame->XB);
 		Verts[i].y	 			= Mask(Pts[i]->ScreenY + Frame->YB);
@@ -1241,7 +1242,7 @@ void UGlideRenderDevice::DrawGouraudPolygon
 	// Fog.
 	if( (PolyFlags & (PF_RenderFog|PF_Translucent|PF_Modulated))==PF_RenderFog )
 	{
-		for( INT i=0; i<NumPts; i++ )
+		for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 		{
 			Verts[i].r = Pts[i]->Fog.R*255.f;
 			Verts[i].g = Pts[i]->Fog.G*255.f;
@@ -1354,7 +1355,7 @@ UBOOL UGlideRenderDevice::Exec( const char* Cmd, FOutputDevice* Out )
 	}
 	else if( ParseCommand(&Cmd,"SetRes") )
 	{
-		INT X=appAtoi(Cmd), Y=appAtoi(appStrchr(Cmd,'x') ? appStrchr(Cmd,'x')+1 : appStrchr(Cmd,'X') ? appStrchr(Cmd,'X')+1 : "");
+		INT_UNREAL_32S X=appAtoi(Cmd), Y=appAtoi(appStrchr(Cmd,'x') ? appStrchr(Cmd,'x')+1 : appStrchr(Cmd,'X') ? appStrchr(Cmd,'X')+1 : "");
 		if( X && Y )
 		{
 			grSstWinClose();
@@ -1387,13 +1388,13 @@ void UGlideRenderDevice::Draw2DPoint( FSceneNode* Frame, FPlane Color, DWORD Lin
 	// Not implemented (not needed for Unreal I).
 	unguard;
 }
-void UGlideRenderDevice::PushHit( const BYTE* Data, INT Count )
+void UGlideRenderDevice::PushHit( const BYTE* Data, INT_UNREAL_32S Count )
 {
 	guard(UGlideRenderDevice::PushHit);
 	// Not implemented (not needed for Unreal I).
 	unguard;
 }
-void UGlideRenderDevice::PopHit( INT Count, UBOOL bForce )
+void UGlideRenderDevice::PopHit( INT_UNREAL_32S Count, UBOOL bForce )
 {
 	guard(UGlideRenderDevice::PopHit);
 	// Not implemented (not needed for Unreal I).
@@ -1407,8 +1408,8 @@ void UGlideRenderDevice::PopHit( INT Count, UBOOL bForce )
 void UGlideRenderDevice::ReadPixels( FColor* InPixels )
 { 
 	guard(ReadPixels);
-	INT X=grSstScreenWidth();
-	INT Y=grSstScreenHeight();
+	INT_UNREAL_32S X=grSstScreenWidth();
+	INT_UNREAL_32S Y=grSstScreenHeight();
 	BYTE* Pixels=(BYTE*)InPixels;
 	DWORD* Data;
 
@@ -1430,7 +1431,8 @@ void UGlideRenderDevice::ReadPixels( FColor* InPixels )
 	WORD* Buffer = New<_WORD>(GMem,X*Y);
 	FxU16* Src = (WORD*)lfbInfo.lfbPtr;
 	FxU16* Dest = Buffer;
-	for( INT y=0; y<Y; y++ )
+	INT_UNREAL_32S y;
+	for( y=0; y<Y; y++ )
 	{
 		WORD* End = &Dest[X];
 		while( Dest < End )
@@ -1440,7 +1442,7 @@ void UGlideRenderDevice::ReadPixels( FColor* InPixels )
 
 	// Unlock the frame buffer.
 	grLfbUnlock( GR_LFB_READ_ONLY, GR_BUFFER_FRONTBUFFER );
-	for( INT i=0; i<X*Y; i++ )
+	for( INT_UNREAL_32S i=0; i<X*Y; i++ )
 	{
 		Pixels[i*4+0] = (Buffer[i] & 0xf800) >> 8;
 		Pixels[i*4+1] = (Buffer[i] & 0x07e0) >> 3;
@@ -1451,7 +1453,7 @@ void UGlideRenderDevice::ReadPixels( FColor* InPixels )
 	Data = (DWORD*)Pixels;
     for( y=0; y < Y; y++ )
 	{
-        for( INT x=0; x < X; x++ )
+        for( INT_UNREAL_32S x=0; x < X; x++ )
 		{
             DWORD rgb = *Data;
             DWORD r = (rgb >> 16) & 0xFF;
@@ -1471,14 +1473,14 @@ void UGlideRenderDevice::ReadPixels( FColor* InPixels )
 	// Init the gamma table.
 	FLOAT Gamma=1.5*Viewport->Client->Brightness;
     DWORD GammaTable[256];
-    for( INT x=0; x<256; x++ )
+    for( INT_UNREAL_32S x=0; x<256; x++ )
         GammaTable[x] = appFloor(appPow(x/255.,1.0/Gamma) * 255.0 + 0.5);
 
 	// Gamma correct.
 	Data = (DWORD*)Pixels;
     for( y=0; y<Y; y++ )
 	{
-        for( INT x=0; x<X; x++ )
+        for( INT_UNREAL_32S x=0; x<X; x++ )
 		{
             DWORD r = GammaTable[(*Data >> 16) & 0xFF];
             DWORD g = GammaTable[(*Data >> 8 ) & 0xFF];

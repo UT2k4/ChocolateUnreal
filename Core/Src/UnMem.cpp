@@ -21,7 +21,7 @@ FMemStack::FTaggedMemory* FMemStack::UnusedChunks = NULL;
 //
 // Initialize this memory stack.
 //
-void FMemStack::Init( INT InDefaultChunkSize )
+void FMemStack::Init( INT_UNREAL_32S InDefaultChunkSize )
 {
 	guard(FMemStack::Init);
 
@@ -63,10 +63,10 @@ void FMemStack::Exit()
 // Return the amount of bytes that have been allocated from the
 // cache by this memory stack.
 //
-INT FMemStack::GetByteCount()
+INT_UNREAL_32S FMemStack::GetByteCount()
 {
 	guard(FMemStack::GetByteCount);
-	INT Count = 0;
+	INT_UNREAL_32S Count = 0;
 	for( FTaggedMemory* Chunk=TopChunk; Chunk; Chunk=Chunk->Next )
 	{
 		if( Chunk!=TopChunk )
@@ -87,7 +87,7 @@ INT FMemStack::GetByteCount()
 // and return it aligned to Align. Updates the memory stack's
 // Chunks table and ActiveChunks counter.
 //
-BYTE* FMemStack::AllocateNewChunk( INT MinSize )
+BYTE* FMemStack::AllocateNewChunk( INT_UNREAL_32S MinSize )
 {
 	guard(FMemStack::AllocateNewChunk);
 
@@ -105,7 +105,7 @@ BYTE* FMemStack::AllocateNewChunk( INT MinSize )
 	if( !Chunk )
 	{
 		// Create new chunk.
-		INT DataSize    = Max(MinSize,DefaultChunkSize);
+		INT_UNREAL_32S DataSize    = Max(MinSize,DefaultChunkSize);
 		Chunk           = (FTaggedMemory*)appMalloc( 256/*!!*/ + DataSize + sizeof(FTaggedMemory), "MemChunk" );
 		Chunk->DataSize = DataSize;
 	}

@@ -30,7 +30,7 @@ class ENGINE_API UCanvas : public UObject
 	FColor			Color;
 	DWORD			bCenter:1;
 	DWORD			bNoSmooth:1;
-	INT				X, Y;
+	INT_UNREAL_32S				X, Y;
 	UFont			*SmallFont, *MedFont, *BigFont, *LargeFont;
 	UViewport*		Viewport;
 	struct FSceneNode* Frame;
@@ -38,9 +38,9 @@ class ENGINE_API UCanvas : public UObject
 	// UCanvas interface.
 	virtual void Init( UViewport* InViewport );
 	virtual void Update( FSceneNode* Frame );
-	virtual void StrLen( UFont* Font, INT& XL, INT& YL, const char* Text, INT iStart=0, INT NumChars=MAXINT );
-	virtual void WrappedStrLen( UFont* Font, INT& XL, INT& YL, INT Width, const char* Text );
-	virtual void VARARGS Printf( UFont* Font, INT X, INT Y, const char* Fmt, ... );
+	virtual void StrLen( UFont* Font, INT_UNREAL_32S& XL, INT_UNREAL_32S& YL, const char* Text, INT_UNREAL_32S iStart=0, INT_UNREAL_32S NumChars=MAXINT );
+	virtual void WrappedStrLen( UFont* Font, INT_UNREAL_32S& XL, INT_UNREAL_32S& YL, INT_UNREAL_32S Width, const char* Text );
+	virtual void VARARGS Printf( UFont* Font, INT_UNREAL_32S X, INT_UNREAL_32S Y, const char* Fmt, ... );
 	virtual void VARARGS WrappedPrintf( UFont* Font, UBOOL Center, const char* Fmt, ... );
 	virtual void DrawTile( UTexture* Texture, FLOAT X, FLOAT Y, FLOAT XL, FLOAT YL, FLOAT U, FLOAT V, FLOAT UL, FLOAT VL, class FSpanBuffer* SpanBuffer, FLOAT Z, FPlane Color, FPlane Fog, DWORD PolyFlags );
 	virtual void DrawIcon( UTexture* Texture, FLOAT ScreenX, FLOAT ScreenY, FLOAT XSize, FLOAT YSize, class FSpanBuffer* SpanBuffer, FLOAT Z, FPlane Color, FPlane Fog, DWORD PolyFlags );
@@ -168,9 +168,9 @@ class ENGINE_API UViewport : public UPlayer
 	UObject*		MiscRes;		// Used in in modes like EM_TEXVIEW.
 	FName			Group;			// Group for editing.
 	DOUBLE			LastUpdateTime;	// Time of last update.
-	INT				SizeX, SizeY;   // Buffer X & Y resolutions.
-	INT				ColorBytes;		// 1=256-color, 4=32-bit color.
-	INT				FrameCount;		// Frame count, incremented when locked.
+	INT_UNREAL_32S				SizeX, SizeY;   // Buffer X & Y resolutions.
+	INT_UNREAL_32S				ColorBytes;		// 1=256-color, 4=32-bit color.
+	INT_UNREAL_32S				FrameCount;		// Frame count, incremented when locked.
 	DWORD			Caps;			// Capabilities (CC_).
 	UBOOL			OnHold;			// 1=on hold, can't be resized.
 	UBOOL			Current;		// If this is the current input viewport.
@@ -185,17 +185,17 @@ class ENGINE_API UViewport : public UPlayer
 	// Frame buffer info; only valid when locked.
 	DOUBLE			CurrentTime;	// Time when initially locked.
 	BYTE*			ScreenPointer;	// Pointer to screen frame buffer, or NULL if none.
-	INT				Stride;			// Stride in pixels.
+	INT_UNREAL_32S				Stride;			// Stride in pixels.
 
 	// Hit testing.
 	UBOOL			HitTesting;		// Whether hit-testing.
-	INT				HitX, HitY;		// Hit rectangle top left.
-	INT				HitXL, HitYL;	// Hit size.
-	TArray<INT>		HitSizes;		// Currently pushed hit sizes.
+	INT_UNREAL_32S				HitX, HitY;		// Hit rectangle top left.
+	INT_UNREAL_32S				HitXL, HitYL;	// Hit size.
+	TArray<INT_UNREAL_32S>		HitSizes;		// Currently pushed hit sizes.
 
 	// Saved-actor parameters.
 	FLOAT SavedOrthoZoom, SavedFovAngle;
-	INT SavedShowFlags, SavedRendMap, SavedMisc1, SavedMisc2;
+	INT_UNREAL_32S SavedShowFlags, SavedRendMap, SavedMisc1, SavedMisc2;
 
 	// Constructor.
 	UViewport( ULevel* InLevel, UClient* InClient );
@@ -212,23 +212,23 @@ class ENGINE_API UViewport : public UPlayer
 
 	// UViewport interface.
 	virtual UBOOL SetDrag( UBOOL NewDrag );
-	virtual UBOOL Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData=NULL, INT* HitSize=NULL );
+	virtual UBOOL Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData=NULL, INT_UNREAL_32S* HitSize=NULL );
 	virtual void Unlock( UBOOL Blit=0 );
 	virtual void SetModeCursor()=0;
 	virtual void UpdateWindow()=0;
-	virtual void OpenWindow( DWORD ParentWindow, UBOOL Temporary, INT NewX, INT NewY, INT OpenX, INT OpenY )=0;
+	virtual void OpenWindow( DWORD ParentWindow, UBOOL Temporary, INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, INT_UNREAL_32S OpenX, INT_UNREAL_32S OpenY )=0;
 	virtual void CloseWindow()=0;
 	virtual void UpdateInput( UBOOL Reset )=0;
 	virtual void MakeCurrent()=0;
 	virtual void* GetWindow()=0;
 	virtual void SetMouseCapture( UBOOL Capture, UBOOL Clip, UBOOL FocusOnly=0 )=0;
 	virtual void Repaint()=0;
-	virtual void MakeFullscreen( INT NewX, INT NewY, UBOOL SaveConfig )=0;
+	virtual void MakeFullscreen( INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, UBOOL SaveConfig )=0;
 	virtual UBOOL Exec( const char* Cmd, FOutputDevice* Out=GSystem );
 
 	// Functions.
-	void ExecuteHits( const FHitCause& Cause, BYTE* HitData, INT HitSize );
-	void PushHit( const struct HHitProxy& Hit, INT Size );
+	void ExecuteHits( const FHitCause& Cause, BYTE* HitData, INT_UNREAL_32S HitSize );
+	void PushHit( const struct HHitProxy& Hit, INT_UNREAL_32S Size );
 	void PopHit( UBOOL bForce );
 	UBOOL IsWire();
 	void Hold();
@@ -236,7 +236,7 @@ class ENGINE_API UViewport : public UPlayer
 	void ExecMacro( const char* Filename, FOutputDevice* Out=GSystem );
 
 	// UViewport inlines.
-	BYTE* _Screen( INT X, INT Y )
+	BYTE* _Screen( INT_UNREAL_32S X, INT_UNREAL_32S Y )
 	{
 		return ScreenPointer + (X+Y*Stride)*ColorBytes;
 	}
@@ -276,7 +276,7 @@ struct ENGINE_API HHitProxy
 {
 	union
 	{
-		mutable INT Size;
+		mutable INT_UNREAL_32S Size;
 		HHitProxy* Parent;
 	};
 	const char* GetName() const
@@ -308,11 +308,11 @@ class ENGINE_API UClient : public UObject
 	UEngine*			Engine;
 	TArray<UViewport*>	Viewports;
 	UViewport*			FullscreenViewport;
-	INT					DrawCycles;
+	INT_UNREAL_32S					DrawCycles;
 
 	// Configurable.
-	INT		ViewportX;
-	INT		ViewportY;
+	INT_UNREAL_32S		ViewportX;
+	INT_UNREAL_32S		ViewportY;
 	FLOAT	Brightness;
 	FLOAT	MipFactor;
 	UBOOL	CaptureMouse;

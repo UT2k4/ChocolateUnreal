@@ -244,7 +244,7 @@ void USGLRenderDevice::Flush()
 //*****************************************************************************
 // Lock the SGL device. This sends a "startofframe".
 //*****************************************************************************
-void USGLRenderDevice::Lock( FPlane InFlashScale, FPlane InFlashFog, FPlane ScreenClear, DWORD InLockFlags, BYTE* HitData, INT* HitSize )
+void USGLRenderDevice::Lock( FPlane InFlashScale, FPlane InFlashFog, FPlane ScreenClear, DWORD InLockFlags, BYTE* HitData, INT_UNREAL_32S* HitSize )
 {
 	guard(USGLRenderDevice::Lock);
 
@@ -465,7 +465,7 @@ int USGLRenderDevice::Exec( const char *Cmd, FOutputDevice* Out )
 	}
 	else if( ParseCommand(&Cmd,"SetRes") )
 	{
-		INT X=appAtoi(Cmd), Y=appAtoi(appStrchr(Cmd,'x') ? appStrchr(Cmd,'x')+1 : appStrchr(Cmd,'X') ? appStrchr(Cmd,'X')+1 : "");
+		INT_UNREAL_32S X=appAtoi(Cmd), Y=appAtoi(appStrchr(Cmd,'x') ? appStrchr(Cmd,'x')+1 : appStrchr(Cmd,'X') ? appStrchr(Cmd,'X')+1 : "");
 		if( X && Y )
 		{
 			// Change resolution only.
@@ -615,13 +615,13 @@ void USGLRenderDevice::Draw2DPoint( FSceneNode* Frame, FPlane Color, DWORD LineF
 	unguard;
 }
 
-void USGLRenderDevice::PushHit( const BYTE* Data, INT Count )
+void USGLRenderDevice::PushHit( const BYTE* Data, INT_UNREAL_32S Count )
 {
 	guard(USGLRenderDevice::PushHit);
 	// Not implemented (not needed for Unreal I).
 	unguard;
 }
-void USGLRenderDevice::PopHit( INT Count, UBOOL bForce )
+void USGLRenderDevice::PopHit( INT_UNREAL_32S Count, UBOOL bForce )
 {
 	guard(USGLRenderDevice::PopHit);
 	// Not implemented (not needed for Unreal I).
@@ -663,7 +663,8 @@ void USGLRenderDevice::DrawComplexSurface
 	// Count up how many vertices we need to allocate memory for.
 	int VertexCount=0;
 	int FaceCount=0;
-	for(FSavedPoly* Poly=Facet.Polys ; Poly; Poly=Poly->Next )
+	FSavedPoly* Poly;
+	for(Poly=Facet.Polys ; Poly; Poly=Poly->Next )
 	{
 		VertexCount+=Poly->NumPts;
 		FaceCount+=Poly->NumPts-2;
@@ -797,8 +798,8 @@ void USGLRenderDevice::DrawComplexSurface
 				{
 					FLOAT X=(Vertex->fMasterS - AdjPanX)*InvUScale;
 					FLOAT Y=(Vertex->fMasterT - AdjPanY)*InvVScale;
-					INT XI=appFloor(X);
-					INT YI=appFloor(Y);
+					INT_UNREAL_32S XI=appFloor(X);
+					INT_UNREAL_32S YI=appFloor(Y);
 					BYTE *Src=Surface.LightMap->Mips[0]->DataPtr + (XI + YI * Surface.LightMap->Mips[0]->USize)*4;
 					SGLColor VertColor=SGLColor(IntensityAdjustTable[Src[2]],IntensityAdjustTable[Src[1]],IntensityAdjustTable[Src[0]]);
 					Vertex->Color	= VertColor.D;
@@ -872,7 +873,7 @@ void USGLRenderDevice::DrawGouraudPolygon
 	FSceneNode*		Frame,
 	FTextureInfo&	Texture,
 	FTransTexture**	Pts,
-	INT				NumPts,
+	INT_UNREAL_32S				NumPts,
 	DWORD			PolyFlags,
 	FSpanBuffer*	Span
 )
@@ -943,7 +944,7 @@ void USGLRenderDevice::DrawGouraudPolygon
 	FLOAT YBias=Frame->YB + 0.1;
 	FLOAT AdjScaleInvW=ScaleInvW * Frame->RProj.Z;
 
-	INT Count;
+	INT_UNREAL_32S Count;
 	PVERTEX Vertex;
 	// Switch to the appropriate handler to generate the vertices.
 	switch (SimplePolyHandler)
@@ -957,12 +958,12 @@ void USGLRenderDevice::DrawGouraudPolygon
 				Vertex->fX	 			= Pt->ScreenX + XBias;
 				Vertex->fY	 			= Pt->ScreenY + YBias;
 				Vertex->fInvW			= Pt->RZ * AdjScaleInvW;
-				INT r					= GammaTable[appRound(Pt->Light.R*255.f)];
-				INT g					= GammaTable[appRound(Pt->Light.G*255.f)];
-				INT b					= GammaTable[appRound(Pt->Light.B*255.f)];
+				INT_UNREAL_32S r					= GammaTable[appRound(Pt->Light.R*255.f)];
+				INT_UNREAL_32S g					= GammaTable[appRound(Pt->Light.G*255.f)];
+				INT_UNREAL_32S b					= GammaTable[appRound(Pt->Light.B*255.f)];
 				// On PCX, we must limit the amount of colour in the vertex lighting since we
 				// can't do full colour intensity lightmap lighting with the hack.
-				INT in					= Max(r,Max(g,b));
+				INT_UNREAL_32S in					= Max(r,Max(g,b));
 				r						= (in+r)>>1;
 				g						= (in+g)>>1;
 				b						= (in+b)>>1;
@@ -981,11 +982,11 @@ void USGLRenderDevice::DrawGouraudPolygon
 				Vertex->fX	 			= Pt->ScreenX + XBias;
 				Vertex->fY	 			= Pt->ScreenY + YBias;
 				Vertex->fInvW			= Pt->RZ * AdjScaleInvW;
-				INT r					= GammaTable[appRound(Pt->Light.R*255.f)];
-				INT g					= GammaTable[appRound(Pt->Light.G*255.f)];
-				INT b					= GammaTable[appRound(Pt->Light.B*255.f)];
-				INT a					= Max(Max(1,r),Max(g,b));
-				INT Scale				= 0x100*255/a;
+				INT_UNREAL_32S r					= GammaTable[appRound(Pt->Light.R*255.f)];
+				INT_UNREAL_32S g					= GammaTable[appRound(Pt->Light.G*255.f)];
+				INT_UNREAL_32S b					= GammaTable[appRound(Pt->Light.B*255.f)];
+				INT_UNREAL_32S a					= Max(Max(1,r),Max(g,b));
+				INT_UNREAL_32S Scale				= 0x100*255/a;
 				r						=(r*Scale)&0xFF00;
 				g						=(g*Scale)&0xFF00;
 				b						=(b*Scale);
@@ -1020,12 +1021,12 @@ void USGLRenderDevice::DrawGouraudPolygon
 				Vertex->fX	 			= Pt->ScreenX + XBias;
 				Vertex->fY	 			= Pt->ScreenY + YBias;
 				Vertex->fInvW			= Pt->RZ * AdjScaleInvW;
-				INT r					= GammaTable[appRound(Pt->Light.R*255.f)];
-				INT g					= GammaTable[appRound(Pt->Light.G*255.f)];
-				INT b					= GammaTable[appRound(Pt->Light.B*255.f)];
+				INT_UNREAL_32S r					= GammaTable[appRound(Pt->Light.R*255.f)];
+				INT_UNREAL_32S g					= GammaTable[appRound(Pt->Light.G*255.f)];
+				INT_UNREAL_32S b					= GammaTable[appRound(Pt->Light.B*255.f)];
 				// On PCX, we must limit the amount of colour in the vertex lighting since we
 				// can't do full colour intensity lightmap lighting with the hack.
-				INT in					= Max(r,Max(g,b));
+				INT_UNREAL_32S in					= Max(r,Max(g,b));
 				r						= (in+r)>>1;
 				g						= (in+g)>>1;
 				b						= (in+b)>>1;
@@ -1034,9 +1035,9 @@ void USGLRenderDevice::DrawGouraudPolygon
 				r						= appRound(Pt->Fog.R*255.f);
 				g						= appRound(Pt->Fog.G*255.f);
 				b						= appRound(Pt->Fog.B*255.f);
-				INT	a					= Max(r,Max(g,b));
-				INT i					= Max(1,a);
-				INT Scale				= 0x100*255/i;
+				INT_UNREAL_32S	a					= Max(r,Max(g,b));
+				INT_UNREAL_32S i					= Max(1,a);
+				INT_UNREAL_32S Scale				= 0x100*255/i;
 				r						= (r*Scale)&0xFF00;
 				g						= (g*Scale)&0xFF00;
 				b						= (b*Scale);
@@ -1056,11 +1057,11 @@ void USGLRenderDevice::DrawGouraudPolygon
 				Vertex->fX	 			= Pt->ScreenX + XBias;
 				Vertex->fY	 			= Pt->ScreenY + YBias;
 				Vertex->fInvW			= Pt->RZ * AdjScaleInvW;
-				INT r					= GammaTable[appRound(Pt->Light.R*255.f)];
-				INT g					= GammaTable[appRound(Pt->Light.G*255.f)];
-				INT b					= GammaTable[appRound(Pt->Light.B*255.f)];
-				INT a					= Max(Max(1,r),Max(g,b));
-				INT Scale=0x100*255/a;
+				INT_UNREAL_32S r					= GammaTable[appRound(Pt->Light.R*255.f)];
+				INT_UNREAL_32S g					= GammaTable[appRound(Pt->Light.G*255.f)];
+				INT_UNREAL_32S b					= GammaTable[appRound(Pt->Light.B*255.f)];
+				INT_UNREAL_32S a					= Max(Max(1,r),Max(g,b));
+				INT_UNREAL_32S Scale=0x100*255/a;
 				r*=Scale;
 				g*=Scale;
 				b*=Scale;
@@ -1071,7 +1072,7 @@ void USGLRenderDevice::DrawGouraudPolygon
 				g						= appRound(Pt->Fog.G*255.f);
 				b						= appRound(Pt->Fog.B*255.f);
 				a						= Max(r,Max(g,b));
-				INT i					= Max(1,a);
+				INT_UNREAL_32S i					= Max(1,a);
 				Scale					= 0x100*255/i;
 				r						= (r*Scale)&0xFF00;
 				g						= (g*Scale)&0xFF00;
@@ -1094,12 +1095,12 @@ void USGLRenderDevice::DrawGouraudPolygon
 				Vertex->fInvW			= Pt->RZ * AdjScaleInvW;
 				Vertex->u32Colour		= 0xFFFFFFFF;
 				// Calculate fog color value.
-				INT r					= appRound(Pt->Fog.R*255.f);
-				INT g					= appRound(Pt->Fog.G*255.f);
-				INT b					= appRound(Pt->Fog.B*255.f);
-				INT	a					= Max(r,Max(g,b));
-				INT i					= Max(1,a);
-				INT Scale				= 0x100*255/i;
+				INT_UNREAL_32S r					= appRound(Pt->Fog.R*255.f);
+				INT_UNREAL_32S g					= appRound(Pt->Fog.G*255.f);
+				INT_UNREAL_32S b					= appRound(Pt->Fog.B*255.f);
+				INT_UNREAL_32S	a					= Max(r,Max(g,b));
+				INT_UNREAL_32S i					= Max(1,a);
+				INT_UNREAL_32S Scale				= 0x100*255/i;
 				r						= (r*Scale)&0xFF00;
 				g						= (g*Scale)&0xFF00;
 				b						= (b*Scale);
@@ -1202,12 +1203,12 @@ void USGLRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT
 		case SIMPLE_HANDLER_NORMAL:
 			{
 				// Calculate base color value.
-				INT r					= GammaTable[BaseColor.R];
-				INT g					= GammaTable[BaseColor.G];
-				INT b					= GammaTable[BaseColor.B];
+				INT_UNREAL_32S r					= GammaTable[BaseColor.R];
+				INT_UNREAL_32S g					= GammaTable[BaseColor.G];
+				INT_UNREAL_32S b					= GammaTable[BaseColor.B];
 				// On PCX, we must limit the amount of colour in the vertex lighting since we
 				// can't do full colour intensity lightmap lighting with the hack.
-				INT in					= Max(r,Max(g,b));
+				INT_UNREAL_32S in					= Max(r,Max(g,b));
 				r						= (in+r)>>1;
 				g						= (in+g)>>1;
 				b						= (in+b)>>1;
@@ -1217,11 +1218,11 @@ void USGLRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT
 		case SIMPLE_HANDLER_TRANSLUCENT:
 			{
 				// Calculate base color value.
-				INT r					= GammaTable[BaseColor.R];
-				INT g					= GammaTable[BaseColor.G];
-				INT b					= GammaTable[BaseColor.B];
-				INT a					= Max(Max(1,r),Max(g,b));
-				INT Scale				= 0x100*255/a;
+				INT_UNREAL_32S r					= GammaTable[BaseColor.R];
+				INT_UNREAL_32S g					= GammaTable[BaseColor.G];
+				INT_UNREAL_32S b					= GammaTable[BaseColor.B];
+				INT_UNREAL_32S a					= Max(Max(1,r),Max(g,b));
+				INT_UNREAL_32S Scale				= 0x100*255/a;
 				r						=(r*Scale)&0xFF00;
 				g						=(g*Scale)&0xFF00;
 				b						=(b*Scale);
@@ -1235,12 +1236,12 @@ void USGLRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT
 		case SIMPLE_HANDLER_NORMAL_FOG:
 			{
 				// Calculate base color value.
-				INT r					= GammaTable[BaseColor.R];
-				INT g					= GammaTable[BaseColor.G];
-				INT b					= GammaTable[BaseColor.B];
+				INT_UNREAL_32S r					= GammaTable[BaseColor.R];
+				INT_UNREAL_32S g					= GammaTable[BaseColor.G];
+				INT_UNREAL_32S b					= GammaTable[BaseColor.B];
 				// On PCX, we must limit the amount of colour in the vertex lighting since we
 				// can't do full colour intensity lightmap lighting with the hack.
-				INT in					= Max(r,Max(g,b));
+				INT_UNREAL_32S in					= Max(r,Max(g,b));
 				r						= (in+r)>>1;
 				g						= (in+g)>>1;
 				b						= (in+b)>>1;
@@ -1249,9 +1250,9 @@ void USGLRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT
 				r						= appRound(Fog.R*255.f);
 				g						= appRound(Fog.G*255.f);
 				b						= appRound(Fog.B*255.f);
-				INT	a					= Max(r,Max(g,b));
-				INT i					= Max(1,a);
-				INT Scale				= 0x100*255/i;
+				INT_UNREAL_32S	a					= Max(r,Max(g,b));
+				INT_UNREAL_32S i					= Max(1,a);
+				INT_UNREAL_32S Scale				= 0x100*255/i;
 				r						= (r*Scale)&0xFF00;
 				g						= (g*Scale)&0xFF00;
 				b						= (b*Scale);
@@ -1262,11 +1263,11 @@ void USGLRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT
 		case SIMPLE_HANDLER_TRANSLUCENT_FOG:
 			{
 				// Calculate base color value.
-				INT r					= GammaTable[BaseColor.R];
-				INT g					= GammaTable[BaseColor.G];
-				INT b					= GammaTable[BaseColor.B];
-				INT a					= Max(Max(1,r),Max(g,b));
-				INT Scale				= 0x100*255/a;
+				INT_UNREAL_32S r					= GammaTable[BaseColor.R];
+				INT_UNREAL_32S g					= GammaTable[BaseColor.G];
+				INT_UNREAL_32S b					= GammaTable[BaseColor.B];
+				INT_UNREAL_32S a					= Max(Max(1,r),Max(g,b));
+				INT_UNREAL_32S Scale				= 0x100*255/a;
 				r						=(r*Scale)&0xFF00;
 				g						=(g*Scale)&0xFF00;
 				b						=(b*Scale);
@@ -1277,7 +1278,7 @@ void USGLRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT
 				g						= appRound(Fog.G*255.f);
 				b						= appRound(Fog.B*255.f);
 				a						= Max(r,Max(g,b));
-				INT i					= Max(1,a);
+				INT_UNREAL_32S i					= Max(1,a);
 				Scale					= 0x100*255/i;
 				r						= (r*Scale)&0xFF00;
 				g						= (g*Scale)&0xFF00;
@@ -1289,12 +1290,12 @@ void USGLRenderDevice::DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT
 		case SIMPLE_HANDLER_MODULATED_FOG:
 			{
 				// Calculate fog color value.
-				INT r					= appRound(Fog.R*255.f);
-				INT g					= appRound(Fog.G*255.f);
-				INT b					= appRound(Fog.B*255.f);
-				INT	a					= Max(r,Max(g,b));
-				INT i					= Max(1,a);
-				INT Scale				= 0x100*255/i;
+				INT_UNREAL_32S r					= appRound(Fog.R*255.f);
+				INT_UNREAL_32S g					= appRound(Fog.G*255.f);
+				INT_UNREAL_32S b					= appRound(Fog.B*255.f);
+				INT_UNREAL_32S	a					= Max(r,Max(g,b));
+				INT_UNREAL_32S i					= Max(1,a);
+				INT_UNREAL_32S Scale				= 0x100*255/i;
 				r						= (r*Scale)&0xFF00;
 				g						= (g*Scale)&0xFF00;
 				b						= (b*Scale);

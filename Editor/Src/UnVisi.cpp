@@ -18,7 +18,7 @@ Description:
 #define DEBUG_BADSHEETS 0   /* Debugging sheet discrepancies */
 #define DEBUG_LVS       0   /* Debugging light volumes */
 #define WORLD_MAX 65536.0	/* Maximum size of the world */
-FPoly BuildInfiniteFPoly( UModel *Model, INT iNode );
+FPoly BuildInfiniteFPoly( UModel *Model, INT_UNREAL_32S iNode );
 
 // Thresholds.
 #define VALID_SIDE         0.1   /* A normal must be at laest this long to be valid */
@@ -43,14 +43,14 @@ class FPortal : public FPoly
 {
 public:
 	// Variables.
-	INT	    iFrontLeaf, iBackLeaf, iNode;
+	INT_UNREAL_32S	    iFrontLeaf, iBackLeaf, iNode;
 	FPortal *GlobalNext, *FrontLeafNext, *BackLeafNext, *NodeNext;
 	BYTE	IsTesting, ShouldTest;
-	INT		FragmentCount;
-	INT	    iZonePortalSurf;
+	INT_UNREAL_32S		FragmentCount;
+	INT_UNREAL_32S	    iZonePortalSurf;
 
 	// Constructor.
-	FPortal( FPoly &InPoly, INT iInFrontLeaf, INT iInBackLeaf, INT iInNode, FPortal *InGlobalNext, FPortal *InNodeNext, FPortal *InFrontLeafNext, FPortal *InBackLeafNext )
+	FPortal( FPoly &InPoly, INT_UNREAL_32S iInFrontLeaf, INT_UNREAL_32S iInBackLeaf, INT_UNREAL_32S iInNode, FPortal *InGlobalNext, FPortal *InNodeNext, FPortal *InFrontLeafNext, FPortal *InBackLeafNext )
 	:	FPoly			(InPoly),
 		iFrontLeaf		(iInFrontLeaf),
 		iBackLeaf		(iInBackLeaf),
@@ -66,7 +66,7 @@ public:
 	{}
 	
 	// Get the leaf on the opposite side of the specified leaf.
-	INT GetNeighborLeafOf( INT iLeaf )
+	INT_UNREAL_32S GetNeighborLeafOf( INT_UNREAL_32S iLeaf )
 	{
 		check( iLeaf==iFrontLeaf || iLeaf==iBackLeaf );
 		if     ( iFrontLeaf == iLeaf )	return iBackLeaf;
@@ -78,12 +78,12 @@ public:
 	{
 		guard(FPortal::Area);
 		FVector Cross(0,0,0);
-		for( INT i=2; i<NumVertices; i++ )
+		for( INT_UNREAL_32S i=2; i<NumVertices; i++ )
 			Cross += (Vertex[i-1]-Vertex[0]) ^ (Vertex[i]-Vertex[0]);
 		return Cross.Size();
 		unguard;
 	}
-	FPortal* Next( INT iLeaf )
+	FPortal* Next( INT_UNREAL_32S iLeaf )
 	{
 		check( iLeaf==iFrontLeaf || iLeaf==iBackLeaf );
 		if     ( iFrontLeaf == iLeaf )	return FrontLeafNext;
@@ -91,7 +91,7 @@ public:
 	}
 
 	// Return this portal polygon, facing outward from leaf iLeaf.
-	void GetPolyFacingOutOf( INT iLeaf, FPoly &Poly )
+	void GetPolyFacingOutOf( INT_UNREAL_32S iLeaf, FPoly &Poly )
 	{
 		check( iLeaf==iFrontLeaf || iLeaf==iBackLeaf );
 		Poly = *(FPoly*)this;
@@ -99,7 +99,7 @@ public:
 	}
 
 	// Return this portal polygon, facing inward to leaf iLeaf.
-	void GetPolyFacingInto( INT iLeaf, FPoly &Poly)
+	void GetPolyFacingInto( INT_UNREAL_32S iLeaf, FPoly &Poly)
 	{
 		check( iLeaf==iFrontLeaf || iLeaf==iBackLeaf );
 		Poly = *(FPoly*)this;
@@ -118,18 +118,18 @@ public:
 	enum {CLIP_BACK_FLAG=0x40000000};
 
 	// Types.
-	typedef void (FEditorVisibility::*PORTAL_FUNC)(FPoly&,INT,INT,INT,INT);
+	typedef void (FEditorVisibility::*PORTAL_FUNC)(FPoly&,INT_UNREAL_32S,INT_UNREAL_32S,INT_UNREAL_32S,INT_UNREAL_32S);
 
 	// Variables.
 	FMemMark		Mark;
 	ULevel*			Level;
 	UModel*			Model;
-	INT				Clips[MAX_CLIPS];
-	INT				NumPortals, NumLogicalLeaves;
-	INT				NumClips, NumClipTests, NumPassedClips, NumUnclipped;
-	INT				NumBspPortals, MaxFragments, NumZonePortals, NumZoneFragments;
-	INT				Extra;
-	INT				iZonePortalSurf;
+	INT_UNREAL_32S				Clips[MAX_CLIPS];
+	INT_UNREAL_32S				NumPortals, NumLogicalLeaves;
+	INT_UNREAL_32S				NumClips, NumClipTests, NumPassedClips, NumUnclipped;
+	INT_UNREAL_32S				NumBspPortals, MaxFragments, NumZonePortals, NumZoneFragments;
+	INT_UNREAL_32S				Extra;
+	INT_UNREAL_32S				iZonePortalSurf;
 	FPortal*		FirstPortal;
 	UBitMatrix*		Visibility;
 	FPortal**		NodePortals;
@@ -137,34 +137,34 @@ public:
 	FActorLink**	LeafLights;
 
 	// Constructor.
-	FEditorVisibility( ULevel* InLevel, UModel* InModel, INT InDebug );
+	FEditorVisibility( ULevel* InLevel, UModel* InModel, INT_UNREAL_32S InDebug );
 
 	// Destructor.
 	~FEditorVisibility();
 
 	// Portal functions.
-	void AddPortal( FPoly &Poly, INT iFrontLeaf, INT iBackLeaf, INT iGeneratingNode, INT iGeneratingBase );
-	void BlockPortal( FPoly &Poly, INT iFrontLeaf, INT iBackLeaf, INT iGeneratingNode, INT iGeneratingBase );
-	void TagZonePortalFragment( FPoly &Poly, INT iFrontLeaf, INT iBackLeaf, INT iGeneratingNode, INT iGeneratingBase );
-	void FilterThroughSubtree( INT Pass, INT iGeneratingNode, INT iGeneratingBase, INT iParentLeaf, INT iNode, FPoly Poly, PORTAL_FUNC Func, INT iBackLeaf );
-	void MakePortalsClip( INT iNode, FPoly Poly, INT Clip, PORTAL_FUNC Func );
-	void MakePortals( INT iNode );
-	void AssignLeaves( INT iNode, INT Outside );
+	void AddPortal( FPoly &Poly, INT_UNREAL_32S iFrontLeaf, INT_UNREAL_32S iBackLeaf, INT_UNREAL_32S iGeneratingNode, INT_UNREAL_32S iGeneratingBase );
+	void BlockPortal( FPoly &Poly, INT_UNREAL_32S iFrontLeaf, INT_UNREAL_32S iBackLeaf, INT_UNREAL_32S iGeneratingNode, INT_UNREAL_32S iGeneratingBase );
+	void TagZonePortalFragment( FPoly &Poly, INT_UNREAL_32S iFrontLeaf, INT_UNREAL_32S iBackLeaf, INT_UNREAL_32S iGeneratingNode, INT_UNREAL_32S iGeneratingBase );
+	void FilterThroughSubtree( INT_UNREAL_32S Pass, INT_UNREAL_32S iGeneratingNode, INT_UNREAL_32S iGeneratingBase, INT_UNREAL_32S iParentLeaf, INT_UNREAL_32S iNode, FPoly Poly, PORTAL_FUNC Func, INT_UNREAL_32S iBackLeaf );
+	void MakePortalsClip( INT_UNREAL_32S iNode, FPoly Poly, INT_UNREAL_32S Clip, PORTAL_FUNC Func );
+	void MakePortals( INT_UNREAL_32S iNode );
+	void AssignLeaves( INT_UNREAL_32S iNode, INT_UNREAL_32S Outside );
 	int  ClipToMaximalSheetWrapping( FPoly &Poly, const FPoly &A, const FPoly &B, const FLOAT Sign, const FLOAT Phase );
-	void CheckVolumeVisibility( const INT iSourceLeaf, const FPoly &Source, const INT iTestLeaf, const FPoly &Clip );
-	int  PointToLeaf( FVector Point, INT iLeaf );
-	int  ActorVisibility( AActor* Actor, INT iLeaf=INDEX_NONE, FPoly* Clipper=NULL );
-	void FilterVolumetricLight( AActor* Actor, INT iNode=0, INT iParent=0, INT IsFront=0 );
+	void CheckVolumeVisibility( const INT_UNREAL_32S iSourceLeaf, const FPoly &Source, const INT_UNREAL_32S iTestLeaf, const FPoly &Clip );
+	int  PointToLeaf( FVector Point, INT_UNREAL_32S iLeaf );
+	int  ActorVisibility( AActor* Actor, INT_UNREAL_32S iLeaf=INDEX_NONE, FPoly* Clipper=NULL );
+	void FilterVolumetricLight( AActor* Actor, INT_UNREAL_32S iNode=0, INT_UNREAL_32S iParent=0, INT_UNREAL_32S IsFront=0 );
 
 	// Zone functions.
 	void FormZonesFromLeaves();
-	void AssignAllZones( INT iNode, int Outside );
+	void AssignAllZones( INT_UNREAL_32S iNode, int Outside );
 	void BuildConnectivity();
 	void BuildZoneInfo();
 
 	// Visibility functions.
-	void BspCrossVisibility( INT iFronyPortalLeaf, INT iBackPortalLeaf, INT iFrontLeaf, INT iBackLeaf, FPoly &FrontPoly, FPoly &ClipPoly, FPoly &BackPoly, INT ValidPolys, INT Pass );
-	void BspVisibility( INT iNode );
+	void BspCrossVisibility( INT_UNREAL_32S iFronyPortalLeaf, INT_UNREAL_32S iBackPortalLeaf, INT_UNREAL_32S iFrontLeaf, INT_UNREAL_32S iBackLeaf, FPoly &FrontPoly, FPoly &ClipPoly, FPoly &BackPoly, INT_UNREAL_32S ValidPolys, INT_UNREAL_32S Pass );
+	void BspVisibility( INT_UNREAL_32S iNode );
 	void TestVisibility();
 };
 
@@ -178,16 +178,16 @@ public:
 void FEditorVisibility::TagZonePortalFragment
 (
 	FPoly&	Poly,
-	INT	    iFrontLeaf,
-	INT		iBackLeaf,
-	INT		iGeneratingNode,
-	INT		iGeneratingBase
+	INT_UNREAL_32S	    iFrontLeaf,
+	INT_UNREAL_32S		iBackLeaf,
+	INT_UNREAL_32S		iGeneratingNode,
+	INT_UNREAL_32S		iGeneratingBase
 )
 {
 	guard(FEditorVisibility::TagZonePortalFragment);
 
 	// Add this node to the bsp as a coplanar to its generator.
-	INT iNewNode = GEditor->bspAddNode( Model, iGeneratingNode, NODE_Plane, Model->Nodes->Element(iGeneratingNode).NodeFlags | NF_IsNew, &Poly );
+	INT_UNREAL_32S iNewNode = GEditor->bspAddNode( Model, iGeneratingNode, NODE_Plane, Model->Nodes->Element(iGeneratingNode).NodeFlags | NF_IsNew, &Poly );
 
 	// Set the node's zones.
 	int Backward = (Poly.Normal | Model->Nodes->Element(iGeneratingBase).Plane) < 0.0;
@@ -203,10 +203,10 @@ void FEditorVisibility::TagZonePortalFragment
 void FEditorVisibility::BlockPortal
 (
 	FPoly&	Poly,
-	INT		iFrontLeaf,
-	INT		iBackLeaf,
-	INT		iGeneratingNode,
-	INT		iGeneratingBase
+	INT_UNREAL_32S		iFrontLeaf,
+	INT_UNREAL_32S		iBackLeaf,
+	INT_UNREAL_32S		iGeneratingNode,
+	INT_UNREAL_32S		iGeneratingBase
 )
 {
 	guard(FEditorVisibility::BlockPortal);
@@ -232,10 +232,10 @@ void FEditorVisibility::BlockPortal
 void FEditorVisibility::AddPortal
 (
 	FPoly&	Poly,
-	INT		iFrontLeaf,
-	INT		iBackLeaf,
-	INT		iGeneratingNode,
-	INT		iGeneratingBase
+	INT_UNREAL_32S		iFrontLeaf,
+	INT_UNREAL_32S		iBackLeaf,
+	INT_UNREAL_32S		iGeneratingNode,
+	INT_UNREAL_32S		iGeneratingBase
 )
 {
 	guard(FEditorVisibility::AddPortal);
@@ -274,14 +274,14 @@ void FEditorVisibility::AddPortal
 //
 void FEditorVisibility::FilterThroughSubtree
 (
-	INT			Pass,
-	INT			iGeneratingNode,
-	INT			iGeneratingBase,
-	INT			iParentLeaf,
-	INT			iNode,
+	INT_UNREAL_32S			Pass,
+	INT_UNREAL_32S			iGeneratingNode,
+	INT_UNREAL_32S			iGeneratingBase,
+	INT_UNREAL_32S			iParentLeaf,
+	INT_UNREAL_32S			iNode,
 	FPoly		Poly,
 	PORTAL_FUNC Func,
-	INT			iBackLeaf
+	INT_UNREAL_32S			iBackLeaf
 )
 {
 	guard(FEditorVisibility::FilterThroughSubtree);
@@ -345,9 +345,9 @@ void FEditorVisibility::FilterThroughSubtree
 //
 void FEditorVisibility::MakePortalsClip
 (
-	INT			iNode,
+	INT_UNREAL_32S			iNode,
 	FPoly		Poly,
-	INT			Clip,
+	INT_UNREAL_32S			Clip,
 	PORTAL_FUNC Func
 )
 {
@@ -356,7 +356,7 @@ void FEditorVisibility::MakePortalsClip
 	// Clip by all parents.
 	while( Clip < NumClips )
 	{
-		INT		 iClipNode = Clips[Clip] & ~CLIP_BACK_FLAG;
+		INT_UNREAL_32S		 iClipNode = Clips[Clip] & ~CLIP_BACK_FLAG;
 		FBspNode &Node     = Model->Nodes->Element(iClipNode);
 
 		// Subdivide if poly vertices overflow.
@@ -408,10 +408,10 @@ void FEditorVisibility::MakePortalsClip
 //
 // Make all portals.
 //
-void FEditorVisibility::MakePortals( INT iNode )
+void FEditorVisibility::MakePortals( INT_UNREAL_32S iNode )
 {
 	guard(FEditorVisibility::MakePortals);
-	INT iOriginalNode = iNode;
+	INT_UNREAL_32S iOriginalNode = iNode;
 
 	// Make an infinite edpoly for this node.
 	FPoly Poly = BuildInfiniteFPoly( Model, iNode );
@@ -469,7 +469,7 @@ void FEditorVisibility::MakePortals( INT iNode )
 // Assign contiguous unique numbers to all front and back leaves in the BSP.
 // Stores the leaf numbers in FBspNode::iLeaf[2].
 //
-void FEditorVisibility::AssignLeaves( INT iNode, INT Outside )
+void FEditorVisibility::AssignLeaves( INT_UNREAL_32S iNode, INT_UNREAL_32S Outside )
 {
 	guard(FEditorVisibility::AssignLeaves);
 
@@ -496,10 +496,10 @@ void FEditorVisibility::AssignLeaves( INT iNode, INT Outside )
 // Recursively build a list of leaves visible from a point.
 // Uses a recursive shadow volume clipper.
 //
-INT FEditorVisibility::ActorVisibility
+INT_UNREAL_32S FEditorVisibility::ActorVisibility
 (
 	AActor*	Actor,
-	INT	    iLeaf,
+	INT_UNREAL_32S	    iLeaf,
 	FPoly*	Clipper
 )
 {
@@ -509,7 +509,7 @@ INT FEditorVisibility::ActorVisibility
 	// If leaf not specified, find the leaf corresponding to the point.
 	if( iLeaf == INDEX_NONE )
 	{
-		INT iNode=0, iParent=0, IsFront=0;
+		INT_UNREAL_32S iNode=0, iParent=0, IsFront=0;
 		while( iNode != INDEX_NONE )
 		{
 			IsFront = (Model->Nodes->Element(iNode).Plane.PlaneDot(Actor->Location) > 0.0);
@@ -545,7 +545,8 @@ INT FEditorVisibility::ActorVisibility
 
 	// Add this actor to the permeated leaf if it's not already there.
 	int Count = 0;
-	for( FActorLink* Link=LeafLights[iLeaf]; Link; Link=Link->Next )
+	FActorLink* Link;
+	for(Link=LeafLights[iLeaf]; Link; Link=Link->Next )
 		if( Link->Actor == Actor )
 			break;
 	if( !Link )
@@ -562,7 +563,7 @@ INT FEditorVisibility::ActorVisibility
 		FLOAT PlaneDot = (Actor->Location - Poly.Base) | Poly.Normal;
 		if( PlaneDot<0.0 && PlaneDot > -Actor->WorldLightRadius() )
 		{
-			INT iOtherLeaf = Portal->GetNeighborLeafOf( iLeaf );
+			INT_UNREAL_32S iOtherLeaf = Portal->GetNeighborLeafOf( iLeaf );
 			if( Clipper )
 			{
 				// Clip Poly by the specified clipping polygon.
@@ -620,7 +621,7 @@ int FEditorVisibility::ClipToMaximalSheetWrapping
 
 		// Find vertex of B such that the plane formed by it and the first
 		// two vertices of A cleanly partitions A and B.
-		INT iB0 = 0;
+		INT_UNREAL_32S iB0 = 0;
 		FVector RefNormal;
 		for( iB0=0; iB0<B.NumVertices; iB0++ )
 		{
@@ -677,15 +678,15 @@ int FEditorVisibility::ClipToMaximalSheetWrapping
 //
 void FEditorVisibility::BspCrossVisibility
 (
-	INT	    iFrontPortalLeaf,
-	INT     iBackPortalLeaf,
-	INT     iFrontLeaf,
-	INT     iBackLeaf,
+	INT_UNREAL_32S	    iFrontPortalLeaf,
+	INT_UNREAL_32S     iBackPortalLeaf,
+	INT_UNREAL_32S     iFrontLeaf,
+	INT_UNREAL_32S     iBackLeaf,
 	FPoly&	FrontPoly,
 	FPoly&	ClipPoly,
 	FPoly&	BackPoly,
-	INT		ValidPolys,
-	INT		Pass
+	INT_UNREAL_32S		ValidPolys,
+	INT_UNREAL_32S		Pass
 )
 {
 	guard(FEditorVisibility::BspCrossVisibility);
@@ -708,7 +709,7 @@ void FEditorVisibility::BspCrossVisibility
 		{
 			if( !NewFrontPortal->IsTesting )
 			{
-				INT iNewFrontLeaf = NewFrontPortal->GetNeighborLeafOf(iFrontLeaf);
+				INT_UNREAL_32S iNewFrontLeaf = NewFrontPortal->GetNeighborLeafOf(iFrontLeaf);
 				if( !Visibility->Get(iNewFrontLeaf, iFrontPortalLeaf) )
 					continue;
 
@@ -740,7 +741,7 @@ void FEditorVisibility::BspCrossVisibility
 		{
 			if( !NewBackPortal->IsTesting )
 			{
-				INT iNewBackLeaf = NewBackPortal->GetNeighborLeafOf(iBackLeaf);
+				INT_UNREAL_32S iNewBackLeaf = NewBackPortal->GetNeighborLeafOf(iBackLeaf);
 				if( !Visibility->Get( iNewBackLeaf, iBackPortalLeaf ) )
 					continue;
 
@@ -773,14 +774,15 @@ void FEditorVisibility::BspCrossVisibility
 //
 // Recursive main Bsp visibility.
 //
-void FEditorVisibility::BspVisibility( INT iNode )
+void FEditorVisibility::BspVisibility( INT_UNREAL_32S iNode )
 {
 	guard(FEditorVisibility::BspVisibility);
 	FBspNode& Node = Model->Nodes->Element(iNode);
-	INT FragmentCount = 0;
+	INT_UNREAL_32S FragmentCount = 0;
 
 	// Mark this node's portals as partitioners.
-	for( FPortal* ClipPortal = NodePortals[iNode]; ClipPortal; ClipPortal=ClipPortal->NodeNext )
+	FPortal* ClipPortal;
+	for(ClipPortal = NodePortals[iNode]; ClipPortal; ClipPortal=ClipPortal->NodeNext )
 		ClipPortal->IsTesting++;
 
 	// Recurse, so that we can use intersubtree visibility to reject intrasubtree
@@ -829,9 +831,9 @@ void FEditorVisibility::BspVisibility( INT iNode )
 //
 void FEditorVisibility::CheckVolumeVisibility
 (
-	const INT		iSourceLeaf,
+	const INT_UNREAL_32S		iSourceLeaf,
 	const FPoly&	Source,
-	const INT		iTestLeaf,
+	const INT_UNREAL_32S		iTestLeaf,
 	const FPoly&	Clip
 )
 {
@@ -845,7 +847,7 @@ void FEditorVisibility::CheckVolumeVisibility
 	for( FPortal* TestPortal = LeafPortals[iTestLeaf]; TestPortal; TestPortal=TestPortal->Next(iTestLeaf) )
 	{
 		// Get TestPortal and leaf on far side of TestPortal.
-		INT iNewTestLeaf = TestPortal->GetNeighborLeafOf(iTestLeaf);
+		INT_UNREAL_32S iNewTestLeaf = TestPortal->GetNeighborLeafOf(iTestLeaf);
 
 		// Don't recurse on portals we're already testing.
 		if
@@ -907,9 +909,9 @@ void FEditorVisibility::FormZonesFromLeaves()
 	{
 		if( Portal->iZonePortalSurf==INDEX_NONE )//!!&& Abs(Portal->Area())>10.0 )
 		{
-			INT Original = Model->Leaves(Portal->iFrontLeaf).iZone;
-			INT New      = Model->Leaves(Portal->iBackLeaf ).iZone;
-			for( INT i=0; i<Model->Leaves.Num(); i++ )
+			INT_UNREAL_32S Original = Model->Leaves(Portal->iFrontLeaf).iZone;
+			INT_UNREAL_32S New      = Model->Leaves(Portal->iBackLeaf ).iZone;
+			for( INT_UNREAL_32S i=0; i<Model->Leaves.Num(); i++ )
 			{
 				if( Model->Leaves(i).iZone == Original )
 					Model->Leaves(i).iZone = New;
@@ -918,8 +920,8 @@ void FEditorVisibility::FormZonesFromLeaves()
 	}
 	
 	// Renumber the leaves.
-	INT NumZones=0;
-	for( INT i=0; i<Model->Leaves.Num(); i++ )
+	INT_UNREAL_32S i,NumZones=0;
+	for( i=0; i<Model->Leaves.Num(); i++ )
 	{
 		if( Model->Leaves(i).iZone >= NumZones )
 		{
@@ -951,10 +953,10 @@ void FEditorVisibility::FormZonesFromLeaves()
 // function call, only leaves have zone numbers.  The zone numbers for the entire
 // Bsp can be determined from leaf zone numbers.
 //
-void FEditorVisibility::AssignAllZones( INT iNode, int Outside )
+void FEditorVisibility::AssignAllZones( INT_UNREAL_32S iNode, int Outside )
 {
 	guard(FEditorVisibility::AssignAllZones);
-	INT iOriginalNode = iNode;
+	INT_UNREAL_32S iOriginalNode = iNode;
 
 	// Recursively assign zone numbers to children.
 	if( Model->Nodes->Element(iOriginalNode).iFront != INDEX_NONE )
@@ -989,7 +991,8 @@ void FEditorVisibility::AssignAllZones( INT iNode, int Outside )
 			if( Model->Nodes->Num() > OriginalNumNodes )
 			{
 				int CanMerge=1, iZone[2]={0,0};
-				for( int i=OriginalNumNodes; i<Model->Nodes->Num(); i++ )
+				int i;
+				for( i=OriginalNumNodes; i<Model->Nodes->Num(); i++ )
 					for( int j=0; j<2; j++ )
 						if( Model->Nodes->Element(i).iZone[j] != 0 )
 							iZone[j] = Model->Nodes->Element(i).iZone[j];
@@ -1030,7 +1033,7 @@ void FEditorVisibility::AssignAllZones( INT iNode, int Outside )
 // during rendering to reject entire sections of the tree when it's known
 // that none of the zones in that section are active.
 //
-QWORD BuildZoneMasks( UModel* Model, INT iNode )
+QWORD BuildZoneMasks( UModel* Model, INT_UNREAL_32S iNode )
 {
 	guard(FEditorVisibility::BuildZoneMasks);
 
@@ -1060,8 +1063,9 @@ QWORD BuildZoneMasks( UModel* Model, INT iNode )
 void FEditorVisibility::BuildConnectivity()
 {
 	guard(FEditorVisibility::BuildConnectivity);
+	int i;
 
-	for( int i=0; i<64; i++ )
+	for( i=0; i<64; i++ )
 	{
 		// Init to identity.
 		Model->Nodes->Zones[i].Connectivity = ((QWORD)1)<<i;
@@ -1094,16 +1098,17 @@ void FEditorVisibility::BuildConnectivity()
 void FEditorVisibility::BuildZoneInfo()
 {
 	guard(FEditorVisibility::BuildZoneInfo);
-	int Infos=0, Duplicates=0, Zoneless=0;
+	int Infos=0, Duplicates=0, Zoneless=0, i = 0;
 	GSystem->StatusUpdatef( 0, 0, "Computing zones" );
 
-	for( int i=0; i<UBspNodes::MAX_ZONES; i++ )
+	for( i=0; i<UBspNodes::MAX_ZONES; i++ )
 	{
 		// By default, the LevelInfo (actor 0) acts as the ZoneInfo
 		// for all zones which don't have individual ZoneInfo's.
 		Model->Nodes->Zones[i].ZoneActor = NULL;
 	}
-	for( INT iActor=0; iActor<Level->Num(); iActor++ )
+	INT_UNREAL_32S iActor = 0;
+	for( iActor=0; iActor<Level->Num(); iActor++ )
 	{
 		if( Level->Actors(iActor) )
 			Level->Actors(iActor)->Region = FPointRegion( Level->GetLevelInfo(), INDEX_NONE, 0 );
@@ -1135,7 +1140,7 @@ void FEditorVisibility::BuildZoneInfo()
 					const int NumTraces = 256;
 					const FLOAT MaxDist = 16384;
 					TArray<FVector> Samples;
-					for( int i=0; i<NumTraces; i++ )
+					for( i=0; i<NumTraces; i++ )
 					{
 						FCheckResult Hit(1.0);
 						Model->LineCheck( Hit, NULL, Actor->Location + MaxDist*VRand(), Actor->Location, FVector(0,0,0), 0 );
@@ -1147,9 +1152,9 @@ void FEditorVisibility::BuildZoneInfo()
 					while( Samples.Num() > ARRAY_COUNT(Actor->Delay) )
 					{
 						// Find best pair to merge.
-						INT iBest=0, jBest=1;
+						INT_UNREAL_32S iBest=0, jBest=1;
 						FLOAT BestCost=10000000000000.0;
-						for( int i=0; i<Samples.Num(); i++ )
+						for( i=0; i<Samples.Num(); i++ )
 						{
 							for( int j=0; j<i; j++ )
 							{
@@ -1230,7 +1235,7 @@ void FEditorVisibility::BuildZoneInfo()
 //
 // Find leaves hit by a volumetric lightsource.
 //
-void FEditorVisibility::FilterVolumetricLight( AActor* Actor, INT iNode, INT iParent, INT IsFront )
+void FEditorVisibility::FilterVolumetricLight( AActor* Actor, INT_UNREAL_32S iNode, INT_UNREAL_32S iParent, INT_UNREAL_32S IsFront )
 {
 	if( iNode != INDEX_NONE )
 	{
@@ -1262,7 +1267,8 @@ void FEditorVisibility::TestVisibility()
 	GSystem->BeginSlowTask("Zoning",1,0);
 
 	// Init Bsp info.
-	for( int i=0; i<Model->Nodes->Num(); i++ )
+	int i;
+	for( i=0; i<Model->Nodes->Num(); i++ )
 	{
 		for( int j=0; j<2; j++ )
 		{
@@ -1310,10 +1316,10 @@ void FEditorVisibility::TestVisibility()
 
 	// Test visibility of lightsources.
 	guard(TestLights);
-	INT* VisibleLeaves = new(GMem,Model->Leaves.Num())INT;
-	INT NumLights[2]={0,0};
+	INT_UNREAL_32S* VisibleLeaves = new(GMem,Model->Leaves.Num())INT_UNREAL_32S;
+	INT_UNREAL_32S NumLights[2]={0,0};
 	DOUBLE LightSeconds=appSeconds();
-	for( INT Pass=0; Pass<2; Pass++ )
+	for( INT_UNREAL_32S Pass=0; Pass<2; Pass++ )
 	{
 		for( i=0; i<Level->Num(); i++ )
 		{
@@ -1326,7 +1332,7 @@ void FEditorVisibility::TestVisibility()
 				if( Pass == 1 )
 				{
 					GSystem->StatusUpdatef( NumLights[1], NumLights[0], "%s", "Illumination occluding" );
-					INT NumVisibleLeaves = ActorVisibility( Actor );
+					INT_UNREAL_32S NumVisibleLeaves = ActorVisibility( Actor );
 					debugf( NAME_Log, "Lightsource %s: %i leaves", Actor->GetName(), NumVisibleLeaves );
 				}
 				NumLights[Pass]++;
@@ -1486,7 +1492,7 @@ void FEditorVisibility::TestVisibility()
 //
 // Constructor.
 //
-FEditorVisibility::FEditorVisibility( ULevel* InLevel, UModel* InModel, INT InExtra )
+FEditorVisibility::FEditorVisibility( ULevel* InLevel, UModel* InModel, INT_UNREAL_32S InExtra )
 :	Mark			(GMem),
 	Level			(InLevel),
 	Model			(InModel),
@@ -1560,11 +1566,11 @@ void UEditorEngine::TestVisibility( ULevel* Level, UModel* Model, int A, int B )
 //
 // Update a bounding volume by expanding it to enclose a list of polys.
 //
-void UpdateBoundWithPolys( FBox& Bound, FPoly** PolyList, INT nPolys )
+void UpdateBoundWithPolys( FBox& Bound, FPoly** PolyList, INT_UNREAL_32S nPolys )
 {
 	guard(UpdateBoundWithPolys);
-	for( INT i=0; i<nPolys; i++ )
-		for( INT j=0; j<PolyList[i]->NumVertices; j++ )
+	for( INT_UNREAL_32S i=0; i<nPolys; i++ )
+		for( INT_UNREAL_32S j=0; j<PolyList[i]->NumVertices; j++ )
 			Bound += PolyList[i]->Vertex[j];
 	unguard;
 }
@@ -1572,18 +1578,19 @@ void UpdateBoundWithPolys( FBox& Bound, FPoly** PolyList, INT nPolys )
 //
 // Update a convolution hull with a list of polys.
 //
-void UpdateConvolutionWithPolys( UModel *Model, INT iNode, FPoly **PolyList, int nPolys )
+void UpdateConvolutionWithPolys( UModel *Model, INT_UNREAL_32S iNode, FPoly **PolyList, int nPolys )
 {
 	guard(UpdateConvolutionWithPolys);
 	FBox Box(0);
 
 	FBspNode &Node = Model->Nodes->Element(iNode);
 	Node.iCollisionBound = Model->LeafHulls.Num();
+	int j;
 	for( int i=0; i<nPolys; i++ )
 	{
 		if( PolyList[i]->iBrushPoly != INDEX_NONE )
 		{
-			for( int j=0; j<i; j++ )
+			for( j=0; j<i; j++ )
 				if( PolyList[j]->iBrushPoly == PolyList[i]->iBrushPoly )
 					break;
 			if( j >= i )
@@ -1595,12 +1602,12 @@ void UpdateConvolutionWithPolys( UModel *Model, INT iNode, FPoly **PolyList, int
 	Model->LeafHulls.AddItem(INDEX_NONE);
 
 	// Add bounds.
-	Model->LeafHulls.AddItem( *(INT*)&Box.Min.X );
-	Model->LeafHulls.AddItem( *(INT*)&Box.Min.Y );
-	Model->LeafHulls.AddItem( *(INT*)&Box.Min.Z );
-	Model->LeafHulls.AddItem( *(INT*)&Box.Max.X );
-	Model->LeafHulls.AddItem( *(INT*)&Box.Max.Y );
-	Model->LeafHulls.AddItem( *(INT*)&Box.Max.Z );
+	Model->LeafHulls.AddItem( *(INT_UNREAL_32S*)&Box.Min.X );
+	Model->LeafHulls.AddItem( *(INT_UNREAL_32S*)&Box.Min.Y );
+	Model->LeafHulls.AddItem( *(INT_UNREAL_32S*)&Box.Min.Z );
+	Model->LeafHulls.AddItem( *(INT_UNREAL_32S*)&Box.Max.X );
+	Model->LeafHulls.AddItem( *(INT_UNREAL_32S*)&Box.Max.Y );
+	Model->LeafHulls.AddItem( *(INT_UNREAL_32S*)&Box.Max.Z );
 
 	unguard;
 }
@@ -1615,10 +1622,10 @@ void SplitPartitioner
 	FPoly**	PolyList,
 	FPoly**	FrontList,
 	FPoly**	BackList,
-	INT		n,
-	INT		nPolys,
-	INT&	nFront, 
-	INT&	nBack, 
+	INT_UNREAL_32S		n,
+	INT_UNREAL_32S		nPolys,
+	INT_UNREAL_32S&	nFront, 
+	INT_UNREAL_32S&	nBack, 
 	FPoly	InfiniteEdPoly
 )
 {
@@ -1674,10 +1681,10 @@ void FilterBound
 (
 	UModel*			Model,
 	FBox*			ParentBound,
-	INT				iNode,
+	INT_UNREAL_32S				iNode,
 	FPoly**			PolyList,
-	INT				nPolys,
-	INT				Outside
+	INT_UNREAL_32S				nPolys,
+	INT_UNREAL_32S				Outside
 )
 {
 	FMemMark Mark(GMem);
@@ -1697,7 +1704,7 @@ void FilterBound
 	FPoly* FrontPoly  = new(GMem)FPoly;
 	FPoly* BackPoly   = new(GMem)FPoly;
 
-	for( INT i=0; i<nPolys; i++ )
+	for( INT_UNREAL_32S i=0; i<nPolys; i++ )
 	{
 		FPoly *Poly = PolyList[i];
 		switch( Poly->SplitWithPlane( Base, Normal, FrontPoly, BackPoly, 0 ) )
@@ -1887,7 +1894,7 @@ void UEditorEngine::bspBuildBounds( UModel* Model )
 // Build an FPoly representing an "infinite" plane (which exceeds the maximum
 // dimensions of the world in all directions) for a particular Bsp node.
 //
-FPoly BuildInfiniteFPoly( UModel* Model, INT iNode )
+FPoly BuildInfiniteFPoly( UModel* Model, INT_UNREAL_32S iNode )
 {
 	guard(BuildInfiniteFPoly);
 

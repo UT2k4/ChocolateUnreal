@@ -104,7 +104,7 @@ void AActor::execGetNextSkin( FFrame& Stack, BYTE*& Result )
 	int bLeaveOnLast = 0;
 	int N = appStrlen(Prefix);
 
-	for( INT i=0; i<List.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<List.Num(); i++ )
 	{
 		if ( appStricmp(List(i).Object, CurrentSkin) == 0 ) 
 		{
@@ -213,8 +213,10 @@ void AActor::execGetMapName( FFrame& Stack, BYTE*& Result )
 	*(char*)Result = 0;
 	char Wildcard[256];
 	TArray<FString> MapNames;
+	INT_UNREAL_32S i, j;
+
 	appSprintf( Wildcard, "*.%s", FURL::DefaultMapExt );
-	for( INT i=0; i<ARRAY_COUNT(GSys->Paths); i++ )
+	for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(GSys->Paths); i++ )
 	{
 		if( appStrstr( GSys->Paths[i], Wildcard ) )
 		{
@@ -225,9 +227,9 @@ void AActor::execGetMapName( FFrame& Stack, BYTE*& Result )
 			appStrcat( Tmp, Prefix );
 			appStrcat( Tmp, Wildcard );
 			TArray<FString>	TheseNames = appFindFiles(Tmp);
-			for( INT i=0; i<TheseNames.Num(); i++ )
+			for( i=0; i<TheseNames.Num(); i++ )
 			{
-				for( INT j=0; j<MapNames.Num(); j++ )
+				for( j=0; j<MapNames.Num(); j++ )
 					if( appStricmp(*MapNames(j),*TheseNames(i))==0 )
 						break;
 				if( j==MapNames.Num() )
@@ -239,7 +241,7 @@ void AActor::execGetMapName( FFrame& Stack, BYTE*& Result )
 	{
 		if( appStrcmp(*MapNames(i), MapName)==0 )
 		{
-			INT Offset = i+Dir;
+			INT_UNREAL_32S Offset = i+Dir;
 			if( Offset < 0 )
 				Offset = MapNames.Num() - 1;
 			else if( Offset >= MapNames.Num() )
@@ -421,7 +423,7 @@ void APawn::execPickAnyTarget( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 	AActor *pick = NULL;
 
-	for( INT iActor=0; iActor<XLevel->Num(); iActor++ )
+	for( INT_UNREAL_32S iActor=0; iActor<XLevel->Num(); iActor++ )
 		if( XLevel->Actors(iActor) )
 		{
 			AActor* next = XLevel->Actors(iActor);
@@ -594,7 +596,7 @@ void APawn::execFindStairRotation( FFrame& Stack, BYTE*& Result )
 			}
 		}
 	}
-	INT Diff = Abs(ViewRotation.Pitch - stairRot);
+	INT_UNREAL_32S Diff = Abs(ViewRotation.Pitch - stairRot);
 	if ( Diff > 0 )
 	{
 		FLOAT RotRate = 8;
@@ -644,7 +646,7 @@ void APawn::execactorReachable( FFrame& Stack, BYTE*& Result )
 	{
 		FLOAT MaxDistSq = ::Max(48.f, CollisionRadius);
 		FVector Dir;
-		INT bOnPath = 0;
+		INT_UNREAL_32S bOnPath = 0;
 		MaxDistSq = MaxDistSq * MaxDistSq;
 		if ( MoveTarget && MoveTarget->IsA(ANavigationPoint::StaticClass)
 			&& (Abs(MoveTarget->Location.Z - Location.Z) < CollisionHeight) ) 
@@ -1196,7 +1198,7 @@ int APawn::moveToward(const FVector &Dest)
 		return 0;
 
 	FLOAT Distance = Direction.Size();
-	INT bGlider = ( !bCanStrafe && ((Physics == PHYS_Flying) || (Physics == PHYS_Swimming)) ); 
+	INT_UNREAL_32S bGlider = ( !bCanStrafe && ((Physics == PHYS_Flying) || (Physics == PHYS_Swimming)) ); 
 
 	if ( (Direction.X * Direction.X + Direction.Y * Direction.Y < 256) 
 			&& (Abs(Direction.Z) < ::Max(48.f, CollisionHeight)) ) 
@@ -1379,9 +1381,10 @@ DWORD APawn::LineOfSightTo(AActor *Other, int bShowSelf)
 	Points[3] = Other->Location + FVector(CollisionRadius, -1 * CollisionRadius, 0);
 	int imin = 0;
 	int imax = 0;
+	INT_UNREAL_32S i;
 	FLOAT currentmin = Points[0].SizeSquared(); 
 	FLOAT currentmax = currentmin; 
-	for (INT i=1;i<4;i++)
+	for ( i=1;i<4;i++)
 	{
 		FLOAT nextsize = Points[i].SizeSquared(); 
 		if (nextsize > currentmax)
@@ -2374,7 +2377,7 @@ int APawn::PickWallAdjust()
 
 	//try left and right
 	FVector Left = FVector(Dir.Y, -1 * Dir.X, 0);
-	INT bCheckRight = 0;
+	INT_UNREAL_32S bCheckRight = 0;
 	FVector CheckLeft = Left * 1.42 * CollisionRadius;
 	GetLevel()->SingleLineCheck(Hit, this, Destination, ViewPoint + CheckLeft, TRACE_VisBlocking); 
 	if (Hit.Time < 1.0) //try right

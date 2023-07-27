@@ -396,3 +396,43 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# UNREAL SPECIFIC IGNORES
+Core/Lib
+Editor/Lib
+Engine/Lib
+Fire/Lib
+# TODO: is this needed?
+Galaxy/Lib
+IpDrv/Lib
+Launch/Lib
+Render/Lib
+SoftDrv/Lib
+
+# System
+System/Core.dll
+System/Editor.dll
+System/Engine.dll
+System/Fire.dll
+System/Galaxy.dll
+System/GlideDrv.dll
+System/IpDrv.dll
+System/Render.dll
+System/SGLDrv.dll
+System/SoftDrv.dll
+System/Unreal.exe
+# keep config vanilla
+System/Unreal.ini
+System/Window.dll
+System/WinDrv.dll
+
+Window/Lib
+WinDrv/Lib
+
+# Unreal Content
+Maps/
+Music/
+# TODO: Is this needed?
+Shared/
+Sounds/
+Textures/

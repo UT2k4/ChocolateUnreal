@@ -26,17 +26,17 @@ struct FPropertyTag
 		{
 			ArIsSaving = 1;
 		}
-		INT Size;
+		INT_UNREAL_32S Size;
 	private:
 		FArchive& SaveAr;
 		FArchive& operator<<( UObject*& Obj )
 		{
-			INT Index = SaveAr.MapObject(Obj);
+			INT_UNREAL_32S Index = SaveAr.MapObject(Obj);
 			return *this << AR_INDEX(Index);
 		}
 		FArchive& operator<<( FName& Name )
 		{
-			INT Index = SaveAr.MapName(&Name);
+			INT_UNREAL_32S Index = SaveAr.MapName(&Name);
 			return *this << AR_INDEX(Index);
 		}
 		FArchive& Serialize( void* V, int Length )
@@ -51,13 +51,13 @@ struct FPropertyTag
 	BYTE	Info;		// Packed info byte.
 	FName	Name;		// Name of property.
 	FName	ItemName;	// Struct name if UStructProperty.
-	INT		Size;       // Property size.
-	INT		ArrayIndex;	// Index if an array; else 0.
+	INT_UNREAL_32S		Size;       // Property size.
+	INT_UNREAL_32S		ArrayIndex;	// Index if an array; else 0.
 
 	// Constructors.
 	FPropertyTag()
 	{}
-	FPropertyTag( FArchive& InSaveAr, UProperty* Property, INT InIndex, BYTE* Value )
+	FPropertyTag( FArchive& InSaveAr, UProperty* Property, INT_UNREAL_32S InIndex, BYTE* Value )
 	:	Type		( Property->GetID() )
 	,	Name		( Property->GetFName() )
 	,	ItemName	( NAME_None     )
@@ -97,7 +97,7 @@ struct FPropertyTag
 		guard(FPropertyTag<<);
 		BYTE SizeByte;
 		_WORD SizeWord;
-		INT SizeInt;
+		INT_UNREAL_32S SizeInt;
 
 		// Name.
 		guard(TagName);
@@ -163,7 +163,7 @@ struct FPropertyTag
 			{
 				BYTE C = Tag.ArrayIndex & 255;
 				Ar << C;
-				Tag.ArrayIndex = ((INT)(B&0x7F)<<8) + ((INT)C);
+				Tag.ArrayIndex = ((INT_UNREAL_32S)(B&0x7F)<<8) + ((INT_UNREAL_32S)C);
 			}
 			else
 			{
@@ -171,7 +171,7 @@ struct FPropertyTag
 				BYTE D = Tag.ArrayIndex>>8;
 				BYTE E = Tag.ArrayIndex;
 				Ar << C << D << E;
-				Tag.ArrayIndex = ((INT)(B&0x3F)<<24) + ((INT)C<<16) + ((INT)D<<8) + ((INT)E);
+				Tag.ArrayIndex = ((INT_UNREAL_32S)(B&0x3F)<<24) + ((INT_UNREAL_32S)C<<16) + ((INT_UNREAL_32S)D<<8) + ((INT_UNREAL_32S)E);
 			}
 		}
 		else Tag.ArrayIndex = 0;
@@ -217,7 +217,8 @@ UField::UField( UField* InSuperField )
 UClass* UField::GetOwnerClass()
 {
 	guardSlow(UField::GetOwnerClass);
-	for( UObject* Obj=this; Obj->GetClass()!=UClass::StaticClass; Obj=Obj->GetParent() );
+	UObject* Obj;
+	for( Obj=this; Obj->GetClass()!=UClass::StaticClass; Obj=Obj->GetParent() );
 	return (UClass*)Obj;
 	unguardSlow;
 }
@@ -277,7 +278,7 @@ static void BuildVfHashes( UStruct* Struct )
 
 		// Initialize hash.
 		UField** PrevLink[UField::HASH_COUNT];
-		for( INT i=0; i<UField::HASH_COUNT; i++ )
+		for( INT_UNREAL_32S i=0; i<UField::HASH_COUNT; i++ )
 		{
 			State->VfHash[i] = NULL;
 			PrevLink[i] = &State->VfHash[i];
@@ -286,7 +287,7 @@ static void BuildVfHashes( UStruct* Struct )
 		// Add all stuff at this node to the hash.
 		for( TFieldIterator<UStruct> It(State); It; ++It )
 		{
-			INT iHash          = It->GetFName().GetIndex() & (UField::HASH_COUNT-1);
+			INT_UNREAL_32S iHash          = It->GetFName().GetIndex() & (UField::HASH_COUNT-1);
 			*PrevLink[iHash]   = *It;
 			PrevLink[iHash]    = &It->HashNext;
 			It->HashNext       = NULL;
@@ -307,7 +308,7 @@ static void BuildVfHashes( UStruct* Struct )
 //
 // Constructors.
 //
-UStruct::UStruct( EIntrinsicConstructor, INT InSize, FName InName, FName InPackageName )
+UStruct::UStruct( EIntrinsicConstructor, INT_UNREAL_32S InSize, FName InName, FName InPackageName )
 :	UField( EC_IntrinsicConstructor, UClass::StaticClass, InName, InPackageName )
 ,	ScriptText( NULL )
 ,	Children( NULL )
@@ -357,7 +358,7 @@ void UStruct::LinkOffsets( FArchive& Ar )
 void UStruct::SerializeBin( FArchive& Ar, BYTE* Data )
 {
 	FName PropertyName(NAME_None);
-	INT Index=0;
+	INT_UNREAL_32S Index=0;
 	guard(UStruct::SerializeBin);
 	for( TFieldIterator<UProperty> It(this); It; ++It )
 	{
@@ -371,13 +372,13 @@ void UStruct::SerializeBin( FArchive& Ar, BYTE* Data )
 void UStruct::SerializeTaggedProperties( FArchive& Ar, BYTE* Data, UClass* DefaultsClass )
 {
 	FName PropertyName(NAME_None);
-	INT Index=-1;
+	INT_UNREAL_32S Index=-1;
 	guard(UStruct::SerializeTaggedProperties);
 	check(Ar.IsLoading() || Ar.IsSaving());
 
 	// Find defaults.
 	BYTE* Defaults      = NULL;
-	INT   DefaultsCount = 0;
+	INT_UNREAL_32S   DefaultsCount = 0;
 	if( DefaultsClass && DefaultsClass->Defaults.Num() )
 	{
 		Defaults      = &DefaultsClass->Defaults(0);
@@ -388,8 +389,9 @@ void UStruct::SerializeTaggedProperties( FArchive& Ar, BYTE* Data, UClass* Defau
 	if( Ar.IsLoading() )
 	{
 		// Load all stored properties.
-		INT Count=0;
+		INT_UNREAL_32S Count=0;
 		guard(LoadStream);
+		TFieldIterator<UProperty> It(this);
 		while( 1 )
 		{
 			FPropertyTag Tag;
@@ -401,7 +403,7 @@ void UStruct::SerializeTaggedProperties( FArchive& Ar, BYTE* Data, UClass* Defau
 				Tag.ItemName = "Rotator";
 			if( Tag.Type==NAME_StructProperty && appStricmp(*Tag.ItemName,"Region")==0 )//oldver
 				Tag.ItemName = "PointRegion";
-			for( TFieldIterator<UProperty> It(this); It; ++It )
+			for( It; It; ++It )
 				if( It->GetFName()==Tag.Name )
 					break;
 			if( !It )
@@ -457,7 +459,7 @@ void UStruct::SerializeTaggedProperties( FArchive& Ar, BYTE* Data, UClass* Defau
 				PropertyName = It->GetFName();
 				for( Index=0; Index<It->ArrayDim; Index++ )
 				{
-					INT Offset = It->Offset + Index*It->GetElementSize();
+					INT_UNREAL_32S Offset = It->Offset + Index*It->GetElementSize();
 					if( !It->Matches( Data, (Offset+It->GetElementSize()<=DefaultsCount) ? Defaults : NULL, Index) )
 					{
  						FPropertyTag Tag( Ar, *It, Index, Data + Offset );
@@ -488,10 +490,10 @@ void UStruct::Serialize( FArchive& Ar )
 		LinkOffsets( Ar );
 
 	// Script code.
-	INT ScriptSize = Script.Num();
+	INT_UNREAL_32S ScriptSize = Script.Num();
 	Ar << ScriptSize;
 	Script.SetNum( ScriptSize );
-	INT iCode = 0;
+	INT_UNREAL_32S iCode = 0;
 	while( iCode < ScriptSize )
 		SerializeExpr( iCode, Ar );
 	if( iCode != ScriptSize )
@@ -516,7 +518,7 @@ void UStruct::CleanupDestroyed( BYTE* Data )
 			{
 				// Cleanup object reference.
 				UObject** LinkedObjects = (UObject**)(Data + Property->Offset);
-				for( INT k=0; k<Property->ArrayDim; k++ )
+				for( INT_UNREAL_32S k=0; k<Property->ArrayDim; k++ )
 				{
 					if( LinkedObjects[k] )
 					{
@@ -533,7 +535,7 @@ void UStruct::CleanupDestroyed( BYTE* Data )
 			else if( Property->GetClass()==UStructProperty::StaticClass )
 			{
 				// Cleanup substructure.
-				for( INT k=0; k<Property->ArrayDim; k++ )
+				for( INT_UNREAL_32S k=0; k<Property->ArrayDim; k++ )
 					((UStructProperty*)Property)->Struct->CleanupDestroyed( Data + Property->Offset + k*Property->GetElementSize() );
 			}
 		}
@@ -544,7 +546,7 @@ void UStruct::CleanupDestroyed( BYTE* Data )
 		for( UObjectProperty* Ref=RefLink; Ref; Ref=Ref->NextReference )
 		{
 			UObject** LinkedObjects = (UObject**)(Data+Ref->Offset);
-			for( INT k=0; k<Ref->ArrayDim; k++ )
+			for( INT_UNREAL_32S k=0; k<Ref->ArrayDim; k++ )
 			{
 				if( LinkedObjects[k] )
 				{
@@ -556,7 +558,7 @@ void UStruct::CleanupDestroyed( BYTE* Data )
 		}
 		for( UStructProperty* St=StructLink; St; St=St->NextStruct )
 		{
-			for( INT k=0; k<St->ArrayDim; k++ )
+			for( INT_UNREAL_32S k=0; k<St->ArrayDim; k++ )
 				St->Struct->CleanupDestroyed( Data + St->Offset + k*St->GetElementSize() );
 		}
 	}
@@ -666,7 +668,7 @@ void UClass::Export( FOutputDevice& Out, const char* FileType, int Indent )
 					API,
 					API
 				);
-				for( INT i=0; i<FName::GetMaxNames(); i++ )
+				for( INT_UNREAL_32S i=0; i<FName::GetMaxNames(); i++ )
 					if( FName::GetEntry(i) && (FName::GetEntry(i)->Flags & RF_TagExp) )
 						Out.Logf( "DECLARE_NAME(%s)\r\n", *FName((EName)(i)) );
 				for( i=0; i<FName::GetMaxNames(); i++ )
@@ -709,7 +711,7 @@ void UClass::Export( FOutputDevice& Out, const char* FileType, int Indent )
 			}
 
 			// Constants.
-			INT Consts=0;
+			INT_UNREAL_32S Consts=0;
 			for( TFieldIterator<UConst> ItC(this); ItC && ItC.GetStruct()==this; ++ItC )
 				Out.Logf( "#define UCONST_%s %s\r\n", ItC->GetName(), ItC->Value ),Consts++;
 			if( Consts )
@@ -733,7 +735,8 @@ void UClass::Export( FOutputDevice& Out, const char* FileType, int Indent )
 			}
 
 			// C++ -> UnrealScript stubs.
-			for( TFieldIterator<UFunction> Function(this); Function && Function.GetStruct()==this; ++Function )
+			TFieldIterator<UFunction> Function(this);
+			for( Function; Function && Function.GetStruct()==this; ++Function )
 			{
 				if( Function->FunctionFlags & FUNC_Intrinsic )
 				{
@@ -758,9 +761,10 @@ void UClass::Export( FOutputDevice& Out, const char* FileType, int Indent )
 						Return->ExportCPPItem( Out );
 
 					// Function name and parms.
-					INT ParmCount=0;
+					INT_UNREAL_32S ParmCount=0;
 					Out.Logf( " event%s(", Function->GetName() );
-					for( TFieldIterator<UProperty> It(*Function); It && (It->PropertyFlags&(CPF_Parm|CPF_ReturnParm))==CPF_Parm; ++It )
+					TFieldIterator<UProperty> It(*Function);
+					for( It; It && (It->PropertyFlags&(CPF_Parm|CPF_ReturnParm))==CPF_Parm; ++It )
 					{
 						if( ParmCount++ )
 							Out.Log(", ");
@@ -1073,7 +1077,7 @@ CORE_API FArchive& operator<<( FArchive& Ar, FDependency& Dep )
 	FLabelEntry.
 -----------------------------------------------------------------------------*/
 
-FLabelEntry::FLabelEntry( FName InName, INT iInCode )
+FLabelEntry::FLabelEntry( FName InName, INT_UNREAL_32S iInCode )
 :	Name	(InName)
 ,	iCode	(iInCode)
 {}
@@ -1092,7 +1096,7 @@ CORE_API FArchive& operator<<( FArchive& Ar, FLabelEntry &Label )
 // Serialize an expression to an archive.
 // Returns expression token.
 //
-EExprToken UStruct::SerializeExpr( INT& iCode, FArchive& Ar )
+EExprToken UStruct::SerializeExpr( INT_UNREAL_32S& iCode, FArchive& Ar )
 {
 	EExprToken Expr=(EExprToken)0;
 	guard(SerializeExpr);
@@ -1179,7 +1183,7 @@ EExprToken UStruct::SerializeExpr( INT& iCode, FArchive& Ar )
 		}
 		case EX_IntConst:
 		{
-			XFER(INT);
+			XFER(INT_UNREAL_32S);
 			break;
 		}
 		case EX_FloatConst:
@@ -1204,7 +1208,7 @@ EExprToken UStruct::SerializeExpr( INT& iCode, FArchive& Ar )
 		}
 		case EX_RotationConst:
 		{
-			XFER(INT); XFER(INT); XFER(INT);
+			XFER(INT_UNREAL_32S); XFER(INT_UNREAL_32S); XFER(INT_UNREAL_32S);
 			break;
 		}
 		case EX_VectorConst:
@@ -1421,7 +1425,7 @@ IMPLEMENT_CLASS(UFunction);
 UState::UState( UState* InSuperState )
 : UStruct( InSuperState )
 {}
-UState::UState( EIntrinsicConstructor, INT InSize, FName InName, FName InPackageName )
+UState::UState( EIntrinsicConstructor, INT_UNREAL_32S InSize, FName InName, FName InPackageName )
 :	UStruct( EC_IntrinsicConstructor, InSize, InName, InPackageName )
 ,	ProbeMask( NULL )
 ,	IgnoreMask( NULL )

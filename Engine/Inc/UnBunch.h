@@ -59,7 +59,7 @@ public:
 	{
 		return sizeof(FBunch);
 	}
-	INT GetTotalSize()
+	INT_UNREAL_32S GetTotalSize()
 	{
 		return sizeof(FBunch) + DataSize;
 	}
@@ -80,7 +80,7 @@ public:
 	FBunch			Header;
 	UNetConnection*	Connection;
 	UBOOL			Overflowed;
-	INT				InPosition;
+	INT_UNREAL_32S				InPosition;
 
 	// Bunch data.
 	BYTE Data[UNetConnection::MAX_PACKET_SIZE];
@@ -106,7 +106,7 @@ public:
 	{
 		guard(FInBunch::DuplicateBunch);
 		
-		INT Size = sizeof(FInBunch) + Header.DataSize - sizeof(Data);
+		INT_UNREAL_32S Size = sizeof(FInBunch) + Header.DataSize - sizeof(Data);
 		FInBunch* Result = (FInBunch*)AllocPooledBunch();
 		appMemcpy( Result, this, Size );
 
@@ -148,7 +148,7 @@ public:
 	FBunch		Header;
 	FChannel*	Channel;
 	UBOOL       Overflowed;
-	INT			MaxDataSize;
+	INT_UNREAL_32S			MaxDataSize;
 
 	// Bunch data.
 	BYTE Data[UNetConnection::MAX_PACKET_SIZE];
@@ -161,7 +161,7 @@ public:
 	{
 		guard(FOutBunch::DuplicateBunch);
 
-		INT Size = sizeof(FOutBunch) + Header.DataSize - sizeof(Data);
+		INT_UNREAL_32S Size = sizeof(FOutBunch) + Header.DataSize - sizeof(Data);
 		FOutBunch* Result = (FOutBunch *)AllocPooledBunch();
 		appMemcpy( Result, this, Size );
 
@@ -170,7 +170,7 @@ public:
 	}
 
 	// Archivers.
-	UBOOL SendProperty( UProperty* Property, INT ArrayIndex, BYTE* Data, BYTE* Defaults, UBOOL Named );
+	UBOOL SendProperty( UProperty* Property, INT_UNREAL_32S ArrayIndex, BYTE* Data, BYTE* Defaults, UBOOL Named );
 	UBOOL SendObject( UObject* Object );
 	FArchive& operator<<( FName& Name );
 	FArchive& operator<<( UObject*& Object );

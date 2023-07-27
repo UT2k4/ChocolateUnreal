@@ -46,12 +46,13 @@ static __inline int GammaAdjustValue(int Value,double Gamma)
 void USGLRenderDevice::UpdateGammaTables(float Gamma)
 {
 	guard(USGLRenderDevice::UpdateGammaTables);
+	int i;
 
 //todo: [USGLRenderDevice::UpdateGammaTables] Shouldn't need to keep gamma >= 1
 //	if (Gamma<1.0f)
 //		Gamma=1.0f;
 
-	for (int i=0;i<0x100;i++)
+	for (i=0;i<0x100;i++)
 	{
 		GammaTable[i]=GammaAdjustValue(i,Gamma);
 	}

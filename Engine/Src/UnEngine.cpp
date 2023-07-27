@@ -144,7 +144,7 @@ void UEngine::Flush()
 //
 // Tick rate.
 //
-INT UEngine::GetMaxTickRate()
+INT_UNREAL_32S UEngine::GetMaxTickRate()
 {
 	guard(UEngine::GetMaxTickRate);
 	return 0;
@@ -240,7 +240,7 @@ int	UEngine::InputEvent( UViewport* Viewport, EInputKey iKey, EInputAction State
 	unguard;
 }
 
-INT UEngine::ChallengeResponse( INT Challenge )
+INT_UNREAL_32S UEngine::ChallengeResponse( INT_UNREAL_32S Challenge )
 {
 	guard(UEngine::ChallengeResponse);
 	return 0;

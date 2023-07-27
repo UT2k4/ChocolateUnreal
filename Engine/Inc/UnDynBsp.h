@@ -22,7 +22,7 @@ public:
 	// Public operations:
 	virtual void Update( AActor *Actor ) = 0;
 	virtual void Flush( AActor *Actor ) = 0;
-	virtual int SurfIsDynamic( INT iSurf ) = 0;
+	virtual int SurfIsDynamic( INT_UNREAL_32S iSurf ) = 0;
 	virtual void Exit() = 0;
 };
 ENGINE_API FMovingBrushTrackerBase* GNewBrushTracker( ULevel* Level );

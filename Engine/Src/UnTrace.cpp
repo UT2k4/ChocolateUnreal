@@ -75,14 +75,14 @@ struct FBoxCheckInfo
 	FCoords			Coords;
 	FVector			Extent;
 	DWORD			ExtraFlags;
-	INT				NumHulls;
+	INT_UNREAL_32S				NumHulls;
 	FVector			Min,Max,LocalHit;
 	FLOAT			T0,T1;
 
 	// Hull info.
 	FPlane			Hulls[64];
-	INT				Flags[64];
-	const INT		*HullNodes;
+	INT_UNREAL_32S				Flags[64];
+	const INT_UNREAL_32S		*HullNodes;
 
 	// Constructor.
 	FBoxCheckInfo
@@ -151,9 +151,10 @@ struct FBoxCheckInfo
 #define CLIP_COLLISION_PRIMITIVE \
 { \
 	guardSlow(CLIP_COLLISION_PRIMITIVE); \
+	int i; \
 	/* Check collision against hull planes. */ \
 	FVector Hit=FVector(0,0,0); \
-	for( int i=0; i<NumHulls; i++ ) \
+	for( i=0; i<NumHulls; i++ ) \
 		if( !ClipTo( Hulls[i], HullNodes[i] & ~0x40000000) ) \
 			goto NoBlock; \
 	\
@@ -174,7 +175,7 @@ struct FBoxCheckInfo
 		for( int j=0; j<i; j++ ) \
 		{ \
 			/* Convolve with edge. */ \
-			INT Or2 = Flags[i] | Flags[j]; \
+			INT_UNREAL_32S Or2 = Flags[i] | Flags[j]; \
 			CONVOLVE_EDGE(1,0,0,CV_XM|CV_XP); \
 			CONVOLVE_EDGE(0,1,0,CV_YM|CV_YP); \
 			CONVOLVE_EDGE(0,0,1,CV_ZM|CV_ZP); \
@@ -212,7 +213,7 @@ struct FBoxPointCheckInfo : public FBoxCheckInfo
 	{}
 
 	// Functions.
-	int ClipTo( const FPlane &Hull, INT Item )
+	int ClipTo( const FPlane &Hull, INT_UNREAL_32S Item )
 	{
 		FLOAT Push = FBoxPushOut( Hull, Extent );
 		FLOAT Dist = Hull.PlaneDot(Point);
@@ -228,7 +229,7 @@ struct FBoxPointCheckInfo : public FBoxCheckInfo
 		}
 		return Dist < Push;
 	}
-	UBOOL BoxPointCheck( INT iParent, INT iNode, UBOOL Outside )
+	UBOOL BoxPointCheck( INT_UNREAL_32S iParent, INT_UNREAL_32S iNode, UBOOL Outside )
 	{
 		UBOOL Result = 1;
 		while( iNode != INDEX_NONE )
@@ -306,7 +307,7 @@ UBOOL UModel::PointCheck
 		else
 		{
 			// Perform simple point check.
-			INT iPrevNode = INDEX_NONE, iNode=0;
+			INT_UNREAL_32S iPrevNode = INDEX_NONE, iNode=0;
 			UBOOL IsFront=0;
 			FCoords Coords = Owner ? Owner->ToWorld() : GMath.UnitCoords;
 			do
@@ -337,8 +338,8 @@ UBOOL LineCheck
 	FCheckResult&	Hit,
 	UModel&			Model,
 	const FCoords*	Coords,
-	INT  			iHit,
-	INT				iNode,
+	INT_UNREAL_32S  			iHit,
+	INT_UNREAL_32S				iNode,
 	FVector			End, 
 	FVector			Start,
 	UBOOL			Outside,
@@ -371,7 +372,7 @@ UBOOL LineCheck
 		{
 			// Line is split and guranteed to be non-parallel to plane, so TimeDenominator != 0.
 			FVector Middle     = Start + (Start-End) * (Dist1/(Dist2-Dist1));
-			INT     FrontFirst = Dist1 > 0.0;
+			INT_UNREAL_32S     FrontFirst = Dist1 > 0.0;
 
 			// Recurse with front part.
 			if( !LineCheck( Hit, Model, Coords, iHit, Node->iChild[FrontFirst], Middle, Start, Node->ChildOutside(FrontFirst,Outside,InNodeFlags), InNodeFlags ) )
@@ -437,7 +438,7 @@ struct FBoxLineCheckInfo : public FBoxCheckInfo
 	{}
 
 	// Tracer.
-	UBOOL ClipTo( const FPlane& Hull, INT Item )
+	UBOOL ClipTo( const FPlane& Hull, INT_UNREAL_32S Item )
 	{
 		guardSlow(ClipTo);
 		FLOAT PushOut = FBoxPushOut( Hull, Extent );
@@ -457,7 +458,7 @@ struct FBoxLineCheckInfo : public FBoxCheckInfo
 		return T0 < T1;
 		unguardSlow;
 	}
-	void BoxLineCheck( INT iParent, INT iNode, UBOOL IsFront, UBOOL Outside )
+	void BoxLineCheck( INT_UNREAL_32S iParent, INT_UNREAL_32S iNode, UBOOL IsFront, UBOOL Outside )
 	{
 		guardSlow(BoxLineCheck);
 		while( iNode != INDEX_NONE )
@@ -587,7 +588,7 @@ FPointRegion UModel::PointRegion( AZoneInfo* Zone, FVector Location ) const
 	if( Nodes->Num() ) 
 	{
 		UBOOL Outside=RootOutside, IsFront=0;
-		INT iNode=0, iParent=0;
+		INT_UNREAL_32S iNode=0, iParent=0;
 		while( iNode != INDEX_NONE )
 		{
 			const FBspNode& Node = Nodes->Element(iNode);
@@ -618,15 +619,15 @@ static FLOAT FindNearestVertex
 	const FVector	&SourcePoint,
 	FVector			&DestPoint, 
 	FLOAT			MinRadius, 
-	INT				iNode, 
-	INT				&pVertex
+	INT_UNREAL_32S				iNode, 
+	INT_UNREAL_32S				&pVertex
 )
 {
 	FLOAT ResultRadius = -1.0;
 	while( iNode != INDEX_NONE )
 	{
 		const FBspNode	*Node	= &Model.Nodes->Element(iNode);
-		INT			    iBack   = Node->iBack;
+		INT_UNREAL_32S			    iBack   = Node->iBack;
 		FLOAT PlaneDist = Node->Plane.PlaneDot( SourcePoint );
 		if( PlaneDist>=-MinRadius && Node->iFront!=INDEX_NONE )
 		{
@@ -684,7 +685,7 @@ FLOAT UModel::FindNearestVertex
 	const FVector	&SourcePoint,
 	FVector			&DestPoint,
 	FLOAT			MinRadius, 
-	INT				&pVertex
+	INT_UNREAL_32S				&pVertex
 ) const
 {
 	guard(UModel::FindNearestVertex);
@@ -699,7 +700,7 @@ FLOAT UModel::FindNearestVertex
 //
 // Recursive worker function for UModel::PrecomputeSphereFilter.
 //
-void PrecomputeSphereFilter( UModel& Model, INT iNode, const FPlane& Sphere )
+void PrecomputeSphereFilter( UModel& Model, INT_UNREAL_32S iNode, const FPlane& Sphere )
 {
 	while( iNode != INDEX_NONE )
 	{

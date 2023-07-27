@@ -62,9 +62,9 @@ void USoftwareRenderDevice::Draw2DLine
 
 		// Depth cued line drawer.
 		#define DEPTHSETUP(Arclen) FixDG = (FixG2-FixG1)/Arclen;
-		INT FixG1 = ::Clamp( appRound(P1.Z * 65536.0 * 10000.0), 100*65536, 255*65536 );
-		INT FixG2 = ::Clamp( appRound(P2.Z * 65536.0 * 10000.0), 100*65536, 255*65536 );
-		INT FixDG;
+		INT_UNREAL_32S FixG1 = ::Clamp( appRound(P1.Z * 65536.0 * 10000.0), 100*65536, 255*65536 );
+		INT_UNREAL_32S FixG2 = ::Clamp( appRound(P2.Z * 65536.0 * 10000.0), 100*65536, 255*65536 );
+		INT_UNREAL_32S FixDG;
 		if( Viewport->ColorBytes == 1 )
 		{
 			#define DRAWPIXEL(Dest) *(BYTE*)(Dest)=ColorTab.PtrBYTE[Unfix(FixG1 += FixDG)];
@@ -104,7 +104,7 @@ void USoftwareRenderDevice::Draw2DLine
 		// Flat shaded line drawer.
 		if( Viewport->ColorBytes==1 )
 		{
-			INT NewColor = Color.A-16;
+			INT_UNREAL_32S NewColor = Color.A-16;
 			#define DRAWPIXEL(Dest) *(Dest)=NewColor
 			#define ASMPIXEL mov [edi],al
 			#define SHIFT 0
@@ -161,10 +161,10 @@ void USoftwareRenderDevice::Draw2DPoint
 {
 	guard(URender::Draw2DPoint);
 	FColor Color(InColor);
-	INT X1 = appFloor(FX1);
-	INT X2 = appFloor(FX2);
-	INT Y1 = appFloor(FY1);
-	INT Y2 = appFloor(FY2);
+	INT_UNREAL_32S X1 = appFloor(FX1);
+	INT_UNREAL_32S X2 = appFloor(FX2);
+	INT_UNREAL_32S Y1 = appFloor(FY1);
+	INT_UNREAL_32S Y2 = appFloor(FY2);
 	if( X2<0 || Y2<0 || X1>=Frame->X || Y2>=Frame->Y )
 		return;
 
@@ -173,15 +173,15 @@ void USoftwareRenderDevice::Draw2DPoint
 	if( ++X2>Frame->X ) X2 = Frame->X; 
 	if( ++Y2>Frame->Y ) Y2 = Frame->Y;
 
-	INT         YL    = Y2-Y1;
-	INT         XL    = X2-X1;
+	INT_UNREAL_32S         YL    = Y2-Y1;
+	INT_UNREAL_32S         XL    = X2-X1;
 	FRainbowPtr Dest1 = Frame->Screen(X1,Y1);
 	if( Viewport->ColorBytes==1 )
 	{
-		for( INT Y=0; Y<YL; Y++ )
+		for( INT_UNREAL_32S Y=0; Y<YL; Y++ )
 		{
 			FRainbowPtr Dest = Dest1;
-			for( INT X=0; X<XL; X++ )
+			for( INT_UNREAL_32S X=0; X<XL; X++ )
 				*Dest.PtrBYTE++ = Color.A;
 			Dest1.PtrBYTE += Viewport->Stride;
 		}
@@ -189,10 +189,10 @@ void USoftwareRenderDevice::Draw2DPoint
 	else if( Viewport->ColorBytes==2 )
 	{
 		_WORD HiColor = (Viewport->Caps & CC_RGB565) ? Color.HiColor565() : Color.HiColor555();
-		for( INT Y=0; Y<YL; Y++ )
+		for( INT_UNREAL_32S Y=0; Y<YL; Y++ )
 		{
 			FRainbowPtr Dest = Dest1;
-			for( INT X=0; X<XL; X++ )
+			for( INT_UNREAL_32S X=0; X<XL; X++ )
 				*Dest.PtrWORD++ = HiColor;
 			Dest1.PtrWORD += Viewport->Stride;
 		}
@@ -200,10 +200,10 @@ void USoftwareRenderDevice::Draw2DPoint
 	else
 	{
 		DWORD TrueColor = Color.TrueColor();
-		for( INT Y=0; Y<YL; Y++ )
+		for( INT_UNREAL_32S Y=0; Y<YL; Y++ )
 		{
 			FRainbowPtr Dest = Dest1;
-			for( INT X=0; X<XL; X++ )
+			for( INT_UNREAL_32S X=0; X<XL; X++ )
 				*Dest.PtrDWORD++ = TrueColor;
 			Dest1.PtrDWORD += Viewport->Stride;
 		}

@@ -312,7 +312,7 @@ UEngine* InitEngine()
 		// Autodetect and ask about detected render devices.
 		static TArray<FRegistryObjectInfo> RenderDevices;
 		GObj.GetRegistryObjects( RenderDevices, UClass::StaticClass, URenderDevice::StaticClass, 0 );
-		for( INT i=0; i<RenderDevices.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<RenderDevices.Num(); i++ )
 		{
 			char File1[256], File2[256];
 			appSprintf( File1, "%s\\%s", SysDir, RenderDevices(i).Autodetect );
@@ -341,23 +341,6 @@ UEngine* InitEngine()
 		// Display first-run message.
 		::MessageBox( NULL, Localize("FirstRun","Starting"), Localize("FirstRun","Caption"), MB_OK|MB_ICONINFORMATION|MB_TASKMODAL );
 		SetConfigBool( "FirstRun", "FirstRun", 0 );
-	}
-	char CdPath[256]="", Check[256];
-	GetConfigString( "Engine.Engine", "CdPath", CdPath, ARRAY_COUNT(CdPath) );
-	appSprintf( Check, "%sTextures\\Palettes.utx", CdPath );
-	while( !GIsEditor && appFSize(Check)<=0 )
-	{
-		if( MessageBox
-		(
-			NULL,
-			"Please insert the Unreal CD-Rom into your drive and press OK to continue, or Cancel to exit.",
-			"Cd Required At Startup",
-			MB_TASKMODAL|MB_OKCANCEL
-		)==IDCANCEL )
-		{
-			GIsCriticalError = 1;
-			ExitProcess( 0 );
-		}
 	}
 
 	// Create the global engine object.
@@ -416,7 +399,7 @@ WINDOW_API void MainLoop( UEngine* Engine )
 		OldTime = NewTime;
 
 		// Enforce optional maximum tick rate.
-		INT MaxTickRate = Engine->GetMaxTickRate();
+		INT_UNREAL_32S MaxTickRate = Engine->GetMaxTickRate();
 		if( MaxTickRate )
 		{
 			FLOAT Delta = (1.0/MaxTickRate) - (appSeconds()-OldTime);

@@ -96,7 +96,7 @@ void FSceneNode::ComputeRenderSize()
 	guard(FSceneNode::ComputeRenderSize);
 
 	// Precomputes.
-	INT Angle	= (0.5 * 65536.0 / 360.0) * Viewport->Actor->FovAngle;
+	INT_UNREAL_32S Angle	= (0.5 * 65536.0 / 360.0) * Viewport->Actor->FovAngle;
 	FX 			= (FLOAT)X;
 	FY 			= (FLOAT)Y;
 	FX1 		= 65536.0 * (FX + 1);
@@ -259,7 +259,7 @@ UBOOL UViewport::IsWire()
 //
 // Lock the viewport for rendering.
 //
-UBOOL UViewport::Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT* HitSize )
+UBOOL UViewport::Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT_UNREAL_32S* HitSize )
 {
 	guard(UViewport::Lock);
 	check(RenDev);
@@ -348,7 +348,7 @@ UBOOL UViewport::Exec( const char* Cmd, FOutputDevice* Out )
 	}
 	else if( ParseCommand(&Cmd,"SHOWALL") )
 	{
-		for( INT i=0; i<Actor->XLevel->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Actor->XLevel->Num(); i++ )
 			if( Actor->XLevel->Element(i) )
 				Actor->XLevel->Element(i)->bHidden = 0;
 		return 1;
@@ -362,7 +362,7 @@ UBOOL UViewport::Exec( const char* Cmd, FOutputDevice* Out )
 		Str.Logf( "   Version: " __DATE__ " " __TIME__ "\r\n" );
 		Str.Logf( "   Player class: %s\r\n", Actor->GetClassName() );
 		Str.Logf( "   URL: %s\r\n", *UrlStr );
-		Str.Logf( "   Location: %i %i %i\r\n", (INT)Actor->Location.X, (INT)Actor->Location.Y, (INT)Actor->Location.Z );
+		Str.Logf( "   Location: %i %i %i\r\n", (INT_UNREAL_32S)Actor->Location.X, (INT_UNREAL_32S)Actor->Location.Y, (INT_UNREAL_32S)Actor->Location.Z );
 		if( Actor->Level->Game==NULL )
 		{
 			Str.Logf( "   Network client\r\n" );
@@ -379,7 +379,7 @@ UBOOL UViewport::Exec( const char* Cmd, FOutputDevice* Out )
 	{
 		// Screenshot.
 		char File[32];
-		for( INT i=0; i<256; i++ )
+		for( INT_UNREAL_32S i=0; i<256; i++ )
 		{
 			appSprintf( File, "Shot%04i.bmp", i );
 			if( appFSize(File) < 0 )
@@ -406,14 +406,14 @@ UBOOL UViewport::Exec( const char* Cmd, FOutputDevice* Out )
 				struct BITMAPINFOHEADER
 				{
 					DWORD  biSize; 
-					INT    biWidth;
-					INT    biHeight;
+					INT_UNREAL_32S    biWidth;
+					INT_UNREAL_32S    biHeight;
 					_WORD  biPlanes;
 					_WORD  biBitCount;
 					DWORD  biCompression;
 					DWORD  biSizeImage;
-					INT    biXPelsPerMeter; 
-					INT    biYPelsPerMeter;
+					INT_UNREAL_32S    biXPelsPerMeter; 
+					INT_UNREAL_32S    biYPelsPerMeter;
 					DWORD  biClrUsed;
 					DWORD  biClrImportant; 
 				} IH;
@@ -442,8 +442,8 @@ UBOOL UViewport::Exec( const char* Cmd, FOutputDevice* Out )
 				appFwrite( &IH, sizeof(IH), 1, F );
 
 				// Colors.
-				for( INT i=SizeY-1; i>=0; i-- )
-					for( INT j=0; j<SizeX; j++ )
+				for( INT_UNREAL_32S i=SizeY-1; i>=0; i-- )
+					for( INT_UNREAL_32S j=0; j<SizeX; j++ )
 						appFwrite( &Buf[i*SizeX+j], 3, 1, F );
 
 				// Success.
@@ -465,7 +465,7 @@ UBOOL UViewport::Exec( const char* Cmd, FOutputDevice* Out )
 	}
 	else if( ParseCommand(&Cmd,"RMODE") )
 	{
-		INT Mode = appAtoi(Cmd);
+		INT_UNREAL_32S Mode = appAtoi(Cmd);
 		if( Mode>REN_None && Mode<REN_MAX )
 			Actor->RendMap = Mode;
 		return 1;
@@ -529,7 +529,7 @@ void UViewport::ExecMacro( const char* Filename, FOutputDevice* Out )
 //
 // Output a message on the viewport's console.
 //
-void UViewport::WriteBinary( const void* Data, INT Length, EName MsgType )
+void UViewport::WriteBinary( const void* Data, INT_UNREAL_32S Length, EName MsgType )
 {
 	guard(UViewport::WriteBinary);
 
@@ -568,7 +568,7 @@ void UViewport::ReadInput( FLOAT DeltaSeconds )
 //
 // Viewport hit-test pushing.
 //
-void UViewport::PushHit( const HHitProxy& Hit, INT Size )
+void UViewport::PushHit( const HHitProxy& Hit, INT_UNREAL_32S Size )
 {
 	guard(UViewport::PushHit);
 
@@ -598,7 +598,7 @@ void UViewport::PopHit( UBOOL bForce )
 //
 // Execute all hits in the hit buffer.
 //
-void UViewport::ExecuteHits( const FHitCause& Cause, BYTE* HitData, INT HitSize )
+void UViewport::ExecuteHits( const FHitCause& Cause, BYTE* HitData, INT_UNREAL_32S HitSize )
 {
 	guard(UViewport::ExecuteHits);
 

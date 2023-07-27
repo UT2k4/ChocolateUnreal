@@ -72,7 +72,7 @@ void UEditorEngine::DrawBoundingBox( FSceneNode* Frame, FBox* Bound, AActor* Act
 		P.X=B[i].X; P.Y=B[j].Y; P.Z=B[k].Z;
 		if( Render->Project( Frame, P, SX, SY, NULL ) )
 		{
-			if( Actor ) PUSH_HIT(Frame,HBrushVertex(CastChecked<ABrush>(Actor),P));
+			if( Actor ) PUSH_HIT(Frame,HBrushVertex,CastChecked<ABrush>(Actor),P);
 			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_ScaleBoxHi.Plane(), LINE_None, SX-1, SY-1, SX+1, SY+1 );
 			if( Actor ) POP_HIT(Frame);
 		}
@@ -225,7 +225,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 			FBox Box = Frame->Viewport->Actor->XLevel->Brush()->Brush->GetRenderBoundingBox( Frame->Viewport->Actor->XLevel->Brush(), 1 );
 			DrawBoundingBox( Frame, &Box, Frame->Viewport->Actor->XLevel->Brush() );
 		}
-		PUSH_HIT(Frame,HActor(Actor));
+		PUSH_HIT(Frame,HActor,Actor);
 	}
 	else if( Actor->IsMovingBrush() )
 	{
@@ -233,7 +233,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 		bDrawPivot    = Actor->bSelected;
 		bDrawVertices = Actor->bSelected;
 		bDrawSelected = Actor->bSelected;	
-		PUSH_HIT(Frame,HActor(Actor));
+		PUSH_HIT(Frame,HActor,Actor);
 	}
 	else if( Actor->IsStaticBrush() )
 	{
@@ -248,7 +248,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 		bDrawPivot    = Actor->bSelected;
 		bDrawVertices = Actor->bSelected;
 		bDrawSelected = Actor->bSelected;
-		PUSH_HIT(Frame,HActor(Actor));
+		PUSH_HIT(Frame,HActor,Actor);
 	}
 
 	// Get the polys.
@@ -272,7 +272,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 	PivColor    = WireColor;
 
 	// Transform and draw all FPolys.
-	INT NumTransformed = 0;
+	INT_UNREAL_32S NumTransformed = 0;
 	FPoly* EdPoly = &TransformedEdPolys[0];
 	for( int i=0; i<Brush->Polys->Num(); i++ )
 	{
@@ -311,7 +311,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 			{
       			if( Render->Project( Frame, *V1, X, Y, NULL ) )
 				{
-					PUSH_HIT(Frame,HBrushVertex(Actor,EdPoly->Vertex[j]));
+					PUSH_HIT(Frame,HBrushVertex,Actor,EdPoly->Vertex[j]);
          			Frame->Viewport->RenDev->Draw2DPoint( Frame, VertexColor, LINE_None, X-1, Y-1, X+1, Y+1 );
 					POP_HIT(Frame);
          		}
@@ -323,7 +323,7 @@ void UEditorEngine::DrawLevelBrush( FSceneNode* Frame, ABrush* Actor, UBOOL bSta
 		Vertex = -Actor->PrePivot.TransformVectorBy(Coords) + Location;
 		if( Render->Project( Frame, Vertex, X, Y, NULL ) )
 		{
-			PUSH_HIT(Frame,HBrushVertex(Actor,Vertex));
+			PUSH_HIT(Frame,HBrushVertex,Actor,Vertex);
 			Frame->Viewport->RenDev->Draw2DPoint( Frame, VertexColor, LINE_None, X-1, Y-1, X+1, Y+1 );
 			POP_HIT(Frame);
 		}
@@ -343,7 +343,7 @@ void UEditorEngine::DrawLevelBrushes( FSceneNode* Frame, UBOOL bStatic, UBOOL bD
 	ULevel* Level=Frame->Viewport->Actor->XLevel;
 	for( DWORD bStaticPass=0; bStaticPass<2; bStaticPass++ )
 	{
-		for( INT iActor=1; iActor<Level->Num(); iActor++ )
+		for( INT_UNREAL_32S iActor=1; iActor<Level->Num(); iActor++ )
 		{
 			AActor* Actor=Level->Actors(iActor);
 			if( Actor && Actor->IsBrush() && Actor->bStatic!=bStaticPass )
@@ -364,14 +364,14 @@ void UEditorEngine::DrawLevelBrushes( FSceneNode* Frame, UBOOL bStatic, UBOOL bD
 void UEditorEngine::DrawGridSection
 (
 	FSceneNode*	Frame,
-	INT				ViewportLocX,
-	INT				ViewportSXR,
-	INT				ViewportGridY,
+	INT_UNREAL_32S				ViewportLocX,
+	INT_UNREAL_32S				ViewportSXR,
+	INT_UNREAL_32S				ViewportGridY,
 	FVector*		A,
 	FVector*		B,
 	FLOAT*			AX,
 	FLOAT*			BX,
-	INT				AlphaCase
+	INT_UNREAL_32S				AlphaCase
 )
 {
 	guard(UEditorEngine::DrawGridSection);
@@ -381,11 +381,11 @@ void UEditorEngine::DrawGridSection
 
 	FLOAT	Start = (int)((ViewportLocX - (ViewportSXR>>1) * Frame->Zoom)/ViewportGridY) - 1.0;
 	FLOAT	End   = (int)((ViewportLocX + (ViewportSXR>>1) * Frame->Zoom)/ViewportGridY) + 1.0;
-	INT     Dist  = (int)(Frame->X * Frame->Zoom / ViewportGridY);
+	INT_UNREAL_32S     Dist  = (int)(Frame->X * Frame->Zoom / ViewportGridY);
 
 	// Figure out alpha interpolator for fading in the grid lines.
 	FLOAT Alpha;
-	INT IncBits=0;
+	INT_UNREAL_32S IncBits=0;
 	if( Dist+Dist >= Frame->X/4 )
 	{
 		while( (Dist>>IncBits) >= Frame->X/4 )
@@ -394,10 +394,10 @@ void UEditorEngine::DrawGridSection
 	}
 	else Alpha = 1.0;
 
-	INT iStart  = ::Max((int)Start,-32768/ViewportGridY) >> IncBits;
-	INT iEnd    = ::Min((int)End,  +32768/ViewportGridY) >> IncBits;
+	INT_UNREAL_32S iStart  = ::Max((int)Start,-32768/ViewportGridY) >> IncBits;
+	INT_UNREAL_32S iEnd    = ::Min((int)End,  +32768/ViewportGridY) >> IncBits;
 
-	for( INT i=iStart; i<iEnd; i++ )
+	for( INT_UNREAL_32S i=iStart; i<iEnd; i++ )
 	{
 		*AX = (i * ViewportGridY) << IncBits;
 		*BX = (i * ViewportGridY) << IncBits;
@@ -423,7 +423,7 @@ void UEditorEngine::DrawWireBackground( FSceneNode* Frame )
 	// If clicked on nothing else, clicked on backdrop.
 	FVector V;
 	Render->Deproject( Frame, Frame->Viewport->HitX+Frame->Viewport->HitXL/2, Frame->Viewport->HitY+Frame->Viewport->HitYL/2, V );
-	PUSH_HIT(Frame,HBackdrop(V));
+	PUSH_HIT(Frame,HBackdrop,V);
 	POP_HIT_FORCE(Frame);
 
 	// Vector defining worldbox lines.
@@ -437,7 +437,7 @@ void UEditorEngine::DrawWireBackground( FSceneNode* Frame )
 	FVector B7( 32768.0,-32767.0,-32767.0);
 	FVector B8(-32768.0,-32767.0,-32767.0);
 	FVector A,B;
-	INT i,j;
+	INT_UNREAL_32S i,j;
 
 	// Draw it.
 	if( Frame->Viewport->IsOrtho() )

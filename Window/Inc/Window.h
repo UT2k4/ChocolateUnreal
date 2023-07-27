@@ -71,7 +71,7 @@ public:
 	// Variables.
 	HWND hWnd;
 	FName PersistentName;
-	INT TopControlId;
+	INT_UNREAL_32S TopControlId;
 	UBOOL Destroyed;
 	WWindow* OwnerWindow;
 	FNotifyHook* NotifyHook;
@@ -82,8 +82,9 @@ public:
 	static TArray<WWindow*> Windows;
 	static LONG APIENTRY StaticProc( WNDPROC DefProc, HWND hWnd, UINT Message, UINT wParam, LONG lParam )
 	{
+		INT_UNREAL_32S i;
 		guard(WWindow::StaticProc);
-		for( INT i=0; i<Windows.Num(); i++ )
+		for( i=0; i<Windows.Num(); i++ )
 			if( Windows(i)->hWnd==hWnd )
 				break;
 		if( i==Windows.Num() && (Message==WM_NCCREATE || Message==WM_INITDIALOG) )
@@ -217,7 +218,7 @@ public:
 	{
 		guard(WWindow::GetText);
 		check(hWnd);
-		INT Length = GetLength();
+		INT_UNREAL_32S Length = GetLength();
 		char* Text = new char[Length+1];
 		SendMessage( *this, WM_GETTEXT, Length+1, (LPARAM)Text );
 		FString Result = FString( Text );
@@ -238,7 +239,7 @@ public:
 		GET_VARARGS(TempStr,Fmt);
 		SetText( TempStr );
 	}
-	virtual INT GetLength()
+	virtual INT_UNREAL_32S GetLength()
 	{
 		guard(WWindow::GetLength);
 		check(hWnd);
@@ -257,11 +258,11 @@ public:
 	{}
 	virtual void OnKillFocus( HWND hWndGaininFocus )
 	{}
-	virtual void OnSize( DWORD Flags, INT NewX, INT NewY )
+	virtual void OnSize( DWORD Flags, INT_UNREAL_32S NewX, INT_UNREAL_32S NewY )
 	{}
 	virtual void OnActivate( UBOOL Active )
 	{}
-	virtual void OnChar( INT Char )
+	virtual void OnChar( INT_UNREAL_32S Char )
 	{}
 	virtual void OnPaste()
 	{}
@@ -341,8 +342,8 @@ public:
 			}
 
 			// Count identical windows already opened.
-			INT Count=0;
-			for( INT i=0; i<Windows.Num(); i++ )
+			INT_UNREAL_32S Count=0;
+			for( INT_UNREAL_32S i=0; i<Windows.Num(); i++ )
 			{
 				Count += Windows(i)->PersistentName==PersistentName;
 			}
@@ -408,9 +409,9 @@ class WINDOW_API FControlSnoop
 {
 public:
 	// FControlSnoop interface.
-	virtual void SnoopChar( WControl* Src, INT Char ) {}
-	virtual void SnoopKeyDown( WControl* Src, INT Char ) {}
-	virtual void SnoopLeftMouseDown( WControl* Src, INT X, INT Y ) {}
+	virtual void SnoopChar( WControl* Src, INT_UNREAL_32S Char ) {}
+	virtual void SnoopKeyDown( WControl* Src, INT_UNREAL_32S Char ) {}
+	virtual void SnoopLeftMouseDown( WControl* Src, INT_UNREAL_32S X, INT_UNREAL_32S Y ) {}
 	virtual void SnoopButtonClick( const char* Text ) {}
 	virtual void SnoopThumbTrack() {}
 	virtual void SnoopThumbPosition() {}
@@ -427,12 +428,12 @@ class WINDOW_API WControl : public WWindow
 {
 public:
 	// Variables.
-	INT ControlId;
+	INT_UNREAL_32S ControlId;
 	virtual WNDPROC GetSuperProc()=0;
 	FControlSnoop* Snoop;
 
 	// Structors.
-	WControl( WWindow* InOwnerWindow, INT InId )
+	WControl( WWindow* InOwnerWindow, INT_UNREAL_32S InId )
 	:	WWindow		( NAME_None, InOwnerWindow )
 	,	ControlId	( InId ? InId : InOwnerWindow->TopControlId++)
 	,	Snoop		( NULL )
@@ -506,7 +507,7 @@ class WINDOW_API WLabel : public WControl
 	DECLARE_WINDOWSUBCLASS(WLabel,WControl)
 
 	// Constructor.
-	WLabel( WWindow* InOwner, INT InId=0 )
+	WLabel( WWindow* InOwner, INT_UNREAL_32S InId=0 )
 	: WControl( InOwner, InId )
 	{}
 
@@ -541,12 +542,12 @@ class WINDOW_API WButton : public WControl
 	DECLARE_WINDOWSUBCLASS(WButton,WControl)
 
 	// Constructor.
-	WButton( WWindow* InOwner, INT InId=0 )
+	WButton( WWindow* InOwner, INT_UNREAL_32S InId=0 )
 	: WControl( InOwner, InId )
 	{}
 
 	// WWindow interface.
-	void OpenWindow( UBOOL Visible, INT X, INT Y, INT XL, INT YL, const char* Text )
+	void OpenWindow( UBOOL Visible, INT_UNREAL_32S X, INT_UNREAL_32S Y, INT_UNREAL_32S XL, INT_UNREAL_32S YL, const char* Text )
 	{
 		guard(WButton::OpenWindow);
 		PerformCreateWindowEx
@@ -577,7 +578,7 @@ class WINDOW_API WComboBox : public WControl
 	DECLARE_WINDOWSUBCLASS(WComboBox,WControl)
 
 	// Constructor.
-	WComboBox( WWindow* InOwner, INT InId=0 )
+	WComboBox( WWindow* InOwner, INT_UNREAL_32S InId=0 )
 	: WControl( InOwner, InId )
 	{}
 
@@ -619,10 +620,10 @@ class WINDOW_API WComboBox : public WControl
 		SendMessage( *this, CB_ADDSTRING, 0, (LPARAM)Str );
 		unguard;
 	}
-	virtual FString GetString( INT Index )
+	virtual FString GetString( INT_UNREAL_32S Index )
 	{
 		guard(WComboBox::GetString);
-		INT Length = SendMessage( *this, CB_GETLBTEXTLEN, Index, 0 );
+		INT_UNREAL_32S Length = SendMessage( *this, CB_GETLBTEXTLEN, Index, 0 );
 		if( Length==CB_ERR )
 			Length = 0;
 		char* Text = new char[Length+1];
@@ -632,28 +633,28 @@ class WINDOW_API WComboBox : public WControl
 		return Result;
 		unguard;
 	}
-	virtual INT GetCount()
+	virtual INT_UNREAL_32S GetCount()
 	{
 		guard(WComboBox::GetCount);
 		return SendMessage( *this, CB_GETCOUNT, 0, 0 );
 		unguard;
 	}
-	virtual void SetCurrent( INT Index )
+	virtual void SetCurrent( INT_UNREAL_32S Index )
 	{
 		guard(WComboBox::SetCurrent);
 		SendMessage( *this, CB_SETCURSEL, Index, 0 );
 		unguard;
 	}
-	virtual INT GetCurrent()
+	virtual INT_UNREAL_32S GetCurrent()
 	{
 		guard(WComboBox::GetCurrent);
 		return SendMessage( *this, CB_GETCURSEL, 0, 0 );
 		unguard;
 	}
-	virtual INT FindString( const char* String )
+	virtual INT_UNREAL_32S FindString( const char* String )
 	{
 		guard(WComboBox::FindString);
-		INT Index = SendMessage( *this, CB_FINDSTRING, -1, (LPARAM)String );
+		INT_UNREAL_32S Index = SendMessage( *this, CB_FINDSTRING, -1, (LPARAM)String );
 		return Index!=CB_ERR ? Index : -1;
 		unguard;
 	}
@@ -669,7 +670,7 @@ class WINDOW_API WEdit : public WControl
 	DECLARE_WINDOWSUBCLASS(WEdit,WControl)
 
 	// Constructor.
-	WEdit( WWindow* InOwner, INT InId=0 )
+	WEdit( WWindow* InOwner, INT_UNREAL_32S InId=0 )
 	: WControl( InOwner, InId )
 	{}
 
@@ -708,28 +709,28 @@ class WINDOW_API WEdit : public WControl
 		SendMessage( *this, EM_SETREADONLY, ReadOnly, 0 );
 		unguard;
 	}
-	INT GetLineCount()
+	INT_UNREAL_32S GetLineCount()
 	{
 		guard(WEdit::GetLineCount);
 		check(hWnd);
 		return SendMessage( *this, EM_GETLINECOUNT, 0, 0 );
 		unguard;
 	}
-	INT GetLineIndex( INT Line )
+	INT_UNREAL_32S GetLineIndex( INT_UNREAL_32S Line )
 	{
 		guard(WEdit::GetLineIndex);
 		check(hWnd);
 		return SendMessage( *this, EM_LINEINDEX, Line, 0 );
 		unguard;
 	}
-	void GetSelection( INT& Start, INT& End )
+	void GetSelection( INT_UNREAL_32S& Start, INT_UNREAL_32S& End )
 	{
 		guard(WEdit::GetSelection);
 		check(hWnd);
 		SendMessage( *this, EM_GETSEL, (WPARAM)&Start, (LPARAM)&End );
 		unguard;
 	}
-	void SetSelection( INT Start, INT End )
+	void SetSelection( INT_UNREAL_32S Start, INT_UNREAL_32S End )
 	{
 		guard(WEdit::SetSelection);
 		check(hWnd);
@@ -816,7 +817,7 @@ class WINDOW_API WTerminal : public WTerminalBase, public FOutputDevice
 	// Variables.
 	WEditTerminal Display;
 	FExec* Exec;
-	INT MaxLines, SlackLines;
+	INT_UNREAL_32S MaxLines, SlackLines;
 	char Typing[256];
 
 	// Structors.
@@ -831,19 +832,19 @@ class WINDOW_API WTerminal : public WTerminalBase, public FOutputDevice
 	}
 
 	// FOutputDevice interface.
-	void WriteBinary( const void* Data, INT Length, EName MsgType=NAME_None )
+	void WriteBinary( const void* Data, INT_UNREAL_32S Length, EName MsgType=NAME_None )
 	{
 		guard(WTerminal::WriteBinary);
 
 		Display.SetRedraw( 0 );
-		INT LineCount = Display.GetLineCount();
+		INT_UNREAL_32S LineCount = Display.GetLineCount();
 		if( LineCount > MaxLines )
 		{
-			INT NewLineCount = Max(LineCount-SlackLines,0);
-			INT Index = Display.GetLineIndex( LineCount-NewLineCount );
+			INT_UNREAL_32S NewLineCount = Max(LineCount-SlackLines,0);
+			INT_UNREAL_32S Index = Display.GetLineIndex( LineCount-NewLineCount );
 			Display.SetSelection( 0, Index );
 			Display.SetSelectedText( "" );
-			INT Length = Display.GetLength();
+			INT_UNREAL_32S Length = Display.GetLength();
 			Display.SetSelection( Length, Length );
 		}
 
@@ -892,7 +893,7 @@ class WINDOW_API WTerminal : public WTerminalBase, public FOutputDevice
 		SetFocus( Display );
 		unguard;
 	}
-	void OnSize( DWORD Flags, INT NewX, INT NewY )
+	void OnSize( DWORD Flags, INT_UNREAL_32S NewX, INT_UNREAL_32S NewY )
 	{
 		guard(WTerminal::OnSize);
 		WWindow::OnSize( Flags, NewX, NewY );
@@ -916,7 +917,7 @@ class WINDOW_API WTerminal : public WTerminalBase, public FOutputDevice
 	{
 		guard(WTerminal::TypeChar);
 		SelectTyping();
-		INT Length = strlen(Typing);
+		INT_UNREAL_32S Length = strlen(Typing);
 		if( Ch>=32 )
 		{
 			if( Length<ARRAY_COUNT(Typing)-1 )
@@ -957,7 +958,7 @@ class WINDOW_API WTerminal : public WTerminalBase, public FOutputDevice
 	void SelectTyping()
 	{
 		guard(WTerminal::SelectTyping);
-		INT Length = Display.GetLength();
+		INT_UNREAL_32S Length = Display.GetLength();
 		Display.SetSelection( Max(Length-strlen(Typing),0U), Length );
 		unguard;
 	}
@@ -1026,16 +1027,16 @@ class WINDOW_API WDialog : public WWindow
 {
 public:
 	// Variables.
-	INT DialogId;
+	INT_UNREAL_32S DialogId;
 
 	// Functions.
-	WDialog( FName InPersistentName, INT InDialogId, WWindow* InOwnerWindow=NULL )
+	WDialog( FName InPersistentName, INT_UNREAL_32S InDialogId, WWindow* InOwnerWindow=NULL )
 	: WWindow( InPersistentName, InOwnerWindow, StaticDlgReturnZero )
 	, DialogId( InDialogId )
 	{}
 
 	// WDialog interface.
-	virtual INT DoModal()
+	virtual INT_UNREAL_32S DoModal()
 	{
 		guard(WDialog::DoModal);
 		check(hWnd==NULL);
@@ -1046,7 +1047,7 @@ public:
 	virtual UBOOL OnInitDialog( HWND hWndControl )
 	{
 		guard(WDialog::OnInitDialog);
-		for( INT i=0; i<Controls.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Controls.Num(); i++ )
 		{
 			// Bind all child controls.
 			WControl* Control = Controls(i);
@@ -1061,7 +1062,7 @@ public:
 	{
 		return 0;
 	}
-	static INT APIENTRY StaticDlgProc( HWND hWnd, UINT Message, UINT wParam, LONG lParam )
+	static INT_UNREAL_32S APIENTRY StaticDlgProc( HWND hWnd, UINT Message, UINT wParam, LONG lParam )
 	{
 		guard(WWindow::StaticWndProc);
 		return StaticProc( StaticDlgReturnZero, hWnd, Message, wParam, lParam );
@@ -1137,7 +1138,7 @@ class WINDOW_API WTrackBar : public WControl
 	DECLARE_WINDOWSUBCLASS(WTrackBar,WControl)
 
 	// Constructor.
-	WTrackBar( WWindow* InOwner, INT InId=0 )
+	WTrackBar( WWindow* InOwner, INT_UNREAL_32S InId=0 )
 	: WControl( InOwner, InId )
 	{}
 
@@ -1161,25 +1162,25 @@ class WINDOW_API WTrackBar : public WControl
 	}
 
 	// WTrackBar interface.
-	void SetTicFreq( INT TicFreq )
+	void SetTicFreq( INT_UNREAL_32S TicFreq )
 	{
 		guard(WTrackBar::SetTicFreq);
 		SendMessage( *this, TBM_SETTICFREQ, TicFreq, 0 );
 		unguard;
 	}
-	void SetRange( INT Min, INT Max )
+	void SetRange( INT_UNREAL_32S Min, INT_UNREAL_32S Max )
 	{
 		guard(WTrackBar::SetRange);
 		SendMessage( *this, TBM_SETRANGE, 1, MAKELONG(Min,Max) );
 		unguard;
 	}
-	void SetPos( INT Pos )
+	void SetPos( INT_UNREAL_32S Pos )
 	{
 		guard(WTrackBar::SetPos);
 		SendMessage( *this, TBM_SETPOS, 1, Pos );
 		unguard;
 	}
-	INT GetPos()
+	INT_UNREAL_32S GetPos()
 	{
 		guard(WTrackBar::GetPos);
 		return SendMessage( *this, TBM_GETPOS, 0, 0 );
@@ -1197,7 +1198,7 @@ class WINDOW_API WListBox : public WControl
 	DECLARE_WINDOWSUBCLASS(WListBox,WControl)
 
 	// Constructor.
-	WListBox( WWindow* InOwner, INT InId=0 )
+	WListBox( WWindow* InOwner, INT_UNREAL_32S InId=0 )
 	: WControl( InOwner, InId )
 	{
 		check(OwnerWindow);
@@ -1224,63 +1225,63 @@ class WINDOW_API WListBox : public WControl
 	}
 
 	// WListBox interface.
-	void* GetItemData( INT Index )
+	void* GetItemData( INT_UNREAL_32S Index )
 	{
 		guard(WListBox::GetItemData);
 		return (void*)SendMessage( *this, LB_GETITEMDATA, Index, 0 );
 		unguard;
 	}
-	INT GetCurrent()
+	INT_UNREAL_32S GetCurrent()
 	{
 		guard(WListBox::GetCurrent);
 		return SendMessage( *this, LB_GETCARETINDEX, 0, 0 );
 		unguard;
 	}
-	void SetCurrent( INT Index, UBOOL bScrollIntoView )
+	void SetCurrent( INT_UNREAL_32S Index, UBOOL bScrollIntoView )
 	{
 		guard(WListBox::SetCurrent);
 		SendMessage( *this, LB_SETCURSEL, Index, 0 );
 		SendMessage( *this, LB_SETCARETINDEX, Index, bScrollIntoView );
 		unguard;
 	}
-	INT GetTop()
+	INT_UNREAL_32S GetTop()
 	{
 		guard(WListBox::GetTop);
 		return SendMessage( *this, LB_GETTOPINDEX, 0, 0 );
 		unguard;
 	}
-	void SetTop( INT Index )
+	void SetTop( INT_UNREAL_32S Index )
 	{
 		guard(WListBox::SetTop);
 		SendMessage( *this, LB_SETTOPINDEX, Index, 0 );
 		unguard;
 	}
-	void DeleteString( INT Index )
+	void DeleteString( INT_UNREAL_32S Index )
 	{
 		guard(WListBox::DeleteItem);
 		SendMessage( *this, LB_DELETESTRING, Index, 0 );
 		unguard;
 	}
-	INT GetCount()
+	INT_UNREAL_32S GetCount()
 	{
 		guard(WListBox::GetCount);
 		return SendMessage( *this, LB_GETCOUNT, 0, 0 );
 		unguard;
 	}
-	INT GetItemHeight( INT Index )
+	INT_UNREAL_32S GetItemHeight( INT_UNREAL_32S Index )
 	{
 		guard(WListBox::GetItemHeight);
 		return SendMessage( *this, LB_GETITEMHEIGHT, Index, 0 );
 		unguard;
 	}
-	INT ItemFromPoint( INT X, INT Y )
+	INT_UNREAL_32S ItemFromPoint( INT_UNREAL_32S X, INT_UNREAL_32S Y )
 	{
 		guard(WListBox::ItemFromPoint);
 		DWORD Result=SendMessage( *this, LB_ITEMFROMPOINT, 0, MAKELPARAM(X,Y) );
 		return HIWORD(Result) ? -1 : LOWORD(Result);
 		unguard;
 	}
-	RECT GetItemRect( INT Index )
+	RECT GetItemRect( INT_UNREAL_32S Index )
 	{
 		guard(WListBox::GetItemRect);
 		RECT R; R.left=R.right=R.top=R.bottom=0;
@@ -1300,22 +1301,22 @@ class WINDOW_API WListBox : public WControl
 		SendMessage( *this, LB_ADDSTRING, 0, (LPARAM)C );
 		unguard;
 	}
-	void InsertString( INT Index, void* C )
+	void InsertString( INT_UNREAL_32S Index, void* C )
 	{
 		guard(WListBox::AddInsert);
 		SendMessage( *this, LB_INSERTSTRING, Index, (LPARAM)C );
 		unguard;
 	}
-	INT FindString( void* C )
+	INT_UNREAL_32S FindString( void* C )
 	{
 		guard(WListBox::FindString);
 		return SendMessage( *this, LB_FINDSTRING, -1, (LPARAM)C );
 		unguard;
 	}
-	INT FindStringChecked( void* C )
+	INT_UNREAL_32S FindStringChecked( void* C )
 	{
 		guard(WListBox::FindStringChecked);
-		INT Result=SendMessage( *this, LB_FINDSTRING, -1, (LPARAM)C );
+		INT_UNREAL_32S Result=SendMessage( *this, LB_FINDSTRING, -1, (LPARAM)C );
 		check(Result!=LB_ERR);
 		return Result;
 		unguard;
@@ -1338,7 +1339,7 @@ class WINDOW_API WItemBox : public WListBox
 	DECLARE_WINDOWCLASS(WItemBox,WListBox)
 
 	// Constructors.
-	WItemBox( WWindow* InOwner, INT InId=0)
+	WItemBox( WWindow* InOwner, INT_UNREAL_32S InId=0)
 	: WListBox( InOwner, InId )
 	{
 		check(OwnerWindow);
@@ -1379,11 +1380,11 @@ public:
 
 	// WPropertiesBase interface.
 	virtual FTreeItem* GetRoot()=0;
-	virtual INT GetDividerWidth()=0;
+	virtual INT_UNREAL_32S GetDividerWidth()=0;
 	virtual void ResizeList()=0;
 	virtual void SetItemFocus( UBOOL FocusCurrent )=0;
 	virtual void ForceRefresh()=0;
-	virtual class FTreeItem* GetListItem( INT i )
+	virtual class FTreeItem* GetListItem( INT_UNREAL_32S i )
 	{
 		guard(WProperties::GetListItem);
 		FTreeItem* Result = (FTreeItem*)List.GetItemData(i);
@@ -1398,7 +1399,7 @@ public:
 -----------------------------------------------------------------------------*/
 
 // QSort comparator.
-inline INT Compare( const class FTreeItem* T1, const class FTreeItem* T2 );
+inline INT_UNREAL_32S Compare( const class FTreeItem* T1, const class FTreeItem* T2 );
 
 // Base class of list items.
 class WINDOW_API FTreeItem : public FControlSnoop
@@ -1410,7 +1411,7 @@ public:
 	UBOOL					Expandable;
 	UBOOL					Expanded;
 	UBOOL					Sorted;
-	INT						ButtonWidth;
+	INT_UNREAL_32S						ButtonWidth;
 	TArray<WButton>			Buttons;
 	TArray<FTreeItem*>		Children;
 
@@ -1436,7 +1437,7 @@ public:
 	void EmptyChildren()
 	{
 		guard(FTreeItem::EmptyChildren);
-		for( INT i=0; i<Children.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Children.Num(); i++ )
 			delete Children(i);
 		Children.Empty();
 		unguard;
@@ -1482,28 +1483,28 @@ public:
 		HDC hDC=GetDC(*OwnerProperties);
 		GetTextExtentPoint32( hDC, Text, appStrlen(Text), &Size ); 
 		ReleaseDC(*OwnerProperties,hDC);
-		INT Width = Size.cx + 2;
+		INT_UNREAL_32S Width = Size.cx + 2;
 		WButton* Button = new(Buttons)WButton(&OwnerProperties->List);
 		Button->OpenWindow( 1, Rect.right-Width, Rect.top, Width, Rect.bottom-Rect.top, Text );
 		ButtonWidth += Width;
 		unguard;
 	}
-	virtual void OnItemLeftMouseDown( INT X, INT Y )
+	virtual void OnItemLeftMouseDown( INT_UNREAL_32S X, INT_UNREAL_32S Y )
 	{
 		guard(FTreeItem::OnItemLeftMouseDown);
 		ToggleExpansion();
 		unguard;
 	}
-	INT GetIndent()
+	INT_UNREAL_32S GetIndent()
 	{
 		guard(FTreeItem::GetIndent);
-		INT Result=0;
+		INT_UNREAL_32S Result=0;
 		for( FTreeItem* Test=Parent; Test!=OwnerProperties->GetRoot(); Test=Test->Parent )
 			Result++;
 		return Result;
 		unguard;
 	}
-	virtual INT GetIndentPixels()
+	virtual INT_UNREAL_32S GetIndentPixels()
 	{
 		guard(FTreeItem::GetIndentPixels);
 		return 10*GetIndent();
@@ -1527,12 +1528,13 @@ public:
 	{
 		guard(FTreeItem::Collapse);
 		OwnerProperties->SetItemFocus( 0 );
-		INT Index = OwnerProperties->List.FindStringChecked( this );
-		INT Count = OwnerProperties->List.GetCount();
+		INT_UNREAL_32S Index = OwnerProperties->List.FindStringChecked( this );
+		INT_UNREAL_32S Count = OwnerProperties->List.GetCount();
+		FTreeItem* Check;
 		while( Index+1<Count )
 		{
 			FTreeItem* NextItem = OwnerProperties->GetListItem(Index+1);
-			for( FTreeItem* Check=NextItem->Parent; Check && Check!=this; Check=Check->Parent );
+			for( Check=NextItem->Parent; Check && Check!=this; Check=Check->Parent );
 			if( !Check )
 				break;
 			NextItem->Expanded = 0;
@@ -1550,12 +1552,12 @@ public:
 			appSort( &Children(0), Children.Num() );
 		if( this==OwnerProperties->GetRoot() )
 		{
-			for( INT i=0; i<Children.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Children.Num(); i++ )
 				OwnerProperties->List.AddString( Children(i) );
 		}
 		else
 		{
-			for( INT i=Children.Num()-1; i>=0; i-- )
+			for( INT_UNREAL_32S i=Children.Num()-1; i>=0; i-- )
 				OwnerProperties->List.InsertStringAfter( this, Children(i) );
 		}
 		OwnerProperties->SetItemFocus( 0 );
@@ -1585,13 +1587,13 @@ public:
 		ToggleExpansion();
 		unguard;
 	}
-	virtual BYTE* GetReadAddress( UProperty* Property, INT Offset )
+	virtual BYTE* GetReadAddress( UProperty* Property, INT_UNREAL_32S Offset )
 	{
 		guard(FTreeList::GetReadAddress);
 		return Parent ? Parent->GetReadAddress(Property,Offset) : NULL;
 		unguard;
 	}
-	virtual void SetProperty( UProperty* Property, INT Offset, const char* Value )
+	virtual void SetProperty( UProperty* Property, INT_UNREAL_32S Offset, const char* Value )
 	{
 		guard(FTreeList::SetProperty);
 		if( Parent ) Parent->SetProperty( Property, Offset, Value );
@@ -1610,7 +1612,7 @@ public:
 		unguard;
 	}
 	virtual void Draw( HDC hDC, RECT Rect, UBOOL Selected )=0;
-	virtual INT GetHeight()=0;
+	virtual INT_UNREAL_32S GetHeight()=0;
 	virtual QWORD GetId() const=0;
 	virtual char* GetCaption( char* Result ) const=0;
 	virtual void OnItemHelp() {}
@@ -1618,14 +1620,14 @@ public:
 	virtual void SetValue( const char* Value ) {}
 
 	// FControlSnoop interface.
-	void SnoopChar( WControl* Src, INT Char )
+	void SnoopChar( WControl* Src, INT_UNREAL_32S Char )
 	{
 		guard(FTreeItem::SnoopChar);
 		if( Char==13 && Expandable )
 			ToggleExpansion();
 		unguard;
 	}
-	void SnoopKeyDown( WControl* Src, INT Char )
+	void SnoopKeyDown( WControl* Src, INT_UNREAL_32S Char )
 	{
 		guard(FTreeItem::SnoopChar);
 		if( Char==VK_UP || Char==VK_DOWN )
@@ -1637,7 +1639,7 @@ public:
 };
 
 // QSort comparator.
-inline INT Compare( const class FTreeItem* T1, const class FTreeItem* T2 )
+inline INT_UNREAL_32S Compare( const class FTreeItem* T1, const class FTreeItem* T2 )
 {
 	char S1[256], S2[256];
 	T1->GetCaption( S1 );
@@ -1651,8 +1653,8 @@ class WINDOW_API FPropertyItem : public FTreeItem
 public:
 	// Variables.
 	UProperty*      Property;
-	INT				Offset;
-	INT				ArrayIndex;
+	INT_UNREAL_32S				Offset;
+	INT_UNREAL_32S				ArrayIndex;
 	WEdit*			EditControl;
 	WTrackBar*		TrackControl;
 	WComboBox*		ComboControl;
@@ -1661,7 +1663,7 @@ public:
 	FName			Name;
 
 	// Constructors.
-	FPropertyItem( WPropertiesBase* InOwnerProperties, FTreeItem* InParent, UProperty* InProperty, FName InName, INT InOffset, INT InArrayIndex )
+	FPropertyItem( WPropertiesBase* InOwnerProperties, FTreeItem* InParent, UProperty* InProperty, FName InName, INT_UNREAL_32S InOffset, INT_UNREAL_32S InArrayIndex )
 	:	FTreeItem	    ( InOwnerProperties, InParent, (Cast<UStructProperty>(InProperty) && Cast<UStructProperty>(InProperty)->Struct->GetFName()!=NAME_Color && Cast<UStructProperty>(InProperty)->Struct->GetFName()!=NAME_DynamicString) || (InProperty->ArrayDim>1 && InArrayIndex==-1) )
 	,	Property		( InProperty )
 	,	Name			( InName )
@@ -1793,7 +1795,7 @@ public:
 		}
  		unguard;
 	}
-	INT GetHeight()
+	INT_UNREAL_32S GetHeight()
 	{
 		guard(FPropertyItem::GetHeigth);
 		return 16;
@@ -1876,7 +1878,7 @@ public:
 				}
 				else if( Property->IsA(UByteProperty::StaticClass) )
 				{
-					for( INT i=0; i<Cast<UByteProperty>(Property)->Enum->Names.Num(); i++ )
+					for( INT_UNREAL_32S i=0; i<Cast<UByteProperty>(Property)->Enum->Names.Num(); i++ )
 						ComboControl->AddString( *Cast<UByteProperty>(Property)->Enum->Names(i) );
 				}
 				else if( Property->IsA(UNameProperty::StaticClass) && Name==NAME_InitialState )
@@ -1884,7 +1886,7 @@ public:
 					TArray<FName> States;
 					GetStates( States );
 					ComboControl->AddString( *FName(NAME_None) );
-					for( INT i=0; i<States.Num(); i++ )
+					for( INT_UNREAL_32S i=0; i<States.Num(); i++ )
 						ComboControl->AddString( *States(i) );
 				}
 				else if( Cast<UClassProperty>(Property) && appStricmp(*Property->Category,"Drivers")==0 )
@@ -1892,7 +1894,7 @@ public:
 					UClassProperty* ClassProp = CastChecked<UClassProperty>(Property);
 					TArray<FRegistryObjectInfo> Classes;
 					GObj.GetRegistryObjects( Classes, UClass::StaticClass, ClassProp->MetaClass, 0 );
-					for( INT i=0; i<Classes.Num(); i++ )
+					for( INT_UNREAL_32S i=0; i<Classes.Num(); i++ )
 					{
 						char Path[256], *Str;
 						appStrcpy( Path, Classes(i).Object );
@@ -1979,7 +1981,7 @@ public:
 		{
 			// Expand array.
 			Sorted=0;
-			for( INT i=0; i<Property->ArrayDim; i++ )
+			for( INT_UNREAL_32S i=0; i<Property->ArrayDim; i++ )
 				Children.AddItem( new FPropertyItem( OwnerProperties, this, Property, Name, Offset + i*Property->GetElementSize(), i ) );
 		}
 		else if( (StructProperty=Cast<UStructProperty>(Property))!=NULL )
@@ -2001,7 +2003,7 @@ public:
 	}
 
 	// FControlSnoop interface.
-	void SnoopChar( WControl* Src, INT Char )
+	void SnoopChar( WControl* Src, INT_UNREAL_32S Char )
 	{
 		guard(FPropertyItem::SnoopChar);
 		if( Char==13 )
@@ -2168,7 +2170,7 @@ public:
 			}
 			else if( Property->IsA(UNameProperty::StaticClass) && Name==NAME_InitialState )
 			{
-				INT Index=ReadValue ? ComboControl->FindString( **(FName*)ReadValue ) : 0;
+				INT_UNREAL_32S Index=ReadValue ? ComboControl->FindString( **(FName*)ReadValue ) : 0;
 				ComboControl->SetCurrent( Index>=0 ? Index : 0 );
 			}
 			ComboChanged=0;
@@ -2220,7 +2222,7 @@ public:
 
  		unguard;
 	}
-	INT GetHeight()
+	INT_UNREAL_32S GetHeight()
 	{
 		guard(FHeaderItem::GetHeigth);
 		return 16;
@@ -2361,7 +2363,7 @@ class WINDOW_API WProperties : public WPropertiesBase
 		}
 		unguard;
 	}
-	void OnSize( DWORD Flags, INT NewX, INT NewY )
+	void OnSize( DWORD Flags, INT_UNREAL_32S NewX, INT_UNREAL_32S NewY )
 	{
 		guard(WProperties::OnSize);
 		SetItemFocus( 0 );
@@ -2428,12 +2430,12 @@ class WINDOW_API WProperties : public WPropertiesBase
 	}
 
 	// FControlSnoop interface.
-	void SnoopLeftMouseDown( WControl* Src, INT X, INT Y )
+	void SnoopLeftMouseDown( WControl* Src, INT_UNREAL_32S X, INT_UNREAL_32S Y )
 	{
 		guard(WProperties::SnoopLeftMouseDown);
 		if( Src==&List )
 		{
-			INT Index = List.ItemFromPoint( X, Y );
+			INT_UNREAL_32S Index = List.ItemFromPoint( X, Y );
 			if( Index>=0 )
 			{
 				FTreeItem* Item = GetListItem(Index);
@@ -2457,14 +2459,14 @@ class WINDOW_API WProperties : public WPropertiesBase
 			FocusItem->SnoopThumbPosition();
 		unguard;
 	}
-	void SnoopChar( WControl* Src, INT Char )
+	void SnoopChar( WControl* Src, INT_UNREAL_32S Char )
 	{
 		guard(WProperties::SnoopChar);
 		if( FocusItem )
 			FocusItem->SnoopChar( Src, Char );
 		unguard;
 	}
-	void SnoopKeyDown( WControl* Src, INT Char )
+	void SnoopKeyDown( WControl* Src, INT_UNREAL_32S Char )
 	{
 		guard(WProperties::SnoopChar);
 		if( Char==9 )
@@ -2481,7 +2483,7 @@ class WINDOW_API WProperties : public WPropertiesBase
 	}
 
 	// WPropertiesBase interface.
-	INT GetDividerWidth()
+	INT_UNREAL_32S GetDividerWidth()
 	{
 		guard(WProperties::GetDividerWidth);
 		return 128;
@@ -2514,7 +2516,7 @@ class WINDOW_API WProperties : public WPropertiesBase
 		RECT ClientRect;
 		GetClientRect( *this, &ClientRect ); 
 		RECT R; R.top=R.bottom=R.left=R.right=0;
-		for( INT i=List.GetCount()-1; i>=0; i-- )
+		for( INT_UNREAL_32S i=List.GetCount()-1; i>=0; i-- )
 			R.bottom += List.GetItemHeight( i );
 		AdjustWindowRect( &R, GetWindowLong(List,GWL_STYLE), 0 );
 		R.bottom+=4;//!!why?
@@ -2542,7 +2544,7 @@ class WINDOW_API WProperties : public WPropertiesBase
 			Remembered.Empty();
 			SavedTop=GetListItem(List.GetTop())->GetId();
 			SavedCurrent=GetListItem(List.GetCurrent())->GetId();
-			for( INT i=0; i<List.GetCount(); i++ )
+			for( INT_UNREAL_32S i=0; i<List.GetCount(); i++ )
 			{
 				FTreeItem* Item = GetListItem(i);
 				if( Item->Expanded )
@@ -2556,15 +2558,17 @@ class WINDOW_API WProperties : public WPropertiesBase
 		GetRoot()->Expanded=0;
 		GetRoot()->Expand();
 
+		INT_UNREAL_32S j;
+
 		// Restore expansion state of the items.
-		INT CurrentIndex=-1, TopIndex=-1;
-		for( INT i=0; i<List.GetCount(); i++ )
+		INT_UNREAL_32S CurrentIndex=-1, TopIndex=-1;
+		for( INT_UNREAL_32S i=0; i<List.GetCount(); i++ )
 		{
 			FTreeItem* Item = GetListItem(i);
 			QWORD      Id   = Item->GetId();
 			if( Item->Expandable && !Item->Expanded )
 			{
-				for( INT j=0; j<Remembered.Num(); j++ )
+				for( j=0; j<Remembered.Num(); j++ )
 					if( Remembered(j)==Id )
 						break;
 				if( j<Remembered.Num() )
@@ -2666,23 +2670,23 @@ public:
 	{}
 
 	// FTreeItem interface.
-	BYTE* GetReadAddress( UProperty* Property, INT Offset )
+	BYTE* GetReadAddress( UProperty* Property, INT_UNREAL_32S Offset )
 	{
 		guard(FObjectsItem::GetReadAddress);
 		if( !_Objects.Num() )
 			return NULL;
-		for( INT i=1; i<_Objects.Num(); i++ )
+		for( INT_UNREAL_32S i=1; i<_Objects.Num(); i++ )
 			if( !Property->Matches( (BYTE*)_Objects(0)+Offset-Property->Offset, (BYTE*)_Objects(i)+Offset-Property->Offset, 0 ) )
 				return NULL;
 		return (BYTE*)_Objects(0) + Offset;
 		unguard;
 	}
-	void SetProperty( UProperty* Property, INT Offset, const char* Value )
+	void SetProperty( UProperty* Property, INT_UNREAL_32S Offset, const char* Value )
 	{
 		guard(FObjectsItem::SetProperty);
 		if( OwnerProperties->NotifyHook )
 			OwnerProperties->NotifyHook->NotifyPreChange( OwnerProperties );
-		for( INT i=0; i<_Objects.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<_Objects.Num(); i++ )
 		{
 			Property->ImportText( Value, (BYTE*)_Objects(i) + Offset, 1 );
 			_Objects(i)->PostEditChange();
@@ -2698,7 +2702,7 @@ public:
 		for( TFieldIterator<UProperty> It(BaseClass); It; ++It )
 			if( AcceptFlags( It->PropertyFlags ) )
 				Categories.AddUniqueItem( It->Category );
-		for( INT i=0; i<Categories.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Categories.Num(); i++ )
 			Children.AddItem( new FCategoryItem(OwnerProperties,this,BaseClass,Categories(i),1) );
 		FTreeItem::Expand();
 		unguard;
@@ -2723,14 +2727,14 @@ public:
 	}
 
 	// FObjectsItem interface.
-	virtual void SetObjects( UObject** InObjects, INT Count )
+	virtual void SetObjects( UObject** InObjects, INT_UNREAL_32S Count )
 	{
 		guard(FObjectsItem::SetSingleObject);
 
 		// Add objects and find lowest common base class.
 		_Objects.Empty();
 		BaseClass=NULL;
-		for( INT i=0; i<Count; i++ )
+		for( INT_UNREAL_32S i=0; i<Count; i++ )
 		{
 			if( InObjects[i] )
 			{
@@ -2795,13 +2799,13 @@ public:
 	}
 
 	// FTreeItem interface.
-	BYTE* GetReadAddress( UProperty* Property, INT Offset )
+	BYTE* GetReadAddress( UProperty* Property, INT_UNREAL_32S Offset )
 	{
 		guard(FObjectsItem::GetReadAddress);
 		return &BaseClass->Defaults(Offset);
 		unguard;
 	}
-	void SetProperty( UProperty* Property, INT Offset, const char* Value )
+	void SetProperty( UProperty* Property, INT_UNREAL_32S Offset, const char* Value )
 	{
 		guard(FObjectsItem::SetProperty);
 		Property->ImportText( Value, &BaseClass->Defaults(Offset), 1 );
@@ -2815,7 +2819,7 @@ public:
 		for( TFieldIterator<UProperty> It(BaseClass); It; ++It )
 			if( AcceptFlags( It->PropertyFlags ) )
 				Categories.AddUniqueItem( It->Category );
-		for( INT i=0; i<Categories.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Categories.Num(); i++ )
 			Children.AddItem( new FCategoryItem(OwnerProperties,this,BaseClass,Categories(i),1) );
 		FTreeItem::Expand();
 		unguard;
@@ -2871,14 +2875,14 @@ public:
 	{}
 
 	// FTreeItem interface.
-	BYTE* GetReadAddress( UProperty* Property, INT Offset )
+	BYTE* GetReadAddress( UProperty* Property, INT_UNREAL_32S Offset )
 	{
 		guard(FObjectsItem::GetReadAddress);
 		check(Class);
 		return &Class->Defaults(Offset);
 		unguard;
 	}
-	void SetProperty( UProperty* Property, INT Offset, const char* Value )
+	void SetProperty( UProperty* Property, INT_UNREAL_32S Offset, const char* Value )
 	{
 		guard(FObjectsItem::SetProperty);
 		check(Class);
@@ -2890,7 +2894,7 @@ public:
 			UClassProperty* ClassProp = CastChecked<UClassProperty>( Property );
 			TArray<FRegistryObjectInfo> Classes;
 			GObj.GetRegistryObjects( Classes, UClass::StaticClass, ClassProp->MetaClass, 0 );
-			for( INT i=0; i<Classes.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Classes.Num(); i++ )
 			{
 				char Path[256], *Str;
 				appStrcpy( Path, Classes(i).Object );
@@ -2995,7 +2999,7 @@ public:
 	QWORD GetId() const
 	{
 		guard(FConfigItem::GetId);
-		return (INT)this + ((QWORD)3<<32);
+		return (INT_UNREAL_32S)this + ((QWORD)3<<32);
 		unguard;
 	}
 	virtual char* GetCaption( char* Result ) const
@@ -3013,13 +3017,14 @@ public:
 	}
 	void Expand()
 	{
+		INT_UNREAL_32S j;
 		guard(FConfigItem::Expand);
 		TArray<FPreferencesInfo> NewPrefs;
 		GObj.GetPreferences( NewPrefs, Prefs.Caption, 0 );
-		for( INT i=0; i<NewPrefs.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<NewPrefs.Num(); i++ )
 		{
 			char Temp[256];
-			for( INT j=0; j<Children.Num(); j++ )
+			for(j=0; j<Children.Num(); j++ )
 			{
 				if( appStricmp( Children(j)->GetCaption(Temp), NewPrefs(i).Caption )==0 )
 					break;

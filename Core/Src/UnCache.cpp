@@ -21,10 +21,10 @@ Revision history:
 //
 void FMemCache::Init
 (
-	INT		BytesToAllocate,	// Number of bytes for the cache.
-	INT		MaxItems,			// Maximum cache items to track.
+	INT_UNREAL_32S		BytesToAllocate,	// Number of bytes for the cache.
+	INT_UNREAL_32S		MaxItems,			// Maximum cache items to track.
 	void*	Start,				// Start of preallocated cache memory, NULL=allocate it.
-	INT		SegmentSize			// Size of segment boundary, or 0=unsegmented.
+	INT_UNREAL_32S		SegmentSize			// Size of segment boundary, or 0=unsegmented.
 )
 {
 	guard(FMemCache::Init);
@@ -46,7 +46,7 @@ void FMemCache::Init
 
 	// Build linked list of items not associated with cache memory.
 	FCacheItem** PrevLink = &UnusedItems;
-	for( INT i=0; i<MaxItems; i++ )
+	for( INT_UNREAL_32S i=0; i<MaxItems; i++ )
 	{
 		*PrevLink = &UnusedItemMemory[i];
 		PrevLink  = &UnusedItemMemory[i].LinearNext;
@@ -55,7 +55,7 @@ void FMemCache::Init
 
 	// Create one or more segments of free space in the cache memory.
 	FCacheItem* Prev    = NULL;
-	INT         Segment = 0;
+	INT_UNREAL_32S         Segment = 0;
 	if( SegmentSize==0 )
 	{
 		FCacheItem* ThisItem = UnusedItems;
@@ -99,7 +99,7 @@ void FMemCache::Init
 	);
 
 	// Init the hash table to empty since no items are used.
-	for( i=0; i<HASH_COUNT; i++ )
+	for(int i=0; i<HASH_COUNT; i++ )
 		HashItems[i] = NULL;
 
 	// Success.
@@ -209,7 +209,7 @@ void FMemCache::CheckState()
 	check( CacheItems != NULL );
 
 	// Init stats.
-	INT ItemCount=0, UsedItemCount=0, WasFree=0, HashCount=0, MemoryCount=0, PrevSegment=-1;
+	INT_UNREAL_32S ItemCount=0, UsedItemCount=0, WasFree=0, HashCount=0, MemoryCount=0, PrevSegment=-1;
 	BYTE* ExpectedPointer = CacheMemory;
 
 	// Traverse all cache items.
@@ -222,7 +222,7 @@ void FMemCache::CheckState()
 		check( Item->LinearNext->LinearPrev == Item );
 
 		// Count memory.
-		INT Size         = Item->LinearNext->Data - Item->Data;
+		INT_UNREAL_32S Size         = Item->LinearNext->Data - Item->Data;
 		MemoryCount     += Size;
 		ExpectedPointer += Size;
 
@@ -247,7 +247,7 @@ void FMemCache::CheckState()
 		if( Item->Id )
 		{
 			UsedItemCount++;
-			INT HashedCount=0;
+			INT_UNREAL_32S HashedCount=0;
 			for( FCacheItem* HashItem=HashItems[GHash(Item->Id)]; HashItem; HashItem=HashItem->HashNext )
 				HashedCount += (HashItem == Item);
 			check(HashedCount!=0);
@@ -301,7 +301,7 @@ void FMemCache::CreateNewFreeSpace
 	BYTE*		End, 
 	FCacheItem*	Prev, 
 	FCacheItem*	Next,
-	INT			Segment
+	INT_UNREAL_32S			Segment
 )
 {
 	guard(FMemCache::CreateNewFreeSpace);
@@ -412,7 +412,7 @@ void FMemCache::Flush( QWORD Id, DWORD Mask, UBOOL IgnoreLocked )
 			// Make sure we flushed the entire cache and there is only
 			// one cache item remaining for each segment.
 			check( CacheItems!=NULL );
-			INT ExpectSegment=0;
+			INT_UNREAL_32S ExpectSegment=0;
 			for( FCacheItem* TestItem=CacheItems; TestItem!=LastItem; TestItem=TestItem->LinearNext )
 			{
 				check( TestItem->Id==0 );
@@ -440,9 +440,9 @@ BYTE* FMemCache::Create
 (
 	QWORD			Id, 
 	FCacheItem*&	Item, 
-	INT				CreateSize, 
-	INT				Alignment,
-	INT				SafetyPad
+	INT_UNREAL_32S				CreateSize, 
+	INT_UNREAL_32S				Alignment,
+	INT_UNREAL_32S				SafetyPad
 )
 {
 	guard(FMemCache::Create);
@@ -462,7 +462,8 @@ BYTE* FMemCache::Create
 	// for each set, remembering the best cost.
 	SQWORD Cost=0;
 	FCacheItem* First=CacheItems;
-	for( FCacheItem* Last=CacheItems; Last!=LastItem; Last=Last->LinearNext )
+	FCacheItem* Last = CacheItems;
+	for( Last=CacheItems; Last!=LastItem; Last=Last->LinearNext )
 	{
 		// Add the cost and size of new Last element to our accumulator.
 		Cost += Last->Cost;
@@ -493,10 +494,10 @@ BYTE* FMemCache::Create
 	if( BestFirst == NULL )
 	{
 		// Critical error: the item can't fit in the cache.
-		INT ItemsLocked=0, Bytes=0, BytesLocked=0;
+		INT_UNREAL_32S ItemsLocked=0, Bytes=0, BytesLocked=0;
 		for( Last=CacheItems; Last!=LastItem; Last=Last->LinearNext )
 		{
-			INT Size = (Last->LinearNext->Data - Last->Data);
+			INT_UNREAL_32S Size = (Last->LinearNext->Data - Last->Data);
 			Bytes += Size;
 			if( Last->Cost >= COST_INFINITE )
 			{
@@ -521,7 +522,7 @@ BYTE* FMemCache::Create
 	// BestFirst->Data + BestFirst->Size.
 	BYTE* Result = Align( BestFirst->Data, Alignment );
 	check( Result + CreateSize <= BestFirst->LinearNext->Data );
-	debug( ((INT)Result & (Alignment-1)) == 0 );
+	debug( ((INT_UNREAL_32S)Result & (Alignment-1)) == 0 );
 
 	// Claim BestFirst for the block we're creating, and lock it.
 	BestFirst->Time = (FCacheItem::TCacheTime)Time;

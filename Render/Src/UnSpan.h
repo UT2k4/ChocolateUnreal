@@ -18,13 +18,13 @@ class FSpan
 {
 public:
 	// Variables.
-	INT Start, End;
+	INT_UNREAL_32S Start, End;
 	FSpan* Next;
 
 	// Constructors.
 	FSpan()
 	{}
-	FSpan( INT InStart, INT InEnd )
+	FSpan( INT_UNREAL_32S InStart, INT_UNREAL_32S InEnd )
 	:	Start		(InStart)
 	,	End			(InEnd)
 	{}
@@ -35,7 +35,7 @@ public:
 //
 struct FRasterSpan
 {
-	INT X[2];
+	INT_UNREAL_32S X[2];
 };
 
 //
@@ -44,8 +44,8 @@ struct FRasterSpan
 class FRasterPoly
 {
 public:
-	INT	StartY;
-	INT EndY;
+	INT_UNREAL_32S	StartY;
+	INT_UNREAL_32S EndY;
 	FRasterSpan Lines[];
 };
 
@@ -56,9 +56,9 @@ public:
 class RENDER_API FSpanBuffer
 {
 public:
-	INT			StartY;		// Starting Y value.
-	INT			EndY;		// Last Y value + 1.
-	INT			ValidLines;	// Number of lines at beginning (for screen).
+	INT_UNREAL_32S			StartY;		// Starting Y value.
+	INT_UNREAL_32S			EndY;		// Last Y value + 1.
+	INT_UNREAL_32S			ValidLines;	// Number of lines at beginning (for screen).
 	FSpan**		Index;		// Contains (EndY-StartY) units pointing to first span or NULL.
 	FMemStack*	Mem;		// Memory pool everything is stored in.
 	FMemMark	Mark;		// Top of memory pool marker.
@@ -87,8 +87,8 @@ public:
 	}
 
 	// Allocation.
-	void AllocIndex( INT AllocStartY, INT AllocEndY, FMemStack* Mem );
-	void AllocIndexForScreen( INT SXR, INT SYR, FMemStack* Mem );
+	void AllocIndex( INT_UNREAL_32S AllocStartY, INT_UNREAL_32S AllocEndY, FMemStack* Mem );
+	void AllocIndexForScreen( INT_UNREAL_32S SXR, INT_UNREAL_32S SYR, FMemStack* Mem );
 	void Release();
 	void GetValidRange( SWORD* ValidStartY, SWORD* ValidEndY );
 
@@ -97,11 +97,11 @@ public:
 	void MergeWith( const FSpanBuffer& Other );
 
 	// Grabbing and updating from rasterizations.
-	INT CopyFromRaster( FSpanBuffer& ScreenSpanBuffer, INT RasterStartY, INT RasterEndY, FRasterSpan* Raster );
-	INT CopyFromRasterUpdate( FSpanBuffer& ScreenSpanBuffer, INT RasterStartY, INT RasterEndY, FRasterSpan* Raster );
+	INT_UNREAL_32S CopyFromRaster( FSpanBuffer& ScreenSpanBuffer, INT_UNREAL_32S RasterStartY, INT_UNREAL_32S RasterEndY, FRasterSpan* Raster );
+	INT_UNREAL_32S CopyFromRasterUpdate( FSpanBuffer& ScreenSpanBuffer, INT_UNREAL_32S RasterStartY, INT_UNREAL_32S RasterEndY, FRasterSpan* Raster );
 
 	// Occlusion.
-	INT BoxIsVisible( INT X1, INT Y1, INT X2, INT Y2 );
+	INT_UNREAL_32S BoxIsVisible( INT_UNREAL_32S X1, INT_UNREAL_32S Y1, INT_UNREAL_32S X2, INT_UNREAL_32S Y2 );
 
 	// Debugging.
 	void AssertEmpty( char* Name );

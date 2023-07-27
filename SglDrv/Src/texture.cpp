@@ -105,7 +105,8 @@ USGLRenderDevice::USGLCacheObject *USGLRenderDevice::GetObjectFromTexture(QWORD 
 	guard(USGLRenderDevice::GetObjectFromTexture);
 
 	// Walk the cache object tree.
-	for (USGLCacheObject *Object=StartCacheObjectList;Object!=NULL;Object=Object->Next)
+	USGLCacheObject* Object;
+	for (Object=StartCacheObjectList;Object!=NULL;Object=Object->Next)
 	{
 		if (Object->CacheID==CacheID)
 			break;
@@ -278,7 +279,7 @@ BOOL USGLRenderDevice::LoadTexture(FTextureInfo &Texture,DWORD Flags,
 {
 	guard(USGLRenderDevice::LoadTexture);
 
-	INT Dimensions;
+	INT_UNREAL_32S Dimensions;
 	BOOL MipMapped=(Texture.NumMips>1 && !(Flags & (SF_LightMap | SF_FogMap)));
 	BOOL ReloadCandidate=!MipMapped && !(Texture.TextureFlags & TF_Realtime);
 
@@ -347,10 +348,11 @@ BOOL USGLRenderDevice::LoadTexture(FTextureInfo &Texture,DWORD Flags,
 		int TargetYSize=Min(Dimensions,Texture.VSize);
 		
 		// Convert data to format we want.
+		int Level;
 		for (int i=0;i<NumLevels(Dimensions);i++,TargetXSize=Max(1,TargetXSize>>1),TargetYSize=Max(1,TargetYSize>>1))
 		{
 			// Select most suitable mip level.
-			for (int Level=Min(i,Texture.NumMips-1);Level<Texture.NumMips-1;Level++)
+			for ( Level=Min(i,Texture.NumMips-1);Level<Texture.NumMips-1;Level++)
 				if (Texture.Mips[Level]->USize<=TargetXSize || Texture.Mips[Level]->VSize<=TargetYSize)
 					break;
 			ConvertTextureData(Dimensions>>i,

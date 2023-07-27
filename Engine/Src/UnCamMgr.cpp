@@ -100,7 +100,7 @@ void UClient::Flush()
 {
 	guard(UClient::Flush);
 
-	for( INT i=0; i<Viewports.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Viewports.Num(); i++ )
 		if( Viewports(i)->RenDev )
 			Viewports(i)->RenDev->Flush();
 

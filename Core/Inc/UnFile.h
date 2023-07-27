@@ -3,7 +3,7 @@
 	Copyright 1997 Epic MegaGames, Inc. This software is a trade secret.
 =============================================================================*/
 
-
+#include <stdarg.h>
 /*-----------------------------------------------------------------------------
 	Global variables.
 -----------------------------------------------------------------------------*/
@@ -63,13 +63,13 @@ CORE_API UBOOL appFindPackageFile( const char* In, const FGuid* Guid, char* Out 
 
 CORE_API const char* ConfigFilename();
 CORE_API UBOOL GetConfigBool( const char* Section, const char* Key, UBOOL& Value, const char* FileName=NULL );
-CORE_API UBOOL GetConfigInt( const char* Section, const char* Key, INT& Value, const char* FileName=NULL );
+CORE_API UBOOL GetConfigInt( const char* Section, const char* Key, INT_UNREAL_32S& Value, const char* FileName=NULL );
 CORE_API UBOOL GetConfigFloat( const char* Section, const char* Key, FLOAT& Value, const char* FileName=NULL );
-CORE_API UBOOL GetConfigString( const char* Section, const char* Key, char* Value, INT Size, const char* FileName=NULL );
+CORE_API UBOOL GetConfigString( const char* Section, const char* Key, char* Value, INT_UNREAL_32S Size, const char* FileName=NULL );
 CORE_API const char* GetConfigStr( const char* Section, const char* Key, const char* FileName=NULL );
-CORE_API UBOOL GetConfigSection( const char* Section, char* Value, INT Size, const char* FileName=NULL );
+CORE_API UBOOL GetConfigSection( const char* Section, char* Value, INT_UNREAL_32S Size, const char* FileName=NULL );
 CORE_API void SetConfigBool( const char* Section, const char* Key, UBOOL Value, const char* FileName=NULL );
-CORE_API void SetConfigInt( const char* Section, const char* Key, INT Value, const char* FileName=NULL );
+CORE_API void SetConfigInt( const char* Section, const char* Key, INT_UNREAL_32S Value, const char* FileName=NULL );
 CORE_API void SetConfigFloat( const char* Section, const char* Key, const FLOAT Value, const char* FileName=NULL );
 CORE_API void SetConfigString( const char* Section, const char* Key, const char* Value, const char* FileName=NULL );
 
@@ -206,19 +206,19 @@ CORE_API void SetLanguage( const char* LanguageExt );
 -----------------------------------------------------------------------------*/
 
 CORE_API FILE* appFopen( const char* Filename, const char* Mode );
-CORE_API INT appFclose( FILE* Stream );
-CORE_API INT appFseek( FILE* Stream, INT Offset, INT Origin );
-CORE_API INT appFtell( FILE* Stream );
-CORE_API INT appFwrite( const void* Buffer, INT Size, INT Count, FILE* Stream );
-CORE_API INT appUnlink( const char* Filename );
-CORE_API INT appFread( void* Buffer, INT Size, INT Count, FILE* Stream );
-CORE_API INT appFSize( const char* Filename );
+CORE_API INT_UNREAL_32S appFclose( FILE* Stream );
+CORE_API INT_UNREAL_32S appFseek( FILE* Stream, INT_UNREAL_32S Offset, INT_UNREAL_32S Origin );
+CORE_API INT_UNREAL_32S appFtell( FILE* Stream );
+CORE_API INT_UNREAL_32S appFwrite( const void* Buffer, INT_UNREAL_32S Size, INT_UNREAL_32S Count, FILE* Stream );
+CORE_API INT_UNREAL_32S appUnlink( const char* Filename );
+CORE_API INT_UNREAL_32S appFread( void* Buffer, INT_UNREAL_32S Size, INT_UNREAL_32S Count, FILE* Stream );
+CORE_API INT_UNREAL_32S appFSize( const char* Filename );
 CORE_API const char* appFExt( const char* Filename );
-CORE_API INT appMkdir( const char* Dirname );
-CORE_API char* appGetcwd( char* Buffer, INT MaxLen );
-CORE_API INT appChdir( const char* Dirname );
-CORE_API INT appFprintf( FILE* F, const char* Fmt, ... );
-CORE_API INT appFerror( FILE* F );
+CORE_API INT_UNREAL_32S appMkdir( const char* Dirname );
+CORE_API char* appGetcwd( char* Buffer, INT_UNREAL_32S MaxLen );
+CORE_API INT_UNREAL_32S appChdir( const char* Dirname );
+CORE_API INT_UNREAL_32S appFprintf( FILE* F, const char* Fmt, ... );
+CORE_API INT_UNREAL_32S appFerror( FILE* F );
 
 /*-----------------------------------------------------------------------------
 	OS functions.
@@ -240,7 +240,7 @@ CORE_API DWORD appCycles();
 CORE_API DOUBLE appSeconds();
 #endif
 
-CORE_API void appSystemTime( INT& Year, INT& Month, INT& DayOfWeek, INT& Day, INT& Hour, INT& Min, INT& Sec, INT& MSec );
+CORE_API void appSystemTime(INT_UNREAL_32S& Year, INT_UNREAL_32S& Month, INT_UNREAL_32S& DayOfWeek, INT_UNREAL_32S& Day, INT_UNREAL_32S& Hour, INT_UNREAL_32S& Min, INT_UNREAL_32S& Sec, INT_UNREAL_32S& MSec );
 
 /*-----------------------------------------------------------------------------
 	Character type functions.
@@ -280,21 +280,21 @@ inline UBOOL appIsNameChar( char c )
 -----------------------------------------------------------------------------*/
 
 CORE_API char* appStrcpy( char* Dest, const char* Src );
-CORE_API INT appStrcpy( const char* String );
-CORE_API INT appStrlen( const char* String );
+CORE_API INT_UNREAL_32S appStrcpy( const char* String );
+CORE_API INT_UNREAL_32S appStrlen( const char* String );
 CORE_API char* appStrstr( const char* String, const char* Find );
 CORE_API char* appStrchr( const char* String, int c );
 CORE_API char* appStrcat( char* Dest, const char* Src );
-CORE_API INT appStrcmp( const char* String1, const char* String2 );
-CORE_API INT appStricmp( const char* String1, const char* String2 );
+CORE_API INT_UNREAL_32S appStrcmp( const char* String1, const char* String2 );
+CORE_API INT_UNREAL_32S appStricmp( const char* String1, const char* String2 );
 
-CORE_API void* appLargeMemset( void* Dest, int C, INT Count );
-CORE_API void* appLargeMemcpy( void* Dest, const void* Src, INT Count );
-CORE_API void* appMemmove( void* Dest, const void* Src, INT Count );
-CORE_API void  appMemset( void* Dest, int C, INT Count );
-CORE_API void* appMemcpy( void* Dest, const void* Src, INT Count );
+CORE_API void* appLargeMemset( void* Dest, int C, INT_UNREAL_32S Count );
+CORE_API void* appLargeMemcpy( void* Dest, const void* Src, INT_UNREAL_32S Count );
+CORE_API void* appMemmove( void* Dest, const void* Src, INT_UNREAL_32S Count );
+CORE_API void  appMemset( void* Dest, int C, INT_UNREAL_32S Count );
+CORE_API void* appMemcpy( void* Dest, const void* Src, INT_UNREAL_32S Count );
 
-CORE_API INT   appMemcmp( const void* Buf1, const void* Buf2, INT Count );
+CORE_API INT_UNREAL_32S   appMemcmp( const void* Buf1, const void* Buf2, INT_UNREAL_32S Count );
 CORE_API const char* appSpc( int Num );
 CORE_API char* appStrncpy( char* Dest, const char* Src, int Max);
 CORE_API char* appStrncat( char* Dest, const char* Src, int Max);
@@ -302,13 +302,13 @@ CORE_API char* appStrupr( char* String );
 CORE_API const char* appStrfind(const char* Str, const char* Find);
 CORE_API UBOOL appMemIsZero( const void* V, int Count );
 CORE_API unsigned long appMemCrc( const unsigned char* Data, int Length );
-CORE_API INT appAtoi( const char* Str );
+CORE_API INT_UNREAL_32S appAtoi( const char* Str );
 CORE_API FLOAT appAtof( const char* Str );
-CORE_API INT appStrtoi( const char* Start, char** End, INT Base );
-CORE_API void appQsort( void* Base, INT num, INT width, int(CDECL *compare)(const void* A, const void* B ) );
-CORE_API INT appStrnicmp( const char* A, const char* B, INT Count );
-CORE_API INT appSprintf( char* Dest, const char* Fmt, ... );
-CORE_API INT appGetVarArgs( char* Dest, const char*& Fmt );
+CORE_API INT_UNREAL_32S appStrtoi( const char* Start, char** End, INT_UNREAL_32S Base );
+CORE_API void appQsort( void* Base, INT_UNREAL_32S num, INT_UNREAL_32S width, int(CDECL *compare)(const void* A, const void* B ) );
+CORE_API INT_UNREAL_32S appStrnicmp( const char* A, const char* B, INT_UNREAL_32S Count );
+CORE_API INT_UNREAL_32S appSprintf( char* Dest, const char* Fmt, ... );
+CORE_API INT_UNREAL_32S appGetVarArgs(char* Dest, const char* Fmt, va_list va);
 CORE_API void appMemswap( void* Ptr1, void* Ptr2, DWORD Size );
 
 //
@@ -330,17 +330,17 @@ CORE_API UBOOL ParseCommand( const char** Stream, const char* Match );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, class FName& Name );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, DWORD& Value );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, class FGuid& Guid );
-CORE_API UBOOL Parse( const char* Stream, const char* Match, char* Value, INT MaxLen );
+CORE_API UBOOL Parse( const char* Stream, const char* Match, char* Value, INT_UNREAL_32S MaxLen );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, BYTE& Value );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, CHAR& Value );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, _WORD& Value );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, SWORD& Value );
 CORE_API UBOOL Parse( const char* Stream, const char* Match, FLOAT& Value );
-CORE_API UBOOL Parse( const char* Stream, const char* Match, INT& Value );
+CORE_API UBOOL Parse( const char* Stream, const char* Match, INT_UNREAL_32S& Value );
 CORE_API UBOOL ParseUBOOL( const char* Stream, const char* Match, UBOOL& OnOff );
 CORE_API UBOOL ParseObject( const char* Stream, const char* Match, class UClass* Type, class UObject*& DestRes, class UObject* InParent );
-CORE_API UBOOL ParseLine( const char** Stream, char* Result, INT MaxLen, UBOOL Exact=0 );
-CORE_API UBOOL ParseToken( const char*& Str, char* Result, INT MaxLen, UBOOL UseEscape );
+CORE_API UBOOL ParseLine( const char** Stream, char* Result, INT_UNREAL_32S MaxLen, UBOOL Exact=0 );
+CORE_API UBOOL ParseToken( const char*& Str, char* Result, INT_UNREAL_32S MaxLen, UBOOL UseEscape );
 CORE_API void ParseNext( const char** Stream );
 CORE_API UBOOL ParseParam( const char* Stream, const char* Param );
 
@@ -359,19 +359,19 @@ CORE_API DOUBLE appAtan2( DOUBLE Y, FLOAT X );
 CORE_API DOUBLE appSqrt( DOUBLE Value );
 CORE_API DOUBLE appPow( DOUBLE A, DOUBLE B );
 CORE_API UBOOL appIsNan( DOUBLE Value );
-CORE_API INT appRand();
+CORE_API INT_UNREAL_32S appRand();
 CORE_API FLOAT appFrand();
 
 #if !DEFINED_appRound
-CORE_API INT appRound( FLOAT Value );
+CORE_API INT_UNREAL_32S appRound( FLOAT Value );
 #endif
 
 #if !DEFINED_appFloor
-CORE_API INT appFloor( FLOAT Value );
+CORE_API INT_UNREAL_32S appFloor( FLOAT Value );
 #endif
 
 #if !DEFINED_appCeil
-CORE_API INT appCeil( FLOAT Value );
+CORE_API INT_UNREAL_32S appCeil( FLOAT Value );
 #endif
 
 /*-----------------------------------------------------------------------------
@@ -381,21 +381,21 @@ CORE_API INT appCeil( FLOAT Value );
 //
 // C style memory allocation.
 //
-CORE_API void* appMalloc( INT Count, const char* Tag );
+CORE_API void* appMalloc(INT_UNREAL_32S Count, const char* Tag );
 CORE_API void appFree( void* Original );
-CORE_API void* appRealloc( void* Original, INT Count, const char* Tag );
+CORE_API void* appRealloc( void* Original, INT_UNREAL_32S Count, const char* Tag );
 CORE_API void appDumpAllocs( class FOutputDevice* Out );
 
 //
 // C++ style memory allocation.
 //
-inline void* operator new( SIZE_T Size, const char* Tag )
+inline void* operator new( size_t Size, const char* Tag )
 {
 	guard( "operator new" );
 	return appMalloc( Size, Tag );
 	unguard;
 }
-inline void* operator new( SIZE_T Size )
+inline void* operator new( size_t Size )
 {
 	guard( "operator new" );
 	return appMalloc( Size, "new" );
@@ -417,7 +417,7 @@ inline void operator delete( void* Ptr )
 //
 // MemSet - fast inline for small tasks, jumps back to big one for larger tasks.
 //
-inline void* appMemset( void* Dest, int C, INT Count )
+inline void* appMemset( void* Dest, int C, INT_UNREAL_32S Count )
 {
 	if (Count < 96) //#debug !!!
 	{
@@ -461,7 +461,7 @@ inline void* appMemset( void* Dest, int C, INT Count )
 	else return appLargeMemset(Dest,C,Count);
 }
 
-inline void* appMemcpy( void* Dest, const void* Src, INT Count )
+inline void* appMemcpy( void* Dest, const void* Src, INT_UNREAL_32S Count )
 {
 	if (Count < 96) 
 	{
@@ -509,7 +509,7 @@ inline void* appMemcpy( void* Dest, const void* Src, INT Count )
 // Quicksort an array of items.  Implemented as a template so that the compare
 // function may be inlined.
 //
-template<class T> inline void appSort( T* Array, INT Num, INT SortCutoff=8 )
+template<class T> inline void appSort( T* Array, INT_UNREAL_32S Num, INT_UNREAL_32S SortCutoff=8 )
 {
 	guard(appSort);
     if( Num < 2 )
@@ -518,14 +518,14 @@ template<class T> inline void appSort( T* Array, INT Num, INT SortCutoff=8 )
 	// Simulated stack.
 	T* FirstStack[32];
 	T* LastStack[32];
-    INT StackIndex = 0;
+    INT_UNREAL_32S StackIndex = 0;
 
 	// Pointers to first and last.
     T* First = Array;
     T* Last = Array + Num - 1;
 
 Resort:
-    INT Size = Last - First + 1;
+    INT_UNREAL_32S Size = Last - First + 1;
 	if( Size <= SortCutoff )
 	{
 		// Bubble-sort small arrays.

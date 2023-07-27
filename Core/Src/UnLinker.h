@@ -16,13 +16,13 @@
 struct CORE_API FObjectExport
 {
 	// Persistent.
-	INT         ClassIndex;
-	INT         ParentIndex;
-	INT			PackageIndex;
+	INT_UNREAL_32S         ClassIndex;
+	INT_UNREAL_32S         ParentIndex;
+	INT_UNREAL_32S			PackageIndex;
 	FName		ObjectName;
 	DWORD		ObjectFlags;
-	INT         SerialSize;
-	INT         SerialOffset;
+	INT_UNREAL_32S         SerialSize;
+	INT_UNREAL_32S         SerialOffset;
 
 	// Internal.
 	FName		OldGroup;//oldver
@@ -83,13 +83,13 @@ struct CORE_API FObjectImport
 	FName			ClassPackage;
 	FName			ClassName;
 	FName			_ObjectPackage;//oldver
-	INT				PackageIndex;
+	INT_UNREAL_32S				PackageIndex;
 	FName			ObjectName;
 
 	// Internal.
 	UObject*		Object;
 	ULinkerLoad*	SourceLinker;
-	INT             SourceIndex;
+	INT_UNREAL_32S             SourceIndex;
 
 	// Functions.
 	FObjectImport()
@@ -165,21 +165,21 @@ public:
 		File = NULL;
 		unguard;
 	}
-	virtual void Seek( INT InPos )
+	virtual void Seek( INT_UNREAL_32S InPos )
 	{
 		Flush();
 		if( appFseek(File,InPos,USEEK_SET) != 0 )
 			appThrowf( LocalizeError("SeekFailed") );
 		Pos = InPos;
 	}
-	INT Tell()
+	INT_UNREAL_32S Tell()
 	{
 		return Pos;
 	}
-	virtual FArchive& Serialize( void* V, INT Length )
+	virtual FArchive& Serialize( void* V, INT_UNREAL_32S Length )
 	{
 		Pos += Length;
-		INT Copy;
+		INT_UNREAL_32S Copy;
 		while( Length > (Copy=ARRAY_COUNT(Buffer)-BufferCount) )
 		{
 			appMemcpy( Buffer+BufferCount, V, Copy );
@@ -203,9 +203,9 @@ public:
 				throw( LocalizeError("WriteFailed"), Filename );
 		BufferCount=0;
 	}
-	INT   BufferCount;
+	INT_UNREAL_32S   BufferCount;
 	BYTE  Buffer[4096];
-	INT   Pos;
+	INT_UNREAL_32S   Pos;
 	FILE* File;
 };
 
@@ -215,7 +215,7 @@ public:
 enum {LoadBufferSize=4096};
 struct FFileStatus
 {
-	INT SavedPos;
+	INT_UNREAL_32S SavedPos;
 };
 
 //
@@ -225,7 +225,7 @@ class FArchiveFileLoad : public FArchive
 {
 public:
 	char Filename[256];
-	INT Pos;
+	INT_UNREAL_32S Pos;
 	FArchiveFileLoad( const char* InFilename )
 	: File(NULL)
 	, Pos(0)
@@ -251,18 +251,18 @@ public:
 		File = NULL;
 		unguard;
 	}
-	void Seek( INT InPos, INT InReadAhead=0 )
+	void Seek( INT_UNREAL_32S InPos, INT_UNREAL_32S InReadAhead=0 )
 	{
 		guard(FArchiveFileLoad::Seek);
 		check(InPos>=0);
 		check(InPos<=Eof);
-		INT Result = appFseek(File,InPos,USEEK_SET);
+		INT_UNREAL_32S Result = appFseek(File,InPos,USEEK_SET);
 		if( Result!=0 )
 			appErrorf( "Seek Failed %i/%i (%i): %i %i", InPos, Eof, Pos, Result, appFerror(File) );
 		unguard;
 		Pos = InPos;
 	}
-	INT Tell()
+	INT_UNREAL_32S Tell()
 	{
 		return appFtell( File );
 	}
@@ -273,15 +273,15 @@ public:
 	void Pop( FFileStatus& St )
 	{
 		guardSlow(FArchiveFileLoad::Pop);
-		INT Result = appFseek( File, St.SavedPos, USEEK_SET );
+		INT_UNREAL_32S Result = appFseek( File, St.SavedPos, USEEK_SET );
 		if( Result!=0 )
 			appErrorf( "Seek Failed %i/%i (%i): %i %i", St.SavedPos, Eof, Pos, Result, appFerror(File) );
 		Pos = St.SavedPos;
 		unguardSlow;
 	}
-	FArchive& Serialize( void* V, INT Length )
+	FArchive& Serialize( void* V, INT_UNREAL_32S Length )
 	{
-		INT Count = appFread( V, Length, 1, File );
+		INT_UNREAL_32S Count = appFread( V, Length, 1, File );
 		if( Count!=1 && Length!=0 )
 			appErrorf( "appFread failed: Count=%i Length=%i Error=%i", Count, Length, appFerror(File) );
 		Pos += Length;
@@ -290,7 +290,7 @@ public:
 	}
 //!!private:
 	FILE* File;
-	INT Eof;
+	INT_UNREAL_32S Eof;
 };
 
 /*----------------------------------------------------------------------------
@@ -303,13 +303,13 @@ public:
 struct FPackageFileSummary
 {
 	// Variables.
-	INT		Tag;
-	INT		FileVersion;
+	INT_UNREAL_32S		Tag;
+	INT_UNREAL_32S		FileVersion;
 	DWORD	PackageFlags;
-	INT		NameCount,		NameOffset;
-	INT		ExportCount,	ExportOffset;
-	INT     ImportCount,	ImportOffset;
-	INT		HeritageCount,	HeritageOffset;
+	INT_UNREAL_32S		NameCount,		NameOffset;
+	INT_UNREAL_32S		ExportCount,	ExportOffset;
+	INT_UNREAL_32S     ImportCount,	ImportOffset;
+	INT_UNREAL_32S		HeritageCount,	HeritageOffset;
 
 	// Constructor.
 	FPackageFileSummary()
@@ -347,7 +347,7 @@ struct FPackageFileSummary
 //
 class CORE_API ULinker : public UObject
 {
-	DECLARE_CLASS(ULinker,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULinker,UObject,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(ULinker)
 
 	// Constants.
@@ -360,7 +360,7 @@ class CORE_API ULinker : public UObject
 	TArray<FObjectImport>	ImportMap;			// Maps file object indices >=0 to external object names.
 	TArray<FObjectExport>	ExportMap;			// Maps file object indices >=0 to external object names.
 	TArray<FGuid>			Heritage;			// List of packages we're backwards compatible with.
-	INT						Success;			// Whether the object was constructed successfully.
+	INT_UNREAL_32S						Success;			// Whether the object was constructed successfully.
 	DWORD					ContextFlags;		// Load flag mask.
 
 	// Constructors.
@@ -387,7 +387,8 @@ class CORE_API ULinker : public UObject
 
 		// Prevent garbage collecting of linker's names and package.
 		Ar << NameMap << LinkerRoot;
-		for( INT i=0; i<ExportMap.Num(); i++ )
+		INT_UNREAL_32S i;
+		for( i=0; i<ExportMap.Num(); i++ )
 		{
 			FObjectExport& E = ExportMap(i);
 			Ar << E.ObjectName << E.OldGroup << E.ClassPackage << E.ClassName;
@@ -412,7 +413,7 @@ class CORE_API ULinker : public UObject
 //
 class ULinkerLoad : public ULinker, public FArchiveFileLoad
 {
-	DECLARE_CLASS(ULinkerLoad,ULinker,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULinkerLoad,ULinker,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(ULinkerLoad)
 
 	// Friends.
@@ -421,7 +422,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 
 	// Variables.
 	DWORD LoadFlags;
-	INT FileSize;
+	INT_UNREAL_32S FileSize;
 	CHAR Status[256];
 
 	// Constructor; all errors here throw exceptions which are fully recoverable.
@@ -434,9 +435,9 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 		debugf( "Loading: %s", InParent->GetFullName() );
 
 		// Error if linker already loaded.
-		for( INT i=0; i<GObj.Loaders.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<GObj.Loaders.Num(); i++ )
 			if( GObj.GetLoader(i)->LinkerRoot == LinkerRoot )
-				appThrowf( LocalizeError("LinkerExists"), *LinkerRoot );
+				appThrowf( LocalizeError("LinkerExists"), LinkerRoot );
 
 		// Begin.
 		GSystem->StatusUpdatef( 0, 0, LocalizeProgress("Loading"), Filename );
@@ -488,7 +489,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 		if( Summary.HeritageCount > 0 )
 		{
 			Seek( Summary.HeritageOffset );
-			for( INT i=0; i<Summary.HeritageCount; i++ )
+			for( INT_UNREAL_32S i=0; i<Summary.HeritageCount; i++ )
 				*this << Heritage( i );
 		}
 		unguard;
@@ -499,7 +500,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 		{
 			//debugf( NAME_Log, "Reading name table: %i names", Summary.NameCount );
 			Seek( Summary.NameOffset );
-			for( INT i=0; i<Summary.NameCount; i++ )
+			for( INT_UNREAL_32S i=0; i<Summary.NameCount; i++ )
 			{
 				// Read the name entry from the file.
 				FNameEntry NameEntry;
@@ -528,14 +529,14 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 		{
 			//debugf( NAME_Log, "Reading export table: %i objects", Summary.ExportCount );
 			Seek( Summary.ExportOffset );
-			for( INT i=0; i<Summary.ExportCount; i++ )
+			for( INT_UNREAL_32S i=0; i<Summary.ExportCount; i++ )
 				*this << ExportMap( i );
 		}
 		unguard;
 
 		// Generate export in-memory info.
 		guard(GenerateExportInfo);
-		for( INT i=0; i<Summary.ExportCount; i++ )
+		for( INT_UNREAL_32S i=0; i<Summary.ExportCount; i++ )
 		{
 			FObjectExport& Export = ExportMap(i);
 			if( Export.ClassIndex < 0 )
@@ -571,7 +572,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 		{
 			// Validate all imports and map them to their remote linkers.
 			guard(ValidateImports);
-			for( INT i=0; i<Summary.ImportCount; i++ )
+			for( INT_UNREAL_32S i=0; i<Summary.ImportCount; i++ )
 				VerifyImport( i );
 			unguard;
 		}
@@ -588,7 +589,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 	}
 
 	// Safely verify an import.
-	void VerifyImport( INT i )
+	void VerifyImport( INT_UNREAL_32S i )
 	{
 		guard(ULinkerLoad::VerifyImport);
 		FObjectImport& Import = ImportMap(i);
@@ -619,8 +620,9 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 					VerifyImport( -Import.PackageIndex-1 );
 					Import.SourceLinker = ImportMap(-Import.PackageIndex-1).SourceLinker;
 					check(Import.SourceLinker);
+					FObjectImport* Top;
 					for
-					(	FObjectImport* Top = &Import
+					(	Top = &Import
 					;	Top->PackageIndex<0
 					;	Top = &ImportMap(-Top->PackageIndex-1) );
 					Pkg = GObj.CreatePackage( NULL, *Top->ObjectName );
@@ -635,7 +637,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 
 			//caveat: Fast enough, but could be much faster with hashing.
 			UBOOL SafeReplace = 0;
-			for( INT j=0; j<Import.SourceLinker->ExportMap.Num(); j++ )
+			for( INT_UNREAL_32S j=0; j<Import.SourceLinker->ExportMap.Num(); j++ )
 			{
 				FObjectExport& Source = Import.SourceLinker->ExportMap( j );
 				if
@@ -665,7 +667,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 						}
 					}
 					if( !(Source.ObjectFlags & RF_Public) )
-						appThrowf( LocalizeError("FailedImportPrivate"), *Source.ClassName, *Import.SourceLinker->LinkerRoot, *Source.ObjectName );
+						appThrowf( LocalizeError("FailedImportPrivate"), Source.ClassName, Import.SourceLinker->LinkerRoot, *Source.ObjectName );
 					Import.SourceIndex = j;
 					break;
 				}
@@ -682,7 +684,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 				||	Import.ClassName==NAME_WetTexture ) )//oldver
 			{
 				// See if there's a match without the proper package.
-				for( INT j=0; j<Import.SourceLinker->ExportMap.Num(); j++ )
+				for( INT_UNREAL_32S j=0; j<Import.SourceLinker->ExportMap.Num(); j++ )
 				{
 					FObjectExport& Source = Import.SourceLinker->ExportMap( j );
 					if
@@ -721,7 +723,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 				if( !Import.Object && !SafeReplace )
 				{
 					FString S = "";
-					for( INT j=-i-1; j!=0; j=ImportMap(-j-1).PackageIndex )
+					for( INT_UNREAL_32S j=-i-1; j!=0; j=ImportMap(-j-1).PackageIndex )
 					{
 						if( j != -i-1 )
 							S = FString(".") + S;
@@ -744,7 +746,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 		if( Summary.ExportCount > 0 )
 		{
 			//debugf( NAME_Log, "Loading all objects: %i objects", Summary.ExportCount );
-			for( INT i=0; i<Summary.ExportCount; i++ )
+			for( INT_UNREAL_32S i=0; i<Summary.ExportCount; i++ )
 				CreateExport( i );
 		}
 		unguard;
@@ -758,7 +760,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 	{
 		guard(ULinkerLoad::Create);
 		//caveat: Fast enough, but could be much faster with hashing.
-		for( INT i=0; i<ExportMap.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<ExportMap.Num(); i++ )
 		{
 			if
 			(	ExportMap(i).ObjectName   == ObjectName
@@ -805,7 +807,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 
 private:
 	// Return the loaded object corresponding to an export index; any errors are fatal.
-	UObject* CreateExport( INT Index )
+	UObject* CreateExport( INT_UNREAL_32S Index )
 	{
 		guard(ULinkerLoad::CreateExport);
 
@@ -864,7 +866,7 @@ private:
 	}
 
 	// Return the loaded object corresponding to an import index; any errors are fatal.
-	UObject* CreateImport( INT Index )
+	UObject* CreateImport( INT_UNREAL_32S Index )
 	{
 		guard(ULinkerLoad::CreateImport);
 
@@ -952,7 +954,7 @@ private:
 	}
 
 	// Map an import/export index to an object; all errors here are fatal.
-	UObject* IndexToObject( INT Index )
+	UObject* IndexToObject( INT_UNREAL_32S Index )
 	{
 		guard(IndexToObject);
 		if( Index > 0 )
@@ -978,7 +980,7 @@ private:
 		debugf( "Unloading: %s", LinkerRoot->GetFullName() );
 
 		// Detach all objects linked with this linker.
-		for( INT i=0; i<ExportMap.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<ExportMap.Num(); i++ )
 		{
 			FObjectExport& E = ExportMap(i);
 			if( E._Object )
@@ -1005,7 +1007,7 @@ private:
 	{
 		guard(ULinkerLoad<<UObject);
 
-		INT Index;
+		INT_UNREAL_32S Index;
 		*this << AR_INDEX(Index);
 		Object = IndexToObject( Index );
 
@@ -1037,12 +1039,12 @@ private:
 //
 class ULinkerSave : public ULinker, public FArchiveFileSave
 {
-	DECLARE_CLASS(ULinkerSave,ULinker,CLASS_Transient);
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULinkerSave,ULinker,CLASS_Transient);
 	NO_DEFAULT_CONSTRUCTOR(ULinkerSave);
 
 	// Variables.
-	TArray<INT> ObjectIndices;
-	TArray<INT> NameIndices;
+	TArray<INT_UNREAL_32S> ObjectIndices;
+	TArray<INT_UNREAL_32S> NameIndices;
 
 	// Constructor.
 	ULinkerSave( UObject* InParent, const char* InFilename )
@@ -1069,13 +1071,13 @@ class ULinkerSave : public ULinker, public FArchiveFileSave
 	}
 
 	// FArchive interface.
-	INT MapName( FName* Name )
+	INT_UNREAL_32S MapName( FName* Name )
 	{
 		guardSlow(ULinkerSave::MapName);
 		return NameIndices(Name->GetIndex());
 		unguardobjSlow;
 	}
-	INT MapObject( UObject* Object )
+	INT_UNREAL_32S MapObject( UObject* Object )
 	{
 		guardSlow(ULinkerSave::MapObject);
 		return Object ? ObjectIndices(Object->GetIndex()) : 0;
@@ -1084,14 +1086,14 @@ class ULinkerSave : public ULinker, public FArchiveFileSave
 	FArchive& operator<<( FName& Name )
 	{
 		guardSlow(ULinkerSave<<FName);
-		INT Save = NameIndices(Name.GetIndex());
+		INT_UNREAL_32S Save = NameIndices(Name.GetIndex());
 		return *this << AR_INDEX(Save);
 		unguardobjSlow;
 	}
 	FArchive& operator<<( UObject*& Obj )
 	{
 		guardSlow(ULinkerSave<<UObject);
-		INT Save = Obj ? ObjectIndices(Obj->GetIndex()) : 0;
+		INT_UNREAL_32S Save = Obj ? ObjectIndices(Obj->GetIndex()) : 0;
 		return *this << AR_INDEX(Save);
 		unguardobjSlow;
 	}

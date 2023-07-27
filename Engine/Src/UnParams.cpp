@@ -58,7 +58,7 @@ UBOOL ENGINE_API GetSUBSTRING
 	const char*	Stream, 
 	const char*	Match,
 	char*		Value,
-	INT			MaxLen
+	INT_UNREAL_32S			MaxLen
 )
 {
 	guard(GetSUBSTRING);
@@ -127,7 +127,7 @@ UBOOL ENGINE_API GetFROTATOR
 (
 	const char*		Stream, 
 	FRotator&		Rotation,
-	INT				ScaleFactor
+	INT_UNREAL_32S				ScaleFactor
 )
 {
 	guard(GetFROTATOR);
@@ -168,7 +168,7 @@ UBOOL ENGINE_API GetFROTATOR
 	const char*		Stream, 
 	const char*		Match, 
 	FRotator&		Value,
-	INT				ScaleFactor
+	INT_UNREAL_32S				ScaleFactor
 )
 {
 	guard(GetFROTATOR);

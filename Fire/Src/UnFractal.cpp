@@ -138,11 +138,12 @@ double FakeAtan( double X )
 
 void InitTables()
 {
-	static INT  Initialized=0;
+	static INT_UNREAL_32S  Initialized=0, t;
+
 	if( !Initialized )
 	{
 		// Init 8-bit sine table.
-		for( INT  t=0; t < 256; t++ )
+		for(  t=0; t < 256; t++ )
 		{
 			PhaseTable[t] = appRound(127.45F + 127.5F*appSin( ((FLOAT)t/256.0F) * 6.2831853F ));
 		}
@@ -458,13 +459,13 @@ enum {  // Internal spark types.
 };
 
 
-void UFireTexture::AddSpark( INT  MouseX, INT  MouseY )
+void UFireTexture::AddSpark( INT_UNREAL_32S  MouseX, INT_UNREAL_32S  MouseY )
 {
 	guard(UFireTexture::AddSpark);
 
 	// Edit-time only.
-	static INT  LightPinX = 0;
-	static INT  LightPinY = 0;
+	static INT_UNREAL_32S  LightPinX = 0;
+	static INT_UNREAL_32S  LightPinY = 0;
 
 	// Return if out of bounds or out of sparks.
     if( MouseX<0 || MouseY<0 || MouseX>=USize || MouseY>=VSize || ActiveSparkNum>=SparksLimit )
@@ -474,7 +475,7 @@ void UFireTexture::AddSpark( INT  MouseX, INT  MouseY )
 	// size; with these, the dynamic array is used as a *static* array in all spark adders/setters.
 	
 	// Make new spark.
-    INT  S = ActiveSparkNum++;  // ->Sparks[0] is the first one.
+    INT_UNREAL_32S  S = ActiveSparkNum++;  // ->Sparks[0] is the first one.
 
 	// General new spark initialization.
     Sparks(S).Type = SparkType;
@@ -565,7 +566,7 @@ void UFireTexture::AddSpark( INT  MouseX, INT  MouseY )
 				// Draw second spark at +0.5 phase
 				if ((DrawMode == DRAW_Lathe_2) && (ActiveSparkNum < SparksLimit)) 
 				{
-					INT  S = ActiveSparkNum++; 
+					INT_UNREAL_32S  S = ActiveSparkNum++; 
 					Sparks(S).Type = SparkType;
 					Sparks(S).X    = Sparks(ThisIdx).X;
 					Sparks(S).Y    = MouseY;
@@ -581,7 +582,7 @@ void UFireTexture::AddSpark( INT  MouseX, INT  MouseY )
 				{
 					for(int t=1; t<3; t++)
 					{
-						INT  S = ActiveSparkNum++; 
+						INT_UNREAL_32S  S = ActiveSparkNum++; 
 						Sparks(S).Type   = SparkType;
 						Sparks(S).X      = Sparks(ThisIdx).X;
 						Sparks(S).Y      = MouseY;
@@ -598,7 +599,7 @@ void UFireTexture::AddSpark( INT  MouseX, INT  MouseY )
 				{
 					for(int t=1; t<4; t++)
 					{
-						INT  S = ActiveSparkNum++; 
+						INT_UNREAL_32S  S = ActiveSparkNum++; 
 						Sparks(S).Type   = SparkType;
 						Sparks(S).X      = Sparks(ThisIdx).X;
 						Sparks(S).Y      = MouseY;
@@ -698,8 +699,8 @@ void UFireTexture::AddSpark( INT  MouseX, INT  MouseY )
 
                 Sparks(S).Heat = 3 | (FX_Heat); // Brightness.
 
-                INT  LenX = MouseX - (int)Sparks(S).X;
-                INT  LenY = MouseY - (int)Sparks(S).Y;
+                INT_UNREAL_32S  LenX = MouseX - (int)Sparks(S).X;
+                INT_UNREAL_32S  LenY = MouseY - (int)Sparks(S).Y;
 
 				if (LenX<0)		LenX  = (- LenX) | 1;
                 else			LenX &= 0xFFFFFFFE;
@@ -731,10 +732,10 @@ void UFireTexture::AddSpark( INT  MouseX, INT  MouseY )
 }
 
 
-void UFireTexture::CloseSpark( INT  MouseX, INT  MouseY)
+void UFireTexture::CloseSpark( INT_UNREAL_32S  MouseX, INT_UNREAL_32S  MouseY)
 {
 	guard(UFireTexture::CloseSpark);
-    INT  S = ActiveSparkNum; // Sparks[S=0] is only one if ActiveSparkNum = 1.
+    INT_UNREAL_32S  S = ActiveSparkNum; // Sparks[S=0] is only one if ActiveSparkNum = 1.
 
 	        // Warning: extremely kludgy.
             // Find ANY old spark of type 17/18 which has an 'open' end.
@@ -759,12 +760,12 @@ void UFireTexture::CloseSpark( INT  MouseX, INT  MouseY)
 	Spark deletion.
 ----------------------------------------------------------------------------*/
 
-void UFireTexture::DeleteSparks( INT  SparkX, INT  SparkY, INT  AreaWidth)
+void UFireTexture::DeleteSparks( INT_UNREAL_32S  SparkX, INT_UNREAL_32S  SparkY, INT_UNREAL_32S  AreaWidth)
 {
 	guard(UFireTexture::DeleteSparks);
     if( ActiveSparkNum > 0 )
 	{
-		for( INT S = 0; S < ActiveSparkNum; S++ )
+		for( INT_UNREAL_32S S = 0; S < ActiveSparkNum; S++ )
 		{
 			// Diamond-shaped eraser.
 			if( AreaWidth >= Abs(SparkX - Sparks(S).X) + Abs(SparkY - Sparks(S).Y ) )
@@ -783,13 +784,13 @@ void UFireTexture::DeleteSparks( INT  SparkX, INT  SparkY, INT  AreaWidth)
 	Spark line drawing.
 ----------------------------------------------------------------------------*/
 
-void UFireTexture::DrawSparkLine( INT  StartX, INT  StartY, INT  DestX, INT  DestY, INT  Density )
+void UFireTexture::DrawSparkLine( INT_UNREAL_32S  StartX, INT_UNREAL_32S  StartY, INT_UNREAL_32S  DestX, INT_UNREAL_32S  DestY, INT_UNREAL_32S  Density )
 {
 	guard(UFireTexture::DrawSparkLine);
-    INT  Xinc, Yinc;
+    INT_UNREAL_32S  Xinc, Yinc;
 
-    INT  DivX = DestX - StartX;
-    INT  DivY = DestY - StartY;
+    INT_UNREAL_32S  DivX = DestX - StartX;
+    INT_UNREAL_32S  DivY = DestY - StartY;
 
     if ((DivX == 0) && (DivY == 0))
         return;
@@ -817,14 +818,14 @@ void UFireTexture::DrawSparkLine( INT  StartX, INT  StartY, INT  DestX, INT  Des
     DivX = Abs(DivX);
     DivY = Abs(DivY);
 
-    INT  Xpoint = StartX;
-    INT  Ypoint = StartY;
+    INT_UNREAL_32S  Xpoint = StartX;
+    INT_UNREAL_32S  Ypoint = StartY;
 
     if (DivX >= DivY)   // Draw line based on X loop.
     {
-        INT  DivY2  = DivY + DivY;
-        INT  Diff   = DivY2 - DivX;
-        INT  DivXY2 = DivY2 - DivX - DivX;
+        INT_UNREAL_32S  DivY2  = DivY + DivY;
+        INT_UNREAL_32S  Diff   = DivY2 - DivX;
+        INT_UNREAL_32S  DivXY2 = DivY2 - DivX - DivX;
 
         for (int LCount = 1; LCount <= DivX; LCount++)
         {
@@ -842,9 +843,9 @@ void UFireTexture::DrawSparkLine( INT  StartX, INT  StartY, INT  DestX, INT  Des
     }
     else    // Draw line based on Y loop.
     {
-        INT  DivX2  = DivX  + DivX;
-        INT  Diff   = DivX2 - DivY;
-        INT  DivXY2 = DivX2 - DivY - DivY;
+        INT_UNREAL_32S  DivX2  = DivX  + DivX;
+        INT_UNREAL_32S  Diff   = DivX2 - DivY;
+        INT_UNREAL_32S  DivXY2 = DivX2 - DivY - DivY;
 
         for (int LCount = 1; LCount <= DivY; LCount++)
         {
@@ -870,7 +871,7 @@ void UFireTexture::DrawSparkLine( INT  StartX, INT  StartY, INT  DestX, INT  Des
 
 // Spark-paint routine - the fire-specific part of the editor.
 
-void UFireTexture::FirePaint( INT MouseX, INT MouseY, DWORD Buttons )
+void UFireTexture::FirePaint( INT_UNREAL_32S MouseX, INT_UNREAL_32S MouseY, DWORD Buttons )
 {
 	guard(UFireTexture::FirePaint);
 
@@ -878,7 +879,7 @@ void UFireTexture::FirePaint( INT MouseX, INT MouseY, DWORD Buttons )
 	UBOOL  LeftButton = (Buttons & MOUSE_Left);
 
 	// Perform painting.
-    static INT  LastMouseX=0, LastMouseY=0, LastLeftButton=0, LastRightButton=0;
+    static INT_UNREAL_32S  LastMouseX=0, LastMouseY=0, LastLeftButton=0, LastRightButton=0;
 
     UBOOL  PosChanged   = ((LastMouseX != MouseX) || (LastMouseY != MouseY));
     UBOOL  RightChanged =  (LastRightButton != RightButton);
@@ -1222,7 +1223,7 @@ void UFireTexture::DrawFlashRamp( LineSeg LL, BYTE Color1, BYTE Color2 )
 {
     DWORD	SparkDest;
     BYTE	FlashArray[256];
-	INT  Xstep,Ystep,RealYlen,RealXlen;
+	INT_UNREAL_32S  Xstep,Ystep,RealYlen,RealXlen;
 
 	// Make writing cache-friendlier by drawing approximately to the right or downwards.
 
@@ -1241,8 +1242,9 @@ void UFireTexture::DrawFlashRamp( LineSeg LL, BYTE Color1, BYTE Color2 )
 	int MajorLen = 1 | ( (LL.Xlen >= LL.Ylen) ?  LL.Xlen : LL.Ylen );
 
     // Fill array for the specific length.
-    INT  FlashPos = 0;
-    for (int Flash = 0; Flash < MajorLen; Flash++)
+    INT_UNREAL_32S  FlashPos = 0;
+	int Flash;
+    for (Flash = 0; Flash < MajorLen; Flash++)
     {
         FlashPos += ( FlashArray[Flash] = SpeedRand() );
     }
@@ -1282,8 +1284,8 @@ void UFireTexture::DrawFlashRamp( LineSeg LL, BYTE Color1, BYTE Color2 )
         // calculate BIAS:
         // Bias = (Ylen << 6) - FlashPos;
 
-        INT  Ypoz = (LL.Ypos << 6);
-        INT  FlashBias = (( (int)RealYlen << 6) - FlashPos) / MajorLen;  
+        INT_UNREAL_32S  Ypoz = (LL.Ypos << 6);
+        INT_UNREAL_32S  FlashBias = (( (int)RealYlen << 6) - FlashPos) / MajorLen;  
 
         //
         for (Flash = 0; Flash < LL.Xlen; Flash++)
@@ -1301,8 +1303,8 @@ void UFireTexture::DrawFlashRamp( LineSeg LL, BYTE Color1, BYTE Color2 )
         //  calculate BIAS:
         //  Bias = (Xlen << 6) - FlashPos;
 
-        INT  Xpoz = (LL.Xpos << 6);
-        INT  FlashBias = (( (int)RealXlen << 6) - FlashPos) / MajorLen;   
+        INT_UNREAL_32S  Xpoz = (LL.Xpos << 6);
+        INT_UNREAL_32S  FlashBias = (( (int)RealXlen << 6) - FlashPos) / MajorLen;   
 
         //
         for (Flash = 0; Flash < LL.Ylen; Flash++)
@@ -1474,7 +1476,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_Blaze: // Emit sparks pseudo-radially.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 128 > SpeedRand() ) )
             {   // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
 	            Sparks(NS).Type = ISPARK_Drifter;  // Dynamic type.
 				Sparks(NS).Heat = ThisSpark->Heat; // Start heat 
                 Sparks(NS).X = ThisSpark->X;
@@ -1489,7 +1491,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_OzHasSpoken: // V-shaped output.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 128 > SpeedRand() ) )
             {   // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type  = ISPARK_DriftSlow;
                 Sparks(NS).Heat  = ThisSpark->Heat;        // Start heat.
                 Sparks(NS).X     = ThisSpark->X;
@@ -1503,7 +1505,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_Cone: // Symmetric gravity-emitting - sparks of type 130.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 64 > SpeedRand() ) )
             {   // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_Faller;
 				Sparks(NS).Heat = ThisSpark->Heat;   // Heat.
                 Sparks(NS).X = ThisSpark->X;
@@ -1518,7 +1520,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_BlazeRight: // Erupt to the right.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 64 > SpeedRand() ) )
             {   // Create it.
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_Faller; //
 				Sparks(NS).Heat = ThisSpark->Heat;  // Heat.
 				Sparks(NS).X = ThisSpark->X;
@@ -1532,7 +1534,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_BlazeLeft: // Erupt to the left.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 64 > SpeedRand() ) )
             {   // Create it.
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_Faller;
 				Sparks(NS).Heat = ThisSpark->Heat;	  // Heat.
 				Sparks(NS).X = ThisSpark->X;
@@ -1546,7 +1548,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_Emit: // Erupt to a preset speed & direction.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 64 > SpeedRand() ) )
             {   // Create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_DriftSlow;
 				Sparks(NS).Heat = ThisSpark->Heat; // heat
                 Sparks(NS).X = ThisSpark->X;
@@ -1560,7 +1562,7 @@ void UFireTexture::RedrawSparks()
 		case SPARK_Fountain: // Erupt to a preset speed & direction.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 64 > SpeedRand() ) )
             {   // Create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type  = ISPARK_Graviton;
 				Sparks(NS).Heat  = ThisSpark->Heat; // heat
                 Sparks(NS).X     = ThisSpark->X;
@@ -1576,7 +1578,7 @@ void UFireTexture::RedrawSparks()
      						// Whirly-floaty fire sparks, go up & glow out.
             if ( (ActiveSparkNum < (SparksLimit)) && ( 128 > SpeedRand() ) )
             {   // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_VShooter; //
 				Sparks(NS).X = UMask & (ThisSpark->X + ((SpeedRand() * ThisSpark->ByteC) >> 8));
 				Sparks(NS).Y = VMask & (ThisSpark->Y + ((SpeedRand() * ThisSpark->ByteC) >> 8));
@@ -1589,7 +1591,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_WanderOrganic: // Emitting VShooters but randomly moves itself.
             if ( (ActiveSparkNum < (SparksLimit)) )
             {   // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_VShooter;
                 Sparks(NS).X = UMask & (ThisSpark->X + (SpeedRand()&31));
                 Sparks(NS).Y = VMask & (ThisSpark->Y + (SpeedRand()&31));
@@ -1606,7 +1608,7 @@ void UFireTexture::RedrawSparks()
         case SPARK_RandomCloud: // Emitting Drop but randomly moves itself eratically.
             if ( (ActiveSparkNum < (SparksLimit)) )
             {   // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type =  ISPARK_Drop;
                 Sparks(NS).X = UMask & (ThisSpark->X + (SpeedRand()&31));
                 Sparks(NS).Y = VMask & (ThisSpark->Y + (SpeedRand()&31));
@@ -1623,7 +1625,7 @@ void UFireTexture::RedrawSparks()
             if  ( (SpeedRand()<20) &&  ( (ActiveSparkNum < (SparksLimit)) ) )
             {
                 // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
 				Sparks(NS).Heat  = ThisSpark->Heat;
                 Sparks(NS).Type = ISPARK_SpawnedEel; //
                 Sparks(NS).X = UMask & (ThisSpark->X + (SpeedRand()&31));
@@ -1641,7 +1643,7 @@ void UFireTexture::RedrawSparks()
             if  ( (SpeedRand()<20) &&  ( (ActiveSparkNum < (SparksLimit)) ) )
             {
 				// Create it.
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_SpawnedSperm; //
 				Sparks(NS).Heat = ThisSpark->Heat;
                 Sparks(NS).X = UMask & (ThisSpark->X + (SpeedRand()&31));
@@ -1659,7 +1661,7 @@ void UFireTexture::RedrawSparks()
             if ( (ActiveSparkNum < (SparksLimit)) )
             {
                 // Create it.
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_Move; //
                 Sparks(NS).X = UMask & (ThisSpark->X + (SpeedRand()&31));
                 Sparks(NS).Y = VMask & (ThisSpark->Y + (SpeedRand()&31));
@@ -1677,7 +1679,7 @@ void UFireTexture::RedrawSparks()
             if ( (ActiveSparkNum < (SparksLimit)) )
             {
                 // create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_Move; //
 				Sparks(NS).X = UMask & (ThisSpark->X + ((SpeedRand() * ThisSpark->ByteC) >> 8));
 				Sparks(NS).Y = VMask & (ThisSpark->Y + ((SpeedRand() * ThisSpark->ByteC) >> 8));
@@ -1691,7 +1693,7 @@ void UFireTexture::RedrawSparks()
             if ( (ActiveSparkNum < (SparksLimit)) )
             {
                 // Create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type  = ISPARK_SpawnedTwirl;
                 Sparks(NS).X     = UMask & (ThisSpark->X + (SpeedRand()&31));
                 Sparks(NS).Y     = VMask & (ThisSpark->Y + (SpeedRand()&31));
@@ -1714,7 +1716,7 @@ void UFireTexture::RedrawSparks()
 		case SPARK_Wheel:  // CLOUDS that move at DrawByteA's speed.
             if ( (ActiveSparkNum < (SparksLimit)) )
             {   // Create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_SpawnedTwirl;
                 Sparks(NS).X = ThisSpark->X ;
                 Sparks(NS).Y = ThisSpark->Y ;
@@ -1730,7 +1732,7 @@ void UFireTexture::RedrawSparks()
 		case SPARK_Sprinkler:  
             if ( (ActiveSparkNum < (SparksLimit)) )
             {   // Create it..
-                INT  NS = ActiveSparkNum++;
+                INT_UNREAL_32S  NS = ActiveSparkNum++;
                 Sparks(NS).Type = ISPARK_SprinklerTwirl;
                 Sparks(NS).X = ThisSpark->X ;
                 Sparks(NS).Y = ThisSpark->Y ;
@@ -1802,19 +1804,19 @@ void UFireTexture::RedrawSparks()
         case SPARK_SphereLightning: // Radial lightning from source point.
             if (SpeedRand() >= ThisSpark->ByteD) // Frequency.
             {
-                INT  SparkAngle = SpeedRand();
-                INT  Radius = ThisSpark->ByteC;
+                INT_UNREAL_32S  SparkAngle = SpeedRand();
+                INT_UNREAL_32S  Radius = ThisSpark->ByteC;
 
 				BYTE  Col1 = ThisSpark->Heat;
 				BYTE  Col2 = ThisSpark->Heat >> 2; // Taper off to (relative) darkness.
 
-                INT  SdispX = ( Radius * ( (int)PhaseTable[SparkAngle] ) ) >> 8;
-                INT  SdispY = ( Radius * ( (int)PhaseTable[(SparkAngle+64) & 255] ) ) >> 8;
+                INT_UNREAL_32S  SdispX = ( Radius * ( (int)PhaseTable[SparkAngle] ) ) >> 8;
+                INT_UNREAL_32S  SdispY = ( Radius * ( (int)PhaseTable[(SparkAngle+64) & 255] ) ) >> 8;
 
   				LineSeg LL;
 
-                INT  Xlen =  (int)SdispX - (int)(Radius/2);
-                INT  Ylen =  (int)SdispY - (int)(Radius/2);
+                INT_UNREAL_32S  Xlen =  (int)SdispX - (int)(Radius/2);
+                INT_UNREAL_32S  Ylen =  (int)SdispY - (int)(Radius/2);
 
 				LL.Xpos = ThisSpark->X;
 				LL.Ypos = ThisSpark->Y;
@@ -2066,7 +2068,7 @@ void UFireTexture::PostDrawSparks()
 
 	if (StarStatus == 0) return; // No stars so don't search the array.
 		
-	for( INT  S = 0; S < ActiveSparkNum; S++ )
+	for( INT_UNREAL_32S  S = 0; S < ActiveSparkNum; S++ )
 	{
         if  (Sparks(S).Type == SPARK_Stars)
 		{
@@ -2140,10 +2142,10 @@ void UWaterTexture::CalculateWater( )
                - ( ((int)*DestCell)  << 1 )\
                );\
 \
-  INT  _EA = (int)SourceE-(int)SourceA;\
-  INT  _FB = (int)SourceF-(int)SourceB;\
-  INT  _GC = (int)SourceG-(int)SourceC;\
-  INT  _HD = (int)SourceH-(int)SourceD;\
+  INT_UNREAL_32S  _EA = (int)SourceE-(int)SourceA;\
+  INT_UNREAL_32S  _FB = (int)SourceF-(int)SourceB;\
+  INT_UNREAL_32S  _GC = (int)SourceG-(int)SourceC;\
+  INT_UNREAL_32S  _HD = (int)SourceH-(int)SourceD;\
  \
   *Dest2 = *( RenderTable + 512 +  _GC + _HD );\
   *Dest3 = *( RenderTable + 512 +  _FB + _HD );\
@@ -2175,10 +2177,10 @@ void UWaterTexture::CalculateWater()
 
     WaveParity++;   // odd/even counter.
 
-    INT  TotalSize = 2 * Xdimension * Ydimension;
+    INT_UNREAL_32S  TotalSize = 2 * Xdimension * Ydimension;
 
     BYTE* DestCell;
-    INT  DestPixel;
+    INT_UNREAL_32S  DestPixel;
 
 
     if ((WaveParity & 1) == 0)
@@ -2593,14 +2595,14 @@ void UWetTexture::ApplyWetTexture()
 	if (LocalSourceBitmap) SourceMapAddr = LocalSourceBitmap;
 	else		     SourceMapAddr  = &SourceTexture->GetMip(0)->DataArray(0);
 
-    INT  Xdimension = USize;
-    INT  Ydimension = VSize;
+    INT_UNREAL_32S  Xdimension = USize;
+    INT_UNREAL_32S  Ydimension = VSize;
 
 	int UMask = USize - 1;
 
 #if WETASM
 
-    for ( INT  v=0; v < Ydimension; v++ )
+    for ( INT_UNREAL_32S  v=0; v < Ydimension; v++ )
     {
 		BYTE* LineStart =  BitMapAddr + (v << UBits);
 		BYTE* SourceStart = SourceMapAddr + (v << UBits);
@@ -2672,17 +2674,17 @@ void UWetTexture::ApplyWetTexture()
 
 #else
 
-    for ( INT  v=0; v < Ydimension; v++ )
+    for ( INT_UNREAL_32S  v=0; v < Ydimension; v++ )
     {
 		BYTE* LineStart =  BitMapAddr + (v << UBits);
 		BYTE* SourceStart = SourceMapAddr + (v << UBits);
 
-		for( INT  u=0; u<Xdimension; u += 2 )
+		for( INT_UNREAL_32S  u=0; u<Xdimension; u += 2 )
         {
 
 		 // coolish effect combining half warped, half original.
 		 // LineStart[u] = (  SourceStart[(u+LineStart[u]) & UMask ] + SourceStart[(u+128) & UMask]  ) >> 1;
-		 INT  u2 = u+1;
+		 INT_UNREAL_32S  u2 = u+1;
 
 		 LineStart[ u] =  SourceStart[(  u + LineStart[ u]) & UMask ];
 		 LineStart[u2] =  SourceStart[( u2 + LineStart[u2]) & UMask ];
@@ -2761,10 +2763,10 @@ void UIceTexture::BlitTexIce()
 	if (LocalSourceBitmap) TexAddr = LocalSourceBitmap;
 	else				   TexAddr = &SourceTexture->GetMip(0)->DataArray(0);
 
-    INT  Xdimension   = USize;  // Wrap needed for 8-bit counters.
-    INT  Ydimension   = VSize;  // 
+    INT_UNREAL_32S  Xdimension   = USize;  // Wrap needed for 8-bit counters.
+    INT_UNREAL_32S  Ydimension   = VSize;  // 
 
-	INT  TempUMask    = UMask;  //
+	INT_UNREAL_32S  TempUMask    = UMask;  //
 
 	static	DWORD ESPStorage;   // Temp ESP  storage.
 	static	DWORD EBPStorage;   // Temp EBP  storage.
@@ -2773,7 +2775,7 @@ void UIceTexture::BlitTexIce()
 	int  UDisp =  appRound(UPosition) & UMask;
 	int  VDisp =  appRound(VPosition) & VMask;
 
-    for ( INT  v=0; v < Ydimension; v++ )
+    for ( INT_UNREAL_32S  v=0; v < Ydimension; v++ )
     {
 		BYTE* LineStart   = BitMapAddr +    (v << UBits);
 		BYTE* TexStart    = TexAddr    +    (v << UBits);
@@ -3144,7 +3146,7 @@ void UIceTexture::BlitTexIce()
 		}
 
 #else
-		for( INT  u=0; u < Xdimension; u+=2 )
+		for( INT_UNREAL_32S  u=0; u < Xdimension; u+=2 )
         {
 			// Coolish effect combining half warped, half original.
 			// LineStart[u] = (  SourceStart[(u+LineStart[u]) & UMask ] + SourceStart[(u+128) & UMask]  ) >> 1;
@@ -3177,10 +3179,10 @@ void UIceTexture::BlitIceTex()
 	BYTE* GlassAddr		= &GlassTexture->GetMip(0)->DataArray(0);
     BYTE* BitMapAddr	= &GetMip(0)->DataArray(0);  // Pointer
 
-    INT  Xdimension   = USize;  // Wrap needed for 8-bit counters.
-    INT  Ydimension   = VSize;  //
+    INT_UNREAL_32S  Xdimension   = USize;  // Wrap needed for 8-bit counters.
+    INT_UNREAL_32S  Ydimension   = VSize;  //
 
-	INT  TempUMask    = UMask;
+	INT_UNREAL_32S  TempUMask    = UMask;
 
 	static	DWORD ESPStorage;   // Temp ESP storage
 	static	DWORD EBPStorage;   // Temp EBP storage
@@ -3189,7 +3191,7 @@ void UIceTexture::BlitIceTex()
 	int  UDisp = appRound(UPosition) & UMask;
 	int  VDisp = appRound(VPosition) & VMask;
 
-    for ( INT  v=0; v < Ydimension; v++ )
+    for ( INT_UNREAL_32S  v=0; v < Ydimension; v++ )
     {
 		BYTE* LineStart   = BitMapAddr +    ( v << UBits );
 		BYTE* TexStart    = TexAddr    + (((v + VDisp) & VMask) << UBits);
@@ -3358,7 +3360,7 @@ void UIceTexture::BlitIceTex()
 			}
 		}
 #else
-		for( INT  u=0; u < Xdimension; u+=2 )
+		for( INT_UNREAL_32S  u=0; u < Xdimension; u+=2 )
         {
 			// Coolish effect combining half warped, half original.
 			// LineStart[u] = (  SourceStart[(u+LineStart[u]) & UMask ] + SourceStart[(u+128) & UMask]  ) >> 1;
@@ -3400,10 +3402,10 @@ void UWaterTexture::WaterRedrawDrops()
 
     BYTE  U2Mask = UMask >> 1;       // warning: 1/2 of full output size
     BYTE  V2Mask = VMask >> 1;       // 
-    INT   XSize  = USize/2;          // 
+    INT_UNREAL_32S   XSize  = USize/2;          // 
     BYTE* WaveFieldA = SourceFields; //
     BYTE* WaveFieldB = SourceFields + XSize;
-    INT   SegSize;
+    INT_UNREAL_32S   SegSize;
 	BYTE  Depth;
 
     GlobalPhase++;
@@ -3448,7 +3450,7 @@ void UWaterTexture::WaterRedrawDrops()
 			}
             break;
 
-		case DROP_HalfAmpl:     // half amplitude: only goes down INT  o water
+		case DROP_HalfAmpl:     // half amplitude: only goes down INT_UNREAL_32S  o water
 			Drops[S].Depth += Drops[S].ByteD; // update phase
             Depth = PhaseTable[ Drops[S].Depth ];
 			if (Depth<128) Depth = 128; // clamp it
@@ -3730,7 +3732,7 @@ void UWaterTexture::WaterRedrawDrops()
 // Adding a drop to the Pool structure (edit-time).
 //
 
-void UWaterTexture::AddDrop( INT  DropX, INT  DropY )
+void UWaterTexture::AddDrop( INT_UNREAL_32S  DropX, INT_UNREAL_32S  DropY )
 {
 	guard(UWaterTexture::AddDrop);
 
@@ -3738,7 +3740,7 @@ void UWaterTexture::AddDrop( INT  DropX, INT  DropY )
     if( DropX>=USize || DropY>=VSize || DropX<0 || DropY<0 || NumDrops>=MaxDrops )
         return;
 
-    INT  S = NumDrops++;
+    INT_UNREAL_32S  S = NumDrops++;
 
     Drops[S].X = DropX >> 1;
     Drops[S].Y = DropY >> 1;
@@ -3852,17 +3854,17 @@ void UWaterTexture::AddDrop( INT  DropX, INT  DropY )
 
 
 // Delete a drop within a certain area in the image. 
-void UWaterTexture::DeleteDrops( INT  DropX, INT  DropY, INT  AreaWidth )
+void UWaterTexture::DeleteDrops( INT_UNREAL_32S  DropX, INT_UNREAL_32S  DropY, INT_UNREAL_32S  AreaWidth )
 {
 	guard(UWaterTexture::DeleteDrops);
 
-    for( INT  S=0; S<NumDrops; S++ )
+    for( INT_UNREAL_32S  S=0; S<NumDrops; S++ )
     {
         if( AreaWidth >= ( Abs(DropX - (Drops[S].X << 1) ) +
                            Abs(DropY - (Drops[S].Y << 1) ) ) )
         {
             // Delete Drop by replacing it with last one (+ delete last one).
-            INT  LastDrop = --NumDrops;
+            INT_UNREAL_32S  LastDrop = --NumDrops;
             Drops[S] = Drops[LastDrop];
         }
     }
@@ -3875,7 +3877,7 @@ void UWaterTexture::DeleteDrops( INT  DropX, INT  DropY, INT  AreaWidth )
 	Temp spark drawing (for editor)
 ----------------------------------------------------------------------------*/
 
-void UFireTexture::TempDrawSpark (INT PosX, INT  PosY, INT Intensity )
+void UFireTexture::TempDrawSpark (INT_UNREAL_32S PosX, INT_UNREAL_32S  PosY, INT_UNREAL_32S Intensity )
 {
     DWORD SparkDest;
 
@@ -3935,7 +3937,7 @@ UFractalTexture::UFractalTexture()
 }
 
 
-void UFractalTexture::Init( INT  InUSize, INT  InVSize )
+void UFractalTexture::Init( INT_UNREAL_32S  InUSize, INT_UNREAL_32S  InVSize )
 {
 	guard(UFractalTexture::Init);
 
@@ -3982,7 +3984,7 @@ UFireTexture::UFireTexture()
 	// initialize the routines we should call for rising/nonrising fire;
 	// one for Pentium/MMX es and one for Ppro/PII's
 
-	//void (*MergePass)( INT Y, INT X, INT InnerX );
+	//void (*MergePass)( INT_UNREAL_32S Y, INT_UNREAL_32S X, INT_UNREAL_32S InnerX );
 
 }
 
@@ -3990,7 +3992,7 @@ UFireTexture::UFireTexture()
 // ::Init  called only _once_ ,on creation in the editor)
 //
 
-void UFireTexture::Init( INT  InUSize, INT  InVSize )
+void UFireTexture::Init( INT_UNREAL_32S  InUSize, INT_UNREAL_32S  InVSize )
 {
 	guard(UFireTexture::Init);
 
@@ -4001,7 +4003,7 @@ void UFireTexture::Init( INT  InUSize, INT  InVSize )
 
 	// Create a custom palette.
 	Palette = new( GetParent() )UPalette;
-	for( INT  i=0; i<256; i++ )
+	for( INT_UNREAL_32S  i=0; i<256; i++ )
 		Palette->Colors.AddItem( FColor(i,i,0) );
 	BlueLagunaPalette(Palette);
 	MipZero = Palette->Colors(128);
@@ -4060,7 +4062,7 @@ void UFireTexture::PostLoad()
 	if( Palette!=NULL && GetParent()!=Palette->GetParent() )
 	{
 		UPalette* NewPalette = new( GetParent(), GetName() )UPalette;
-		for( INT i=0; i<256; i++ )
+		for( INT_UNREAL_32S i=0; i<256; i++ )
 			NewPalette->Colors.AddItem( Palette->Colors(i) );
 		Palette = NewPalette->ReplaceWithExisting();
 		MipZero = Palette->Colors(128);
@@ -4071,7 +4073,7 @@ void UFireTexture::PostLoad()
 	// Fill the fire table.
 	if (OldRenderHeat != RenderHeat)
 	{
-		for( INT  T = 0; T<1024; T++ )
+		for( INT_UNREAL_32S  T = 0; T<1024; T++ )
 			RenderTable[T] = Clamp( T/4.0 + 1.0 - (255-RenderHeat)/16.0, 0.0, 255.0 );
 		OldRenderHeat = RenderHeat;
 	}
@@ -4123,7 +4125,7 @@ void UFireTexture::PostLoad()
 
 
 
-void UFireTexture::TouchTexture(INT UPos, INT VPos, FLOAT Magnitude)
+void UFireTexture::TouchTexture(INT_UNREAL_32S UPos, INT_UNREAL_32S VPos, FLOAT Magnitude)
 {
 	guard(UFireTexture::TouchTexture);
 
@@ -4201,7 +4203,7 @@ void UFireTexture::Click( DWORD Buttons, FLOAT X, FLOAT Y )
 	// Mouse 'torch' animation.
 	if( 1 )
 	{
-		GetMip(0)->DataArray((INT)X + (INT)Y * USize) = 255;
+		GetMip(0)->DataArray((INT_UNREAL_32S)X + (INT_UNREAL_32S)Y * USize) = 255;
 	}
     else
     {
@@ -4222,7 +4224,7 @@ void UFireTexture::Serialize( FArchive& Ar )
 		//if (ActiveSparkNum > Sparks.Num()) appErrorf(" Active Spark num out of bounds 1: ActiveSparkNum = %i, Sparks.Num() = %i",ActiveSparkNum,Sparks.Num());
 
 		// Delete the transients, compact the spark array.
-		for( INT t=ActiveSparkNum-1; t>=0; t-- )
+		for( INT_UNREAL_32S t=ActiveSparkNum-1; t>=0; t-- )
 			if( Sparks(t).Type >= ISPARK_TRANSIENTS ) 
 				Sparks(t) = Sparks(--ActiveSparkNum);	
 
@@ -4267,7 +4269,7 @@ UWaterTexture::UWaterTexture()
 
 // Init. Called only _once_, on creation of texture in editor.
 
-void UWaterTexture::Init( INT  InUSize, INT  InVSize )
+void UWaterTexture::Init( INT_UNREAL_32S  InUSize, INT_UNREAL_32S  InVSize )
 {
 	guard(UWaterTexture::Init);
 
@@ -4307,7 +4309,7 @@ void UWaterTexture::PostLoad()
 		// Allocate the two wave height fields.
 		SourceFields = new BYTE[ USize * VSize / 2 ]; 
 		// initialize water to average height.
-		for( INT  i=0; i< USize * VSize / 2; i++ )
+		for( INT_UNREAL_32S  i=0; i< USize * VSize / 2; i++ )
 			SourceFields[i] = 128;
 	};
 
@@ -4316,7 +4318,7 @@ void UWaterTexture::PostLoad()
 
 
 
-void UWaterTexture::TouchTexture(INT UPos, INT VPos, FLOAT Magnitude)
+void UWaterTexture::TouchTexture(INT_UNREAL_32S UPos, INT_UNREAL_32S VPos, FLOAT Magnitude)
 {
 	guard(UWaterTexture::TouchTexture);
 
@@ -4360,7 +4362,7 @@ void UWaterTexture::Clear( DWORD ClearFlags )
 
 	// Clear fields.
 	if( ClearFlags & TCLEAR_Bitmap )
-		for( INT  i=0; i< USize * VSize / 2; i++ )
+		for( INT_UNREAL_32S  i=0; i< USize * VSize / 2; i++ )
 			SourceFields[i] = 128;
 
 	// Clear drops.
@@ -4371,11 +4373,11 @@ void UWaterTexture::Clear( DWORD ClearFlags )
 }
 
 
-void UWaterTexture::WaterPaint( INT X, INT Y, DWORD Buttons)
+void UWaterTexture::WaterPaint( INT_UNREAL_32S X, INT_UNREAL_32S Y, DWORD Buttons)
 {
 	guard(UWaterTexture::WaterPaint);
 		
-	INT MouseX=X, MouseY=Y;
+	INT_UNREAL_32S MouseX=X, MouseY=Y;
 
 	// Water drawing
 	
@@ -4383,7 +4385,7 @@ void UWaterTexture::WaterPaint( INT X, INT Y, DWORD Buttons)
 	UBOOL  LeftButton = (Buttons & MOUSE_Left);
 
 	// Perform painting.
-    static INT  LastMouseX=0, LastMouseY=0, LastLeftButton=0, LastRightButton=0;
+    static INT_UNREAL_32S  LastMouseX=0, LastMouseY=0, LastLeftButton=0, LastRightButton=0;
 
     UBOOL  PosChanged   =  ((LastMouseX != MouseX) || (LastMouseY != MouseY));
     UBOOL  RightChanged =   (LastRightButton != RightButton);
@@ -4433,7 +4435,7 @@ void UWaterTexture::Click( DWORD Buttons, FLOAT X, FLOAT Y )
 {
 	guard(UWaterTexture::Click);
 
-	INT MouseX=X, MouseY=Y;
+	INT_UNREAL_32S MouseX=X, MouseY=Y;
 
 	// Paint on the water.
     if( Buttons & MOUSE_Left )
@@ -4464,7 +4466,7 @@ UWaveTexture::UWaveTexture()
 	unguard;
 }
 
-void UWaveTexture::Init( INT  InUSize, INT  InVSize )
+void UWaveTexture::Init( INT_UNREAL_32S  InUSize, INT_UNREAL_32S  InVSize )
 {
 	guard(UWaveTexture::Init);
 
@@ -4481,7 +4483,7 @@ void UWaveTexture::Init( INT  InUSize, INT  InVSize )
 
 	// Create a custom palette.	
 	Palette = new( GetParent() )UPalette;
-	for( INT  i=0; i<256; i++ )
+	for( INT_UNREAL_32S  i=0; i<256; i++ )
 		Palette->Colors.AddItem( FColor(0,0,0) );
 	BlueLagunaPalette(Palette);
 	MipZero = Palette->Colors(128);
@@ -4501,7 +4503,7 @@ void UWaveTexture::PostLoad()
 	if( Palette!=NULL && GetParent()!=Palette->GetParent() )
 	{
 		UPalette* NewPalette = new( GetParent(), GetName() )UPalette;
-		for( INT i=0; i<256; i++ )
+		for( INT_UNREAL_32S i=0; i<256; i++ )
 			NewPalette->Colors.AddItem( Palette->Colors(i) );
 		Palette = NewPalette->ReplaceWithExisting();
 		MipZero = Palette->Colors(128);
@@ -4525,7 +4527,7 @@ void UWaveTexture::Clear( DWORD ClearFlags )
 
 	// Clear fields.
 	if( ClearFlags & TCLEAR_Bitmap )
-		for( INT  i=0; i< USize * VSize / 2; i++ )
+		for( INT_UNREAL_32S  i=0; i< USize * VSize / 2; i++ )
 			SourceFields[i] = 128;
 
 	// Clear drops.
@@ -4557,13 +4559,13 @@ void UWaveTexture::SetWaveLight()
     FLOAT Lamp   = PI * BumpMapLight / 255.0;
     FLOAT Viewer = PI * BumpMapAngle / 255.0;
 
-    for( INT  i=0; i<1024 ; i++ )
+    for( INT_UNREAL_32S  i=0; i<1024 ; i++ )
     {
 		// Get reflection magnitude.
         FLOAT Normal = FakeAtan(  ((FLOAT)WaveAmp/255.0F) * (512.0F - (float)i) / 196.0F )  + (PI * 0.5F);
 
         // Max in this palette is 255, diffuse light reaches to 256-(PhongRange/2). 
-        INT  TempLight = (int) ( (256-(PhongRange/2)) * appCos ( Normal- Lamp ) );   //* ((FLOAT)WaveAmp/256.0F) );
+        INT_UNREAL_32S  TempLight = (int) ( (256-(PhongRange/2)) * appCos ( Normal- Lamp ) );   //* ((FLOAT)WaveAmp/256.0F) );
 
         // Create a phong-ish highlight.
         // Based on angle between viewer direction and reflected light:
@@ -4596,7 +4598,7 @@ UWetTexture::UWetTexture()
 	unguard;
 }
 
-void UWetTexture::Init( INT  InUSize, INT  InVSize )
+void UWetTexture::Init( INT_UNREAL_32S  InUSize, INT_UNREAL_32S  InVSize )
 {
 	guard(UWetTexture::Init);
 
@@ -4605,7 +4607,7 @@ void UWetTexture::Init( INT  InUSize, INT  InVSize )
 
 	// Create a custom palette.
 	Palette = new( GetParent() )UPalette;
-	for( INT  i=0; i<256; i++ )
+	for( INT_UNREAL_32S  i=0; i<256; i++ )
 		Palette->Colors.AddItem( FColor(i,i,i) );
 	BlueLagunaPalette(Palette);
 	MipZero = Palette->Colors(128);
@@ -4632,17 +4634,17 @@ void UWetTexture::PostLoad()
 	{
 		// Size changed; try to recover a source texture by upsampling..
 
-		INT UScaler = UBits - SourceTexture->UBits;
-		INT VScaler = VBits - SourceTexture->VBits;
+		INT_UNREAL_32S UScaler = UBits - SourceTexture->UBits;
+		INT_UNREAL_32S VScaler = VBits - SourceTexture->VBits;
 
 		if ((UScaler>0 ) && (VScaler>0))
 		{
 			LocalSourceBitmap = new BYTE[ USize * VSize ]; 
 			BYTE* SourceMapAddr  = &SourceTexture->GetMip(0)->DataArray(0);
 			
-			for (INT V=0; V< VSize; V++)
+			for (INT_UNREAL_32S V=0; V< VSize; V++)
 			{
-				for (INT U=0; U< USize; U++)
+				for (INT_UNREAL_32S U=0; U< USize; U++)
 				{	
 					LocalSourceBitmap[ U + ( V * USize )] = 
 						SourceMapAddr[ ( U >> UScaler ) + ((V >> VScaler) << SourceTexture->UBits) ];
@@ -4683,7 +4685,7 @@ void UWetTexture::Clear( DWORD ClearFlags )
 
 	// Clear fields.
 	if( ClearFlags & TCLEAR_Bitmap )
-		for( INT  i=0; i< USize * VSize / 2; i++ )
+		for( INT_UNREAL_32S  i=0; i< USize * VSize / 2; i++ )
 			SourceFields[i] = 128;
 
 	// Clear drops.
@@ -4715,7 +4717,7 @@ void UWetTexture::SetRefractionTable()
 {
 	guard(UWetTexture::SetRefractionTable);
 	// 'zero' is 512
-	for( INT  i=0; i<1024 ; i++ )
+	for( INT_UNREAL_32S  i=0; i<1024 ; i++ )
     {
 		int TempLight = (+i-511) * ((FLOAT)WaveAmp/512.0F); 
 		RenderTable[i] = Clamp( TempLight, -128, 127 );
@@ -4793,17 +4795,17 @@ void UIceTexture::PostLoad()
 				// Try to copy source texture to current texture.
 				// Size changed; try to recover a source texture by upsampling..
 
-				INT UScaler = UBits - SourceTexture->UBits;
-				INT VScaler = VBits - SourceTexture->VBits;
+				INT_UNREAL_32S UScaler = UBits - SourceTexture->UBits;
+				INT_UNREAL_32S VScaler = VBits - SourceTexture->VBits;
 
 				if ((UScaler>=0 ) && (VScaler>=0))
 				{
 					LocalSourceBitmap = &GetMip(0)->DataArray(0);  // our default data ?
 					BYTE* SourceMapAddr  = &SourceTexture->GetMip(0)->DataArray(0);
 					
-					for (INT V=0; V< VSize; V++)
+					for (INT_UNREAL_32S V=0; V< VSize; V++)
 					{
-						for (INT U=0; U< USize; U++)
+						for (INT_UNREAL_32S U=0; U< USize; U++)
 						{	
 							LocalSourceBitmap[ U + ( V * USize )] = 
 								SourceMapAddr[ ( U >> UScaler ) + ((V >> VScaler) << SourceTexture->UBits) ];
@@ -4823,7 +4825,7 @@ void UIceTexture::PostLoad()
 	unguard;
 }
 
-void UIceTexture::Init( INT  InUSize, INT  InVSize )
+void UIceTexture::Init( INT_UNREAL_32S  InUSize, INT_UNREAL_32S  InVSize )
 {
 	guard(UIceTexture::Init);
 
@@ -4844,7 +4846,7 @@ void UIceTexture::Init( INT  InUSize, INT  InVSize )
 
 	// Create a dummy palette.
 	Palette = new( GetParent() )UPalette;
-	for( INT  i=0; i<256; i++ )
+	for( INT_UNREAL_32S  i=0; i<256; i++ )
 		Palette->Colors.AddItem( FColor(i,i,i) );
 	MipZero = Palette->Colors(128);
 	

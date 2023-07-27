@@ -22,7 +22,7 @@
 #include "Core.h"
 
 CORE_API FGlobalPlatform GTempPlatform;
-INT GSlowTaskCount=0;
+INT_UNREAL_32S GSlowTaskCount=0;
 FILE* GLogFile=NULL;
 char GLogFname[256]="", GReadIni[256]="", GWriteIni[256]="";
 
@@ -343,7 +343,8 @@ void appInit()
 	char Comp[MAX_COMPUTERNAME_LENGTH+1]="";
 	DWORD Size=MAX_COMPUTERNAME_LENGTH+1;
 	GetComputerName( Comp, &Size );
-	for( char *c=Comp, *d=GComputerName; *c!=0; c++ )
+	char *c, *d;
+	for( c=Comp, d=GComputerName; *c!=0; c++ )
 		if( appIsAlnum(*c) && d<GComputerName+ARRAY_COUNT(GComputerName)-1 )
 			*d++ = *c;
 	*d++ = 0;
@@ -354,17 +355,12 @@ void appInit()
 	GMem.Init( 65536 );
 	GSys = new USystem;
 	GObj.AddToRoot( GSys );
-	for( INT i=0; i<ARRAY_COUNT(GSys->Suppress); i++ )
+	for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(GSys->Suppress); i++ )
 		if( GSys->Suppress[i]!=NAME_None )
 			GSys->Suppress[i].SetFlags( RF_Suppress );
 
 	// Randomize.
 	srand( (unsigned)time( NULL ) );
-
-	// Set heap granularity.
-	INT OldHeapGranularity=*__p__amblksiz(), NewHeapGranularity=0x10000;
-	*__p__amblksiz() = NewHeapGranularity;
-	debugf( NAME_Init, "Heap granularity changed from %i to %i", OldHeapGranularity, NewHeapGranularity );
 
 	// Get memory.
 	MEMORYSTATUS M;
@@ -403,7 +399,7 @@ void appInit()
 	QueryPerformanceFrequency(&lFreq);
 	DOUBLE Frequency = (DOUBLE)(SQWORD)(((QWORD)lFreq.LowPart) + ((QWORD)lFreq.HighPart<<32));
 	check(Frequency!=0);
-	INT Cycles=0;
+	INT_UNREAL_32S Cycles=0;
 	LARGE_INTEGER I1, I2;
 	QueryPerformanceCounter(&I1);
 	clock(Cycles);
@@ -610,7 +606,7 @@ CORE_API DWORD appCycles()
 //
 // Return the system time.
 //
-CORE_API void appSystemTime( INT& Year, INT& Month, INT& DayOfWeek, INT& Day, INT& Hour, INT& Min, INT& Sec, INT& MSec )
+CORE_API void appSystemTime( INT_UNREAL_32S& Year, INT_UNREAL_32S& Month, INT_UNREAL_32S& DayOfWeek, INT_UNREAL_32S& Day, INT_UNREAL_32S& Hour, INT_UNREAL_32S& Min, INT_UNREAL_32S& Sec, INT_UNREAL_32S& MSec )
 {
 	guard(appSystemTime);
 
@@ -643,7 +639,7 @@ void appLaunchURL( const char* URL, const char* Parms, char* Error256 )
 	guard(appLaunchURL);
 	Error256=0;
 	debugf( NAME_Log, "LaunchURL %s", URL );
-	INT Code = (INT)ShellExecute(NULL,"open",URL,Parms,"",SW_SHOWNORMAL);
+	INT_UNREAL_32S Code = (INT_UNREAL_32S)ShellExecute(NULL,"open",URL,Parms,"",SW_SHOWNORMAL);
 	if( Code<=32 )
 		appSprintf( Error256, LocalizeError("UrlFailed") );
 	unguard;
@@ -730,7 +726,7 @@ CORE_API void appCleanFileCache()
 	// Delete all temporary files.
 	appSprintf( Temp, "%s\\*.tmp", GSys->CachePath );
 	TArray<FString> Found = appFindFiles( Temp );
-	for( INT i=0; i<Found.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Found.Num(); i++ )
 	{
 		appSprintf( Temp, "%s\\%s", GSys->CachePath, *Found(i) );
 		debugf( "Deleting temporary file: %s", Temp );
@@ -742,7 +738,7 @@ CORE_API void appCleanFileCache()
 	Found = appFindFiles( Temp );
 	if( GSys->PurgeCacheDays )
 	{
-		for( INT i=0; i<Found.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Found.Num(); i++ )
 		{
 			struct _stat Buf;
 			appSprintf( Temp, "%s\\%s", GSys->CachePath, *Found(i) );
@@ -752,7 +748,7 @@ CORE_API void appCleanFileCache()
 				FileTime = Buf.st_mtime;
 				time( &CurrentTime );
 				DOUBLE DiffSeconds = difftime( CurrentTime, FileTime );
-				INT    DiffDays    = DiffSeconds / 60.0 / 60.0 / 24.0;
+				INT_UNREAL_32S    DiffDays    = DiffSeconds / 60.0 / 60.0 / 24.0;
 				if( DiffDays > GSys->PurgeCacheDays )
 				{
 					debugf( "Purging outdated file from cache: %s (%i days old)", Temp, DiffDays );
@@ -820,14 +816,14 @@ CORE_API UBOOL appCopyFile( const char* Src, const char* Dest )
 // This code is unguarded because trapped errors will just try
 // to log more errors, resulting in a recursive mess.
 //
-void FGlobalPlatform::WriteBinary( const void* Data, INT Length, EName Event )
+void FGlobalPlatform::WriteBinary( const void* Data, INT_UNREAL_32S Length, EName Event )
 {
 	try
 	{
 		FName EventName = FName(Event);
 		if( !(EventName.GetFlags() & RF_Suppress) )
 		{
-			INT FoundIndex=0;
+			INT_UNREAL_32S FoundIndex=0;
 #ifdef _DEBUG
 			OutputDebugString( *EventName );
 			OutputDebugString( ": " );
@@ -958,7 +954,7 @@ CORE_API void VARARGS appUnwindf( const char* Fmt, ... )
 	char TempStr[4096];
 	GET_VARARGS( TempStr, Fmt );
 
-	static INT Count=0;
+	static INT_UNREAL_32S Count=0;
 	if( Count++ )
 		strncat( GErrorHist, " <- ", ARRAY_COUNT(GErrorHist) );
 	strncat( GErrorHist, TempStr, ARRAY_COUNT(GErrorHist) );
@@ -1001,7 +997,7 @@ void FGlobalPlatform::EndSlowTask()
 //
 // Update the progress bar.
 //
-UBOOL VARARGS FGlobalPlatform::StatusUpdatef( INT Numerator, INT Denominator, const char* Fmt, ... )
+UBOOL VARARGS FGlobalPlatform::StatusUpdatef( INT_UNREAL_32S Numerator, INT_UNREAL_32S Denominator, const char* Fmt, ... )
 {
 	guard(FGlobalPlatform::StatusUpdatef);
 
@@ -1030,7 +1026,7 @@ UBOOL GetConfigString
 	const char*	Section,
 	const char*	Key,
     char*		Value,
-	INT			Size,
+	INT_UNREAL_32S			Size,
 	const char*	Filename
 )
 {
@@ -1065,7 +1061,7 @@ UBOOL GetConfigStringArray
 	guard(GetConfigStringArray);
 	char NewKey[256], NewValue[256];
 	Value.Empty();
-	for( INT i=0; i<32; i++ )
+	for( INT_UNREAL_32S i=0; i<32; i++ )
 	{
 		appSprintf( NewKey, "%s%i", Key, i );
 		if( GetConfigString( Section, NewKey, NewValue, ARRAY_COUNT(NewValue), Filename ) )
@@ -1084,7 +1080,7 @@ UBOOL GetConfigInt
 (
 	const char*	Section,
 	const char*	Key,
-	INT&		Value,
+	INT_UNREAL_32S&		Value,
 	const char*	Filename
 )
 {
@@ -1154,7 +1150,7 @@ UBOOL GetConfigSection
 (
 	const char*		Section,
 	char*			Result,
-	INT				Size,
+	INT_UNREAL_32S				Size,
 	const char*		Filename
 )
 {
@@ -1191,7 +1187,7 @@ void SetConfigInt
 (
     const char* Section,
 	const char* Key,
-	INT			Value,
+	INT_UNREAL_32S			Value,
 	const char* Filename
 )
 {
@@ -1292,7 +1288,8 @@ CORE_API const char* appBaseDir()
 	{
 		// Get directory this executable was launched from.
 		GetModuleFileName( hInstance, BaseDir, ARRAY_COUNT(BaseDir) );
-		for( INT i=strlen(BaseDir)-1; i>0; i-- )
+		INT_UNREAL_32S i;
+		for( i=strlen(BaseDir)-1; i>0; i-- )
 			if( BaseDir[i-1]=='\\' || BaseDir[i-1]=='/' )
 				break;
 		BaseDir[i]=0;

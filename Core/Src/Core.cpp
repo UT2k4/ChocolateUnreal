@@ -26,7 +26,7 @@ CORE_API DOUBLE GSecondsPerCycle=1.0;
 CORE_API SQWORD GTicks=1;
 CORE_API char GErrorHist[4096]="";
 CORE_API char GComputerName[32]="";
-CORE_API INT GScriptCycles;
+CORE_API INT_UNREAL_32S GScriptCycles;
 CORE_API DWORD GPageSize=4096;
 CORE_API DWORD GProcessorCount=1;
 CORE_API DWORD GPhysicalMemory=16384*1024;

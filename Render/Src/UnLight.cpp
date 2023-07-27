@@ -111,7 +111,7 @@ FLOAT SqrtManTbl[2<<APPROX_MAN_BITS];
 FLOAT DivSqrtManTbl[1<<APPROX_MAN_BITS],DivManTbl[1<<APPROX_MAN_BITS];
 FLOAT DivSqrtExpTbl[1<<APPROX_EXP_BITS],DivExpTbl[1<<APPROX_EXP_BITS];
 
-static INT SavedESP,SavedEBP; 
+static INT_UNREAL_32S SavedESP,SavedEBP; 
 
 /*------------------------------------------------------------------------------------
 	Subsystem definition
@@ -147,8 +147,8 @@ public:
 	struct FLocalEffectEntry
 	{
 		LIGHT_SPATIAL_FUNC	SpatialFxFunc;		// Function to perform spatial lighting
-		INT					IsSpatialDynamic;	// Indicates whether light spatiality changes over time.
-		INT					IsMergeDynamic;		// Indicates whether merge function changes over time.
+		INT_UNREAL_32S					IsSpatialDynamic;	// Indicates whether light spatiality changes over time.
+		INT_UNREAL_32S					IsMergeDynamic;		// Indicates whether merge function changes over time.
 	};
 	enum ELightKind
 	{
@@ -176,7 +176,7 @@ public:
 		UBOOL		IsVolumetric;			// Whether it's volumetric.
 
 		// Clipping region.
-		INT MinU, MaxU, MinV, MaxV;
+		INT_UNREAL_32S MinU, MaxU, MinV, MaxV;
 
 		// For volumetric lights.
 		FLOAT		VolRadius;				// Volumetric radius.
@@ -216,7 +216,7 @@ public:
 	static void spatial_Test		( FTextureInfo& Tex, FLightInfo* Info, BYTE* Src, BYTE* Dest );
 
 	// FLightManager functions.
-	static void Merge( FTextureInfo& Tex, BYTE LightEffect, INT Key, FLightInfo* Light, DWORD* Stream, DWORD* Dest );
+	static void Merge( FTextureInfo& Tex, BYTE LightEffect, INT_UNREAL_32S Key, FLightInfo* Light, DWORD* Stream, DWORD* Dest );
 	static FLOAT Volumetric( FLightInfo* Info, FVector& Vertex );
 	void ShadowMapGen( FTextureInfo& Tex, BYTE* SrcBits, BYTE* Dest1 );
 	UBOOL AddLight( AActor* Actor, AActor* Other );
@@ -227,8 +227,8 @@ public:
 	static FSceneNode*		Frame;
 	static ULevel*			Level;
 	static FMemMark			Mark;
-	static INT				ShadowMaskU, ShadowMaskSpace, ShadowSkip;
-	static INT				StaticLights, DynamicLights, MovingLights, StaticLightingChanged;
+	static INT_UNREAL_32S				ShadowMaskU, ShadowMaskSpace, ShadowSkip;
+	static INT_UNREAL_32S				StaticLights, DynamicLights, MovingLights, StaticLightingChanged;
 	static FTextureInfo		LightMap, FogMap;
 	static FMipmap			LightMip, FogMip;
 	static FLightInfo*		LastLight;
@@ -238,7 +238,7 @@ public:
 	static AZoneInfo*		Zone;
 	static FPlane			AmbientVector;
 	static FLOAT			Diffuse;
-	static INT              TemporaryTablesBuilt;
+	static INT_UNREAL_32S              TemporaryTablesBuilt;
 	static FLOAT			BackdropBrightness;
 	static FLOAT            LightSqrt[4096];
 	static FILTER_TAB		FilterTab[128];
@@ -260,13 +260,13 @@ FVector							FLightManager::VertexDV;
 FSceneNode*						FLightManager::Frame;
 ULevel*							FLightManager::Level;
 FMemMark						FLightManager::Mark;
-INT								FLightManager::ShadowMaskU;
-INT								FLightManager::ShadowMaskSpace;
-INT								FLightManager::ShadowSkip;
-INT								FLightManager::StaticLights;
-INT								FLightManager::DynamicLights;
-INT								FLightManager::MovingLights;
-INT								FLightManager::StaticLightingChanged;
+INT_UNREAL_32S								FLightManager::ShadowMaskU;
+INT_UNREAL_32S								FLightManager::ShadowMaskSpace;
+INT_UNREAL_32S								FLightManager::ShadowSkip;
+INT_UNREAL_32S								FLightManager::StaticLights;
+INT_UNREAL_32S								FLightManager::DynamicLights;
+INT_UNREAL_32S								FLightManager::MovingLights;
+INT_UNREAL_32S								FLightManager::StaticLightingChanged;
 FTextureInfo					FLightManager::LightMap;
 FTextureInfo					FLightManager::FogMap;
 FMipmap							FLightManager::LightMip;
@@ -281,7 +281,7 @@ FPlane							FLightManager::AmbientVector;
 FLOAT							FLightManager::Diffuse;
 BYTE							FLightManager::ByteMuck[0x4000];
 AActor*							FLightManager::Actor;
-INT								FLightManager::TemporaryTablesBuilt;
+INT_UNREAL_32S								FLightManager::TemporaryTablesBuilt;
 FLOAT							FLightManager::BackdropBrightness;
 FLOAT							FLightManager::LightSqrt[4096];
 FCacheItem*						FLightManager::ItemsToUnlock[MAX_UNLOCKED_ITEMS];
@@ -325,7 +325,8 @@ static void SetupTable( FLOAT* ManTbl, FLOAT* ExpTbl, FLOAT Power )
 	union {FLOAT F; DWORD D;} Temp;
 
 	Temp.F = 1.0;
-	for( DWORD i=0; i<(1<<APPROX_EXP_BITS); i++ )
+	DWORD i;
+	for( i=0; i<(1<<APPROX_EXP_BITS); i++ )
 	{
 		Temp.D = (Temp.D & 0x007fffff ) + (i << (32-APPROX_EXP_BITS));
 		ExpTbl[ i ] = appPow( Abs(Temp.F), Power );
@@ -351,14 +352,15 @@ static void SetupTable( FLOAT* ManTbl, FLOAT* ExpTbl, FLOAT Power )
 void FLightManager::Init()
 {
 	guard(FLightManager::Init);
+	INT_UNREAL_32S i;
 
 	// Mutual occlusion blending.
-	for( INT i=0; i<128; i++ )
+	for( i=0; i<128; i++ )
 		for( int j=0; j<128; j++ )
 			ByteMuck[i*128+j] = i + j - (i*j/127); 
 
 	// Filtering table.
-	INT FilterWeight[8][8] = 
+	INT_UNREAL_32S FilterWeight[8][8] = 
 	{
 		{ 0,24,40,24,0,0,0,0},
 		{ 0,40,64,40,0,0,0,0},
@@ -412,11 +414,11 @@ void FLightManager::Init()
 		{
 			// Handle all four packed values.
 			FilterTab[i][j] = 0;
-			for( INT Pack=0; Pack<4; Pack++ )
+			for( INT_UNREAL_32S Pack=0; Pack<4; Pack++ )
 			{
 				// Accumulate filter weights in FilterTab[i][j] according to which bits are set in i.
-				INT Acc = 0;
-				for( INT Bit=0; Bit<8; Bit++ )
+				INT_UNREAL_32S Acc = 0;
+				for( INT_UNREAL_32S Bit=0; Bit<8; Bit++ )
 					if( i & (1<<(Pack + Bit)) )
 						Acc += FilterWeight[j][Bit];
 
@@ -471,13 +473,13 @@ void FLightManager::ShadowMapGen( FTextureInfo& Tex, BYTE* SrcBits, BYTE* Dest1 
 		appMemset( Dest1, 127, ShadowMaskSpace*8 );
 		return;
 	}
-	debug(((INT)Dest1 & 3)==0);
+	debug(((INT_UNREAL_32S)Dest1 & 3)==0);
 
 	// Generate smooth shadow map by convolving the shadow bitmask with a smoothing filter.
-	INT Size4 = (ShadowMaskU*8)/4;
+	INT_UNREAL_32S Size4 = (ShadowMaskU*8)/4;
 	appMemset( Dest1, 0, ShadowMaskSpace*8 );
 	DWORD* Dests[3] = { (DWORD*)Dest1, (DWORD*)Dest1, (DWORD*)Dest1 + Size4 };
-	for( INT V=0; V<Tex.VClamp; V++ )
+	for( INT_UNREAL_32S V=0; V<Tex.VClamp; V++ )
 	{
 		// Get initial bits, with low bit shifted in.
 		BYTE* Src = SrcBits;
@@ -487,7 +489,7 @@ void FLightManager::ShadowMapGen( FTextureInfo& Tex, BYTE* SrcBits, BYTE* Dest1 
 		if( D & 0x400 ) D |= 0x300;
 
 		// Filter everything.
-		for( INT U=0; U<ShadowMaskU; U++ )
+		for( INT_UNREAL_32S U=0; U<ShadowMaskU; U++ )
 		{
 			D = (D >> 8) | (((DWORD)*Src++) << (8+2));
 
@@ -894,6 +896,7 @@ __inline FPlane FLightManager::AMD3DFog(FTransSample& Vert, DWORD PolyFlags )
 		DoFemms();
 
 		FPlane Fog(0,0,0,0);
+		FLightInfo* LightInfo;
 
 		// First fog light is copied, all next lights are merged.
 		// Look for the first volumetric light.
@@ -901,7 +904,7 @@ __inline FPlane FLightManager::AMD3DFog(FTransSample& Vert, DWORD PolyFlags )
 		// Todo: zero/bailout test probably also useful here. Try higher level
 		// optims (bounding spheres etc) first !
 
-		for( FLightInfo* LightInfo=FirstLight; LightInfo<LastLight; LightInfo++ )
+		for( LightInfo=FirstLight; LightInfo<LastLight; LightInfo++ )
 		{
 			if( LightInfo->IsVolumetric ) 
 			{
@@ -1064,6 +1067,7 @@ inline FPlane FLightManager::Fog(FTransSample& Vert, DWORD PolyFlags )
 	{
 		STAT(clock(GStat.MeshLightTime));
 		FPlane Fog(0,0,0,0);
+		FLightInfo* LightInfo;
 
 		// First fog light is copied, all next lights are merged.
 		// Look for the first volumetric light.
@@ -1071,7 +1075,7 @@ inline FPlane FLightManager::Fog(FTransSample& Vert, DWORD PolyFlags )
 		// Todo: zero/bailout test probably also useful here. Try higher level
 		// optims (bounding spheres etc) first !
 
-		for( FLightInfo* LightInfo=FirstLight; LightInfo<LastLight; LightInfo++ )
+		for( LightInfo=FirstLight; LightInfo<LastLight; LightInfo++ )
 		{
 			if( LightInfo->IsVolumetric ) 
 			{
@@ -1135,13 +1139,13 @@ inline FPlane FLightManager::Fog(FTransSample& Vert, DWORD PolyFlags )
 	Light merging.
 ------------------------------------------------------------------------------------*/
 
-void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT Key, FLightInfo* Info, DWORD* Stream, DWORD* Dest )
+void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT_UNREAL_32S Key, FLightInfo* Info, DWORD* Stream, DWORD* Dest )
 {
 	guardSlow(FLightManager::Merge);
 
-	static INT Count; 
+	static INT_UNREAL_32S Count; 
 	FColor* Palette;
-    INT Skip;
+    INT_UNREAL_32S Skip;
 
 	// Merge the two streams of light.
 	BYTE* Src = Info->IlluminationMap;
@@ -1158,7 +1162,7 @@ void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT Key, FLightInfo* 
 	Stream += Info->MinV * Tex.USize;
 
 
-	for( INT i=Info->MinV; i<Info->MaxV; i++ )
+	for( INT_UNREAL_32S i=Info->MinV; i<Info->MaxV; i++ )
 	{
 		BYTE* NewSrc = Src;
 
@@ -1169,17 +1173,17 @@ void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT Key, FLightInfo* 
 			NewSrc = Temp;
 			if( Effect==LE_TorchWaver )
 			{
-				for( INT i=Info->MinU; i<Info->MaxU; i++ )
+				for( INT_UNREAL_32S i=Info->MinU; i<Info->MaxU; i++ )
 					Temp[i] = appFloor((FLOAT)Src[i] * (0.95 + 0.05 * GRandoms->RandomBase(Key++)));
 			}
 			else if( Effect==LE_FireWaver )
 			{
-				for( INT i=Info->MinU; i<Info->MaxU; i++ )
+				for( INT_UNREAL_32S i=Info->MinU; i<Info->MaxU; i++ )
 					Temp[i] = appFloor((FLOAT)Src[i] * (0.80 + 0.20 * GRandoms->RandomBase(Key++)));
 			}
 			else if( Effect==LE_WateryShimmer )
 			{
-				for( INT i=Info->MinU; i<Info->MaxU; i++ )
+				for( INT_UNREAL_32S i=Info->MinU; i<Info->MaxU; i++ )
 					Temp[i] = appFloor((FLOAT)Src[i] * (0.60 + 0.40 * GRandoms->Random(Key++)));
 			}
 		}
@@ -1284,7 +1288,7 @@ void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT Key, FLightInfo* 
 
 	#else
 
-		for( INT j=Info->MinU; j<Info->MaxU; j++ )
+		for( INT_UNREAL_32S j=Info->MinU; j<Info->MaxU; j++ )
 		{
 			Dest[j] = Stream[j] + Palette[NewSrc[j]].D;
 			if( Dest[j] & 0x80808080 )
@@ -1324,8 +1328,8 @@ void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT Key, FLightInfo* 
 	FVector Vertex1 = VertexBase + VertexDV*Info->MinV + VertexDU*Info->MinU; \
 	Src  += (ShadowMaskU*8)*Info->MinV + Info->MinU; \
 	Dest += Map.UClamp*Info->MinV + Info->MinU; \
-	INT USkip = Map.UClamp - (Info->MaxU - Info->MinU); \
-	for( INT VCounter=Info->MinV; VCounter<Info->MaxV; VCounter++,Src+=USkip+ShadowSkip,Dest+=USkip ) {
+	INT_UNREAL_32S USkip = Map.UClamp - (Info->MaxU - Info->MinU); \
+	for( INT_UNREAL_32S VCounter=Info->MinV; VCounter<Info->MaxV; VCounter++,Src+=USkip+ShadowSkip,Dest+=USkip ) {
 
 #define SPATIAL_POST \
 		Vertex1 += VertexDV; }
@@ -1336,7 +1340,7 @@ void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT Key, FLightInfo* 
 	FVector Location    = Info->Actor->Location; \
 	FLOAT	RRadiusMult = Info->RRadiusMult; \
 	FLOAT   Diffuse     = Info->Diffuse; \
-	for( INT UCounter=Info->MinU; UCounter<Info->MaxU; UCounter++,Vertex+=VertexDU,Src++,Dest++ ) { \
+	for( INT_UNREAL_32S UCounter=Info->MinU; UCounter<Info->MaxU; UCounter++,Vertex+=VertexDU,Src++,Dest++ ) { \
 		if( *Src ) { \
 			DWORD SqrtOfs = appRound( FDistSquared(Vertex,Location) * RRadiusMult ); \
 			if( SqrtOfs<4096 ) {
@@ -1346,7 +1350,7 @@ void FLightManager::Merge( FTextureInfo& Tex, BYTE Effect, INT Key, FLightInfo* 
 	FVector Vertex = Vertex1 - Info->Actor->Location; \
 	FLOAT	RRadiusMult = Info->RRadiusMult; \
 	FLOAT   Diffuse     = Info->Diffuse; \
-	for( INT UCounter=Info->MinU; UCounter<Info->MaxU; UCounter++,Vertex+=VertexDU,Src++,Dest++ ) { \
+	for( INT_UNREAL_32S UCounter=Info->MinU; UCounter<Info->MaxU; UCounter++,Vertex+=VertexDU,Src++,Dest++ ) { \
 		if( *Src ) { \
 			DWORD SqrtOfs = appRound( Vertex.SizeSquared() * RRadiusMult ); \
 			if( SqrtOfs<4096 ) {
@@ -1363,20 +1367,20 @@ void FLightManager::spatial_None( FTextureInfo& Map, FLightInfo* Info, BYTE* Src
 	// Variables.
 	static FVector Vertex;
 	static FLOAT   Scale, Diffuse;
-	static INT     Dist, DistU, DistV, DistUU, DistVV, DistUV;
-	static INT     Interp00, Interp10, Interp20, Interp01, Interp11, Interp02;
+	static INT_UNREAL_32S     Dist, DistU, DistV, DistUU, DistVV, DistUV;
+	static INT_UNREAL_32S     Interp00, Interp10, Interp20, Interp01, Interp11, Interp02;
 	static DWORD   Inner0, Inner1;
-	static INT     Hecker;
+	static INT_UNREAL_32S     Hecker;
 
 	// Compute values for stepping through mesh points.
 #if 0
 	FVector Vertex1 = VertexBase - Info->Actor->Location;
 	Scale           = Info->RRadiusMult;
 	Diffuse         = Info->Diffuse;
-	for( INT V=0; V<Map.VClamp; V++,Vertex1+=VertexDV )
+	for( INT_UNREAL_32S V=0; V<Map.VClamp; V++,Vertex1+=VertexDV )
 	{
 		FVector Vertex = Vertex1;
-		for( INT U=0; U<Map.UClamp; U++,Vertex+=VertexDU,Src++,Dest++ )
+		for( INT_UNREAL_32S U=0; U<Map.UClamp; U++,Vertex+=VertexDU,Src++,Dest++ )
 		{
 			if( *Src )
 			{
@@ -1411,13 +1415,13 @@ void FLightManager::spatial_None( FTextureInfo& Map, FLightInfo* Info, BYTE* Src
 
 	Src  += (ShadowMaskU*8) * Info->MinV + Info->MinU;
 	Dest += Map.UClamp * Info->MinV + Info->MinU;
-	INT USkip = Map.UClamp - (Info->MaxU-Info->MinU);
-	for( INT VCounter=Info->MinV; VCounter<Info->MaxV; VCounter++ )
+	INT_UNREAL_32S USkip = Map.UClamp - (Info->MaxU-Info->MinU);
+	for( INT_UNREAL_32S VCounter=Info->MinV; VCounter<Info->MaxV; VCounter++ )
 	{
 		// Forward difference the square of the distance between the points.
 		Inner0 = Interp00;
 		Inner1 = Interp01;
-		for( INT U=Info->MinU; U<Info->MaxU; U++ )
+		for( INT_UNREAL_32S U=Info->MinU; U<Info->MaxU; U++ )
 		{
 			if( *Src!=0 && Inner0<4096*4096 ) 
 			{
@@ -1451,7 +1455,7 @@ inline FLOAT FLightManager::Volumetric( FLightInfo* Info, FVector &Vertex )
 	//
 	// FLOAT VertexSize = SqrtApprox(Vertex.SizeSquared());	// Distance eye-to-vertex.
 	//
-	static FogRejectionMethod = 0;
+	static int FogRejectionMethod = 0;
 
 	FLOAT c1, c2, d, F, h, c0, S, S2; 
 	
@@ -1700,7 +1704,7 @@ void FLightManager::spatial_Cylinder( FTextureInfo& Map, FLightInfo* Info, BYTE*
 	guardSlow(FLightManager::spatial_Cylinder);
 	SPATIAL_PRE
 		FVector Vertex = Vertex1 - Info->Actor->Location;
-		for( INT i=Info->MinU; i<Info->MaxU; i++,Vertex+=VertexDU,Src++,Dest++ )
+		for( INT_UNREAL_32S i=Info->MinU; i<Info->MaxU; i++,Vertex+=VertexDU,Src++,Dest++ )
 			*Dest = Max(0,appFloor(*Src * (1.0 - ( Square(Vertex.X) + Square(Vertex.Y) ) * Square(Info->RRadius)) ));
 	SPATIAL_POST
 	unguardSlow;
@@ -1972,10 +1976,10 @@ void FLightManager::FLightInfo::ComputeFromActor( FTextureInfo& Map, FSceneNode*
 				Color = (FVector*)GCache.Create(CacheID,TopItemToUnlock[-1],sizeof(FVector)+256*sizeof(FColor));
 			*Color = FloatColor;
 			Palette = (FColor*)(Color+1);
-			INT FixR = 0; INT FixDR=appFloor(FloatColor.R*65536.0);
-			INT FixG = 0; INT FixDG=appFloor(FloatColor.G*65536.0);
-			INT FixB = 0; INT FixDB=appFloor(FloatColor.B*65536.0);
-			for( INT i=0; i<256; i++ )
+			INT_UNREAL_32S FixR = 0; INT_UNREAL_32S FixDR=appFloor(FloatColor.R*65536.0);
+			INT_UNREAL_32S FixG = 0; INT_UNREAL_32S FixDG=appFloor(FloatColor.G*65536.0);
+			INT_UNREAL_32S FixB = 0; INT_UNREAL_32S FixDB=appFloor(FloatColor.B*65536.0);
+			for( INT_UNREAL_32S i=0; i<256; i++ )
 			{
 				Palette[i].B = Min(Unfix(FixR),127); FixR+=FixDR;
 				Palette[i].G = Min(Unfix(FixG),127); FixG+=FixDG;
@@ -2019,11 +2023,11 @@ void FLightManager::FLightInfo::ComputeFromActor( FTextureInfo& Map, FSceneNode*
 				Color = (FPlane*)GCache.Create(CacheID,TopItemToUnlock[-1],sizeof(FPlane)+256*sizeof(FColor));
 			*Color = VolumetricColor;
 			VolPalette = (FColor*)(Color+1);
-			INT FixR = 0; INT FixDR=appFloor(VolumetricColor.R*65536.0);
-			INT FixG = 0; INT FixDG=appFloor(VolumetricColor.G*65536.0);
-			INT FixB = 0; INT FixDB=appFloor(VolumetricColor.B*65536.0);
-			//INT FixA = 0; INT FixDA=appFloor(VolumetricColor.A*65536.0);
-			for( INT i=0; i<256; i++ )
+			INT_UNREAL_32S FixR = 0; INT_UNREAL_32S FixDR=appFloor(VolumetricColor.R*65536.0);
+			INT_UNREAL_32S FixG = 0; INT_UNREAL_32S FixDG=appFloor(VolumetricColor.G*65536.0);
+			INT_UNREAL_32S FixB = 0; INT_UNREAL_32S FixDB=appFloor(VolumetricColor.B*65536.0);
+			//INT_UNREAL_32S FixA = 0; INT_UNREAL_32S FixDA=appFloor(VolumetricColor.A*65536.0);
+			for( INT_UNREAL_32S i=0; i<256; i++ )
 			{
 				VolPalette[i].B = Min(Unfix(FixR),127); FixR+=FixDR;
 				VolPalette[i].G = Min(Unfix(FixG),127); FixG+=FixDG;
@@ -2065,7 +2069,7 @@ void FLightManager::SetupForSurf
 {
 	guard(FLightManager::SetupForSurf);
 	STAT(clock(GStat.IllumTime));
-	INT Key=0;
+	INT_UNREAL_32S Key=0;
 
 #if 0
 	// To regenerate all lighting every frame, uncomment this.
@@ -2097,7 +2101,7 @@ void FLightManager::SetupForSurf
 	Mark                    = FMemMark(GMem);
 	Frame					= InFrame;
 	Level					= Frame->Level;
-	INT iLightMap	        = Level->Model->Surfs->Element(Draw->iSurf).iLightMap;
+	INT_UNREAL_32S iLightMap	        = Level->Model->Surfs->Element(Draw->iSurf).iLightMap;
 	LevelInfo				= Level->GetLevelInfo();
 	Zone					= NULL;
 	TemporaryTablesBuilt	= 0;	
@@ -2125,7 +2129,7 @@ void FLightManager::SetupForSurf
 		// Static lights.
 		BYTE* ShadowBase = &Model->LightBits(Index->DataOffset);
 		if( Index->iLightActors != INDEX_NONE )
-			for( INT i=0; Model->Lights(i+Index->iLightActors); i++,ShadowBase+=ShadowMaskSpace )
+			for( INT_UNREAL_32S i=0; Model->Lights(i+Index->iLightActors); i++,ShadowBase+=ShadowMaskSpace )
 				if( AddLight( Mover, Model->Lights(i+Index->iLightActors) ) )
 					LastLight[-1].ShadowBits = ShadowBase;
 
@@ -2143,7 +2147,7 @@ void FLightManager::SetupForSurf
 		// Static lights.
 		BYTE* ShadowBase = &Model->LightBits(Index->DataOffset);
 		if( Index->iLightActors != INDEX_NONE )
-			for( INT i=0; Model->Lights(i+Index->iLightActors); i++,ShadowBase+=ShadowMaskSpace )
+			for( INT_UNREAL_32S i=0; Model->Lights(i+Index->iLightActors); i++,ShadowBase+=ShadowMaskSpace )
 				if( AddLight( Mover, Model->Lights(i+Index->iLightActors) ) )
 					LastLight[-1].ShadowBits = ShadowBase;
 
@@ -2156,11 +2160,12 @@ void FLightManager::SetupForSurf
 	else if( Mover->Region.iLeaf!=INDEX_NONE && Level->Model->Leaves.Num() )
 	{
 		guard(SetupMoverSurface);
+		FLightInfo* Find;
 
 		// Static mover lights.
 		FLeaf& Leaf = Level->Model->Leaves(Mover->Region.iLeaf);
 		if( Leaf.iPermeating!=INDEX_NONE )
-			for( INT i=Leaf.iPermeating; Level->Model->Lights(i); i++ )
+			for( INT_UNREAL_32S i=Leaf.iPermeating; Level->Model->Lights(i); i++ )
 				if( ((Level->Model->Lights(i)->Location - MapCoords->Origin)|MapCoords->ZAxis) > 0.0 && Level->Model->Lights(i)->bSpecialLit==Mover->bSpecialLit )
 					AddLight( NULL, Level->Model->Lights(i) );
 
@@ -2172,7 +2177,7 @@ void FLightManager::SetupForSurf
 		// Volumetric mover lights.
 		for( FActorLink* Volumetrics=Draw->Volumetrics; Volumetrics && LastLight<FinalLight; Volumetrics=Volumetrics->Next )
 		{
-			for( FLightInfo* Find=FirstLight; Find<LastLight && Find->Actor!=Volumetrics->Actor; Find++ );
+			for( Find=FirstLight; Find<LastLight && Find->Actor!=Volumetrics->Actor; Find++ );
 			Find->IsVolumetric = 1;
 			if( Find==LastLight )
 			{
@@ -2205,7 +2210,7 @@ void FLightManager::SetupForSurf
 			FCoords Uncoords = MapCoords->Inverse();
 			BumpNormals = (FVector*)GCache.Create( CacheID, Item, 256 * sizeof(FVector) );
 			FColor* Colors = BumpMap->Palette;
-			for( INT i=0; i<256; i++ )
+			for( INT_UNREAL_32S i=0; i<256; i++ )
 				BumpNormals[i] = FVector
 				( 
 					(128-Colors[i].B)/128.0,
@@ -2216,7 +2221,7 @@ void FLightManager::SetupForSurf
 
 		// Compute resulting colors.
 		FVector C[256];
-		for( INT i=0; i<256; i++ )
+		for( INT_UNREAL_32S i=0; i<256; i++ )
 			C[i] = FVector(0,0,0);
 		for( FLightInfo* Light=FirstLight; Light<LastLight; Light++ )
 		{
@@ -2244,11 +2249,12 @@ void FLightManager::SetupForSurf
 	if( Zone && Zone->bFogZone && Draw->Volumetrics )
 	{
 		guard(SetupVolumetrics);
+		FLightInfo* Find;
 		OutFogMap = &FogMap;
 		for( FActorLink* Link=Draw->Volumetrics; Link && LastLight<FinalLight; Link=Link->Next )
 		{
 			// See if volumetric light is already on the list as a regular light.
-			for( FLightInfo* Find=FirstLight; Find<LastLight && Find->Actor!=Link->Actor; Find++ );
+			for( Find=FirstLight; Find<LastLight && Find->Actor!=Link->Actor; Find++ );
 			Find->IsVolumetric = 1;
 			if( Find==LastLight )
 			{
@@ -2333,10 +2339,10 @@ void FLightManager::SetupForSurf
 						    if (*(DWORD*)&FogAdd != 0) // bailout if 0...
 							{
 								DWORD Light = appRound( FogAdd  * 255.0f );
-								Dest[j].R = ByteMuck[Dest[j].R+128*(INT)Info->VolPalette[Light].R]; 
-								Dest[j].G = ByteMuck[Dest[j].G+128*(INT)Info->VolPalette[Light].G]; 
-								Dest[j].B = ByteMuck[Dest[j].B+128*(INT)Info->VolPalette[Light].B]; 
-								Dest[j].A = 0; //ByteMuck[Dest[j].A+128*(INT)Info->VolPalette[Light].A];
+								Dest[j].R = ByteMuck[Dest[j].R+128*(INT_UNREAL_32S)Info->VolPalette[Light].R]; 
+								Dest[j].G = ByteMuck[Dest[j].G+128*(INT_UNREAL_32S)Info->VolPalette[Light].G]; 
+								Dest[j].B = ByteMuck[Dest[j].B+128*(INT_UNREAL_32S)Info->VolPalette[Light].B]; 
+								Dest[j].A = 0; //ByteMuck[Dest[j].A+128*(INT_UNREAL_32S)Info->VolPalette[Light].A];
 							}
 						}
 						Vertex1 += VertDV;
@@ -2368,7 +2374,7 @@ void FLightManager::SetupForSurf
 
 	// Handle static lighting.
 	DWORD* Stream = (DWORD*)GCache.Get(LightMap.CacheID,*TopItemToUnlock++);
-	struct FMoverStamp{ INT iLeaf; FVector Location; FRotator Rotation; };
+	struct FMoverStamp{ INT_UNREAL_32S iLeaf; FVector Location; FRotator Rotation; };
 	if( Mover && Stream )
 	{
 		StaticLightingChanged |= ((FMoverStamp*)Stream)->iLeaf    != Mover->Region.iLeaf;
@@ -2397,9 +2403,9 @@ void FLightManager::SetupForSurf
 		FColor AmbientColor( AmbientVector*0.25 );
 		Exchange( AmbientColor.R, AmbientColor.B );
 		DWORD* Temp = Stream;
-		for( INT i=0; i<LightMap.VClamp; i++ )
+		for( INT_UNREAL_32S i=0; i<LightMap.VClamp; i++ )
 		{
-			for( INT j=0; j<LightMap.UClamp; j++ )
+			for( INT_UNREAL_32S j=0; j<LightMap.UClamp; j++ )
 				Temp[j] = AmbientColor.D;
 			Temp += LightMap.USize;
 		}
@@ -2464,7 +2470,7 @@ void FLightManager::SetupForSurf
 
 		// Copy the static lighting.
 		DWORD *TmpStatic=Static, *TmpStream=Stream;
-		for( INT i=0; i<LightMap.VClamp; i++ )
+		for( INT_UNREAL_32S i=0; i<LightMap.VClamp; i++ )
 		{
 			appMemcpy( TmpStream, TmpStatic, LightMap.UClamp*sizeof(DWORD) );
 			TmpStatic += LightMap.USize;
@@ -2639,7 +2645,7 @@ UBOOL FLightManager::AddLight( AActor* Actor, AActor* Light )
 enum {MaxActorLights=16};
 enum {DesiredActorLights=6};
 static AActor* Consider[120];
-static INT NumConsider=0, ConsiderTag=0;
+static INT_UNREAL_32S NumConsider=0, ConsiderTag=0;
 inline void AddConsider( AActor* Actor, AActor* Light, BYTE Factor )
 {
 	if( Light->ExtraTag!=ConsiderTag )
@@ -2656,7 +2662,7 @@ inline void AddConsider( AActor* Actor, AActor* Light, BYTE Factor )
 		}
 	}
 }
-inline INT Compare( const class AActor* A1, const class AActor* A2 )
+inline INT_UNREAL_32S Compare( const class AActor* A1, const class AActor* A2 )
 {
 	return 1 - 2*(A1->LightingTag>A2->LightingTag);
 }
@@ -2664,6 +2670,7 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 {
 	guard(FLightManager::SetupForActor);
 	DWORD Result=0;
+	INT_UNREAL_32S i = 0, NewNum = 0;
 
 	// Init per actor variables.
 	Mark      = FMemMark(GMem);
@@ -2692,14 +2699,14 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 	&&	!Frame->Viewport->Client->NoLighting )
 	{
 		// Get actor light cache.
-		INT Delta      = Clamp((INT)((Frame->Viewport->CurrentTime-Frame->Viewport->LastUpdateTime)*768),0,255);
-		INT FrameCount = Frame->Viewport->FrameCount;
-		INT* Num       = NULL;
+		INT_UNREAL_32S Delta      = Clamp((INT_UNREAL_32S)((Frame->Viewport->CurrentTime-Frame->Viewport->LastUpdateTime)*768),0,255);
+		INT_UNREAL_32S FrameCount = Frame->Viewport->FrameCount;
+		INT_UNREAL_32S* Num       = NULL;
 		struct FInfo
 		{
 			AActor* Actor;
 			BYTE Factor;
-			INT Index;
+			INT_UNREAL_32S Index;
 		} *Senders;
 		UBOOL FirstSeeActor = 0;
 		QWORD CacheID  = MakeCacheID( CID_ActorLightCache, Actor );
@@ -2708,8 +2715,8 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 		{
 			// Look up actors from cache.
 			guardSlow(CacheLook);
-			Num = (INT*)Senders++;
-			for( INT i=0,NewNum=0; i<*Num; i++ )
+			Num = (INT_UNREAL_32S*)Senders++;
+			for( i=0,NewNum=0; i<*Num; i++ )
 			{
 				if( NewNum!=i )
 					Senders[NewNum] = Senders[i];
@@ -2725,7 +2732,7 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 			guardSlow(CacheCreate);
 			FirstSeeActor = 1;
 			Senders  = (FInfo*)GCache.Create( CacheID, TopItemToUnlock[-1], (MaxActorLights+1) * sizeof(FInfo) );
-			Num      = (INT*)Senders++;
+			Num      = (INT_UNREAL_32S*)Senders++;
 			*Num     = 0;
 			unguardSlow;
 		}
@@ -2736,7 +2743,7 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 
 		// Cached lights.
 		guardSlow(ConsiderLights);
-		for( INT i=0; i<*Num; i++ )
+		for( INT_UNREAL_32S i=0; i<*Num; i++ )
 			if( Senders[i].Actor )
 				AddConsider( Actor, Senders[i].Actor, Senders[i].Factor );
 		unguardSlow;
@@ -2745,7 +2752,7 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 		guardSlow(StaticLeafLights);
 		FLeaf& Leaf = Level->Model->Leaves(Actor->Region.iLeaf);
 		if( Leaf.iPermeating!=INDEX_NONE )
-			for( INT i=Leaf.iPermeating; Level->Model->Lights(i) && NumConsider<ARRAY_COUNT(Consider); i++ )
+			for( INT_UNREAL_32S i=Leaf.iPermeating; Level->Model->Lights(i) && NumConsider<ARRAY_COUNT(Consider); i++ )
 				AddConsider( Actor, Level->Model->Lights(i), 0 );
 		unguardSlow;
 
@@ -2759,9 +2766,9 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 		appSort( Consider, NumConsider );
 
 		// Amortized trace visibility.
-		INT NumRealVisible=0, Threshold=-1;
+		INT_UNREAL_32S NumRealVisible=0, Threshold=-1;
 		guardSlow(TraceVis);
-		for( INT i=0; i<NumConsider; i++ )
+		for( INT_UNREAL_32S i=0; i<NumConsider; i++ )
 		{
 			// Determine effective visibility.
 			UBOOL IsVisible;
@@ -2796,12 +2803,12 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 				Consider[i]->SpecialTag |= 1;
 
 				// Update factor.
-				Consider[i]->SpecialTag = Min( (INT)Consider[i]->SpecialTag+Delta, 255 ) | 1;
+				Consider[i]->SpecialTag = Min( (INT_UNREAL_32S)Consider[i]->SpecialTag+Delta, 255 ) | 1;
 			}
 			else
 			{
 				// This light is not considered visible.
-				Consider[i]->SpecialTag = Max( (INT)Consider[i]->SpecialTag-Delta, 0 ) & ~1;
+				Consider[i]->SpecialTag = Max( (INT_UNREAL_32S)Consider[i]->SpecialTag-Delta, 0 ) & ~1;
 				if( Consider[i]->SpecialTag>0 )
 					AddLight( Actor, Consider[i] );
 			}
@@ -2811,7 +2818,7 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 		// Recache all accepted lights.
 		guardSlow(Recache);
 		*Num=0;
-		for( INT i=0; i<NumConsider && *Num<MaxActorLights; i++ )
+		for( INT_UNREAL_32S i=0; i<NumConsider && *Num<MaxActorLights; i++ )
 		{
 			if( Consider[i]->SpecialTag > 1 )
 			{
@@ -2825,10 +2832,11 @@ DWORD FLightManager::SetupForActor( FSceneNode* InFrame, AActor* InActor, FVolAc
 
 		// Volumetric occluding lights.
 		guardSlow(Vtrics);
+		FLightInfo* Find;
 		for( Volumetrics; Volumetrics && LastLight<FinalLight; Volumetrics=Volumetrics->Next )
 		{
 			Result |= PF_RenderFog;
-			for( FLightInfo* Find=FirstLight; Find<LastLight && Find->Actor!=Volumetrics->Actor; Find++ );
+			for( Find=FirstLight; Find<LastLight && Find->Actor!=Volumetrics->Actor; Find++ );
 			Find->IsVolumetric = 1;
 			if( Find==LastLight )
 			{

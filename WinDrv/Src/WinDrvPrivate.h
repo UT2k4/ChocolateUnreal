@@ -54,7 +54,7 @@ enum EWindowsBlitType
 //
 class DLL_EXPORT UWindowsViewport : public UViewport, public WWindow
 {
-	DECLARE_CLASS(UWindowsViewport,UViewport,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UWindowsViewport,UViewport,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UWindowsViewport)
 
 	// Variables.
@@ -67,9 +67,9 @@ class DLL_EXPORT UWindowsViewport : public UViewport, public WWindow
 	// Info saved during captures and fullscreen sessions.
 	POINT				SavedCursor;
 	RECT				SavedWindowRect;
-	INT					SavedColorBytes;
-	INT					SavedCaps;
-	INT					SavedX, SavedY;
+	INT_UNREAL_32S					SavedColorBytes;
+	INT_UNREAL_32S					SavedCaps;
+	INT_UNREAL_32S					SavedX, SavedY;
 
 	// DIB section bitmap info.
 	struct
@@ -91,17 +91,17 @@ class DLL_EXPORT UWindowsViewport : public UViewport, public WWindow
 	}
 
 	// UViewport interface.
-	UBOOL Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData=NULL, INT* HitSize=0 );
+	UBOOL Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData=NULL, INT_UNREAL_32S* HitSize=0 );
 	void Unlock( UBOOL Blit );
 	UBOOL Exec( const char* Cmd, FOutputDevice* Out );
 	void Repaint();
 	void SetModeCursor();
 	void UpdateWindow();
-	void OpenWindow( DWORD ParentWindow, UBOOL Temporary, INT NewX, INT NewY, INT OpenX, INT OpenY );
+	void OpenWindow( DWORD ParentWindow, UBOOL Temporary, INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, INT_UNREAL_32S OpenX, INT_UNREAL_32S OpenY );
 	void CloseWindow();
 	void UpdateInput( UBOOL Reset );
 	void MakeCurrent();
-	void MakeFullscreen( INT NewX, INT NewY, UBOOL UpdateProfile );
+	void MakeFullscreen( INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, UBOOL UpdateProfile );
 	void* GetWindow();
 	void SetMouseCapture( UBOOL Capture, UBOOL Clip, UBOOL FocusOnly );
 
@@ -110,12 +110,12 @@ class DLL_EXPORT UWindowsViewport : public UViewport, public WWindow
 
 	// UWindowsViewport interface.
 	void FindAvailableModes();
-	void SetClientSize( INT NewX, INT NewY, UBOOL UpdateProfile );
-	void SetFrameBufferSize( INT NewX, INT NewY, INT NewColorBytes, EWindowsBlitType BlitType );
+	void SetClientSize( INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, UBOOL UpdateProfile );
+	void SetFrameBufferSize( INT_UNREAL_32S NewX, INT_UNREAL_32S NewY, INT_UNREAL_32S NewColorBytes, EWindowsBlitType BlitType );
 	void TryHardware3D( UWindowsViewport* Viewport );
 	void SetTopness();
 	LONG WndProc( UINT Message, UINT wParam, LONG lParam );
-	UBOOL CauseInputEvent( INT iKey, EInputAction Action, FLOAT Delta=0.0 );
+	UBOOL CauseInputEvent( INT_UNREAL_32S iKey, EInputAction Action, FLOAT Delta=0.0 );
 	UBOOL JoystickInputEvent( FLOAT Delta, EInputKey Key, FLOAT Scale, UBOOL DeadZone );
 };
 
@@ -128,7 +128,7 @@ class DLL_EXPORT UWindowsViewport : public UViewport, public WWindow
 //
 class DLL_EXPORT UWindowsClient : public UClient, public FNotifyHook
 {
-	DECLARE_CLASS(UWindowsClient,UClient,CLASS_Transient|CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UWindowsClient,UClient,CLASS_Transient|CLASS_Config)
 
 	// Constants.
 	enum {MAX_DD=4};
@@ -152,10 +152,10 @@ class DLL_EXPORT UWindowsClient : public UClient, public FNotifyHook
 	HDC					hMemScreenDC;
 	HWND				FullscreenhWndDD;
 	UBOOL				InMenuLoop;
-	INT					NormalMouseInfo[3];
-	INT					CaptureMouseInfo[3];
+	INT_UNREAL_32S					NormalMouseInfo[3];
+	INT_UNREAL_32S					CaptureMouseInfo[3];
 	GUID				ddGUIDs[MAX_DD];
-	INT					NumDD;
+	INT_UNREAL_32S					NumDD;
 	IDirectDraw2*		dd;
 	IDirectDrawSurface*	ddFrontBuffer;
 	IDirectDrawSurface*	ddBackBuffer;
@@ -163,8 +163,8 @@ class DLL_EXPORT UWindowsClient : public UClient, public FNotifyHook
 	DD_CREATE_FUNC		ddCreateFunc;
 	DD_ENUM_FUNC		ddEnumFunc;
 	JOYCAPS				JoyCaps;
-	INT					ddModeWidth[DD_MAX_MODES], ddModeHeight[DD_MAX_MODES];
-	INT					ddNumModes;
+	INT_UNREAL_32S					ddModeWidth[DD_MAX_MODES], ddModeHeight[DD_MAX_MODES];
+	INT_UNREAL_32S					ddNumModes;
 	WConfigProperties*	ConfigProperties;
 
 	// Constructors.
@@ -197,13 +197,13 @@ class DLL_EXPORT UWindowsClient : public UClient, public FNotifyHook
 
 	// UWindowsClient interface.
 	void EndFullscreen();
-	int Toggle( HMENU hMenu, INT Item );
+	int Toggle( HMENU hMenu, INT_UNREAL_32S Item );
 	int ddInit();
 	void ddExit();
 	char* ddError( HRESULT Result );
-	UBOOL ddSetMode( HWND hWndOwner, INT Width, INT Height, INT ColorBytes, INT& Caps );
+	UBOOL ddSetMode( HWND hWndOwner, INT_UNREAL_32S Width, INT_UNREAL_32S Height, INT_UNREAL_32S ColorBytes, INT_UNREAL_32S& Caps );
 	void ddEndMode();
-	UBOOL ddSetViewport( UViewport* Viewport, INT Width, INT Height, INT ColorBytes, INT RequestedCaps );
+	UBOOL ddSetViewport( UViewport* Viewport, INT_UNREAL_32S Width, INT_UNREAL_32S Height, INT_UNREAL_32S ColorBytes, INT_UNREAL_32S RequestedCaps );
 };
 
 /*-----------------------------------------------------------------------------

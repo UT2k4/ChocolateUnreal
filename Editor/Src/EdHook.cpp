@@ -105,7 +105,7 @@ void ObjTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 					if( It->IsA(Class) && It->IsIn(RealPackage) )
 						Results.AddItem( *It );
 			}
-			for( INT i=0; i<Results.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Results.Num(); i++ )
 			{
 				if( i )
 					Out.Log( " " );
@@ -119,17 +119,18 @@ void ObjTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 		if( ParseObject<UClass>(Item,"CLASS=",Class,ANY_PACKAGE) )
 		{
 			TArray<UObject*> List;
+			UObject* TopParent;
 			for( FObjectIterator It; It; ++It )
 			{
 				if( It->IsA(Class) && It->GetParent()!=GObj.GetTransientPackage() )
 				{
 					check(It->GetParent());
-					for( UObject* TopParent=It->GetParent(); TopParent->GetParent()!=NULL; TopParent=TopParent->GetParent() );
+					for( TopParent=It->GetParent(); TopParent->GetParent()!=NULL; TopParent=TopParent->GetParent() );
 					if( TopParent->IsA(UPackage::StaticClass) )
 						List.AddUniqueItem( TopParent );
 				}
 			}
-			for( INT i=0; i<List.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<List.Num(); i++ )
 			{
 				if( i )
 					Out.Log( "," );
@@ -163,7 +164,7 @@ void ObjTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 			for( FObjectIterator It; It; ++It )
 				if( It->IsA(Class) && It->GetParent() && It->GetParent()->GetParent()==Pkg )
 					List.AddUniqueItem( It->GetParent() );
-			for( INT i=0; i<List.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<List.Num(); i++ )
 			{
 				if( i )
 					Out.Log( "," );
@@ -219,12 +220,12 @@ void UEditorEngine::UpdatePropertiesWindows()
 	if( ActorProperties )
 	{
 		TArray<UObject*> SelectedActors;
-		for( INT i=0; i<Level->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 			if( Level->Element(i) && Level->Element(i)->bSelected )
 				SelectedActors.AddItem( Level->Element(i) );
 		ActorProperties->Root.SetObjects( &SelectedActors(0), SelectedActors.Num() );
 	}
-	for( INT i=0; i<WProperties::PropertiesWindows.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<WProperties::PropertiesWindows.Num(); i++ )
 	{
 		WProperties* Properties=WProperties::PropertiesWindows(i);
 		if( Properties!=ActorProperties && Properties!=Preferences )
@@ -239,7 +240,7 @@ UBOOL UEditorEngine::HookExec( const char* Cmd, FOutputDevice* Out )
 	{
 		char Parms[256];
 		Exec( "MAP SAVE FILE=..\\Maps\\Autoplay.unr", Out );
-		appSprintf( Parms, "Autoplay.unr HWND=%i %s", (INT)hWndMain, GameCommandLine );
+		appSprintf( Parms, "Autoplay.unr HWND=%i %s", (INT_UNREAL_32S)hWndMain, GameCommandLine );
 		appLaunchURL( "Unreal", Parms );
 		return 1;
 	}

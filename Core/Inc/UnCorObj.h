@@ -12,7 +12,7 @@
 //
 class CORE_API UPackage : public UObject
 {
-	DECLARE_CLASS(UPackage,UObject,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UPackage,UObject,0)
 
 	// Variables.
 	void* DllHandle;
@@ -66,10 +66,10 @@ class CORE_API ULanguage : public UObject
 //
 class CORE_API UTextBuffer : public UObject, public FOutputDevice
 {
-	DECLARE_CLASS(UTextBuffer,UObject,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTextBuffer,UObject,0)
 
 	// Variables.
-	INT Pos, Top;
+	INT_UNREAL_32S Pos, Top;
 	FString Text;
 
 	// Constructors.
@@ -143,7 +143,7 @@ class CORE_API USystem : public USubsystem
 	char CachePath[96];
 	char CacheExt[32];
 	FName Suppress[16];
-	INT PurgeCacheDays;
+	INT_UNREAL_32S PurgeCacheDays;
 
 	// Constructors.
 	static void InternalClassInitializer( UClass* Class );

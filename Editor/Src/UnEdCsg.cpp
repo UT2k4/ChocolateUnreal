@@ -63,7 +63,7 @@ void UEditorEngine::csgCopyBrush
 	check(Src->IsA(ABrush::StaticClass));
 	check(Dest->IsA(ABrush::StaticClass));
 
-	if( Src->Brush->Polys->Num == 0 )
+	if( Src->Brush->Polys->Num() == 0)
 	{
 		Dest->Brush = NULL;
 		return;
@@ -78,7 +78,7 @@ void UEditorEngine::csgCopyBrush
 
 	// Update poly textures.
 	Dest->Brush->Polys->Add( Src->Brush->Polys->Num() );
-	for( INT i=0; i<Dest->Brush->Polys->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Dest->Brush->Polys->Num(); i++ )
 	{
 		FPoly& Poly     = Dest->Brush->Polys->Element(i);
 		Poly            = Src->Brush->Polys->Element(i);
@@ -230,7 +230,7 @@ void UEditorEngine::csgRebuild( ULevel* Level )
 //
 // Repartition the bsp.
 //
-void UEditorEngine::bspRepartition( UModel* Model, INT iNode, INT Simple )
+void UEditorEngine::bspRepartition( UModel* Model, INT_UNREAL_32S iNode, INT_UNREAL_32S Simple )
 {
 	guard(UEditorEngine::bspRepartition);
 
@@ -245,7 +245,7 @@ void UEditorEngine::bspRepartition( UModel* Model, INT iNode, INT Simple )
 //
 // Build list of leaves.
 //
-static void EnlistLeaves( UModel* Model, TArray<INT>& iFronts, TArray<INT>& iBacks, INT iNode )
+static void EnlistLeaves( UModel* Model, TArray<INT_UNREAL_32S>& iFronts, TArray<INT_UNREAL_32S>& iBacks, INT_UNREAL_32S iNode )
 {
 	guard(EnlistLeaves);
 	FBspNode& Node=Model->Nodes->Element(iNode);
@@ -275,13 +275,14 @@ void UEditorEngine::csgRebuild( ULevel* Level )
 	Level->Model->EmptyModel( 1, 1 );
 
 	// Count brushes.
-	INT BrushTotal=0, BrushCount=0;
+	INT_UNREAL_32S BrushTotal=0, BrushCount=0;
+	FStaticBrushIterator It(Level);
 	for( FStaticBrushIterator TempIt(Level); TempIt; ++TempIt )
 		if( *TempIt != Level->Brush() )
 			BrushTotal++;
 
 	// Compose all structural brushes and portals.
-	for( FStaticBrushIterator It(Level); It; ++It )
+	for( It; It; ++It )
 	{
 		if( *It!=Level->Brush() )
 		{
@@ -305,7 +306,7 @@ void UEditorEngine::csgRebuild( ULevel* Level )
 	TestVisibility( Level, Level->Model, 0, 0 );
 
 	// Remember leaves.
-	TArray<INT> iFronts, iBacks;
+	TArray<INT_UNREAL_32S> iFronts, iBacks;
 	if( Level->Model->Nodes->Num() )
 		EnlistLeaves( Level->Model, iFronts, iBacks, 0 );
 
@@ -326,11 +327,11 @@ void UEditorEngine::csgRebuild( ULevel* Level )
 	}
 
 	// Optimize the sub-bsp's.
-	INT iNode;
-	for( TIterator<INT>ItF(iFronts); ItF; ++ItF )
+	INT_UNREAL_32S iNode;
+	for( TIterator<INT_UNREAL_32S>ItF(iFronts); ItF; ++ItF )
 		if( (iNode=Level->Model->Nodes->Element(*ItF).iFront)!=INDEX_NONE )
 			bspRepartition( Level->Model, iNode, 2 );
-	for( TIterator<INT>ItB(iBacks); ItB; ++ItB )
+	for( TIterator<INT_UNREAL_32S>ItB(iBacks); ItB; ++ItB )
 		if( (iNode=Level->Model->Nodes->Element(*ItB).iBack)!=INDEX_NONE )
 			bspRepartition( Level->Model, iNode, 2 );
 #endif
@@ -357,7 +358,7 @@ void UEditorEngine::csgRebuild( ULevel* Level )
 void UEditorEngine::polySetAndClearPolyFlags(UModel *Model, DWORD SetBits, DWORD ClearBits,int SelectedOnly, int UpdateMaster)
 {
 	guard(UEditorEngine::polySetAndClearPolyFlags);
-	for( INT i=0; i<Model->Surfs->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++ )
 	{
 		FBspSurf& Poly = Model->Surfs->Element(i);
 		if( !SelectedOnly || (Poly.PolyFlags & PF_Selected) )
@@ -382,7 +383,7 @@ void UEditorEngine::polySetAndClearPolyFlags(UModel *Model, DWORD SetBits, DWORD
 //
 // Find the Brush EdPoly corresponding to a given Bsp surface.
 //
-int UEditorEngine::polyFindMaster(UModel *Model, INT iSurf, FPoly &Poly)
+int UEditorEngine::polyFindMaster(UModel *Model, INT_UNREAL_32S iSurf, FPoly &Poly)
 {
 	guard(UEditorEngine::polyFindMaster);
 
@@ -408,9 +409,9 @@ int UEditorEngine::polyFindMaster(UModel *Model, INT iSurf, FPoly &Poly)
 void UEditorEngine::polyUpdateMaster
 (
 	UModel*	Model,
-	INT  	iSurf,
-	INT		UpdateTexCoords,
-	INT		UpdateBase
+	INT_UNREAL_32S  	iSurf,
+	INT_UNREAL_32S		UpdateTexCoords,
+	INT_UNREAL_32S		UpdateBase
 )
 {
 	guard(UEditorEngine::polyUpdateMaster);
@@ -423,7 +424,7 @@ void UEditorEngine::polyUpdateMaster
 	if( UpdateTexCoords || UpdateBase )
 		Poly.Actor->BuildCoords( NULL, &Uncoords );
 
-	for( INT iEdPoly = Poly.iBrushPoly; iEdPoly < Poly.Actor->Brush->Polys->Num(); iEdPoly++ )
+	for( INT_UNREAL_32S iEdPoly = Poly.iBrushPoly; iEdPoly < Poly.Actor->Brush->Polys->Num(); iEdPoly++ )
 	{
 		FPoly& MasterEdPoly = Poly.Actor->Brush->Polys->Element(iEdPoly);
 		if( iEdPoly==Poly.iBrushPoly || MasterEdPoly.iLink==Poly.iBrushPoly )
@@ -463,7 +464,7 @@ void UEditorEngine::polyFindByFlags(UModel *Model, DWORD SetBits, DWORD ClearBit
 	guard(UEditorEngine::polyFindByFlags);
 	FBspSurf *Poly = &Model->Surfs->Element(0);
 	//
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		if (((Poly->PolyFlags&SetBits)!=0) || ((Poly->PolyFlags&~ClearBits)!=0))
 			{
@@ -479,10 +480,10 @@ void UEditorEngine::polyFindByFlags(UModel *Model, DWORD SetBits, DWORD ClearBit
 // and polygon index. Call with BrushPoly set to INDEX_NONE to find all Bsp 
 // polys corresponding to the Brush.
 //
-void UEditorEngine::polyFindByBrush( UModel* Model, ABrush* Actor, INT iBrushPoly, POLY_CALLBACK Callback )
+void UEditorEngine::polyFindByBrush( UModel* Model, ABrush* Actor, INT_UNREAL_32S iBrushPoly, POLY_CALLBACK Callback )
 	{
 	guard(UEditorEngine::polyFindByBrush);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf &Poly = Model->Surfs->Element(i);
 		if (
@@ -503,7 +504,7 @@ void UEditorEngine::polyFindByBrush( UModel* Model, ABrush* Actor, INT iBrushPol
 void UEditorEngine::polyResetSelection(UModel *Model)
 	{
 	guard(UEditorEngine::polyResetSelection);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		Poly->PolyFlags |= ~(PF_Selected | PF_Memorized);
@@ -521,10 +522,11 @@ void UEditorEngine::polySelectAll(UModel *Model)
 
 void UEditorEngine::polySelectMatchingGroups(UModel *Model)
 	{
+	INT_UNREAL_32S i;
 	guard(UEditorEngine::polySelectMatchingGroups);
 	appMemset( GFlags1, 0, sizeof(GFlags1) );
 	//
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for ( i=0; i<Model->Surfs->Num(); i++)
 	{
 		FBspSurf *Surf = &Model->Surfs->Element(i);
 		if (Surf->PolyFlags&PF_Selected)
@@ -550,11 +552,12 @@ void UEditorEngine::polySelectMatchingGroups(UModel *Model)
 void UEditorEngine::polySelectMatchingItems(UModel *Model)
 {
 	guard(UEditorEngine::polySelectMatchingItems);
+	INT_UNREAL_32S i;
 
 	appMemset(GFlags1,0,sizeof(GFlags1));
 	appMemset(GFlags2,0,sizeof(GFlags2));
 
-	for( INT i=0; i<Model->Surfs->Num(); i++ )
+	for( i=0; i<Model->Surfs->Num(); i++ )
 	{
 		FBspSurf *Surf = &Model->Surfs->Element(i);
 		if( Surf->Actor )
@@ -605,7 +608,7 @@ int TagAdjacentsType(UModel *Model, EAdjacentsType AdjacentType)
 	FVert	*VertPool;
 	FVector		*Base,*Normal;
 	BYTE		b;
-	INT		    i;
+	INT_UNREAL_32S		    i;
 	int			Selected,Found;
 	//
 	Selected = 0;
@@ -678,7 +681,7 @@ void TagCoplanars(UModel *Model)
 	//
 	appMemset(GFlags2,0,sizeof(GFlags2));
 	//
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		SelectedPoly = &Model->Surfs->Element(i);
 		if (SelectedPoly->PolyFlags & PF_Selected)
@@ -686,7 +689,7 @@ void TagCoplanars(UModel *Model)
 			SelectedBase   = &Model->Points->Element(SelectedPoly->pBase);
 			SelectedNormal = &Model->Vectors->Element(SelectedPoly->vNormal);
 			//
-			for (INT j=0; j<Model->Surfs->Num(); j++)
+			for (INT_UNREAL_32S j=0; j<Model->Surfs->Num(); j++)
 				{
 				Poly = &Model->Surfs->Element(j);
 				Base   = &Model->Points->Element(Poly->pBase);
@@ -723,7 +726,8 @@ void UEditorEngine::polySelectMatchingBrush(UModel *Model)
 	//
 	appMemset( GFlags1, 0, sizeof(GFlags1) );
 	//
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	INT_UNREAL_32S i;
+	for (i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		if( Poly->Actor->Brush )
@@ -750,7 +754,7 @@ void UEditorEngine::polySelectMatchingBrush(UModel *Model)
 void UEditorEngine::polySelectMatchingTexture(UModel *Model)
 	{
 	guard(UEditorEngine::polySelectMatchingTexture);
-	INT		i,Blank=0;
+	INT_UNREAL_32S		i,Blank=0;
 	appMemset( GFlags1, 0, sizeof(GFlags1) );
 	//
 	for (i=0; i<Model->Surfs->Num(); i++)
@@ -798,7 +802,7 @@ void UEditorEngine::polySelectAdjacentSlants(UModel *Model)
 void UEditorEngine::polySelectReverse(UModel *Model)
 	{
 	guard(UEditorEngine::polySelectReverse);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		Model->Surfs->ModifyItem(i,0);
@@ -812,7 +816,7 @@ void UEditorEngine::polySelectReverse(UModel *Model)
 void UEditorEngine::polyMemorizeSet(UModel *Model)
 	{
 	guard(UEditorEngine::polyMemorizeSet);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		if (Poly->PolyFlags & PF_Selected) 
@@ -839,7 +843,7 @@ void UEditorEngine::polyMemorizeSet(UModel *Model)
 void UEditorEngine::polyRememberSet(UModel *Model)
 	{
 	guard(UEditorEngine::polyRememberSet);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		if (Poly->PolyFlags & PF_Memorized) 
@@ -868,7 +872,7 @@ void UEditorEngine::polyXorSet(UModel *Model)
 	int			Flag1,Flag2;
 	//
 	guard(UEditorEngine::polyXorSet);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		Flag1 = (Poly->PolyFlags & PF_Selected ) != 0;
@@ -898,7 +902,7 @@ void UEditorEngine::polyXorSet(UModel *Model)
 void UEditorEngine::polyUnionSet(UModel *Model)
 	{
 	guard(UEditorEngine::polyUnionSet);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		if (!(Poly->PolyFlags & PF_Memorized))
@@ -917,7 +921,7 @@ void UEditorEngine::polyUnionSet(UModel *Model)
 void UEditorEngine::polyIntersectSet(UModel *Model)
 	{
 	guard(UEditorEngine::polyIntersectSet);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		if ((Poly->PolyFlags & PF_Memorized) && !(Poly->PolyFlags & PF_Selected))
@@ -1071,7 +1075,7 @@ void CopyBrushEdPolys( UModel *DestBrush, UModel *SourceBrush )
 void UEditorEngine::mapBrushGet( ULevel* Level )
 {
 	guard(UEditorEngine::mapBrushGet);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		ABrush* Actor = Cast<ABrush>(Level->Actors(i));
 		if( Actor && Actor!=Level->Brush() && Actor->bSelected )
@@ -1091,7 +1095,7 @@ void UEditorEngine::mapBrushGet( ULevel* Level )
 void UEditorEngine::mapBrushPut( ULevel* Level )
 {
 	guard(UEditorEngine::mapBrushPut);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		ABrush* Actor = Cast<ABrush>(Level->Actors(i));
 		if( Actor && Actor!=Level->Brush() && Actor->bSelected )
@@ -1117,9 +1121,10 @@ void SendTo( ULevel* Level, int bSendToFirst )
 	Level->ModifyAllItems();
 	AActor** Lists[2];
 	int      Count[2];
+	int i;
 
 	// Partition.
-	for( int i=0; i<2; i++ )
+	for( i=0; i<2; i++ )
 	{
 		Lists[i] = new(GMem,Level->Num())AActor*;
 		Count[i] = 0;
@@ -1193,7 +1198,7 @@ void UEditorEngine::mapSetBrush
 void UEditorEngine::polyTexPan(UModel *Model,int PanU,int PanV,int Absolute)
 	{
 	guard(UEditorEngine::polyTexPan);
-	for (INT i=0; i<Model->Surfs->Num(); i++)
+	for (INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++)
 		{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		if (Poly->PolyFlags & PF_Selected)
@@ -1218,11 +1223,11 @@ void UEditorEngine::polyTexPan(UModel *Model,int PanU,int PanV,int Absolute)
 //
 // Scale textures on selected polys. Doesn't do transaction tracking.
 //
-void UEditorEngine::polyTexScale( UModel* Model, FLOAT UU, FLOAT UV, FLOAT VU, FLOAT VV, INT Absolute )
+void UEditorEngine::polyTexScale( UModel* Model, FLOAT UU, FLOAT UV, FLOAT VU, FLOAT VV, INT_UNREAL_32S Absolute )
 {
 	guard(UEditorEngine::polyTexScale);
 
-	for( INT i=0; i<Model->Surfs->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++ )
 	{
 		FBspSurf *Poly = &Model->Surfs->Element(i);
 		if (Poly->PolyFlags & PF_Selected)
@@ -1264,7 +1269,7 @@ void UEditorEngine::polyTexAlign( UModel *Model, ETexAlign TexAlignType, DWORD T
 	FModelCoords	Coords,Uncoords;
 	FLOAT			Orientation,k;
 
-	for( INT i=0; i<Model->Surfs->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++ )
 	{
 		FBspSurf* Poly = &Model->Surfs->Element(i);
 		if( Poly->PolyFlags & PF_Selected )
@@ -1441,7 +1446,7 @@ void PolysTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 	int n=0, StaticLights=0, Meshels=0, MeshU=0, MeshV=0;
 	OffFlags = (DWORD)~0;
 	OnFlags  = (DWORD)~0;
-	for( INT i=0; i<Level->Model->Surfs->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Model->Surfs->Num(); i++ )
 	{
 		FBspSurf *Poly = &Level->Model->Surfs->Element(i);
 		if( Poly->PolyFlags&PF_Selected )

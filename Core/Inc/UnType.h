@@ -15,17 +15,17 @@ class CORE_API UProperty : public UField
 	DECLARE_ABSTRACT_CLASS(UProperty,UField,0)
 
 	// Persistent variables.
-	INT		ArrayDim;
+		INT_UNREAL_32S		ArrayDim;
 	DWORD	PropertyFlags;
 	FName	Category;
 	_WORD	RepOffset;
 
 	// In memory variables.
-	INT		Offset;
+	INT_UNREAL_32S		Offset;
 
 	// Constructors.
 	UProperty();
-	UProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags )
+	UProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags )
 	:	UField( NULL )
 	,	ArrayDim( 1 )
 	,	PropertyFlags( InFlags )
@@ -43,11 +43,11 @@ class CORE_API UProperty : public UField
 	virtual UBOOL Identical( const void* A, const void* B ) const=0;
 	virtual void ExportCPP( FOutputDevice& Out, UBOOL IsLocal, UBOOL IsParm );
 	virtual void ExportCPPItem( FOutputDevice& Out ) const=0;
-	virtual INT GetElementSize() const=0;
+	virtual INT_UNREAL_32S GetElementSize() const=0;
 	virtual void SerializeItem( FArchive& Ar, void* Value ) const=0;
 	virtual void ExportTextItem( char* ValueStr, BYTE* PropertyValue, BYTE* DefaultValue, UBOOL HumanReadable )=0;
 	virtual const char* ImportText( const char* Buffer, BYTE* Data, UBOOL HumanReadable ) const=0;
-	virtual UBOOL ExportText( INT ArrayElement, char* ValueStr, BYTE* Data, BYTE* Delta, UBOOL HumanReadable );
+	virtual UBOOL ExportText(INT_UNREAL_32S ArrayElement, char* ValueStr, BYTE* Data, BYTE* Delta, UBOOL HumanReadable );
 	virtual void Link( FArchive& Ar, UProperty* Prev )=0;
 	virtual void ExecLet( void* Var, FFrame& Stack );
 	virtual UBOOL Port()
@@ -63,9 +63,9 @@ class CORE_API UProperty : public UField
 	}
 
 	// Inlines.
-	UBOOL Matches( const void* A, const void* B, INT ArrayIndex )
+	UBOOL Matches( const void* A, const void* B, INT_UNREAL_32S ArrayIndex )
 	{
-		INT Ofs = Offset + ArrayIndex * GetElementSize();
+		INT_UNREAL_32S Ofs = Offset + ArrayIndex * GetElementSize();
 		return Identical( (BYTE*)A + Ofs, B ? (BYTE*)B + Ofs : NULL );
 	}
 	UStruct* GetParentStruct()
@@ -73,7 +73,7 @@ class CORE_API UProperty : public UField
 		check(CastChecked<UStruct>(GetParent())!=NULL);
 		return (UStruct*)GetParent();
 	}
-	INT GetSize()
+	INT_UNREAL_32S GetSize()
 	{
 		return ArrayDim * GetElementSize();
 	}
@@ -88,7 +88,7 @@ class CORE_API UProperty : public UField
 //
 class CORE_API UByteProperty : public UProperty
 {
-	DECLARE_CLASS(UByteProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UByteProperty,UProperty,0)
 
 	// Variables.
 	UEnum* Enum;
@@ -96,7 +96,7 @@ class CORE_API UByteProperty : public UProperty
 	// Constructors.
 	UByteProperty()
 	{}
-	UByteProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags, UEnum* InEnum=NULL )
+	UByteProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags, UEnum* InEnum=NULL )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	,	Enum( InEnum )
 	{}
@@ -105,7 +105,7 @@ class CORE_API UByteProperty : public UProperty
 	void Serialize( FArchive& Ar );
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
 		return sizeof(BYTE);
 	}
@@ -135,31 +135,31 @@ class CORE_API UByteProperty : public UProperty
 //
 class CORE_API UIntProperty : public UProperty
 {
-	DECLARE_CLASS(UIntProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UIntProperty,UProperty,0)
 
 	// Constructors.
 	UIntProperty()
 	{}
-	UIntProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags )
+	UIntProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	{}
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
-		return sizeof(INT);
+		return sizeof(INT_UNREAL_32S);
 	}
 	void Link( FArchive& Ar, UProperty* Prev )
 	{
-		Offset = Align( GetParentStruct()->PropertiesSize, sizeof(INT) );
+		Offset = Align( GetParentStruct()->PropertiesSize, sizeof(INT_UNREAL_32S) );
 	}
 	UBOOL Identical( const void* A, const void* B ) const
 	{
-		return *(INT*)A == (B ? *(INT*)B : 0);
+		return *(INT_UNREAL_32S*)A == (B ? *(INT_UNREAL_32S*)B : 0);
 	}
 	void SerializeItem( FArchive& Ar, void* Value ) const
 	{
-		Ar << *(INT*)Value;
+		Ar << *(INT_UNREAL_32S*)Value;
 	}
 	void ExportCPPItem( FOutputDevice& Out ) const;
 	void ExportTextItem( char* ValueStr, BYTE* PropertyValue, BYTE* DefaultValue, UBOOL HumanReadable );
@@ -175,7 +175,7 @@ class CORE_API UIntProperty : public UProperty
 //
 class CORE_API UBoolProperty : public UProperty
 {
-	DECLARE_CLASS(UBoolProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UBoolProperty,UProperty,0)
 
 	// Variables.
 	DWORD BitMask;
@@ -183,7 +183,7 @@ class CORE_API UBoolProperty : public UProperty
 	// Constructors.
 	UBoolProperty()
 	{}
-	UBoolProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags )
+	UBoolProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	,	BitMask( 1 )
 	{}
@@ -192,7 +192,7 @@ class CORE_API UBoolProperty : public UProperty
 	void Serialize( FArchive& Ar );
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
 		return sizeof(DWORD);
 	}
@@ -236,17 +236,17 @@ class CORE_API UBoolProperty : public UProperty
 //
 class CORE_API UFloatProperty : public UProperty
 {
-	DECLARE_CLASS(UFloatProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFloatProperty,UProperty,0)
 
 	// Constructors.
 	UFloatProperty()
 	{}
-	UFloatProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags )
+	UFloatProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	{}
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
 		return sizeof(FLOAT);
 	}
@@ -276,7 +276,7 @@ class CORE_API UFloatProperty : public UProperty
 //
 class CORE_API UObjectProperty : public UProperty
 {
-	DECLARE_CLASS(UObjectProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UObjectProperty,UProperty,0)
 
 	// Variables.
 	class UClass* PropertyClass;
@@ -285,7 +285,7 @@ class CORE_API UObjectProperty : public UProperty
 	// Constructors.
 	UObjectProperty()
 	{}
-	UObjectProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags, UClass* InClass )
+	UObjectProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags, UClass* InClass )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	,	PropertyClass( InClass )
 	{}
@@ -294,7 +294,7 @@ class CORE_API UObjectProperty : public UProperty
 	void Serialize( FArchive& Ar );
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
 		return sizeof(UObject*);
 	}
@@ -324,7 +324,7 @@ class CORE_API UObjectProperty : public UProperty
 //
 class CORE_API UClassProperty : public UObjectProperty
 {
-	DECLARE_CLASS(UClassProperty,UObjectProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UClassProperty,UObjectProperty,0)
 
 	// Variables.
 	class UClass* MetaClass;
@@ -332,7 +332,7 @@ class CORE_API UClassProperty : public UObjectProperty
 	// Constructors.
 	UClassProperty()
 	{}
-	UClassProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags, UClass* InMetaClass )
+	UClassProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags, UClass* InMetaClass )
 	:	UObjectProperty( EC_CppProperty, InOffset, InCategory, InFlags, UClass::StaticClass )
 	,	MetaClass( InMetaClass )
 	{}
@@ -357,17 +357,17 @@ class CORE_API UClassProperty : public UObjectProperty
 //
 class CORE_API UNameProperty : public UProperty
 {
-	DECLARE_CLASS(UNameProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UNameProperty,UProperty,0)
 
 	// Constructors.
 	UNameProperty()
 	{}
-	UNameProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags )
+	UNameProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	{}
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
 		return sizeof(FName);
 	}
@@ -397,15 +397,15 @@ class CORE_API UNameProperty : public UProperty
 //
 class CORE_API UStringProperty : public UProperty
 {
-	DECLARE_CLASS(UStringProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UStringProperty,UProperty,0)
 
 	// Variables.
-	INT StringSize;
+		INT_UNREAL_32S StringSize;
 
 	// Constructors.
 	UStringProperty()
 	{}
-	UStringProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags, INT InStringSize )
+	UStringProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags, INT_UNREAL_32S InStringSize )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	,	StringSize( InStringSize )
 	{}
@@ -414,7 +414,7 @@ class CORE_API UStringProperty : public UProperty
 	void Serialize( FArchive& Ar );
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
 		return StringSize;
 	}
@@ -453,9 +453,8 @@ class CORE_API UStructProperty : public UProperty
 	UStructProperty* NextStruct;
 
 	// Constructors.
-	UStructProperty()
-	{}
-	UStructProperty( ECppProperty, INT InOffset, const char* InCategory, DWORD InFlags, UStruct* InStruct )
+
+	UStructProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags, UStruct* InStruct )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	,	Struct( InStruct )
 	{}
@@ -464,7 +463,7 @@ class CORE_API UStructProperty : public UProperty
 	void Serialize( FArchive& Ar );
 
 	// UProperty interface.
-	INT GetElementSize() const
+	INT_UNREAL_32S GetElementSize() const
 	{
 		return Struct->PropertiesSize;
 	}
@@ -481,7 +480,7 @@ class CORE_API UStructProperty : public UProperty
 	UBOOL Identical( const void* A, const void* B ) const
 	{
 		for( TFieldIterator<UProperty> It(Struct); It; ++It )
-			for( INT i=0; i<It->ArrayDim; i++ )
+			for(INT_UNREAL_32S i=0; i<It->ArrayDim; i++ )
 				if( !It->Matches(A,B,i) )
 					return 0;
 		return 1;
@@ -523,7 +522,8 @@ template <class T> T* FindField( UStruct* Owner, const char* FieldName )
 inline UBOOL UObject::IsA( class UClass* SomeBase ) const
 {
 	guardSlow(UObject::IsA);
-	for( UClass* TempClass=Class; TempClass; TempClass=(UClass*)TempClass->SuperField )
+	UClass* TempClass;
+	for( TempClass=Class; TempClass; TempClass=(UClass*)TempClass->SuperField )
 		if( TempClass==SomeBase )
 			return 1;
 	return SomeBase==NULL;
@@ -567,7 +567,7 @@ inline UBOOL UStruct::StructCompare( const void* A, const void* B )
 {
 	guardSlow(UStruct::StructCompare);
 	for( TFieldIterator<UProperty> It(this); It; ++It )
-		for( INT i=0; i<It->ArrayDim; i++ )
+		for(INT_UNREAL_32S i=0; i<It->ArrayDim; i++ )
 			if( !It->Matches(A,B,i) )
 				return 0;
 	unguardSlow;

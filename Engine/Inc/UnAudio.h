@@ -33,7 +33,7 @@ class ENGINE_API UAudioSubsystem : public USubsystem
 	virtual void RegisterSound( USound* Music )=0;
 	virtual void UnregisterSound( USound* Sound )=0;
 	virtual void UnregisterMusic( UMusic* Music )=0;
-	virtual UBOOL PlaySound( AActor* Actor, INT Id, USound* Sound, FVector Location, FLOAT Volume, FLOAT Radius, FLOAT Pitch )=0;
+	virtual UBOOL PlaySound( AActor* Actor, INT_UNREAL_32S Id, USound* Sound, FVector Location, FLOAT Volume, FLOAT Radius, FLOAT Pitch )=0;
 	virtual void NoteDestroy( AActor* Actor )=0;
 	virtual UBOOL GetLowQualitySetting()=0;
 };
@@ -52,12 +52,11 @@ class ENGINE_API USound : public UObject
 	// Variables.
 	TArray<BYTE>		Data;
 	FName				FileType;
-	INT					OriginalSize;
+	INT_UNREAL_32S					OriginalSize;
 	void*				Handle;
 	static UAudioSubsystem* Audio;
 
 	// Constructor.
-	USound() {}
 
 	// UObject interface.
 	void Serialize( FArchive& Ar );
@@ -80,12 +79,11 @@ class ENGINE_API UMusic : public UObject
 	// Variables.
 	TArray<BYTE>		Data;
 	FName				FileType;
-	INT					OriginalSize;
+	INT_UNREAL_32S					OriginalSize;
 	void*				Handle;
 	static UAudioSubsystem* Audio;
 
 	// Constructor.
-	UMusic() {}
 
 	// UObject implementation.
 	void Serialize( FArchive& Ar );
@@ -182,7 +180,7 @@ public:
 	DWORD  SampleDataSize;
 	BYTE*  WaveDataEnd;
 
-	INT	   SampleLoopsNum;
+	INT_UNREAL_32S	   SampleLoopsNum;
 	FSampleLoop*  pSampleLoop;
 
 	DWORD  NewDataSize;

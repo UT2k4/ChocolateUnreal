@@ -9,7 +9,7 @@
 
 #define __WIN32__	1
 #define __INTEL__	1
-
+#include <stdarg.h>
 /*----------------------------------------------------------------------------
 	Platform specifics types and defines.
 ----------------------------------------------------------------------------*/
@@ -19,7 +19,7 @@
 #undef CHAR
 #undef WORD
 #undef DWORD
-#undef INT
+#undef INT_UNREAL_32S
 #undef FLOAT
 #undef MAXBYTE
 #undef MAXWORD
@@ -50,8 +50,8 @@ enum {CACHE_LINE_SIZE   = 32}; // Cache line size.
 #define STDCALL		__stdcall				/* Standard calling convention */
 
 // Variable arguments.
-#define GET_VARARGS(msg,fmt) appGetVarArgs(msg,fmt)
-
+#define GET_VARARGS(msg,fmt) {va_list va_;va_start(va_,fmt); appGetVarArgs(msg,fmt,va_);va_end(va_);}
+#define GET_VARARGSR(msg,fmt,result) {va_list va_;va_start(va_,fmt);result =  appGetVarArgs(msg,fmt,va_);va_end(va_);}
 // Compiler name.
 #ifdef _DEBUG
 	#define COMPILER "Compiled with Visual C++ Debug"
@@ -68,14 +68,13 @@ typedef unsigned __int64	QWORD;		// 64-bit unsigned.
 // Signed base types.
 typedef	char				CHAR;		// 8-bit  signed.
 typedef signed short		SWORD;		// 16-bit signed.
-typedef signed int  		INT;		// 32-bit signed.
+typedef signed int  		INT_UNREAL_32S;		// 32-bit signed.
 typedef signed __int64		SQWORD;		// 64-bit signed.
 
 // Other base types.
 typedef signed int			UBOOL;		// Boolean 0 (false) or 1 (true).
 typedef float				FLOAT;		// 32-bit IEEE floating point.
 typedef double				DOUBLE;		// 64-bit IEEE double.
-typedef unsigned int        SIZE_T;     // Corresponds to C SIZE_T.
 
 // Unwanted VC++ level 4 warnings to disable.
 #pragma warning(disable : 4244) /* conversion to float, possible loss of data							*/
@@ -137,7 +136,7 @@ typedef struct _iobuf FILE;
 // Package implementation.
 #define IMPLEMENT_PACKAGE_PLATFORM(pkgname) \
 	extern "C" {HINSTANCE hInstance;} \
-	INT __declspec(dllexport) __stdcall DllMain( HINSTANCE hInInstance, DWORD Reason, void* Reserved ) \
+	INT_UNREAL_32S __declspec(dllexport) __stdcall DllMain( HINSTANCE hInInstance, DWORD Reason, void* Reserved ) \
 	{ hInstance = hInInstance; return 1; }
 
 /*----------------------------------------------------------------------------
@@ -150,9 +149,9 @@ typedef struct _iobuf FILE;
 //
 #if ASM
 #define DEFINED_appRound 1
-inline INT appRound( FLOAT F )
+inline INT_UNREAL_32S appRound( FLOAT F )
 {
-	INT I;
+	INT_UNREAL_32S I;
 	__asm fld [F]
 	__asm fistp [I]
 	return I;
@@ -164,10 +163,10 @@ inline INT appRound( FLOAT F )
 //
 #if ASM
 #define DEFINED_appFloor 1
-inline INT appFloor( FLOAT F )
+inline INT_UNREAL_32S appFloor( FLOAT F )
 {
 	static FLOAT Half=0.5;
-	INT I;
+	INT_UNREAL_32S I;
 	__asm fld [F]
 	__asm fsub [Half]
 	__asm fistp [I]

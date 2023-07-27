@@ -26,10 +26,10 @@ void NoteTextureMovement( ULevel* Level );
 void MoveActors( ULevel* Level, FVector Delta, FRotator DeltaRot, UBOOL Constrained, APlayerPawn* ViewActor );
 
 // Global variables.
-INT GLastScroll=0;
-INT GFixPanU=0, GFixPanV=0;
-INT GFixScale=0;
-INT GForceXSnap=0, GForceYSnap=0, GForceZSnap=0;
+INT_UNREAL_32S GLastScroll=0;
+INT_UNREAL_32S GFixPanU=0, GFixPanV=0;
+INT_UNREAL_32S GFixScale=0;
+INT_UNREAL_32S GForceXSnap=0, GForceYSnap=0, GForceZSnap=0;
 
 // Editor state.
 UBOOL GPivotShown=0, GSnapping=0;
@@ -353,7 +353,9 @@ void UEditorEngine::NoteActorMovement( ULevel* Level )
 		GEditor->ClickFlags |= CF_MOVE_ACTOR;
 		GEditor->Trans->Begin( Level, "Actor movement" );
 		GSnapping=0;
-		for( INT i=0; i<Level->Num(); i++ )
+		INT_UNREAL_32S i;
+
+		for( i=0; i<Level->Num(); i++ )
 		{
 			AActor* Actor = Level->Actors(i);
 			if( Actor && Actor->bSelected )
@@ -393,7 +395,7 @@ void UEditorEngine::FinishAllSnaps( ULevel* Level )
 {
 	guard(UEditorEngine::FinishAllSnaps);
 	ClickFlags &= ~CF_MOVE_ACTOR;
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 		if( Level->Actors(i) && Level->Actors(i)->bSelected )
 			Level->Actors(i)->PostEditMove();
 	unguard;
@@ -430,9 +432,9 @@ void UEditorEngine::SetPivot( FVector NewPivot, UBOOL SnapPivotToGrid, UBOOL DoM
 	}
 
 	// Check all actors.
-	INT Count=0, SnapCount=0;
+	INT_UNREAL_32S Count=0, SnapCount=0;
 	AActor* SingleActor=NULL;
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		if( Level->Actors(i) && Level->Actors(i)->bSelected )
 		{
@@ -517,7 +519,7 @@ void MoveActors( ULevel* Level, FVector Delta, FRotator DeltaRot, UBOOL Constrai
 	// Move the actors.
 	if( Delta!=FVector(0,0,0) || DeltaRot!=FRotator(0,0,0) )
 	{
-		for( INT i=0; i<Level->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 		{
 			AActor* Actor = Level->Actors(i);
 			if( Actor && (Actor->bSelected || Actor==ViewActor) )
@@ -538,9 +540,9 @@ void MoveActors( ULevel* Level, FVector Delta, FRotator DeltaRot, UBOOL Constrai
 -----------------------------------------------------------------------------*/
 
 struct FPolyVertex {
-	FPolyVertex::FPolyVertex( INT i, INT j ) : PolyIndex(i), VertexIndex(j) {};
-	INT PolyIndex;
-	INT VertexIndex;
+	FPolyVertex::FPolyVertex( INT_UNREAL_32S i, INT_UNREAL_32S j ) : PolyIndex(i), VertexIndex(j) {};
+	INT_UNREAL_32S PolyIndex;
+	INT_UNREAL_32S VertexIndex;
 };
 
 static AActor* VertexEditActor=NULL;
@@ -558,7 +560,9 @@ void GrabVertex( ULevel* Level )
 
 	// Find the selected brush -- abort if none is found.
 	AActor* Actor=NULL;
-	for( INT i=0; i<Level->Num(); i++ )
+	INT_UNREAL_32S i;
+
+	for( i=0; i<Level->Num(); i++ )
 	{
 		Actor = Level->Actors(i);
 		if( Actor && Actor->bSelected && Actor->IsBrush() )
@@ -578,7 +582,7 @@ void GrabVertex( ULevel* Level )
 	for( i=0; i<Polys->Num(); i++ ) 
 	{
 		FCoords BrushC(VertexEditActor->ToWorld());
-		for( INT j=0; j<Polys->Element(i).NumVertices; j++ ) 
+		for( INT_UNREAL_32S j=0; j<Polys->Element(i).NumVertices; j++ ) 
 		{
 			FVector Location = Polys->Element(i).Vertex[j].TransformPointBy(BrushC);
 			// match GPivotLocation against Brush's vertex positions -- find "close" vertex
@@ -602,7 +606,7 @@ void ReleaseVertex( ULevel* Level )
 		return;
 
 	UPolys* Polys = VertexEditActor->Brush->Polys;
-	for( INT i=0; i<Polys->Num(); i++ ) 
+	for( INT_UNREAL_32S i=0; i<Polys->Num(); i++ ) 
 	{
 		// force recalculation of normal, and texture U and V coordinates in FPoly::Finalize()
 		Polys->Element(i).Normal = FVector(0,0,0);
@@ -662,10 +666,10 @@ void MoveVertex( ULevel* Level, FVector Delta, UBOOL Constrained )
 		Polys->ModifyAllItems();
 
 		FCoords BrushC(VertexEditActor->ToWorld());
-		for( INT k=0; k<VertexEditList.Num(); k++ ) 
+		for( INT_UNREAL_32S k=0; k<VertexEditList.Num(); k++ ) 
 		{
-			INT i = VertexEditList(k).PolyIndex;
-			INT j = VertexEditList(k).VertexIndex;
+			INT_UNREAL_32S i = VertexEditList(k).PolyIndex;
+			INT_UNREAL_32S j = VertexEditList(k).VertexIndex;
 			Polys->Element(i).Vertex[j] += Delta.TransformVectorBy(BrushC); //!! rotation transform is backwards MWP
 		}
 	}
@@ -718,7 +722,7 @@ void UEditorEngine::MouseDelta
 	FLOAT			TempFloat,TempU,TempV,Speed;
 	int				Temp;
 	static FLOAT	TextureAngle=0.0;
-	static INT	*OriginalUVectors = NULL,*OriginalVVectors = NULL,OrigNumVectors=0;
+	static INT_UNREAL_32S	*OriginalUVectors = NULL,*OriginalVVectors = NULL,OrigNumVectors=0;
 
 	if( Viewport->Actor->RendMap==REN_TexView )
 	{
@@ -762,11 +766,11 @@ void UEditorEngine::MouseDelta
 			// is unique in the world.
 			if( OriginalUVectors ) appFree(OriginalUVectors);
 			if( OriginalVVectors ) appFree(OriginalVVectors);
-			INT Size = Viewport->Actor->XLevel->Model->Surfs->Num() * sizeof(INT);
-			OriginalUVectors = (INT *)appMalloc(Size,"OriginalUVectors");
-			OriginalVVectors = (INT *)appMalloc(Size,"OriginalVVectors");
+			INT_UNREAL_32S Size = Viewport->Actor->XLevel->Model->Surfs->Num() * sizeof(INT_UNREAL_32S);
+			OriginalUVectors = (INT_UNREAL_32S *)appMalloc(Size,"OriginalUVectors");
+			OriginalVVectors = (INT_UNREAL_32S *)appMalloc(Size,"OriginalVVectors");
 			OrigNumVectors = Viewport->Actor->XLevel->Model->Vectors->Num();
-			for( INT i=0; i<Viewport->Actor->XLevel->Model->Surfs->Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Viewport->Actor->XLevel->Model->Surfs->Num(); i++ )
 			{
 				FBspSurf *Surf = &Viewport->Actor->XLevel->Model->Surfs->Element(i);
 				OriginalUVectors[i] = Surf->vTextureU;
@@ -801,7 +805,7 @@ void UEditorEngine::MouseDelta
 			FVector *AllVectors = new(GMem,Count)FVector;
 			appMemcpy( AllVectors, &Viewport->Actor->XLevel->Model->Vectors->Element(0), Count*sizeof(FVector) );
 			Viewport->Actor->XLevel->Model->Vectors->SetNum( OrigNumVectors );
-			for( INT i=0; i<Viewport->Actor->XLevel->Model->Surfs->Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Viewport->Actor->XLevel->Model->Surfs->Num(); i++ )
 			{
 				FBspSurf *Surf = &Viewport->Actor->XLevel->Model->Surfs->Element(i);
 				if( Surf->PolyFlags & PF_Selected )
@@ -950,7 +954,7 @@ void UEditorEngine::MouseDelta
 			{
 				BrushActor->TempScale.Scale = Vector;
 				BrushActor->PostScale.Scale = Vector;
-				if( Viewport->Actor->XLevel->Brush()->Brush->Polys->Num==0 )
+				if( Viewport->Actor->XLevel->Brush()->Brush->Polys->Num()==0 )
 					break;
 				FBox Box = BrushActor->Brush->GetRenderBoundingBox( BrushActor, 1 );
 
@@ -1039,7 +1043,7 @@ void UEditorEngine::MouseDelta
 				goto ViewportMove;
 			NoteTextureMovement( Level );
 			TextureAngle += (FLOAT)MouseX / 256.0;
-			for( INT i=0; i<Viewport->Actor->XLevel->Model->Surfs->Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Viewport->Actor->XLevel->Model->Surfs->Num(); i++ )
 			{
 				FBspSurf* Surf = &Viewport->Actor->XLevel->Model->Surfs->Element(i);
 				if( Surf->PolyFlags & PF_Selected )
@@ -1093,7 +1097,7 @@ void UEditorEngine::MousePosition( UViewport* Viewport, DWORD Buttons, FLOAT X, 
 // Handle a regular ASCII key that was pressed in UnrealEd.
 // Returns 1 if proceesed, 0 if not.
 //
-INT UEditorEngine::Key( UViewport* Viewport, EInputKey Key )
+INT_UNREAL_32S UEditorEngine::Key( UViewport* Viewport, EInputKey Key )
 {
 	guard(UEditorEngine::Key);
 	if( UEngine::Key( Viewport, Key ) )
@@ -1190,13 +1194,13 @@ void DrawTextureBrowser( FSceneNode* Frame )
 	FMemMark Mark(GMem);
 	enum {MAX=16384};
 	UTexture**  List    = new(GMem,MAX)UTexture*;
-	INT			Size	= Frame->Viewport->Actor->Misc1;
-	INT			PerRow	= Frame->X/Size;
-	INT			Space	= (Frame->X - Size*PerRow)/(PerRow+1);
-	INT			VSkip	= (Size>=64) ? 10 : 0;
+	INT_UNREAL_32S			Size	= Frame->Viewport->Actor->Misc1;
+	INT_UNREAL_32S			PerRow	= Frame->X/Size;
+	INT_UNREAL_32S			Space	= (Frame->X - Size*PerRow)/(PerRow+1);
+	INT_UNREAL_32S			VSkip	= (Size>=64) ? 10 : 0;
 
 	// Make the list.
-	INT n = 0;
+	INT_UNREAL_32S n = 0;
 	for( TObjectIterator<UTexture> It; It && n<MAX; ++It )
 		if( It->IsIn(Pkg) )
 			List[n++] = *It;
@@ -1205,18 +1209,18 @@ void DrawTextureBrowser( FSceneNode* Frame )
 	appQsort( &List[0], n, sizeof(UTexture *), ResNameCompare );
 
 	// Draw them.
-	INT YL = Space+(Size+Space+VSkip)*((n+PerRow-1)/PerRow);
+	INT_UNREAL_32S YL = Space+(Size+Space+VSkip)*((n+PerRow-1)/PerRow);
 	if( YL > 0 )
 	{
-		INT YOfs = -((Frame->Viewport->Actor->Misc2*Frame->Y)/512);
+		INT_UNREAL_32S YOfs = -((Frame->Viewport->Actor->Misc2*Frame->Y)/512);
 		for( int i=0; i<n; i++ )
 		{
 			UTexture* Texture = List[i];
-			INT X = (Size+Space)*(i%PerRow);
-			INT Y = (Size+Space+VSkip)*(i/PerRow)+YOfs;
+			INT_UNREAL_32S X = (Size+Space)*(i%PerRow);
+			INT_UNREAL_32S Y = (Size+Space+VSkip)*(i/PerRow)+YOfs;
 			if( Y+Size+Space+VSkip>0 && Y<Frame->Y )
 			{
-				PUSH_HIT(Frame,HBrowserTexture(Texture));
+				PUSH_HIT(Frame,HBrowserTexture, Texture);
 				if( Texture==GEditor->CurrentTexture )
 					Frame->Viewport->Canvas->DrawPattern( GEditor->BkgndHi, X+1, Y+1, Size+Space*2-2, Size+Space*2+VSkip-2, 1.0, 0.0, 0.0, NULL, 1.0, FPlane(1.,1.,1.,0), FPlane(0,0,0,0), 0 );
 				FLOAT Scale=0.125;
@@ -1229,7 +1233,7 @@ void DrawTextureBrowser( FSceneNode* Frame )
 					appStrcpy( Temp, Texture->GetName() );
 					if( Size>=128 )
 						appSprintf( Temp + appStrlen(Temp), " (%ix%i)", Texture->USize, Texture->VSize );
-					INT XL, YL;
+					INT_UNREAL_32S XL, YL;
 					Frame->Viewport->Canvas->StrLen( Frame->Viewport->Canvas->MedFont, XL, YL, Temp );
 					X = X+Space+(Size-XL)/2;
 					Frame->Viewport->Canvas->Printf( Frame->Viewport->Canvas->MedFont, X, Y+Size+1, Temp );
@@ -1268,7 +1272,7 @@ struct HPlayerControlButton : public HHitProxy
 };
 
 // Draw an onscreen mouseable button.
-static INT DrawButton( FSceneNode* Frame, UTexture* Texture, INT X, INT Y )
+static INT_UNREAL_32S DrawButton( FSceneNode* Frame, UTexture* Texture, INT_UNREAL_32S X, INT_UNREAL_32S Y )
 {
 	guard(DrawButton);
 	Frame->Viewport->Canvas->DrawIcon( Texture, X+0.5, Y+0.5, Texture->USize, Texture->VSize, NULL, 0.0, FPlane(0.9,0.9,0.9,0), FPlane(0,0,0,0), 0 );
@@ -1280,15 +1284,15 @@ static INT DrawButton( FSceneNode* Frame, UTexture* Texture, INT X, INT Y )
 static void DrawButtons( FSceneNode* Frame )
 {
 	guard(DrawButtons);
-	INT ButtonX=2;
+	INT_UNREAL_32S ButtonX=2;
 
 	// Menu toggle button.
-	PUSH_HIT(Frame,HMenuToggleButton());
+	PUSH_HIT(Frame,HMenuToggleButton);
 	ButtonX += DrawButton( Frame, (Frame->Viewport->Actor->ShowFlags&SHOW_Menu) ? GEditor->MenuUp : GEditor->MenuDn, ButtonX, 2 );
 	POP_HIT(Frame);
 
 	// Player control button.
-	PUSH_HIT(Frame,HPlayerControlButton());
+	PUSH_HIT(Frame,HPlayerControlButton);
 	if( !Frame->Viewport->IsOrtho() )
 		ButtonX += DrawButton( Frame, (Frame->Viewport->Actor->ShowFlags&SHOW_PlayerCtrl) ? GEditor->PlyrOn : GEditor->PlyrOff, ButtonX, 2 );
 	POP_HIT(Frame);
@@ -1309,7 +1313,7 @@ extern FLOAT EdClipZ;
 //
 // Draw the camera view.
 //
-void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
+void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* HitCount )
 {
 	FVector			OriginalLocation;
 	FRotator		OriginalRotation;
@@ -1358,7 +1362,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 			Actor->bHiddenEd = 1;
 			Actor->bHidden   = 1;
 			UTexture* Texture = (UTexture*)Viewport->MiscRes;
-			PUSH_HIT(Frame,HTextureView(Texture,Frame->X,Frame->Y));
+			PUSH_HIT(Frame,HTextureView,Texture,Frame->X,Frame->Y);
 			Viewport->Canvas->DrawIcon( Texture->Get(Viewport->CurrentTime), 0, 0, Frame->X, Frame->Y, NULL, 1.0, FPlane(1,1,1,0), FPlane(0,0,0,0), PF_TwoSided );
 			POP_HIT(Frame);
 			unguard;
@@ -1398,7 +1402,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 
 			// Do coordinates.
 			Frame->ComputeRenderCoords( Viewport->Actor->Location, Viewport->Actor->ViewRotation );
-			PUSH_HIT(Frame,HCoords(Frame));
+			PUSH_HIT(Frame,HCoords,Frame);
 
 			// Remember.
 			OriginalLocation		= Actor->Location;
@@ -1450,7 +1454,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 		}
 		default:
 		{
-			INT Mode = edcamMode( Viewport );
+			INT_UNREAL_32S Mode = edcamMode( Viewport );
 			Actor->bHiddenEd = Viewport->IsOrtho();
 
 			// Draw background.
@@ -1460,7 +1464,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 			|| !(Viewport->Actor->ShowFlags & SHOW_Backdrop) )
 				DrawWireBackground( Frame );
 
-			PUSH_HIT(Frame,HCoords(Frame));
+			PUSH_HIT(Frame,HCoords,Frame);
 
 			// Draw the level.
 			UBOOL bStaticBrushes = Viewport->IsWire();
@@ -1474,7 +1478,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 			// Draw all paths.
 			if( (Viewport->Actor->ShowFlags&SHOW_Paths) && Viewport->Actor->XLevel->ReachSpecs.Num() )
 			{
-				for( INT i=0; i<Viewport->Actor->XLevel->ReachSpecs.Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<Viewport->Actor->XLevel->ReachSpecs.Num(); i++ )
 				{
 					FReachSpec& ReachSpec = Viewport->Actor->XLevel->ReachSpecs( i );
 					if( ReachSpec.Start && ReachSpec.End && !ReachSpec.bPruned )
@@ -1495,7 +1499,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 			if( Viewport->Actor->ShowFlags & SHOW_Actors )
 			{
 				// Draw actor extras.
-				for( INT iActor=0; iActor<Viewport->Actor->XLevel->Num(); iActor++ )
+				for( INT_UNREAL_32S iActor=0; iActor<Viewport->Actor->XLevel->Num(); iActor++ )
 				{
 					AActor* Actor = Viewport->Actor->XLevel->Actors(iActor);
 					if( Actor && !Actor->bHiddenEd )
@@ -1512,14 +1516,14 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 								continue;
 						}
 #endif
-						PUSH_HIT(Frame,HActor(Actor));
+						PUSH_HIT(Frame,HActor,Actor);
 						// If this actor is an event source, draw event lines connecting it to
 						// all corresponding event sinks.
 						if
 						(	Actor->Event!=NAME_None
 						&&	Viewport->IsWire() )//SHOW_Events!!
 						{
-							for( INT iOther=0; iOther<Viewport->Actor->XLevel->Num(); iOther++ )
+							for( INT_UNREAL_32S iOther=0; iOther<Viewport->Actor->XLevel->Num(); iOther++ )
 							{
 								AActor* OtherActor = Viewport->Actor->XLevel->Actors( iOther );
 								if
@@ -1577,7 +1581,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 						&&	Actor->bDirectional
 						&&	(Actor->IsA(ACamera::StaticClass) || Actor->bSelected) )
 						{
-							PUSH_HIT(Frame,HActor(Actor));
+							PUSH_HIT(Frame,HActor,Actor);
 							FVector V = Actor->Location, A(0,0,0), B(0,0,0);
 							FCoords C = GMath.UnitCoords / Actor->Rotation;
 							Render->Draw3DLine( Frame, C_ActorArrow.Plane(), LINE_None, V + C.XAxis * 48, V );
@@ -1603,7 +1607,7 @@ void UEditorEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitCount )
 				FVector Location = GSnappedLocation;
 				if( Render->Project( Frame, Location, X, Y, NULL ) )
 				{
-					PUSH_HIT(Frame,HGlobalPivot(Location));
+					PUSH_HIT(Frame,HGlobalPivot,Location);
          			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_BrushWire.Plane(), LINE_None, X-1, Y-1, X+1, Y+1 );
         			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_BrushWire.Plane(), LINE_None, X,   Y-4, X,   Y+4 );
          			Frame->Viewport->RenDev->Draw2DPoint( Frame, C_BrushWire.Plane(), LINE_None, X-4, Y,   X+4, Y   );
@@ -1654,7 +1658,7 @@ void UEditorEngine::Click
 
 	// Draw with hit-testing.
 	BYTE HitData[1024];
-	INT HitCount=ARRAY_COUNT(HitData);
+	INT_UNREAL_32S HitCount=ARRAY_COUNT(HitData);
 	Draw( Viewport, HitData, &HitCount );
 
 	// Update buttons.
@@ -1685,13 +1689,13 @@ void UEditorEngine::edcamSetMode( int InMode )
 
 	// Clear old mode.
 	if( Mode != EM_None )
-		for( INT i=0; i<Client->Viewports.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 			MouseDelta( Client->Viewports(i), MOUSE_ExitMode, 0, 0 );
 
 	// Set new mode.
 	Mode = InMode;
 	if( Mode != EM_None )
-		for( INT i=0; i<Client->Viewports.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 			MouseDelta( Client->Viewports(i), MOUSE_SetMode, 0, 0 );
 
 	unguard;
@@ -1732,9 +1736,9 @@ void UEditorEngine::NoteSelectionChange( ULevel* Level )
 	EdCallback( EDC_SelChange, 0 );
 
 	// Pick a new common pivot, or not.
-	INT Count=0;
+	INT_UNREAL_32S Count=0;
 	AActor* SingleActor=NULL;
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		if( Level->Actors(i) && Level->Actors(i)->bSelected )
 		{
@@ -1757,9 +1761,10 @@ void UEditorEngine::NoteSelectionChange( ULevel* Level )
 void UEditorEngine::SelectNone( ULevel *Level, UBOOL Notify )
 {
 	guard(UEditorEngine::SelectNone);
+	INT_UNREAL_32S i;
 
 	// Unselect all actors.
-	for( INT i=0; i<Level->Num(); i++ )
+	for( i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if( Actor && Actor->bSelected )

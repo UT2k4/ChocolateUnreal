@@ -30,10 +30,10 @@
 
 struct FBspDrawList
 {
-	INT 			iNode;
-	INT				iSurf;
-	INT				iZone;
-	INT				Key;
+	INT_UNREAL_32S 			iNode;
+	INT_UNREAL_32S				iSurf;
+	INT_UNREAL_32S				iZone;
+	INT_UNREAL_32S				Key;
 	DWORD			PolyFlags;
 	FSpanBuffer		Span;
 	AZoneInfo*		Zone;
@@ -102,9 +102,9 @@ struct FDynamicItem
 
 	// Functions.
 	FDynamicItem() {}
-	FDynamicItem( INT iNode );
-	virtual void Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, INT Outside ) {}
-	virtual void PreRender( UViewport* Viewport, FSceneNode* Frame, FSpanBuffer* SpanBuffer, INT iNode, FVolActorLink* Volumetrics ) {}
+	FDynamicItem( INT_UNREAL_32S iNode );
+	virtual void Filter( UViewport* Viewport, FSceneNode* Frame, INT_UNREAL_32S iNode, INT_UNREAL_32S Outside ) {}
+	virtual void PreRender( UViewport* Viewport, FSceneNode* Frame, FSpanBuffer* SpanBuffer, INT_UNREAL_32S iNode, FVolActorLink* Volumetrics ) {}
 };
 
 struct FDynamicSprite : public FDynamicItem
@@ -114,15 +114,15 @@ struct FDynamicSprite : public FDynamicItem
 	FDynamicSprite*	RenderNext;
 	FTransform		ProxyVerts[4];
 	AActor*			Actor;
-	INT				X1, Y1;
-	INT				X2, Y2;
+	INT_UNREAL_32S				X1, Y1;
+	INT_UNREAL_32S				X2, Y2;
 	FLOAT 			ScreenX, ScreenY;
 	FLOAT			Persp;
 	FActorLink*		Volumetrics;
 	FVolActorLink*	LeafLights;
 
 	// Functions.
-	FDynamicSprite( FSceneNode* Frame, INT iNode, AActor* Actor );
+	FDynamicSprite( FSceneNode* Frame, INT_UNREAL_32S iNode, AActor* Actor );
 	FDynamicSprite( AActor* InActor ) : Actor( InActor ), SpanBuffer( NULL ), Volumetrics( NULL ), LeafLights( NULL ) {}
 	UBOOL Setup( FSceneNode* Frame );
 };
@@ -134,8 +134,8 @@ struct FDynamicChunk : public FDynamicItem
 	FDynamicSprite* Sprite;
 
 	// Functions.
-	FDynamicChunk( INT iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster );
-	void Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, INT Outside );
+	FDynamicChunk( INT_UNREAL_32S iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster );
+	void Filter( UViewport* Viewport, FSceneNode* Frame, INT_UNREAL_32S iNode, INT_UNREAL_32S Outside );
 };
 
 struct FDynamicFinalChunk : public FDynamicItem
@@ -145,8 +145,8 @@ struct FDynamicFinalChunk : public FDynamicItem
 	FDynamicSprite* Sprite;
 
 	// Functions.
-	FDynamicFinalChunk( INT iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster, INT IsBack );
-	void PreRender( UViewport* Viewport,  FSceneNode* Frame, FSpanBuffer* SpanBuffer, INT iNode, FVolActorLink* Volumetrics );
+	FDynamicFinalChunk( INT_UNREAL_32S iNode, FDynamicSprite* InSprite, FRasterPoly* InRaster, INT_UNREAL_32S IsBack );
+	void PreRender( UViewport* Viewport,  FSceneNode* Frame, FSpanBuffer* SpanBuffer, INT_UNREAL_32S iNode, FVolActorLink* Volumetrics );
 };
 
 struct FDynamicLight : public FDynamicItem
@@ -157,8 +157,8 @@ struct FDynamicLight : public FDynamicItem
 	UBOOL			HitLeaf;
 
 	// Functions.
-	FDynamicLight( INT iNode, AActor* Actor, UBOOL IsVol, UBOOL InHitLeaf );
-	void Filter( UViewport* Viewport, FSceneNode* Frame, INT iNode, INT Outside );
+	FDynamicLight( INT_UNREAL_32S iNode, AActor* Actor, UBOOL IsVol, UBOOL InHitLeaf );
+	void Filter( UViewport* Viewport, FSceneNode* Frame, INT_UNREAL_32S iNode, INT_UNREAL_32S Outside );
 };
 
 /*------------------------------------------------------------------------------------
@@ -182,17 +182,17 @@ extern FLightManagerBase* GLightManager;
 	struct FRenderStats
 	{
 		// Misc.
-		INT ExtraTime;
+		INT_UNREAL_32S ExtraTime;
 
 		// MeshStats.
-		INT MeshTime;
-		INT MeshGetFrameTime, MeshProcessTime, MeshLightSetupTime, MeshLightTime, MeshSubTime, MeshClipTime, MeshTmapTime;
-		INT MeshCount, MeshPolyCount, MeshSubCount, MeshVertLightCount, MeshLightCount, MeshVtricCount;
+		INT_UNREAL_32S MeshTime;
+		INT_UNREAL_32S MeshGetFrameTime, MeshProcessTime, MeshLightSetupTime, MeshLightTime, MeshSubTime, MeshClipTime, MeshTmapTime;
+		INT_UNREAL_32S MeshCount, MeshPolyCount, MeshSubCount, MeshVertLightCount, MeshLightCount, MeshVtricCount;
 
 		// ActorStats.
 
 		// FilterStats.
-		INT FilterTime;
+		INT_UNREAL_32S FilterTime;
 
 		// RejectStats.
 
@@ -201,78 +201,78 @@ extern FLightManagerBase* GLightManager;
 		// ZoneStats.
 
 		// OcclusionStats.
-		INT OcclusionTime, ClipTime, RasterTime, SpanTime;
-		INT NodesDone, NodesTotal;
-		INT NumRasterPolys, NumRasterBoxReject;
-		INT NumTransform, NumClip;
-		INT BoxTime, BoxChecks, BoxBacks, BoxIn, BoxOutOfPyramid, BoxSpanOccluded;
-		INT NumPoints;
+		INT_UNREAL_32S OcclusionTime, ClipTime, RasterTime, SpanTime;
+		INT_UNREAL_32S NodesDone, NodesTotal;
+		INT_UNREAL_32S NumRasterPolys, NumRasterBoxReject;
+		INT_UNREAL_32S NumTransform, NumClip;
+		INT_UNREAL_32S BoxTime, BoxChecks, BoxBacks, BoxIn, BoxOutOfPyramid, BoxSpanOccluded;
+		INT_UNREAL_32S NumPoints;
 
 		// GameStats.
 
 		// IllumStats.
-		INT IllumTime;
+		INT_UNREAL_32S IllumTime;
 
 		// PolyVStats.
-		INT PolyVTime;
+		INT_UNREAL_32S PolyVTime;
 
 		// Actor drawing stats:
-		INT NumSprites;			// Number of sprites filtered.
-		INT NumChunks;			// Number of final chunks filtered.
-		INT NumFinalChunks;		// Number of final chunks.
-		INT NumMovingLights;    // Number of moving lights.
-		INT ChunksDrawn;		// Chunks drawn.
+		INT_UNREAL_32S NumSprites;			// Number of sprites filtered.
+		INT_UNREAL_32S NumChunks;			// Number of final chunks filtered.
+		INT_UNREAL_32S NumFinalChunks;		// Number of final chunks.
+		INT_UNREAL_32S NumMovingLights;    // Number of moving lights.
+		INT_UNREAL_32S ChunksDrawn;		// Chunks drawn.
 
 		// Texture subdivision stats
-		INT DynLightActors;		// Number of actors shining dynamic light.
+		INT_UNREAL_32S DynLightActors;		// Number of actors shining dynamic light.
 
 		// Span buffer:
-		INT SpanTotalChurn;		// Total spans added.
-		INT SpanRejig;			// Number of span index that had to be reallocated during merging.
+		INT_UNREAL_32S SpanTotalChurn;		// Total spans added.
+		INT_UNREAL_32S SpanRejig;			// Number of span index that had to be reallocated during merging.
 
 		// Clipping:
-		INT ClipAccept;			// Polygons accepted by clipper.
-		INT ClipOutcodeReject;	// Polygons outcode-rejected by clipped.
-		INT ClipNil;			// Polygons clipped into oblivion.
+		INT_UNREAL_32S ClipAccept;			// Polygons accepted by clipper.
+		INT_UNREAL_32S ClipOutcodeReject;	// Polygons outcode-rejected by clipped.
+		INT_UNREAL_32S ClipNil;			// Polygons clipped into oblivion.
 
 		// Memory:
-		INT GMem;				// Bytes used in global memory pool.
-		INT GDynMem;			// Bytes used in dynamics memory pool.
+		INT_UNREAL_32S GMem;				// Bytes used in global memory pool.
+		INT_UNREAL_32S GDynMem;			// Bytes used in dynamics memory pool.
 
 		// Zone rendering:
-		INT CurZone;			// Current zone the player is in.
-		INT NumZones;			// Total zones in world.
-		INT VisibleZones;		// Zones actually processed.
-		INT MaskRejectZones;	// Zones that were mask rejected.
+		INT_UNREAL_32S CurZone;			// Current zone the player is in.
+		INT_UNREAL_32S NumZones;			// Total zones in world.
+		INT_UNREAL_32S VisibleZones;		// Zones actually processed.
+		INT_UNREAL_32S MaskRejectZones;	// Zones that were mask rejected.
 
 		// Illumination cache:
-		INT PalCycles;			// Time spent in palette regeneration.
+		INT_UNREAL_32S PalCycles;			// Time spent in palette regeneration.
 
 		// Lighting:
-		INT Lightage,LightMem,MeshPtsGen,MeshesGen,VolLightActors;
+		INT_UNREAL_32S Lightage,LightMem,MeshPtsGen,MeshesGen,VolLightActors;
 
 		// Textures:
-		INT UniqueTextures,UniqueTextureMem,CodePatches;
+		INT_UNREAL_32S UniqueTextures,UniqueTextureMem,CodePatches;
 
 		// Extra:
-		INT Extra1,Extra2,Extra3,Extra4;
+		INT_UNREAL_32S Extra1,Extra2,Extra3,Extra4;
 
 		// Routine timings:
-		INT GetValidRangeCycles;
-		INT BoxIsVisibleCycles;
-		INT CopyFromRasterUpdateCycles;
-		INT CopyFromRasterCycles;
-		INT CopyIndexFromCycles;
-		INT MergeWithCycles;
-		INT CalcRectFromCycles;
-		INT CalcLatticeFromCycles;
-		INT GenerateCycles;
-		INT CalcLatticeCycles;
-		INT RasterSetupCycles;
-		INT RasterGenerateCycles;
-		INT TransformCycles;
-		INT ClipCycles;
-		INT AsmCycles;
+		INT_UNREAL_32S GetValidRangeCycles;
+		INT_UNREAL_32S BoxIsVisibleCycles;
+		INT_UNREAL_32S CopyFromRasterUpdateCycles;
+		INT_UNREAL_32S CopyFromRasterCycles;
+		INT_UNREAL_32S CopyIndexFromCycles;
+		INT_UNREAL_32S MergeWithCycles;
+		INT_UNREAL_32S CalcRectFromCycles;
+		INT_UNREAL_32S CalcLatticeFromCycles;
+		INT_UNREAL_32S GenerateCycles;
+		INT_UNREAL_32S CalcLatticeCycles;
+		INT_UNREAL_32S RasterSetupCycles;
+		INT_UNREAL_32S RasterGenerateCycles;
+		INT_UNREAL_32S TransformCycles;
+		INT_UNREAL_32S ClipCycles;
+		INT_UNREAL_32S AsmCycles;
 	};
 	extern FRenderStats GStat;
 #else
@@ -380,7 +380,7 @@ inline FLOAT SqrtApprox   (FLOAT F) {return appSqrt(F);}
 //
 class RENDER_API URender : public URenderBase
 {
-	DECLARE_CLASS(URender,URenderBase,CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(URender,URenderBase,CLASS_Config)
 
 	// Friends.
 	friend class  FGlobalSpanTextureMapper;
@@ -398,7 +398,7 @@ class RENDER_API URender : public URenderBase
 		FSpanBuffer*	Span,
 		FTransTexture*	Pts,
 		DWORD			PolyFlags,
-		INT				SubCount
+		INT_UNREAL_32S				SubCount
 	);
 
 	// obsolete!!
@@ -425,16 +425,16 @@ class RENDER_API URender : public URenderBase
 	void PreRender( FSceneNode* Frame );
 	void PostRender( FSceneNode* Frame );
 	void DrawWorld( FSceneNode* Frame );
-	UBOOL Deproject( FSceneNode* Frame, INT ScreenX, INT ScreenY, FVector& V );
+	UBOOL Deproject( FSceneNode* Frame, INT_UNREAL_32S ScreenX, INT_UNREAL_32S ScreenY, FVector& V );
 	UBOOL Project( FSceneNode* Frame, const FVector& V, FLOAT& ScreenX, FLOAT& ScreenY, FLOAT* Scale );
 	void DrawActor( FSceneNode* Frame, AActor* Actor );
-	void GetVisibleSurfs( UViewport* Viewport, TArray<INT>& iSurfs );
+	void GetVisibleSurfs( UViewport* Viewport, TArray<INT_UNREAL_32S>& iSurfs );
 	void OccludeBsp( FSceneNode* Frame );
 	void SetupDynamics( FSceneNode* Frame, AActor* Exclude );
 	UBOOL BoundVisible( FSceneNode* Frame, FBox* Bound, FSpanBuffer* SpanBuffer, FScreenBounds& Results );
 	void GlobalLighting( UBOOL Realtime, AActor* Owner, FLOAT& Brightness, FPlane& Color );
 	FSceneNode* CreateMasterFrame( UViewport* Viewport, FVector Location, FRotator Rotation, FScreenBounds* Bounds );
-	FSceneNode* CreateChildFrame( FSceneNode* Frame, FSpanBuffer* Span, ULevel* Level, INT iSurf, INT iZone, FLOAT Mirror, const FPlane& NearClip, const FCoords& Coords, FScreenBounds* Bounds );
+	FSceneNode* CreateChildFrame( FSceneNode* Frame, FSpanBuffer* Span, ULevel* Level, INT_UNREAL_32S iSurf, INT_UNREAL_32S iZone, FLOAT Mirror, const FPlane& NearClip, const FCoords& Coords, FScreenBounds* Bounds );
 	void Draw2DClippedLine( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FVector P1, FVector P2 );
 	void Draw3DLine( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FVector OrigP, FVector OrigQ );
 	void DrawCircle( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FVector& Location, FLOAT Radius );
@@ -449,12 +449,12 @@ class RENDER_API URender : public URenderBase
 	// Dynamic lighting.
 	enum {MAX_DYN_LIGHT_SURFS=2048};
 	enum {MAX_DYN_LIGHT_LEAVES=1024};
-	static INT				NumDynLightSurfs;
-	static INT				NumDynLightLeaves;
-	static INT				MaxSurfLights;
-	static INT				MaxLeafLights;
-	static INT				DynLightSurfs[MAX_DYN_LIGHT_SURFS];
-	static INT				DynLightLeaves[MAX_DYN_LIGHT_LEAVES];
+	static INT_UNREAL_32S				NumDynLightSurfs;
+	static INT_UNREAL_32S				NumDynLightLeaves;
+	static INT_UNREAL_32S				MaxSurfLights;
+	static INT_UNREAL_32S				MaxLeafLights;
+	static INT_UNREAL_32S				DynLightSurfs[MAX_DYN_LIGHT_SURFS];
+	static INT_UNREAL_32S				DynLightLeaves[MAX_DYN_LIGHT_LEAVES];
 	static FActorLink**		SurfLights;
 	static FVolActorLink**	LeafLights;
 
@@ -505,9 +505,9 @@ class RENDER_API URender : public URenderBase
 	}* PointCache;
 	static FMemStack VectorMem;
 	static DWORD Stamp;
-	INT						NumPostDynamics;
+	INT_UNREAL_32S						NumPostDynamics;
 	FDynamicsCache**		PostDynamics;
-	FDynamicItem*& Dynamic( INT iNode, INT i )
+	FDynamicItem*& Dynamic( INT_UNREAL_32S iNode, INT_UNREAL_32S i )
 	{
 		return DynamicsCache[iNode].Dynamics[i];
 	}
@@ -515,14 +515,14 @@ class RENDER_API URender : public URenderBase
 	// Implementation.
 	void OccludeFrame( FSceneNode* Frame );
 	void DrawFrame( FSceneNode* Frame );
-	void LeafVolumetricLighting( FSceneNode* Frame, UModel* Model, INT iLeaf );
-	INT ClipBspSurf( INT iNode, FTransform**& OutPts );
-	INT AMD3DClipBspSurf( INT iNode, FTransform**& OutPts );
-	INT ClipTexPoints( FSceneNode* Frame, FTransTexture* InPts, FTransTexture* OutPts, INT Num0 );
+	void LeafVolumetricLighting( FSceneNode* Frame, UModel* Model, INT_UNREAL_32S iLeaf );
+	INT_UNREAL_32S ClipBspSurf( INT_UNREAL_32S iNode, FTransform**& OutPts );
+	INT_UNREAL_32S AMD3DClipBspSurf( INT_UNREAL_32S iNode, FTransform**& OutPts );
+	INT_UNREAL_32S ClipTexPoints( FSceneNode* Frame, FTransTexture* InPts, FTransTexture* OutPts, INT_UNREAL_32S Num0 );
 	void DrawActorSprite( FSceneNode* Frame, FDynamicSprite* Sprite );
 	void DrawMesh( FSceneNode* Frame, AActor* Owner, FSpanBuffer* SpanBuffer, AZoneInfo* Zone, const FCoords& Coords, FVolActorLink* LeafLights, FActorLink* Volumetrics, DWORD PolyFlags );
 	void AMD3DDrawMesh( FSceneNode* Frame, AActor* Owner, FSpanBuffer* SpanBuffer, AZoneInfo* Zone, const FCoords& Coords, FVolActorLink* LeafLights, FActorLink* Volumetrics, DWORD PolyFlags );
-	void ShowStat( FSceneNode* Frame, INT& StatYL, const char* Fmt, ... );
+	void ShowStat( FSceneNode* Frame, INT_UNREAL_32S& StatYL, const char* Fmt, ... );
 	void DrawStats( FSceneNode* Frame );
 };
 extern RENDER_API URender* GRender;

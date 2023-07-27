@@ -249,7 +249,7 @@ void UObject::execClassContext( FFrame& Stack, BYTE*& Result )
 	else
 	{
 		Stack.ScriptWarn( 0, "Accessed null class context" );
-		INT wSkip = Stack.ReadWord();
+		INT_UNREAL_32S wSkip = Stack.ReadWord();
 		BYTE bSize = *Stack.Code++;
 		Stack.Code += wSkip;
 		if( Result )
@@ -273,16 +273,16 @@ void UObject::execArrayElement( FFrame& Stack, BYTE*& Result )
 	Stack.Step( this, Result );
 
 	// Bounds check.
-	if( *(INT*)Addr>=GProperty->ArrayDim || *(INT*)Addr<0 )
+	if( *(INT_UNREAL_32S*)Addr>=GProperty->ArrayDim || *(INT_UNREAL_32S*)Addr<0 )
 	{
 		// Display out-of-bounds warning and continue on with index clamped to valid range.
-		Stack.ScriptWarn( 0, "Accessed array out of bounds (%i/%i)", *(INT*)Addr, GProperty->ArrayDim );
-		*(INT*)Addr = Clamp( *(INT*)Addr, 0, GProperty->ArrayDim - 1 );
+		Stack.ScriptWarn( 0, "Accessed array out of bounds (%i/%i)", *(INT_UNREAL_32S*)Addr, GProperty->ArrayDim );
+		*(INT_UNREAL_32S*)Addr = Clamp( *(INT_UNREAL_32S*)Addr, 0, GProperty->ArrayDim - 1 );
 	}
 
 	// Add scaled offset to base pointer.
 	if( Result )
-		Result += *(INT*)Addr * GProperty->GetElementSize();
+		Result += *(INT_UNREAL_32S*)Addr * GProperty->GetElementSize();
 
 	unguardexecSlow;
 }
@@ -370,7 +370,7 @@ void UObject::execSwitch( FFrame& Stack, BYTE*& Result )
 		Stack.Code++;
 
 		// Get address of next handler.
-		INT wNext = Stack.ReadWord();
+		INT_UNREAL_32S wNext = Stack.ReadWord();
 		if( wNext == MAXWORD ) // Default case or end of cases.
 			break;
 
@@ -394,7 +394,7 @@ void UObject::execCase( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execCase);
 
 	// Get address of next handler.
-	INT wNext = Stack.ReadWord();
+	INT_UNREAL_32S wNext = Stack.ReadWord();
 	if( wNext != MAXWORD )
 	{
 		BYTE Buffer[MAX_STRING_CONST_SIZE], *Val=Buffer;
@@ -422,7 +422,7 @@ void UObject::execJumpIfNot( FFrame& Stack, BYTE*& Result )
 	CHECK_RUNAWAY;
 
 	// Get code offset.
-	INT wOffset = Stack.ReadWord();
+	INT_UNREAL_32S wOffset = Stack.ReadWord();
 
 	// Get boolean test value.
 	BYTE Buffer[MAX_CONST_SIZE], *Val=Buffer;
@@ -441,7 +441,7 @@ void UObject::execAssert( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execAssert);
 
 	// Get line number.
-	INT wLine = Stack.ReadWord();
+	INT_UNREAL_32S wLine = Stack.ReadWord();
 
 	// Get boolean assert value.
 	BYTE Buffer[MAX_CONST_SIZE], *Val=Buffer;
@@ -517,7 +517,7 @@ void UObject::execContext( FFrame& Stack, BYTE*& Result )
 	else
 	{
 		Stack.ScriptWarn( 0, "Accessed None" );
-		INT wSkip = Stack.ReadWord();
+		INT_UNREAL_32S wSkip = Stack.ReadWord();
 		BYTE bSize = *Stack.Code++;
 		Stack.Code += wSkip;
 		if( Result )
@@ -641,7 +641,7 @@ AUTOREGISTER_INTRINSIC( UObject, EX_StructMember, execStructMember );
 void UObject::execIntConst( FFrame& Stack, BYTE*& Result )
 {
 	guardSlow(UObject::execIntConst);
-	*(INT*)Result = Stack.ReadInt();
+	*(INT_UNREAL_32S*)Result = Stack.ReadInt();
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntConst, execIntConst );
@@ -691,7 +691,7 @@ AUTOREGISTER_INTRINSIC( UObject, EX_ByteConst, execByteConst );
 void UObject::execIntZero( FFrame& Stack, BYTE*& Result )
 {
 	guardSlow(UObject::execIntZero);
-	*(INT*)Result = 0;
+	*(INT_UNREAL_32S*)Result = 0;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntZero, execIntZero );
@@ -699,7 +699,7 @@ AUTOREGISTER_INTRINSIC( UObject, EX_IntZero, execIntZero );
 void UObject::execIntOne( FFrame& Stack, BYTE*& Result )
 {
 	guardSlow(UObject::execIntOne);
-	*(INT*)Result = 1;
+	*(INT_UNREAL_32S*)Result = 1;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntOne, execIntOne );
@@ -707,7 +707,7 @@ AUTOREGISTER_INTRINSIC( UObject, EX_IntOne, execIntOne );
 void UObject::execTrue( FFrame& Stack, BYTE*& Result )
 {
 	guardSlow(UObject::execTrue);
-	*(INT*)Result = 1;
+	*(INT_UNREAL_32S*)Result = 1;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_True, execTrue );
@@ -731,7 +731,7 @@ AUTOREGISTER_INTRINSIC( UObject, EX_NoObject, execNoObject );
 void UObject::execIntConstByte( FFrame& Stack, BYTE*& Result )
 {
 	guardSlow(UObject::execIntConstByte);
-	*(INT*)Result = *Stack.Code++;
+	*(INT_UNREAL_32S*)Result = *Stack.Code++;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntConstByte, execIntConstByte );
@@ -799,7 +799,7 @@ void UObject::execByteToInt( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execByteToInt);
 	BYTE Buffer[MAX_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	*(INT*)Result = *(BYTE*)Addr;
+	*(INT_UNREAL_32S*)Result = *(BYTE*)Addr;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_ByteToInt, execByteToInt );
@@ -840,7 +840,7 @@ void UObject::execIntToByte( FFrame& Stack, BYTE*& Result )
 	BYTE Buffer[MAX_CONST_SIZE];
 	Result = Buffer;
 	Stack.Step( Stack.Object, Result );
-	*(BYTE*)Result = *(INT*)Result;
+	*(BYTE*)Result = *(INT_UNREAL_32S*)Result;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntToByte, execIntToByte );
@@ -850,7 +850,7 @@ void UObject::execIntToBool( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execIntToBool);
 	BYTE Buffer[MAX_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	*(INT*)Result = *(INT*)Addr ? 1 : 0;
+	*(INT_UNREAL_32S*)Result = *(INT_UNREAL_32S*)Addr ? 1 : 0;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntToBool, execIntToBool );
@@ -860,7 +860,7 @@ void UObject::execIntToFloat( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execIntToFloat);
 	BYTE Buffer[MAX_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	*(FLOAT*)Result = *(INT*)Addr;
+	*(FLOAT*)Result = *(INT_UNREAL_32S*)Addr;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntToFloat, execIntToFloat );
@@ -871,7 +871,7 @@ void UObject::execIntToString( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execIntToString);
 	BYTE Buffer[MAX_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	appSprintf( (char*)Result, "%i", *(INT*)Addr );
+	appSprintf( (char*)Result, "%i", *(INT_UNREAL_32S*)Addr );
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_IntToString, execIntToString );
@@ -891,7 +891,7 @@ void UObject::execBoolToInt( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execBoolToInt);
 	BYTE Buffer[MAX_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	*(INT*)Result = *(DWORD*)Addr & 1;
+	*(INT_UNREAL_32S*)Result = *(DWORD*)Addr & 1;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_BoolToInt, execBoolToInt );
@@ -931,7 +931,7 @@ void UObject::execFloatToInt( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execFloatToInt);
 	BYTE Buffer[MAX_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	*(INT*)Result = *(FLOAT*)Addr;
+	*(INT_UNREAL_32S*)Result = *(FLOAT*)Addr;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_FloatToInt, execFloatToInt );
@@ -1011,7 +1011,7 @@ void UObject::execStringToInt( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execStringToInt);
 	BYTE Buffer[MAX_STRING_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	*(INT*)Result = appAtoi((char*)Addr);
+	*(INT_UNREAL_32S*)Result = appAtoi((char*)Addr);
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_StringToInt, execStringToInt );
@@ -1021,9 +1021,9 @@ void UObject::execStringToBool( FFrame& Stack, BYTE*& Result )
 	guardSlow(UObject::execStringToBool);
 	BYTE Buffer[MAX_STRING_CONST_SIZE], *Addr=Buffer;
 	Stack.Step( Stack.Object, Addr );
-	if     ( appStricmp((char*)Addr,"True" ) == 0 ) *(INT*)Result = 1;
-	else if( appStricmp((char*)Addr,"False") == 0 ) *(INT*)Result = 0;
-	else                                            *(INT*)Result = appAtoi((char*)Addr) ? 1 : 0;
+	if     ( appStricmp((char*)Addr,"True" ) == 0 ) *(INT_UNREAL_32S*)Result = 1;
+	else if( appStricmp((char*)Addr,"False") == 0 ) *(INT_UNREAL_32S*)Result = 0;
+	else                                            *(INT_UNREAL_32S*)Result = appAtoi((char*)Addr) ? 1 : 0;
 	unguardexecSlow;
 }
 AUTOREGISTER_INTRINSIC( UObject, EX_StringToBool, execStringToBool );
@@ -1261,7 +1261,7 @@ void UObject::execComplement_PreInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(A);
 	P_FINISH;
 
-	*(INT*)Result = ~A;
+	*(INT_UNREAL_32S*)Result = ~A;
 
 	unguardexecSlow;
 }
@@ -1274,7 +1274,7 @@ void UObject::execSubtract_PreInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(A);
 	P_FINISH;
 
-	*(INT*)Result = -A;
+	*(INT_UNREAL_32S*)Result = -A;
 
 	unguardexecSlow;
 }
@@ -1288,7 +1288,7 @@ void UObject::execMultiply_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A * B;
+	*(INT_UNREAL_32S*)Result = A * B;
 
 	unguardexecSlow;
 }
@@ -1302,7 +1302,7 @@ void UObject::execDivide_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = B ? A / B : 0;
+	*(INT_UNREAL_32S*)Result = B ? A / B : 0;
 
 	unguardexecSlow;
 }
@@ -1316,7 +1316,7 @@ void UObject::execAdd_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A + B;
+	*(INT_UNREAL_32S*)Result = A + B;
 
 	unguardexecSlow;
 }
@@ -1330,7 +1330,7 @@ void UObject::execSubtract_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A - B;
+	*(INT_UNREAL_32S*)Result = A - B;
 
 	unguardexecSlow;
 }
@@ -1344,7 +1344,7 @@ void UObject::execLessLess_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A << B;
+	*(INT_UNREAL_32S*)Result = A << B;
 
 	unguardexecSlow;
 }
@@ -1358,7 +1358,7 @@ void UObject::execGreaterGreater_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A >> B;
+	*(INT_UNREAL_32S*)Result = A >> B;
 
 	unguardexecSlow;
 }
@@ -1456,7 +1456,7 @@ void UObject::execAnd_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A & B;
+	*(INT_UNREAL_32S*)Result = A & B;
 
 	unguardexecSlow;
 }
@@ -1470,7 +1470,7 @@ void UObject::execXor_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A ^ B;
+	*(INT_UNREAL_32S*)Result = A ^ B;
 
 	unguardexecSlow;
 }
@@ -1484,7 +1484,7 @@ void UObject::execOr_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = A | B;
+	*(INT_UNREAL_32S*)Result = A | B;
 
 	unguardexecSlow;
 }
@@ -1498,7 +1498,7 @@ void UObject::execMultiplyEqual_IntFloat( FFrame& Stack, BYTE*& Result )
 	P_GET_FLOAT(B);
 	P_FINISH;
 
-	*(INT*)Result = (*A *= B);
+	*(INT_UNREAL_32S*)Result = (*A *= B);
 
 	unguardexecSlow;
 }
@@ -1512,7 +1512,7 @@ void UObject::execDivideEqual_IntFloat( FFrame& Stack, BYTE*& Result )
 	P_GET_FLOAT(B);
 	P_FINISH;
 
-	*(INT*)Result = (B ? *A /= B : 0);
+	*(INT_UNREAL_32S*)Result = (B ? *A /= B : 0);
 
 	unguardexecSlow;
 }
@@ -1526,7 +1526,7 @@ void UObject::execAddEqual_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = (*A += B);
+	*(INT_UNREAL_32S*)Result = (*A += B);
 
 	unguardexecSlow;
 }
@@ -1540,7 +1540,7 @@ void UObject::execSubtractEqual_IntInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = (*A -= B);
+	*(INT_UNREAL_32S*)Result = (*A -= B);
 
 	unguardexecSlow;
 }
@@ -1553,7 +1553,7 @@ void UObject::execAddAdd_PreInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT_REF(A);
 	P_FINISH;
 
-	*(INT*)Result = ++(*A);
+	*(INT_UNREAL_32S*)Result = ++(*A);
 
 	unguardexecSlow;
 }
@@ -1566,7 +1566,7 @@ void UObject::execSubtractSubtract_PreInt( FFrame& Stack, BYTE*& Result )
 	P_GET_INT_REF(A);
 	P_FINISH;
 
-	*(INT*)Result = --(*A);
+	*(INT_UNREAL_32S*)Result = --(*A);
 
 	unguardexecSlow;
 }
@@ -1579,7 +1579,7 @@ void UObject::execAddAdd_Int( FFrame& Stack, BYTE*& Result )
 	P_GET_INT_REF(A);
 	P_FINISH;
 
-	*(INT*)Result = (*A)++;
+	*(INT_UNREAL_32S*)Result = (*A)++;
 
 	unguardexecSlow;
 }
@@ -1592,7 +1592,7 @@ void UObject::execSubtractSubtract_Int( FFrame& Stack, BYTE*& Result )
 	P_GET_INT_REF(A);
 	P_FINISH;
 
-	*(INT*)Result = (*A)--;
+	*(INT_UNREAL_32S*)Result = (*A)--;
 
 	unguardexecSlow;
 }
@@ -1605,7 +1605,7 @@ void UObject::execRand( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(A);
 	P_FINISH;
 
-	*(INT*)Result = A>0 ? (appRand() % A) : 0;
+	*(INT_UNREAL_32S*)Result = A>0 ? (appRand() % A) : 0;
 
 	unguardexecSlow;
 }
@@ -1619,7 +1619,7 @@ void UObject::execMin( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = Min(A,B);
+	*(INT_UNREAL_32S*)Result = Min(A,B);
 
 	unguardexecSlow;
 }
@@ -1633,7 +1633,7 @@ void UObject::execMax( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = Max(A,B);
+	*(INT_UNREAL_32S*)Result = Max(A,B);
 
 	unguardexecSlow;
 }
@@ -1648,7 +1648,7 @@ void UObject::execClamp( FFrame& Stack, BYTE*& Result )
 	P_GET_INT(B);
 	P_FINISH;
 
-	*(INT*)Result = Clamp(V,A,B);
+	*(INT_UNREAL_32S*)Result = Clamp(V,A,B);
 
 	unguardexecSlow;
 }
@@ -2123,7 +2123,7 @@ void UObject::execConcat_StringString( FFrame& Stack, BYTE*& Result )
 	P_GET_STRING(B);
 	P_FINISH;
 
-	INT Size = appStrlen(A);
+	INT_UNREAL_32S Size = appStrlen(A);
 	appStrcpy((char*)Result,A);
 	appStrncpy((char*)Result + Size, B, MAX_STRING_CONST_SIZE - Size);
 
@@ -2236,7 +2236,7 @@ void UObject::execLen( FFrame& Stack, BYTE*& Result )
 	P_GET_STRING(S);
 	P_FINISH;
 
-	*(INT*)Result = appStrlen(S);
+	*(INT_UNREAL_32S*)Result = appStrlen(S);
 
 	unguardexecSlow;
 }
@@ -2251,7 +2251,7 @@ void UObject::execInStr( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	CHAR *Ptr = appStrstr(S,A);
-	*(INT*)Result = Ptr ? Ptr - S : -1;
+	*(INT_UNREAL_32S*)Result = Ptr ? Ptr - S : -1;
 
 	unguardexecSlow;
 }
@@ -2311,8 +2311,8 @@ void UObject::execCaps( FFrame& Stack, BYTE*& Result )
 
 	P_GET_STRING(A);
 	P_FINISH;
-
-	for( int i=0; A[i]; i++ )
+	int i;
+	for( i=0; A[i]; i++ )
 		Result[i] = appToUpper(A[i]);
 	Result[i]=0;
 
@@ -2341,7 +2341,7 @@ void UObject::execAsc( FFrame& Stack, BYTE*& Result )
 	P_GET_STRING(S);
 	P_FINISH;
 
-	*(INT*)Result = S[0];	
+	*(INT_UNREAL_32S*)Result = S[0];	
 
 	unguardexecSlow;
 }
@@ -2591,7 +2591,8 @@ void UObject::execGetPropertyText( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	*(char*)Result = 0;
-	for( UField* Field=GetClass()->Children; Field; Field=Field->Next )
+	UField* Field;
+	for( Field=GetClass()->Children; Field; Field=Field->Next )
 		if( appStricmp( Field->GetName(), PropName )==0 )
 			break;
 	UProperty* Property = Cast<UProperty>( Field );
@@ -2609,7 +2610,8 @@ void UObject::execSetPropertyText( FFrame& Stack, BYTE*& Result )
 	P_GET_STRING(PropName);
 	P_GET_STRING(PropValue);
 	P_FINISH;
-	for( UField* Field=GetClass()->Children; Field; Field=Field->Next )
+	UField* Field;
+	for( Field=GetClass()->Children; Field; Field=Field->Next )
 		if( appStricmp( Field->GetName(), PropName )==0 )
 			break;
 	UProperty* Property = Cast<UProperty>( Field );
@@ -2720,11 +2722,11 @@ BYTE CORE_API GRegisterIntrinsic( int iIntrinsic, void* Func )
 	{
 		Initialized = 1;
 		for( int i=0; i<ARRAY_COUNT(GIntrinsics); i++ )
-			GIntrinsics[i] = UObject::execUndefined;
+			GIntrinsics[i] = &UObject::execUndefined;
 	}
 	if( iIntrinsic != INDEX_NONE )
 	{
-		if( iIntrinsic<0 || iIntrinsic>ARRAY_COUNT(GIntrinsics) || GIntrinsics[iIntrinsic]!=UObject::execUndefined) 
+		if( iIntrinsic<0 || iIntrinsic>ARRAY_COUNT(GIntrinsics) || GIntrinsics[iIntrinsic]!=&UObject::execUndefined) 
 			GIntrinsicDuplicate = iIntrinsic;
 		*(void**)&GIntrinsics[iIntrinsic] = Func;
 	}

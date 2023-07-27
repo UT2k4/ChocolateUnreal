@@ -14,7 +14,7 @@
 //
 class ENGINE_API UConsole : public UObject, public FOutputDevice
 {
-	DECLARE_CLASS(UConsole,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UConsole,UObject,CLASS_Transient)
 
 	// Constructor.
 	UConsole();
@@ -23,7 +23,7 @@ class ENGINE_API UConsole : public UObject, public FOutputDevice
 	virtual void _Init( UViewport* Viewport );
 	virtual void PreRender( FSceneNode* Frame );
 	virtual void PostRender( FSceneNode* Frame );
-	virtual void WriteBinary( const void* Data, INT Length, EName MsgType=NAME_None );
+	virtual void WriteBinary( const void* Data, INT_UNREAL_32S Length, EName MsgType=NAME_None );
 
 	// Intrinsics.
 	INTRINSIC(execConsoleCommand);
@@ -82,22 +82,22 @@ private:
 
 	// Variables.
 	UViewport*  Viewport;
-	INT			HistoryTop;
-	INT			HistoryBot;
-	INT			HistoryCur;
+	INT_UNREAL_32S			HistoryTop;
+	INT_UNREAL_32S			HistoryBot;
+	INT_UNREAL_32S			HistoryCur;
 	TEXTMSG		TypedStr;
 	TEXTMSG		History[MAX_HISTORY];
-	INT			Scrollback;
-	INT			NumLines;
-	INT			TopLine;
-	INT			TextLines;
+	INT_UNREAL_32S			Scrollback;
+	INT_UNREAL_32S			NumLines;
+	INT_UNREAL_32S			TopLine;
+	INT_UNREAL_32S			TextLines;
 	FName  		MsgType;
 	FLOAT		MsgTime;
 	TEXTMSG 	MsgText[MAX_LINES];
-	INT			BorderSize;
-	INT			ConsoleLines;
-	INT			BorderLines;
-	INT			BorderPixels;
+	INT_UNREAL_32S			BorderSize;
+	INT_UNREAL_32S			ConsoleLines;
+	INT_UNREAL_32S			BorderLines;
+	INT_UNREAL_32S			BorderPixels;
 	FLOAT		ConsolePos;
 	FLOAT		ConsoleDest;
 	UTexture*	ConBackground;

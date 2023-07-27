@@ -113,6 +113,9 @@
     <ClInclude Include="..\Inc\UnVcWin32.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="CoreClasses.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\Classes\Object.uc">

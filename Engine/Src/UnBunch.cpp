@@ -49,7 +49,7 @@ FArchive& FOutBunch::operator<<( class FName& N )
 	guard(FOutBunch<<FName);
 
 	// Map to indices.
-	INT Index = Channel->Connection->Driver->Map.NameToIndex( N );
+	INT_UNREAL_32S Index = Channel->Connection->Driver->Map.NameToIndex( N );
 	*this << AR_INDEX( Index );
 
 	return *this;
@@ -64,7 +64,7 @@ FArchive& FInBunch::operator<<( class FName& N )
 	guard(FInBunch<<FName);
 
 	// Map to indices.
-	INT Index;
+	INT_UNREAL_32S Index;
 	*this << AR_INDEX( Index );
 	N = Overflowed ? NAME_None : Connection->Driver->Map.IndexToName( Index );
 
@@ -84,7 +84,7 @@ UBOOL FOutBunch::SendObject( UObject* Object )
 	guard(FOutBunch::SendObject);
 	AActor* Actor = Cast<AActor>(Object);
 	UBOOL Result = 1;
-	INT   Index  = -1;
+	INT_UNREAL_32S   Index  = -1;
 	if( Actor && !Actor->bStatic && !Actor->bNoDelete )
 	{
 		// Map dynamic actor through channel index.
@@ -127,7 +127,7 @@ FArchive& FOutBunch::operator<<( UObject*& Object )
 FArchive& FInBunch::operator<<( UObject*& Object )
 {
 	guard(FInBunch<<UObject);
-	INT Index;
+	INT_UNREAL_32S Index;
 	*this << AR_INDEX(Index);
 	if( !Overflowed )
 	{
@@ -177,7 +177,7 @@ UBOOL FInBunch::ReceiveProperty( UProperty* Property, BYTE* InData, BYTE* Recent
 		*this << Element;
 
 	// Receive property data.
-	INT Offset = Property->Offset + Element*Property->GetElementSize();
+	INT_UNREAL_32S Offset = Property->Offset + Element*Property->GetElementSize();
 	BYTE* Data = InData + Offset;
 	if( Property->GetClass()==UByteProperty::StaticClass )
 	{
@@ -188,7 +188,7 @@ UBOOL FInBunch::ReceiveProperty( UProperty* Property, BYTE* InData, BYTE* Recent
 	else if( Property->GetClass()==UIntProperty::StaticClass )
 	{
 		guard(Int);
-		*this << *(INT*)Data;
+		*this << *(INT_UNREAL_32S*)Data;
 		unguard;
 	}
 	else if( Property->GetClass()==UBoolProperty::StaticClass )
@@ -330,7 +330,7 @@ FOutBunch::FOutBunch( FChannel* InChannel, UBOOL bClose )
 //
 // Byte stream serializer.
 //
-FArchive& FOutBunch::Serialize( void* V, INT Length )
+FArchive& FOutBunch::Serialize( void* V, INT_UNREAL_32S Length )
 {
 	guard(FOutBunch::Serialize);	
 	if( Header.DataSize+Length<=MaxDataSize && !Overflowed )
@@ -346,14 +346,14 @@ FArchive& FOutBunch::Serialize( void* V, INT Length )
 //
 // Send a property.
 //
-UBOOL FOutBunch::SendProperty( UProperty* Property, INT ArrayIndex, BYTE* InData, BYTE* Defaults, UBOOL Named )
+UBOOL FOutBunch::SendProperty( UProperty* Property, INT_UNREAL_32S ArrayIndex, BYTE* InData, BYTE* Defaults, UBOOL Named )
 {
 	guard(FOutBunch::SendProperty);
-	INT SavedSize       = Header.DataSize;
-	INT SavedOverflowed = Overflowed;
+	INT_UNREAL_32S SavedSize       = Header.DataSize;
+	INT_UNREAL_32S SavedOverflowed = Overflowed;
 
 	// Setup.
-	INT   Offset  = Property->Offset + ArrayIndex*Property->GetElementSize();
+	INT_UNREAL_32S   Offset  = Property->Offset + ArrayIndex*Property->GetElementSize();
 	BYTE* Data    = InData + Offset;
 
 	// Send property name and optional array index.
@@ -378,7 +378,7 @@ UBOOL FOutBunch::SendProperty( UProperty* Property, INT ArrayIndex, BYTE* InData
 	else if( Property->GetClass()==UIntProperty::StaticClass )
 	{
 		guard(Int);
-		*this << *(INT*)Data;
+		*this << *(INT_UNREAL_32S*)Data;
 		unguard;
 	}
 	else if( Property->GetClass()==UBoolProperty::StaticClass )

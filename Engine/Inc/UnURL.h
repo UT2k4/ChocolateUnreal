@@ -22,7 +22,7 @@ public:
 	FString Map;		// Map name, i.e. "SkyCity", default is "Index".
 	FString Portal;		// Portal to enter through, default is "".
 	TArray<FString> Op;	// Options.
-	INT		Port;       // Optional host port.
+	INT_UNREAL_32S		Port;       // Optional host port.
 	UBOOL	Valid;		// Whether parsed successfully.
 
 	// Statics.
@@ -35,7 +35,7 @@ public:
 	static FString DefaultPortal;
 	static FString DefaultMapExt;
 	static FString DefaultSaveExt;
-	static INT DefaultPort;
+	static INT_UNREAL_32S DefaultPort;
 
 	// Constructors.
 	FURL( const char* Filename=NULL );

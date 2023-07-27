@@ -16,7 +16,7 @@
 //
 // Initialize the base channel.
 //
-FChannel::FChannel( INT InChType, UNetConnection* InConnection, INT InChIndex, INT InOpenedLocally )
+FChannel::FChannel( INT_UNREAL_32S InChType, UNetConnection* InConnection, INT_UNREAL_32S InChIndex, INT_UNREAL_32S InOpenedLocally )
 :	Connection		( InConnection )
 ,	ChIndex			( InChIndex )
 ,	OpenedLocally	( InOpenedLocally )
@@ -27,7 +27,7 @@ FChannel::FChannel( INT InChType, UNetConnection* InConnection, INT InChIndex, I
 	check(CHF_Mask>=UNetConnection::MAX_CHANNELS);
 
 	// Init incoming and outgoing buffers.
-	for( INT i=0; i<RELIABLE_BUFFER; i++ )
+	for( INT_UNREAL_32S i=0; i<RELIABLE_BUFFER; i++ )
 	{
 		OutRec[i] = NULL;
 		InRec [i] = NULL;
@@ -64,7 +64,7 @@ FChannel::~FChannel()
 	check(Connection->Channels[ChIndex]==this);
 
 	// Free any pending incoming and outgoing bunches.
-	for( INT i=0; i<RELIABLE_BUFFER; i++ )
+	for( INT_UNREAL_32S i=0; i<RELIABLE_BUFFER; i++ )
 	{
 		if( OutRec[i] ) FreePooledBunch( OutRec[i] );
 		if( InRec [i] ) FreePooledBunch( InRec [i] );
@@ -82,10 +82,12 @@ FChannel::~FChannel()
 //
 void FChannel::ReceivedAck( _WORD Sequence )
 {
+	INT_UNREAL_32S i;
+
 	guard(FChannel::ReceivedAck);
 	check(Connection->Channels[ChIndex]==this);
 
-	for( INT i=0; i<RELIABLE_BUFFER; i++ )
+	for( i=0; i<RELIABLE_BUFFER; i++ )
 		if( OutRec[i] && OutRec[i]->Header.Sequence==Sequence )
 			break;
 	if( i<RELIABLE_BUFFER )
@@ -113,9 +115,11 @@ void FChannel::ReceivedAck( _WORD Sequence )
 //
 void FChannel::ReceivedNak( _WORD Sequence )
 {
+	INT_UNREAL_32S i;
+
 	guard(FBunch::ReceivedNak);
 	check(Connection->Channels[ChIndex]==this);
-	for( INT i=0; i<RELIABLE_BUFFER; i++ )
+	for( i=0; i<RELIABLE_BUFFER; i++ )
 		if( OutRec[i] && OutRec[i]->Header.Sequence==Sequence )
 			break;
 	if( i < RELIABLE_BUFFER )
@@ -136,10 +140,10 @@ void FChannel::ReceivedNak( _WORD Sequence )
 // Return the maximum amount of data that can be sent in this
 // bunch without overflow.
 //
-INT FChannel::MaxSend()
+INT_UNREAL_32S FChannel::MaxSend()
 {
 	guard(FChannel::MaxSend);
-	return Max( 0, Connection->MaxPacket - Connection->OutNum - (INT)sizeof(FBunch) );
+	return Max( 0, Connection->MaxPacket - Connection->OutNum - (INT_UNREAL_32S)sizeof(FBunch) );
 	unguard;
 }
 
@@ -152,7 +156,7 @@ void FChannel::Tick()
 	check(Connection->Channels[ChIndex]==this);
 
 	// Resend any pending packets if we didn't get the appropriate acks.
-	for( INT i=0; i<RELIABLE_BUFFER; i++ )
+	for( INT_UNREAL_32S i=0; i<RELIABLE_BUFFER; i++ )
 	{
 		if( OutRec[i] && Connection->Driver->Time-OutTime[i] > Connection->Driver->AckTimeout )
 		{
@@ -178,10 +182,12 @@ void FChannel::Tick()
 //
 void FChannel::AssertInSequenced()
 {
+	int i;
+
 	guard(FChannel::AssertInSequenced);
 
 	// Verify that buffer contains no missing entries.
-	for( int i=0; i<RELIABLE_BUFFER; i++ )
+	for( i=0; i<RELIABLE_BUFFER; i++ )
 		if( InRec[i]==NULL )
 			break;
 	while( ++i < RELIABLE_BUFFER )
@@ -203,6 +209,8 @@ void FChannel::ReceivedRawBunch( FInBunch& Bunch, UBOOL bFirstTime )
 {
 	guard(FChannel::ReceivedRawBunch);
 	check(Connection->Channels[ChIndex]==this);
+
+	INT_UNREAL_32S i;
 
 	// If this is a duplicate of an existing bunch, or out-of-order, skip it.
 	if( (SWORD)(Bunch.Header.Sequence-Connection->LastInRcvd[ChIndex]) <= 0)
@@ -226,7 +234,7 @@ void FChannel::ReceivedRawBunch( FInBunch& Bunch, UBOOL bFirstTime )
 	{
 		// If required sequence isn't queued up, speculatively nak it 
 		// to encourage the sender to retransmit it quickly.
-		for( INT i=0; i<RELIABLE_BUFFER; i++ )
+		for( i=0; i<RELIABLE_BUFFER; i++ )
 			if( InRec[i] && InRec[i]->Header.Sequence==Bunch.Header.PrevSequence )
 				break;
 		if( i==RELIABLE_BUFFER )
@@ -261,7 +269,7 @@ void FChannel::ReceivedRawBunch( FInBunch& Bunch, UBOOL bFirstTime )
 		// There was space, so queue it.
 		if( Process )
 		{
-			for( INT j=RELIABLE_BUFFER-1; j>i; j-- )
+			for( INT_UNREAL_32S j=RELIABLE_BUFFER-1; j>i; j-- )
 				InRec[j] = InRec[j-1];
 			InRec[i] = Bunch.DuplicateBunch();
 			AssertInSequenced();
@@ -304,7 +312,7 @@ void FChannel::ReceivedRawBunch( FInBunch& Bunch, UBOOL bFirstTime )
 			{
 				debugfSlow( NAME_DevNetTraffic, "      Unleashing queued bunches" );
 				FInBunch* Bunch = InRec[0];
-				for( INT i=1; i<RELIABLE_BUFFER; i++ )
+				for( INT_UNREAL_32S i=1; i<RELIABLE_BUFFER; i++ )
 					InRec[i-1] = InRec[i];
 				InRec[RELIABLE_BUFFER-1] = NULL;
 				AssertInSequenced();
@@ -385,7 +393,7 @@ UBOOL FChannel::SendBunch( FOutBunch& Bunch, UBOOL Merge )
 	}
 
 	// Contemplate merging.
-	INT BunchIndex = INDEX_NONE;
+	INT_UNREAL_32S BunchIndex = INDEX_NONE;
 	if
 	(	Merge
 	&&	Connection->LastBunchEnd
@@ -424,7 +432,7 @@ UBOOL FChannel::SendBunch( FOutBunch& Bunch, UBOOL Merge )
 
 		// Save a copy of the reliable bunch in case it must be resent.
 		OutTime[BunchIndex] = Connection->Driver->Time;
-		INT Size = sizeof(FOutBunch) + Bunch.Header.DataSize - sizeof(Bunch.Data);
+		INT_UNREAL_32S Size = sizeof(FOutBunch) + Bunch.Header.DataSize - sizeof(Bunch.Data);
 		check(Size<=sizeof(FOutBunch));
 		if( !OutRec[BunchIndex] )
 			OutRec[BunchIndex] = (FOutBunch*)AllocPooledBunch();
@@ -467,15 +475,15 @@ char* FChannel::Describe( char* String256 )
 //
 // Reserve an outgoing index on this channel.
 //
-INT FChannel::ReserveOutgoingIndex( UBOOL bClose )
+INT_UNREAL_32S FChannel::ReserveOutgoingIndex( UBOOL bClose )
 {
 	guardSlow(FChannel::ReserveOutgoingIndex);
 
 	// Always save one bunch for the close-notification.
-	INT MaxBunch = bClose ? RELIABLE_BUFFER : RELIABLE_BUFFER-1;
+	INT_UNREAL_32S MaxBunch = bClose ? RELIABLE_BUFFER : RELIABLE_BUFFER-1;
 
 	// If bunch buffer is full, can't allocate a bunch.
-	for( INT BunchIndex=0; BunchIndex<MaxBunch; BunchIndex++ )
+	for( INT_UNREAL_32S BunchIndex=0; BunchIndex<MaxBunch; BunchIndex++ )
 		if( OutRec[BunchIndex] == NULL )
 			return BunchIndex;
 
@@ -499,7 +507,7 @@ UBOOL FChannel::IsNetReady( UBOOL Saturate )
 		return 0;
 
 	// Ready if there's space available.
-	for( INT BunchIndex=0; BunchIndex<RELIABLE_BUFFER-1; BunchIndex++ )
+	for( INT_UNREAL_32S BunchIndex=0; BunchIndex<RELIABLE_BUFFER-1; BunchIndex++ )
 		if( OutRec[BunchIndex] == NULL )
 			return 1;
 
@@ -516,7 +524,7 @@ UBOOL FChannel::IsNetReady( UBOOL Saturate )
 //
 // Initialize the text channel.
 //
-FControlChannel::FControlChannel( UNetConnection* InConnection, INT InChannelIndex, INT InOpenedLocally )
+FControlChannel::FControlChannel( UNetConnection* InConnection, INT_UNREAL_32S InChannelIndex, INT_UNREAL_32S InOpenedLocally )
 :	FChannel( ChannelType, InConnection, InChannelIndex, InOpenedLocally )
 {
 	guard(FControlChannel::FControlChannel);
@@ -598,7 +606,7 @@ IMPLEMENT_CHTYPE(FControlChannel);
 //
 // Initialize this actor channel.
 //
-FActorChannel::FActorChannel( UNetConnection* InConnection, INT InChannelIndex, INT InOpenedLocally )
+FActorChannel::FActorChannel( UNetConnection* InConnection, INT_UNREAL_32S InChannelIndex, INT_UNREAL_32S InOpenedLocally )
 :	FChannel		( ChannelType, InConnection, InChannelIndex, InOpenedLocally )
 ,	Level			( Connection->Driver->Notify->NotifyGetLevel() )
 ,	Actor			( NULL )
@@ -857,12 +865,14 @@ void FActorChannel::ReceivedBunch( FInBunch& Bunch )
 			UBOOL Ignore=0;
 			BYTE ParmMask=0, ParmBit=1;
 			Bunch << ParmMask;
+			UFunction* Test;
+
 			if( !Level->NetDriver->ServerConnection && Function->RepOffset!=MAXWORD )
 			{
 				// See if UnrealScript replication condition is met.
 				guard(EvalRPCCondition);
 				Exchange(Actor->Role,Actor->RemoteRole);
-				for( UFunction* Test=Function; Test->GetSuperFunction(); Test=Test->GetSuperFunction() );
+				for( Test=Function; Test->GetSuperFunction(); Test=Test->GetSuperFunction() );
 				FFrame EvalStack( Actor, Test->GetOwnerClass(), Test->RepOffset, NULL );
 				BYTE Buffer[MAX_CONST_SIZE], *Val=Buffer;
 				EvalStack.Step( Actor, Val );
@@ -955,7 +965,7 @@ void FActorChannel::ReplicateActor( UBOOL FullReplication )
 	else
 	{
 		// Start with default version of the actor.
-		INT Size = Actor->GetClass()->Defaults.Num();
+		INT_UNREAL_32S Size = Actor->GetClass()->Defaults.Num();
 		Recent   = (BYTE*)appMalloc( Size, "FActorChannelRecent" );
 		appMemcpy( Recent, &Actor->GetClass()->Defaults(0), Size );
 		Actor->bNetInitial = 1;
@@ -973,9 +983,11 @@ void FActorChannel::ReplicateActor( UBOOL FullReplication )
 		Bunch.Header.ChIndex |= CHF_Reliable;
 	}
 
+	AActor* Top;
+
 	// Owned by connection's player?
 	Actor->bNetOwner = 0;
-	for( AActor* Top=Actor; Top->Owner; Top=Top->Owner );
+	for( Top=Actor; Top->Owner; Top=Top->Owner );
 	UPlayer* Player = Top->IsA(APlayerPawn::StaticClass) ? ((APlayerPawn*)Top)->Player : NULL;
 
 	// Set quickie replication variables.
@@ -1023,7 +1035,7 @@ void FActorChannel::ReplicateActor( UBOOL FullReplication )
 		{
 			FRepLink*  Condition = Link->Condition;
 			UProperty* It        = Link->Property;
-			INT        Index     = 0;
+			INT_UNREAL_32S        Index     = 0;
 			if
 			(	Condition->LastObject != Actor
 			||	Condition->LastStamp  != Actor->OtherTag
@@ -1121,7 +1133,7 @@ IMPLEMENT_CHTYPE(FActorChannel);
 	FFileChannel implementation.
 -----------------------------------------------------------------------------*/
 
-FFileChannel::FFileChannel( UNetConnection* InConnection, INT InChannelIndex, INT InOpenedLocally )
+FFileChannel::FFileChannel( UNetConnection* InConnection, INT_UNREAL_32S InChannelIndex, INT_UNREAL_32S InOpenedLocally )
 :	FChannel		( ChannelType, InConnection, InChannelIndex, InOpenedLocally )
 ,	File			( NULL )
 ,	Transfered		( 0 )
@@ -1259,8 +1271,8 @@ void FFileChannel::Tick()
 		//debugf( NAME_DevNet, LocalizeProgress("NetSending"), Info.Parent->GetName(), Transfered, Info.FileSize );
 		FOutBunch Bunch( this );
 		BYTE Buffer[UNetConnection::MAX_PACKET_SIZE];
-		INT Size = MaxSend();
-		INT Read = appFread( Buffer, 1, Size, File );
+		INT_UNREAL_32S Size = MaxSend();
+		INT_UNREAL_32S Read = appFread( Buffer, 1, Size, File );
 		Bunch.Serialize( Buffer, Read );
 		Bunch.Header.ChIndex |= CHF_Reliable;
 		SendBunch( Bunch, 0 );
@@ -1322,12 +1334,12 @@ IMPLEMENT_CHTYPE(FFileChannel);
 -----------------------------------------------------------------------------*/
 
 // Channel tables.
-ENGINE_API FChannel* (*GChannelConstructors[CHTYPE_MAX])( UNetConnection* InConnection, INT InChIndex, UBOOL InOpenedLocally );
+ENGINE_API FChannel* (*GChannelConstructors[CHTYPE_MAX])( UNetConnection* InConnection, INT_UNREAL_32S InChIndex, UBOOL InOpenedLocally );
 
 //
 // Global channel registrar.
 //
-BYTE GAutoRegisterChannel( INT ChType, FChannel* (*Constructor)( UNetConnection* InConnection, INT InChIndex, UBOOL InOpenedLocally ) )
+BYTE GAutoRegisterChannel( INT_UNREAL_32S ChType, FChannel* (*Constructor)( UNetConnection* InConnection, INT_UNREAL_32S InChIndex, UBOOL InOpenedLocally ) )
 {
 	static int Initialized = 0;
 	if( !Initialized )
@@ -1343,7 +1355,7 @@ BYTE GAutoRegisterChannel( INT ChType, FChannel* (*Constructor)( UNetConnection*
 //
 // Return whether a channel type is recognized.
 //
-UBOOL GIsKnownChannelType( INT Type )
+UBOOL GIsKnownChannelType( INT_UNREAL_32S Type )
 {
 	guard(IsKnownChannelType);
 	return Type>=0 && Type<CHTYPE_MAX && GChannelConstructors[Type];

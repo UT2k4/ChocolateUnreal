@@ -123,7 +123,7 @@ void ULevel::SetActorCollision( UBOOL bCollision )
 		// Init hash.
 		guard(StartCollision);
 		Hash = GNewCollisionHash();
-		for( INT i=0; i<Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Num(); i++ )
 			if( Actors(i) && Actors(i)->bCollideActors )
 				Hash->AddActor( Actors(i) );
 		unguard;
@@ -132,7 +132,7 @@ void ULevel::SetActorCollision( UBOOL bCollision )
 	{
 		// Destroy hash.
 		guard(EndCollision);
-		for( INT i=0; i<Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Num(); i++ )
 			if( Actors(i) && Actors(i)->bCollideActors )
 				Hash->RemoveActor( Actors(i) );
 		delete Hash;
@@ -157,7 +157,7 @@ void ULevel::Serialize( FArchive& Ar )
 	Ar << ReachSpecs;
 	Ar << TimeSeconds;
 	Ar << FirstDeleted;
-	for( INT i=0; i<NUM_LEVEL_TEXT_BLOCKS; i++ )
+	for( INT_UNREAL_32S i=0; i<NUM_LEVEL_TEXT_BLOCKS; i++ )
 		Ar << TextBlocks[i];
 
 	if( Ar.Ver() >= 61 )//oldver
@@ -171,7 +171,7 @@ void ULevel::Export( FOutputDevice& Out, const char* FileType, int Indent )
 
 	Out.Logf( "%sBegin Map Name=%s\r\n", appSpc(Indent), GetName() );
 	UBOOL AllSelected = appStricmp(FileType,"copy")!=0;
-	for( INT iActor=0; iActor<Num(); iActor++ )
+	for( INT_UNREAL_32S iActor=0; iActor<Num(); iActor++ )
 	{
 		AActor* Actor = Actors(iActor);
 		if( Actor && !Actor->IsA(ACamera::StaticClass) && (AllSelected ||Actor->bSelected) )
@@ -262,20 +262,21 @@ void ULevel::ReconcileActors()
 {
 	guard(ULevel::ReconcileActors);
 	check(GIsEditor);
+	int i;
 
 	// Dissociate all actor Viewports and remember their view properties.
-	for( int i=0; i<Num(); i++ )
+	for( i=0; i<Num(); i++ )
 		if( Actors(i) && Actors(i)->IsA(APlayerPawn::StaticClass) )
 			if( ((APlayerPawn*)Actors(i))->Player )
 				((APlayerPawn*)Actors(i))->Player = NULL;
 
 	// Match Viewports and Viewport-actors with identical names.
 	guard(MatchIdentical);
-	for( int i=0; i<Engine->Client->Viewports.Num(); i++ )
+	for( i=0; i<Engine->Client->Viewports.Num(); i++ )
 	{
 		UViewport* Viewport = Engine->Client->Viewports(i);
 		check(Viewport->Actor==NULL);
-		for( INT j=0; j<Num(); j++ )
+		for( INT_UNREAL_32S j=0; j<Num(); j++ )
 		{
 			AActor* Actor = Actors(j);
 			if( Actor && Actor->IsA(ACamera::StaticClass) && appStricmp(*Actor->Tag,Viewport->GetName())==0 )
@@ -372,6 +373,7 @@ UBOOL ULevel::Listen( char* Error256 )
 	}
 	else
 	{
+		INT_UNREAL_32S i;
 		UClass* NetDriverClass = GObj.LoadClass( UNetDriver::StaticClass, NULL, "ini:Engine.Engine.NetworkDevice", NULL, LOAD_NoFail | LOAD_KeepImports, NULL );
 		NetDriver = (UNetDriver*)GObj.ConstructObject( NetDriverClass );
 		if( NetDriver->Init( 0, this, URL, Error256) )
@@ -381,7 +383,7 @@ UBOOL ULevel::Listen( char* Error256 )
 			UGameEngine* GameEngine = CastChecked<UGameEngine>( Engine );
 
 			// Load server required packages.
-			for( INT i=0; i<ARRAY_COUNT(GameEngine->ServerPackages); i++ )
+			for( i=0; i<ARRAY_COUNT(GameEngine->ServerPackages); i++ )
 			{
 				if( *GameEngine->ServerPackages[i] )
 				{
@@ -551,7 +553,7 @@ void ULevel::NotifyReceivedText( UNetConnection* Connection, const char* Text )
 		if( ParseCommand(&Text,"HELLO") )
 		{
 			// Handle revision.
-			INT Revision=0;
+			INT_UNREAL_32S Revision=0;
 			Parse( Text, "REVISION=", Revision );
 			if( Revision < NET_REVISION )
 			{
@@ -570,7 +572,7 @@ void ULevel::NotifyReceivedText( UNetConnection* Connection, const char* Text )
 		else if( ParseCommand(&Text,"LOGIN") )
 		{
 			// Admit or deny the player here.
-			INT Response=0;
+			INT_UNREAL_32S Response=0;
 			if
 			(	!Parse(Text,"RESPONSE=",Response)
 			||	!Engine->ChallengeResponse(Connection->Challenge)==Response )
@@ -593,11 +595,11 @@ void ULevel::NotifyReceivedText( UNetConnection* Connection, const char* Text )
 				delete Connection;
 				return;
 			}
-			INT RequestedByteLimit;
+			INT_UNREAL_32S RequestedByteLimit;
 			if( Parse( Str, "RATE=", RequestedByteLimit ) )
 				Connection->ByteLimit = Clamp( RequestedByteLimit, 500, NetDriver->MaxClientByteLimit );
 			debugf( "Client rate is %i", Connection->ByteLimit );
-			for( INT i=0; i<Connection->Driver->Map.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Connection->Driver->Map.Num(); i++ )
 			{
 				// Send information about the package.
 				char GuidStr[64];
@@ -645,7 +647,7 @@ void ULevel::NotifyReceivedText( UNetConnection* Connection, const char* Text )
 //
 // Called when a file receive is about to begin.
 //
-void ULevel::NotifyReceivedFile( UNetConnection* Connection, INT PackageIndex, const char* Error )
+void ULevel::NotifyReceivedFile( UNetConnection* Connection, INT_UNREAL_32S PackageIndex, const char* Error )
 {
 	guard(ULevel::NotifyReceivingFile);
 	appErrorf( "Level received unexpected file" );
@@ -768,7 +770,7 @@ static UBOOL CanSee
 // Get a list of actors that are relevant to a given network player pawn.
 // These actors are replicated over the net.
 //
-INT ULevel::GetRelevantActors( APlayerPawn* InViewer, AActor** List, INT Max )
+INT_UNREAL_32S ULevel::GetRelevantActors( APlayerPawn* InViewer, AActor** List, INT_UNREAL_32S Max )
 {
 	guard(ULevel::GetRelevantActors);
 	clock(GetRelevantCycles);
@@ -801,8 +803,8 @@ INT ULevel::GetRelevantActors( APlayerPawn* InViewer, AActor** List, INT Max )
 	Viewer->XLevel->Model->LineCheck(Hit,NULL,Hit.Location,Location,FVector(0,0,0),NF_NotVisBlocking);
 
 	// Slow version which doesn't use any precomputed visibility.
-	INT Count=0;
-	for( INT i=iFirstDynamicActor; i<Num(); i++ )
+	INT_UNREAL_32S Count=0;
+	for( INT_UNREAL_32S i=iFirstDynamicActor; i<Num(); i++ )
 	{
 		if
 		(	Actors(i)

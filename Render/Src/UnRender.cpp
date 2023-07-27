@@ -31,17 +31,17 @@ DWORD 								URender::Stamp;
 FMemStack							URender::VectorMem;
 URender::FStampedPoint*				URender::PointCache;
 URender::FDynamicsCache*			URender::DynamicsCache;
-INT									URender::NumDynLightSurfs;
-INT									URender::NumDynLightLeaves;
-INT									URender::MaxSurfLights;
-INT									URender::MaxLeafLights;
+INT_UNREAL_32S									URender::NumDynLightSurfs;
+INT_UNREAL_32S									URender::NumDynLightLeaves;
+INT_UNREAL_32S									URender::MaxSurfLights;
+INT_UNREAL_32S									URender::MaxLeafLights;
 FActorLink**						URender::SurfLights=NULL;
 FVolActorLink**						URender::LeafLights=NULL;
-INT									URender::DynLightSurfs[MAX_DYN_LIGHT_SURFS];
-INT									URender::DynLightLeaves[MAX_DYN_LIGHT_LEAVES];
+INT_UNREAL_32S									URender::DynLightSurfs[MAX_DYN_LIGHT_SURFS];
+INT_UNREAL_32S									URender::DynLightLeaves[MAX_DYN_LIGHT_LEAVES];
 
 // Optimization globals.
-INT         GFrameStamp=0;
+INT_UNREAL_32S         GFrameStamp=0;
 FSceneNode* GFrame;
 FBspNode*   GNodes;
 FBspSurf*   GSurfs;
@@ -105,7 +105,7 @@ void URender::Init( UEngine* InEngine )
 	GCache.Flush();
 
 	// Caches.
-	for( INT i=0; i<MAX_POINTS;  i++ )
+	for( INT_UNREAL_32S i=0; i<MAX_POINTS;  i++ )
 		PointCache [i].Stamp = Stamp;
 	VectorMem.Init( 16384 );
 
@@ -156,7 +156,7 @@ void URender::DrawStats( FSceneNode* Frame )
 
 	if( FpsStats )
 	{
-		INT XL,YL;
+		INT_UNREAL_32S XL,YL;
 		appSprintf
 		(
 			TempStr,
@@ -167,11 +167,11 @@ void URender::DrawStats( FSceneNode* Frame )
 			PolysDraw
 		);
 		Frame->Viewport->Canvas->StrLen( Frame->Viewport->Canvas->SmallFont, XL, YL, TempStr );
-		INT Y=Frame->Y;
+		INT_UNREAL_32S Y=Frame->Y;
 		Frame->Viewport->Canvas->Printf( Frame->Viewport->Canvas->SmallFont, (Frame->X-XL)/2, Y-YL-2, "%s", TempStr );
 	}
 #if STATS
-	INT	StatYL=0;
+	INT_UNREAL_32S	StatYL=0;
 	if( GlobalStats )
 	{
 		ShowStat( Frame, StatYL, "GLOBAL:" );
@@ -184,7 +184,7 @@ void URender::DrawStats( FSceneNode* Frame )
 			GSecondsPerCycle*1000 * Engine->GameCycles,
 			GSecondsPerCycle*1000 * (Engine->ClientCycles-Frame->Viewport->Client->DrawCycles),
 			GSecondsPerCycle*1000 * Frame->Viewport->Client->DrawCycles,
-			GSecondsPerCycle*1000 * Abs((INT)FrameTime - (INT)Engine->TickCycles)
+			GSecondsPerCycle*1000 * Abs((INT_UNREAL_32S)FrameTime - (INT_UNREAL_32S)Engine->TickCycles)
 		);
 		Frame->Viewport->Actor->XLevel->GetStats( TempStr );
 		ShowStat( Frame, StatYL, "  %s", TempStr );
@@ -353,13 +353,13 @@ void URender::DrawStats( FSceneNode* Frame )
 //
 // Show one statistic and update the pointer.
 //
-void URender::ShowStat( FSceneNode* Frame, INT& StatYL, const char* Fmt, ... )
+void URender::ShowStat( FSceneNode* Frame, INT_UNREAL_32S& StatYL, const char* Fmt, ... )
 {
 	char TempStr[4096];
 	GET_VARARGS(TempStr,Fmt);
 
 	guard(URender::ShowStat);
-	INT XL, YL;
+	INT_UNREAL_32S XL, YL;
 	Frame->Viewport->Canvas->Printf( Frame->Viewport->Canvas->SmallFont, 8, STAT_Y + StatYL, "%s", TempStr );
     Frame->Viewport->Canvas->StrLen( Frame->Viewport->Canvas->SmallFont, XL, YL, " " );
 	StatYL += YL;
@@ -774,10 +774,10 @@ static _inline void TransformAndComputeOutcodeAndProject(FTransform*       OutPo
 
 //
 // K6 3D assembler version of:
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = Frame->PrjXM * Pts[i]->Point.Z + Pts[i]->Point.X;
 //
-static _inline void SetXMinDotVals(FSceneNode *Frame, INT NumPts, FTransform** Pts)
+static _inline void SetXMinDotVals(FSceneNode *Frame, INT_UNREAL_32S NumPts, FTransform** Pts)
 {
 	_asm
 	{
@@ -808,10 +808,10 @@ Done:
 
 //
 // K6 3D assembler version of:
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = Frame->PrjXP * Pts[i]->Point.Z - Pts[i]->Point.X;
 //
-static _inline void SetXMaxDotVals(FSceneNode *Frame, INT NumPts, FTransform** Pts)
+static _inline void SetXMaxDotVals(FSceneNode *Frame, INT_UNREAL_32S NumPts, FTransform** Pts)
 {
 	_asm
 	{
@@ -842,10 +842,10 @@ Done:
 
 //
 // K6 3D assembler version of:
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = Frame->PrjYM * Pts[i]->Point.Z + Pts[i]->Point.Y;
 //
-static _inline void SetYMinDotVals(FSceneNode *Frame, INT NumPts, FTransform** Pts)
+static _inline void SetYMinDotVals(FSceneNode *Frame, INT_UNREAL_32S NumPts, FTransform** Pts)
 {
 	_asm
 	{
@@ -876,10 +876,10 @@ Done:
 
 //
 // K6 3D assembler version of:
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = Frame->PrjYP * Pts[i]->Point.Z - Pts[i]->Point.Y;
 //
-static _inline void SetYMaxDotVals(FSceneNode *Frame, INT NumPts, FTransform** Pts)
+static _inline void SetYMaxDotVals(FSceneNode *Frame, INT_UNREAL_32S NumPts, FTransform** Pts)
 {
 	_asm
 	{
@@ -981,16 +981,16 @@ static _inline void IntersectAndProject(FSceneNode*	Frame,
 #endif
 }
 
-static inline INT AMD3DClip( FTransform** Dest, FTransform** Src, INT SrcNum )
+static inline INT_UNREAL_32S AMD3DClip( FTransform** Dest, FTransform** Src, INT_UNREAL_32S SrcNum )
 {
-	INT DestNum=0;
-	for( INT i=0,j=SrcNum-1; i<SrcNum; j=i++ )
+	INT_UNREAL_32S DestNum=0;
+	for( INT_UNREAL_32S i=0,j=SrcNum-1; i<SrcNum; j=i++ )
 	{
-		if( *(INT*)(Dot+j) >= 0 )
+		if( *(INT_UNREAL_32S*)(Dot+j) >= 0 )
 		{
 			Dest[DestNum++] = Src[j];
 		}
-		if( (*(INT*)(Dot+j) ^ *(INT*)(Dot+i)) < 0 )
+		if( (*(INT_UNREAL_32S*)(Dot+j) ^ *(INT_UNREAL_32S*)(Dot+i)) < 0 )
 		{
 			FTransform* T = Dest[DestNum++] = New<FTransform>( GDynMem );
 //			FLOAT Alpha   = Dot[j] / (Dot[j]-Dot[i]);
@@ -1007,7 +1007,7 @@ static inline INT AMD3DClip( FTransform** Dest, FTransform** Src, INT SrcNum )
 //
 // Transform and clip a polygon.
 //
-_inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
+_inline INT_UNREAL_32S URender::AMD3DClipBspSurf( INT_UNREAL_32S iNode, FTransform**& Result )
 {
 	guard(URender::AMD3DClipBspSurf);
 	static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
@@ -1015,16 +1015,16 @@ _inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
 	// Transform.
 	STAT(GStat.NumTransform++);
 	FBspNode* Node		= &GNodes[iNode];
-	INT       NumPts    = Node->NumVertices;
+	INT_UNREAL_32S       NumPts    = Node->NumVertices;
 	FVert*	  VertPool	= &GVerts[Node->iVertPool];
 	BYTE      Outcode   = FVF_OutReject;
 	BYTE      AllCodes  = 0;
 
 	DoFemms();
 
-	for( INT i=0; i<NumPts; i++ )
+	for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 	{
-		INT pPoint = VertPool[i].pVertex;
+		INT_UNREAL_32S pPoint = VertPool[i].pVertex;
 		FStampedPoint& S = PointCache[pPoint];
 		if( S.Stamp != Stamp )
 		{
@@ -1054,7 +1054,7 @@ _inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutXMin )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = GFrame->PrjXM * Pts[i]->Point.Z + Pts[i]->Point.X;
 			SetXMinDotVals(GFrame,NumPts,Pts);
 			NumPts = AMD3DClip( LocalPts, Pts, NumPts );
@@ -1068,7 +1068,7 @@ _inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutXMax )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = GFrame->PrjXP * Pts[i]->Point.Z - Pts[i]->Point.X;
 			SetXMaxDotVals(GFrame,NumPts,Pts);
 			NumPts = AMD3DClip( LocalPts, Pts, NumPts );
@@ -1082,7 +1082,7 @@ _inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutYMin )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = GFrame->PrjYM * Pts[i]->Point.Z + Pts[i]->Point.Y;
 			SetYMinDotVals(GFrame,NumPts,Pts);
 			NumPts = AMD3DClip( LocalPts, Pts, NumPts );
@@ -1096,7 +1096,7 @@ _inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutYMax )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-//			for( INT i=0; i<NumPts; i++ )
+//			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 //				Dot[i] = GFrame->PrjYP * Pts[i]->Point.Z - Pts[i]->Point.Y;
 			SetYMaxDotVals(GFrame,NumPts,Pts);
 			NumPts = AMD3DClip( LocalPts, Pts, NumPts );
@@ -1114,7 +1114,7 @@ _inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
 		UBOOL Clipped=0;
 		// Can't K63Dize this since it doesn't seem to be used so we can't test it.
 		DoFemms();
-		for( INT i=0; i<NumPts; i++ )
+		for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 		{
 			Dot[i] = GFrame->NearClip.PlaneDot(Pts[i]->Point);
 			Clipped |= (Dot[i]<0.0);
@@ -1144,16 +1144,16 @@ _inline INT URender::AMD3DClipBspSurf( INT iNode, FTransform**& Result )
 #pragma pack( )
 #endif
 
-static inline INT Clip( FTransform** Dest, FTransform** Src, INT SrcNum )
+static inline INT_UNREAL_32S Clip( FTransform** Dest, FTransform** Src, INT_UNREAL_32S SrcNum )
 {
-	INT DestNum=0;
-	for( INT i=0,j=SrcNum-1; i<SrcNum; j=i++ )
+	INT_UNREAL_32S DestNum=0;
+	for( INT_UNREAL_32S i=0,j=SrcNum-1; i<SrcNum; j=i++ )
 	{
-		if( *(INT*)(Dot+j) >= 0 )
+		if( *(INT_UNREAL_32S*)(Dot+j) >= 0 )
 		{
 			Dest[DestNum++] = Src[j];
 		}
-		if( (*(INT*)(Dot+j) ^ *(INT*)(Dot+i)) < 0 )
+		if( (*(INT_UNREAL_32S*)(Dot+j) ^ *(INT_UNREAL_32S*)(Dot+i)) < 0 )
 		{
 			FTransform* T = Dest[DestNum++] = New<FTransform>( GDynMem );
 			FLOAT Alpha   = Dot[j] / (Dot[j]-Dot[i]);
@@ -1169,7 +1169,7 @@ static inline INT Clip( FTransform** Dest, FTransform** Src, INT SrcNum )
 //
 // Transform and clip a polygon.
 //
-INT URender::ClipBspSurf( INT iNode, FTransform**& Result )
+INT_UNREAL_32S URender::ClipBspSurf( INT_UNREAL_32S iNode, FTransform**& Result )
 {
 #ifndef NOAMD3D
 	if (GIsK63D)
@@ -1181,13 +1181,13 @@ INT URender::ClipBspSurf( INT iNode, FTransform**& Result )
 	// Transform.
 	STAT(GStat.NumTransform++);
 	FBspNode* Node		= &GNodes[iNode];
-	INT       NumPts    = Node->NumVertices;
+	INT_UNREAL_32S       NumPts    = Node->NumVertices;
 	FVert*	  VertPool	= &GVerts[Node->iVertPool];
 	BYTE      Outcode   = FVF_OutReject;
 	BYTE      AllCodes  = 0;
-	for( INT i=0; i<NumPts; i++ )
+	for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 	{
-		INT pPoint = VertPool[i].pVertex;
+		INT_UNREAL_32S pPoint = VertPool[i].pVertex;
 		FStampedPoint& S = PointCache[pPoint];
 		if( S.Stamp != Stamp )
 		{
@@ -1212,7 +1212,7 @@ INT URender::ClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutXMin )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = GFrame->PrjXM * Pts[i]->Point.Z + Pts[i]->Point.X;
 			NumPts = Clip( LocalPts, Pts, NumPts );
 			if( !NumPts )
@@ -1222,7 +1222,7 @@ INT URender::ClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutXMax )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = GFrame->PrjXP * Pts[i]->Point.Z - Pts[i]->Point.X;
 			NumPts = Clip( LocalPts, Pts, NumPts );
 			if( !NumPts )
@@ -1232,7 +1232,7 @@ INT URender::ClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutYMin )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = GFrame->PrjYM * Pts[i]->Point.Z + Pts[i]->Point.Y;
 			NumPts = Clip( LocalPts, Pts, NumPts );
 			if( !NumPts )
@@ -1242,7 +1242,7 @@ INT URender::ClipBspSurf( INT iNode, FTransform**& Result )
 		if( AllCodes & FVF_OutYMax )
 		{
 			static FTransform* LocalPts[FBspNode::MAX_FINAL_VERTICES];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = GFrame->PrjYP * Pts[i]->Point.Z - Pts[i]->Point.Y;
 			NumPts = Clip( LocalPts, Pts, NumPts );
 			if( !NumPts )
@@ -1253,7 +1253,7 @@ INT URender::ClipBspSurf( INT iNode, FTransform**& Result )
 	if( GFrame->NearClip.W != 0.0 )
 	{
 		UBOOL Clipped=0;
-		for( INT i=0; i<NumPts; i++ )
+		for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 		{
 			Dot[i] = GFrame->NearClip.PlaneDot(Pts[i]->Point);
 			Clipped |= (Dot[i]<0.0);
@@ -1324,8 +1324,8 @@ FSceneNode* URender::CreateChildFrame
 	FSceneNode*		Parent,
 	FSpanBuffer*	Span,
 	ULevel*			Level,
-	INT				iSurf,
-	INT				iZone,
+	INT_UNREAL_32S				iSurf,
+	INT_UNREAL_32S				iZone,
 	FLOAT			Mirror,
 	const FPlane&	NearClip,
 	const FCoords&	Coords,
@@ -1333,9 +1333,10 @@ FSceneNode* URender::CreateChildFrame
 )
 {
 	guard(URender::CreateChildFrame);
+	FSceneNode* Frame;
 
 	// See if the scene frame already exists.
-	for( FSceneNode* Frame=Parent->Child; Frame; Frame=Frame->Sibling )
+	for( Frame=Parent->Child; Frame; Frame=Frame->Sibling )
 	{
 		if
 		(	Frame->Level==Level
@@ -1405,23 +1406,23 @@ FSceneNode* URender::CreateChildFrame
 -----------------------------------------------------------------------------*/
 
 FRasterSpan HackRaster[1200];//max y res 1200!!
-INT RasterStartY, RasterEndY, RasterStartX, RasterEndX;
-static UBOOL SetupRaster( FTransform** Pts, INT NumPts, FSpanBuffer* Span, INT EndY )
+INT_UNREAL_32S RasterStartY, RasterEndY, RasterStartX, RasterEndX;
+static UBOOL SetupRaster( FTransform** Pts, INT_UNREAL_32S NumPts, FSpanBuffer* Span, INT_UNREAL_32S EndY )
 {
 	guard(SetupRaster);
 
 	// Compute integer coords.
 	RasterStartY = RasterEndY = Pts[0]->IntY;
 	RasterStartX = RasterEndX = appFloor( Pts[0]->ScreenX );
-	for( INT i=1; i<NumPts; i++ )
+	for( INT_UNREAL_32S i=1; i<NumPts; i++ )
 	{
-		INT Y = Pts[i]->IntY;
+		INT_UNREAL_32S Y = Pts[i]->IntY;
 		if( Y < RasterStartY )
 			RasterStartY = Y;
 		else if( Y > RasterEndY )
 			RasterEndY = Y;
 
-		INT X = appFloor( Pts[i]->ScreenX );
+		INT_UNREAL_32S X = appFloor( Pts[i]->ScreenX );
 		if( X < RasterStartX )
 			RasterStartX = X;
 		else if( X > RasterEndX )
@@ -1431,7 +1432,7 @@ static UBOOL SetupRaster( FTransform** Pts, INT NumPts, FSpanBuffer* Span, INT E
 	{
 		RasterStartY = Clamp( RasterStartY, 0, EndY );
 		RasterEndY   = Clamp( RasterEndY,   0, EndY );
-		for( INT i=0; i<NumPts; i++ )
+		for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 		{
 			Pts[i]->IntY    = Clamp( Pts[i]->IntY, 0, EndY );
 			Pts[i]->ScreenY = Clamp( Pts[i]->IntY, 0, EndY );
@@ -1452,15 +1453,15 @@ static UBOOL SetupRaster( FTransform** Pts, INT NumPts, FSpanBuffer* Span, INT E
 	{
 		if( P[1]->IntY != P[0]->IntY )
 		{
-			INT Index    = P[1]->IntY > P[0]->IntY;
+			INT_UNREAL_32S Index    = P[1]->IntY > P[0]->IntY;
 			Bot          = P[Index];
 			Top          = P[1-Index];
-			INT*   Set   = HackRaster->X + Top->IntY*2 + Index;
+			INT_UNREAL_32S*   Set   = HackRaster->X + Top->IntY*2 + Index;
 			DOUBLE YAdj  = Top->IntY - Top->ScreenY;
 			DOUBLE FDX   = 65536.0 * (Bot->ScreenX - Top->ScreenX) / (Bot->ScreenY - Top->ScreenY);
 			DWORD  X     = appFloor( 65536.0 * Top->ScreenX + YAdj * FDX );
 			DWORD  DX    = appFloor( FDX );
-			INT    Count = Bot->IntY - Top->IntY;
+			INT_UNREAL_32S    Count = Bot->IntY - Top->IntY;
 			while( Count >= 4 )
 			{
 				Set[0]  = Unfix(X+=DX);
@@ -1486,12 +1487,12 @@ static UBOOL SetupRaster( FTransform** Pts, INT NumPts, FSpanBuffer* Span, INT E
 	Visible nodes.
 -----------------------------------------------------------------------------*/
 
-void URender::GetVisibleSurfs( UViewport* Viewport, TArray<INT>& iSurfs )
+void URender::GetVisibleSurfs( UViewport* Viewport, TArray<INT_UNREAL_32S>& iSurfs )
 {
 	guard(URender::GetVisibleSurfs);
 
 	// Try six views.
-	for( INT i=0; i<6; i++ )
+	for( INT_UNREAL_32S i=0; i<6; i++ )
 	{
 		// Set up rendering.
 		FMemMark MemMark(GMem);
@@ -1511,7 +1512,7 @@ void URender::GetVisibleSurfs( UViewport* Viewport, TArray<INT>& iSurfs )
 		UBOOL SavedFogZone = Viewport->RenDev->VolumetricLighting;
 		Viewport->RenDev->VolumetricLighting = 0;
 		OccludeBsp( Frame );
-		for( INT i=0; i<3; i++ )
+		for( INT_UNREAL_32S i=0; i<3; i++ )
 			for( FBspDrawList* Draw=Frame->Draw[i]; Draw; Draw=Draw->Next )
 				iSurfs.AddUniqueItem( Draw->iSurf );
 		Viewport->RenDev->VolumetricLighting = SavedFogZone;
@@ -1547,9 +1548,9 @@ UBOOL URender::BoundVisible
 	FTransform	Pts[8], *Pt;
 	FVector 	ViewportLoc;
 	FLOAT       BoxMinZ, BoxMaxZ;
-	INT         BoxX, BoxY;
-	INT 		BoxMinX, BoxMaxX, BoxMinY, BoxMaxY;
-	INT			OutCode;
+	INT_UNREAL_32S         BoxX, BoxY;
+	INT_UNREAL_32S 		BoxMinX, BoxMaxX, BoxMinY, BoxMaxY;
+	INT_UNREAL_32S			OutCode;
 
 	// Handle rejection in orthogonal views.
 	if( Frame->Viewport->IsOrtho() )
@@ -1563,7 +1564,7 @@ UBOOL URender::BoundVisible
 	}
 
 	// Compute hull position code.
-	INT HullCode = 0;
+	INT_UNREAL_32S HullCode = 0;
 	FVector NewMin = Bound->Min - Frame->Coords.Origin;
 	FVector NewMax = Bound->Max - Frame->Coords.Origin;
 	if     ( NewMin.X > 0.0 ) HullCode  = 1;
@@ -1603,13 +1604,13 @@ UBOOL URender::BoundVisible
 	/* 25 */ {0,4,5,7,3,2,255},
 	/* 27 */ {1,3,2,6,4,5,255},
 	};
-	/*{for( INT i=0; i<27; i++ )
+	/*{for( INT_UNREAL_32S i=0; i<27; i++ )
 	{
-		INT Verts[8];
-		INT Found[9];
-		for( INT j=0; j<8; j++ )
+		INT_UNREAL_32S Verts[8];
+		INT_UNREAL_32S Found[9];
+		for( INT_UNREAL_32S j=0; j<8; j++ )
 			Verts[j]=Found[j]=0;
-		INT x=i;
+		INT_UNREAL_32S x=i;
 		if( x>=18 )
 		{
 			Verts[7]++;
@@ -1659,7 +1660,7 @@ UBOOL URender::BoundVisible
 			x -= 1;
 		}
 		check(x==0);
-		for( INT u=0; u<8 && HullVerts[i][u]!=255; u++ )
+		for( INT_UNREAL_32S u=0; u<8 && HullVerts[i][u]!=255; u++ )
 		{
 			check(HullVerts[i][u]>=0);
 			check(HullVerts[i][u]<=7);
@@ -1667,7 +1668,7 @@ UBOOL URender::BoundVisible
 				appErrorf("b %i [%i]",i,HullVerts[i][u]);
 			Verts[HullVerts[i][u]]=0;
 		}
-		for( INT q=0; q<8; q++ )
+		for( INT_UNREAL_32S q=0; q<8; q++ )
 			if( Verts[q]!=0 && Verts[q]!=3 )
 				appErrorf("a %i [%i]",i,q);
 	}}*/
@@ -1690,7 +1691,7 @@ UBOOL URender::BoundVisible
 	{
 		FVector Center   = 0.5*(Bound->Min + Bound->Max);
 		FLOAT   RadiusSq = FDistSquared(Center,Bound->Min);
-		for( INT i=0; i<4; i++ )
+		for( INT_UNREAL_32S i=0; i<4; i++ )
 		{
 			FLOAT Dot = Frame->ViewPlanes[i].PlaneDot(Center);
 			if( Dot<0.0 && Square(Dot)>RadiusSq )
@@ -1723,7 +1724,7 @@ UBOOL URender::BoundVisible
 	BoxDot[1].YAxis = NewMax * Frame->Coords.YAxis;
 
 	// View-pyramid reject with an outcode test.
-	INT ThisCode, AllCodes;
+	INT_UNREAL_32S ThisCode, AllCodes;
 	BoxMinZ = Pts[0].Point.Z;
 	BoxMaxZ = Pts[0].Point.Z;
 	OutCode  = 1|2|4|8;
@@ -1765,7 +1766,7 @@ UBOOL URender::BoundVisible
 	if( AllCodes & 2 ) BoxMaxX = Frame->X;
 	if( AllCodes & 4 ) BoxMinY = 0;
 	if( AllCodes & 8 ) BoxMaxY = Frame->Y;
-	for( INT i=1; i<8; i++,Pt++ )
+	for( INT_UNREAL_32S i=1; i<8; i++,Pt++ )
 	{
 		FLOAT RZ = Frame->Proj.Z / Pt->Point.Z;
 		BoxX     = appFloor( Frame->FX2 + Pt->Point.X * RZ );
@@ -1802,23 +1803,23 @@ enum ENodePass
 
 struct FNodeStack
 {
-	INT				iNode;
-	INT				iFarNode;
-	INT				FarOutside;
-	INT				Outside;
+	INT_UNREAL_32S				iNode;
+	INT_UNREAL_32S				iFarNode;
+	INT_UNREAL_32S				FarOutside;
+	INT_UNREAL_32S				Outside;
 	ENodePass		Pass;
 	FNodeStack*		Next;
 };
 
-static UBOOL VolumetricOccludes( const FVolActorLink* Link, FVector* VolCross, INT NumVolCross )
+static UBOOL VolumetricOccludes( const FVolActorLink* Link, FVector* VolCross, INT_UNREAL_32S NumVolCross )
 {
-	for( INT i=0; i<NumVolCross; i++ )
+	for( INT_UNREAL_32S i=0; i<NumVolCross; i++ )
 		if( (Link->Location | VolCross[i]) > Link->Actor->WorldVolumetricRadius() )
 			return 0;
 	return 1;
 }
 
-void URender::LeafVolumetricLighting( FSceneNode* Frame, UModel* Model, INT iLeaf )
+void URender::LeafVolumetricLighting( FSceneNode* Frame, UModel* Model, INT_UNREAL_32S iLeaf )
 {
 	guardSlow(URender::LeafVolumetricLighting);
 
@@ -1827,9 +1828,9 @@ void URender::LeafVolumetricLighting( FSceneNode* Frame, UModel* Model, INT iLea
 	if( Leaf.iVolumetric != INDEX_NONE )
 	{
 		AActor* Actor;
-		for( INT i=Leaf.iVolumetric; (Actor=Model->Lights(i))!=NULL; i++ )
+		for( INT_UNREAL_32S i=Leaf.iVolumetric; (Actor=Model->Lights(i))!=NULL; i++ )
 		{
-			if( Actor->LightingTag!=(INT)Stamp )
+			if( Actor->LightingTag!=(INT_UNREAL_32S)Stamp )
 			{
 				Actor->LightingTag = Stamp;
 				if( FDistSquared( Frame->Coords.Origin, Actor->Location ) > Square(Actor->WorldVolumetricRadius()) )
@@ -1845,7 +1846,7 @@ void URender::LeafVolumetricLighting( FSceneNode* Frame, UModel* Model, INT iLea
 	// Dynamic volumetrics.
 	for( FVolActorLink* Link=LeafLights[iLeaf]; Link; Link=Link->Next )
 	{
-		if( Link->Volumetric && Link->Actor->LightingTag!=(INT)Stamp )
+		if( Link->Volumetric && Link->Actor->LightingTag!=(INT_UNREAL_32S)Stamp )
 		{
 			Link->Actor->LightingTag = Stamp;
 			FirstVolumetric = new(GDynMem)FVolActorLink( *Link, FirstVolumetric );
@@ -1856,22 +1857,22 @@ void URender::LeafVolumetricLighting( FSceneNode* Frame, UModel* Model, INT iLea
 
 FVert* _Verts;
 FBspNode* _Nodes;
-void Traverse( FSceneNode* Frame, INT iNode )
+void Traverse( FSceneNode* Frame, INT_UNREAL_32S iNode )
 {
 	UModel*   Model   = Frame->Level->Model;
 	FBspNode* Node    = _Nodes+iNode;
-	INT       IsFront = Node->Plane.PlaneDot(Frame->Coords.Origin) > 0.0;
+	INT_UNREAL_32S       IsFront = Node->Plane.PlaneDot(Frame->Coords.Origin) > 0.0;
 	if( Node->iChild[IsFront] != INDEX_NONE )
 	{
 		Traverse( Frame, Node->iChild[IsFront] );
 	}
 	FBspNode* Plane;
-	for( INT iPlane=iNode; iPlane!=INDEX_NONE; iPlane=Plane->iPlane )
+	for( INT_UNREAL_32S iPlane=iNode; iPlane!=INDEX_NONE; iPlane=Plane->iPlane )
 	{
 		Plane = _Nodes+iPlane;
-		for( INT i=0; i<Plane->NumVertices; i++ )
+		for( INT_UNREAL_32S i=0; i<Plane->NumVertices; i++ )
 		{
-			INT pPoint = _Verts[Plane->iVertPool+i].pVertex;
+			INT_UNREAL_32S pPoint = _Verts[Plane->iVertPool+i].pVertex;
 			URender::FStampedPoint& S = URender::PointCache[pPoint];
 			if( S.Stamp != URender::Stamp )
 			{
@@ -1882,8 +1883,8 @@ void Traverse( FSceneNode* Frame, INT iNode )
 			}
 			if( !S.Point->Flags )
 			{
-				INT X = Clamp( appFloor( S.Point->ScreenX ), 0, Frame->X-1 );
-				INT Y = Clamp( S.Point->IntY, 0, Frame->Y-1 );
+				INT_UNREAL_32S X = Clamp( appFloor( S.Point->ScreenX ), 0, Frame->X-1 );
+				INT_UNREAL_32S Y = Clamp( S.Point->IntY, 0, Frame->Y-1 );
 				*Frame->Screen(X,Y) = 0xfe;
 			}
 		}
@@ -1907,18 +1908,18 @@ void URender::OccludeBsp( FSceneNode* Frame )
 	FVector				Origin;
 	DWORD				PolyFlags, PolyFlagMask, ExtraPolyFlags;
 	QWORD				ActiveZoneMask;
-	INT          		iNode,iOriginalNode,iThingZone;
+	INT_UNREAL_32S          		iNode,iOriginalNode,iThingZone;
 	BYTE				iViewZone;
 	BYTE				iZone;
 	BYTE				ViewZoneMask;
-	INT           		Visible;
-	INT					Mergeable;
-	INT					Outside;
-	INT					Pass;
-	INT					NumPts;
-	INT					IsVolumetric;
-	INT					DrawBin;
-	INT                 NumActiveZones;
+	INT_UNREAL_32S           		Visible;
+	INT_UNREAL_32S					Mergeable;
+	INT_UNREAL_32S					Outside;
+	INT_UNREAL_32S					Pass;
+	INT_UNREAL_32S					NumPts;
+	INT_UNREAL_32S					IsVolumetric;
+	INT_UNREAL_32S					DrawBin;
+	INT_UNREAL_32S                 NumActiveZones;
 	BYTE                ActiveZones[64];
 	guard(URender::OccludeBsp);
 	check(Frame->Level->Model->Nodes->Max()<MAX_NODES);
@@ -1941,13 +1942,13 @@ void URender::OccludeBsp( FSceneNode* Frame )
 		Traverse( Frame, 0 );
 		/*
 		static FTransform V;
-		for( INT i=0; i<Model->Points->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Model->Points->Num(); i++ )
 		{
 			Pipe( V, Frame, Model->Points->Element(i) );
 			if( !V.Flags )
 			{
-				INT X = Clamp( appFloor( V.ScreenX ), 0, Frame->X-1 );
-				INT Y = Clamp( V.IntY, 0, Frame->Y-1 );
+				INT_UNREAL_32S X = Clamp( appFloor( V.ScreenX ), 0, Frame->X-1 );
+				INT_UNREAL_32S Y = Clamp( V.IntY, 0, Frame->Y-1 );
 				*Frame->Screen(X,Y) = 0xfe;
 			}
 		}*/
@@ -2009,7 +2010,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 	}
 
 	// Init zone span buffers.
-	for( INT i=0; i<UBspNodes::MAX_ZONES; i++ )
+	for( INT_UNREAL_32S i=0; i<UBspNodes::MAX_ZONES; i++ )
 		ZoneSpanBuffer[i].AllocIndex(0,0,&GDynMem);
 	ZoneSpanBuffer[iViewZone] = *Frame->Span;
 
@@ -2019,7 +2020,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 	iNode				= 0;
 	Outside				= Model->RootOutside;
 	Pass				= PASS_Front;
-
+	INT_UNREAL_32S i;
 	// Process everything in the world.
 	for( ;; )
 	{
@@ -2052,7 +2053,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 				}
 				if( iViewZone )
 				{
-					for( INT i=0; i<NumActiveZones; i++ )
+					for( i=0; i<NumActiveZones; i++ )
 					{
 						BYTE iZone = ActiveZones[i];
 						if
@@ -2074,7 +2075,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 				Item->Filter( Viewport, Frame, iNode, Outside );
 
 			// Set up stack to recurse into front.
-			INT IsFront       = Node->Plane.PlaneDot(Origin) > 0.0;
+			INT_UNREAL_32S IsFront       = Node->Plane.PlaneDot(Origin) > 0.0;
 			Stack->iFarNode   = Node->iChild[1-IsFront];
 			Stack->FarOutside = Node->ChildOutside(1-IsFront,Outside);
 			if( Node->iChild[IsFront] != INDEX_NONE )
@@ -2109,7 +2110,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 			// Setup.
 			iOriginalNode	= iNode;
 			FLOAT Dot		= Node->Plane.PlaneDot(Origin);
-			INT IsFront		= Dot>0.0;
+			INT_UNREAL_32S IsFront		= Dot>0.0;
 			iThingZone      = Node->iZone[IsFront] & ViewZoneMask;
 
 			// Render dynamic stuff in front of the plane.
@@ -2158,9 +2159,9 @@ void URender::OccludeBsp( FSceneNode* Frame )
 					goto NextCoplanar;
 
 				// Fix facing.
-				if( (!IsFront && (PolyFlags & (PF_TwoSided | PF_Portal))) ^ Frame->Mirror==-1.f )
-					for( INT i=0; i<NumPts/2; i++ )
-						Exchange( Pts[i], Pts[NumPts-i-1] );
+				if ((!IsFront && (PolyFlags & (PF_TwoSided | PF_Portal))) ^ Frame->Mirror == -1.f)
+					for (INT_UNREAL_32S i = 0; i < NumPts / 2; i++)
+						Exchange(Pts[i], Pts[NumPts - i - 1]);
 
 				// Setup.
 				clock(GStat.RasterTime);
@@ -2356,7 +2357,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 
 					// Handle volumetrics.
 					static FVector VolCross[32];
-					INT NumVolCross=0;
+					INT_UNREAL_32S NumVolCross=0;
 					if( FirstVolumetric )
 					{
 						for( FTransform** P1=Pts,**P2=Pts+NumPts-1; P1<Pts+NumPts; P2=P1++ )
@@ -2398,7 +2399,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 							Saved->Next         = NULL;
 							TempDrawList->Polys = Saved;
 							Saved->NumPts       = NumPts;
-							for( INT i=0; i<NumPts; i++ )
+							for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 								Saved->Pts[i] = Pts[i];;
 							TempDrawList->Span.Release();
 						}
@@ -2426,7 +2427,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 							Saved->Next         = Merge->Polys;
 							Merge->Polys        = Saved;
 							Saved->NumPts       = NumPts;
-							for( INT i=0; i<NumPts; i++ )
+							for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 								Saved->Pts[i] = Pts[i];
 						}
 						else
@@ -2436,11 +2437,12 @@ void URender::OccludeBsp( FSceneNode* Frame )
 							unclock(GStat.SpanTime);
 						}
 						TempDrawList->Span.Release();
+						FActorLink* Other;
 
 						// Merge in the new volumetrics.
 						for( FVolActorLink* Link=FirstVolumetric; Link; Link=Link->Next )
 						{
-							for( FActorLink* Other=Merge->Volumetrics; Other; Other=Other->Next )
+							for( Other=Merge->Volumetrics; Other; Other=Other->Next )
 								if( Other->Actor == Link->Actor )
 									break;
 							if( Other==NULL && VolumetricOccludes( Link, VolCross, NumVolCross ) )
@@ -2449,11 +2451,12 @@ void URender::OccludeBsp( FSceneNode* Frame )
 					}
 					Node->NodeFlags &= ~NF_PolyOccluded;
 					NodesDraw++;
+					INT_UNREAL_32S i, j;
 
 					// See if filled up.
 					if( SpanBuffer->ValidLines <= 0 )
 					{
-						for( INT i=0,j=0; i<NumActiveZones; j+=ActiveZones[i++]!=iZone )
+						for( i=0,j=0; i<NumActiveZones; j+=ActiveZones[i++]!=iZone )
 							ActiveZones[j] = ActiveZones[i];
 						NumActiveZones=j;
 						ActiveZoneMask &= ~(((QWORD)1)<<iZone);
@@ -2527,7 +2530,7 @@ void URender::OccludeBsp( FSceneNode* Frame )
 struct FBspDrawListPtr
 {
 	FBspDrawList *Ptr;
-	friend inline INT Compare( const FBspDrawListPtr &A, const FBspDrawListPtr &B )
+	friend inline INT_UNREAL_32S Compare( const FBspDrawListPtr &A, const FBspDrawListPtr &B )
 		{ return A.Ptr->Key - B.Ptr->Key; }
 };
 
@@ -2537,20 +2540,22 @@ struct FBspDrawListPtr
 struct FCoronaLight
 {
 	AActor* _Actor;
-	INT     iActor;
+	INT_UNREAL_32S     iActor;
 	FLOAT   Bright;
 };
 #define MAX_CORONA_LIGHTS 32
-static void GAddCorona( FSceneNode* Frame, FCoronaLight* CoronaLights, INT& iFree, AActor* Light, FLOAT Delta )
+static void GAddCorona( FSceneNode* Frame, FCoronaLight* CoronaLights, INT_UNREAL_32S& iFree, AActor* Light, FLOAT Delta )
 {
 	FCheckResult Hit;
+	int i;
+
 	if
 	(	Light->bCorona
 	&&	Light->Skin
 	&& !Light->bDeleteMe
 	&&  Frame->Level->SingleLineCheck( Hit, NULL, Light->Location, Frame->Coords.Origin, TRACE_VisBlocking, FVector(0,0,0) ) )
 	{
-		for( int i=0; i<MAX_CORONA_LIGHTS; i++ )
+		for( i=0; i<MAX_CORONA_LIGHTS; i++ )
 			if( CoronaLights[i]._Actor == Light )
 				break;
 		if( i<MAX_CORONA_LIGHTS )
@@ -2603,9 +2608,10 @@ void URender::OccludeFrame( FSceneNode* Frame )
 	// Perform occlusion checking.
 	SetupDynamics( Frame, (Viewport->Actor->bBehindView || Frame->Parent!=NULL) ? NULL : Viewport->Actor->ViewTarget ?  Viewport->Actor->ViewTarget : Viewport->Actor );
 	OccludeBsp( Frame );
+	INT_UNREAL_32S i;
 
 	// Remember surface lights.
-	for( INT i=0; i<3; i++ )
+	for( i=0; i<3; i++ )
 		for( FBspDrawList* Draw=Frame->Draw[i]; Draw; Draw=Draw->Next )
 			Draw->SurfLights = SurfLights[Draw->iSurf];
 
@@ -2643,6 +2649,7 @@ void URender::DrawFrame( FSceneNode* Frame )
 	UViewport* Viewport = Frame->Viewport;
 	UModel*	   Model    = Frame->Level->Model;
 	check(Model->Nodes->Num()>0);
+	INT_UNREAL_32S i, Pass;
 
 	// First, draw children.
 	for( FSceneNode* F=Frame->Child; F; F=F->Sibling )
@@ -2653,8 +2660,8 @@ void URender::DrawFrame( FSceneNode* Frame )
 		Viewport->RenDev->ClearZ( Frame );
 
 	// Count surfaces to draw.
-	INT Num[3]={0,0,0};
-	for( INT Pass=0; Pass<3; Pass++ )
+	INT_UNREAL_32S Num[3]={0,0,0};
+	for( Pass=0; Pass<3; Pass++ )
 		for( FBspDrawList* Draw = Frame->Draw[Pass]; Draw; Draw = Draw->Next )
 			Num[Pass]++;
 
@@ -2664,7 +2671,7 @@ void URender::DrawFrame( FSceneNode* Frame )
 	for( Pass=0; Pass<3; Pass++ )
 		for( FBspDrawList* Draw = Frame->Draw[Pass]; Draw; Draw = Draw->Next )
 			(LastDraw[Pass]++)->Ptr = Draw;
-	for( INT i=0; i<Num[0]/2; i++ )
+	for( i=0; i<Num[0]/2; i++ )
 		Exchange( FirstDraw[0][i], FirstDraw[0][Num[0]-i-1] );
 
 	// Sort solid surfaces by texture and then by palette for cache coherence.
@@ -2684,12 +2691,12 @@ void URender::DrawFrame( FSceneNode* Frame )
 			FLOAT PanU = Surf->PanU;
 			if( Surf->PolyFlags & PF_AutoUPan )
 			{
-				PanU += ((INT)(Frame->Level->GetLevelInfo()->TimeSeconds * 35.f * Draw->Zone->TexUPanSpeed * 256.0)&0x3ffff)/256.0;
+				PanU += ((INT_UNREAL_32S)(Frame->Level->GetLevelInfo()->TimeSeconds * 35.f * Draw->Zone->TexUPanSpeed * 256.0)&0x3ffff)/256.0;
 			}
 			FLOAT PanV = Surf->PanV;
 			if( Surf->PolyFlags & PF_AutoVPan )
 			{
-				PanV += ((INT)(Frame->Level->GetLevelInfo()->TimeSeconds * 35.f * Draw->Zone->TexVPanSpeed * 256.0)&0x3ffff)/256.0;
+				PanV += ((INT_UNREAL_32S)(Frame->Level->GetLevelInfo()->TimeSeconds * 35.f * Draw->Zone->TexVPanSpeed * 256.0)&0x3ffff)/256.0;
 			}
 			if( Surf->PolyFlags & (PF_SmallWavy | PF_BigWavy) )
 			{
@@ -2784,7 +2791,7 @@ void URender::DrawFrame( FSceneNode* Frame )
 				FVector Color;
 				if( Viewport->Actor->RendMap!=REN_Zones || Model->Nodes->NumZones==0 )
 				{
-					INT Index = Viewport->Actor->RendMap==REN_Polys ? Node->iSurf : Draw->iNode;
+					INT_UNREAL_32S Index = Viewport->Actor->RendMap==REN_Polys ? Node->iSurf : Draw->iNode;
 					Color = Texture->MipZero.Plane() * (0.5 + (Index&7)/16.0);
 				}
 				else
@@ -2800,7 +2807,7 @@ void URender::DrawFrame( FSceneNode* Frame )
 			}
 
 			// Draw the surface.
-			PUSH_HIT(Frame,HBspSurf(Draw->iSurf));
+			PUSH_HIT(Frame,HBspSurf,Draw->iSurf);
 			clock(GStat.PolyVTime);
 			Viewport->RenDev->DrawComplexSurface( Frame, Surface, Facet );
 			unclock(GStat.PolyVTime);
@@ -2840,8 +2847,8 @@ void URender::DrawFrame( FSceneNode* Frame )
 		for( int i=0; i<MAX_CORONA_LIGHTS; i++ )
 			if( CoronaLights[i]._Actor && (CoronaLights[i].Bright-=Delta)<0 )
 				CoronaLights[i]._Actor = NULL;
-		INT iFree=0;
-		INT iPermeating = Viewport->Actor->XLevel->Model->Leaves(Viewport->Actor->Region.iLeaf).iPermeating;
+		INT_UNREAL_32S iFree=0;
+		INT_UNREAL_32S iPermeating = Viewport->Actor->XLevel->Model->Leaves(Viewport->Actor->Region.iLeaf).iPermeating;
 		if( iPermeating!=INDEX_NONE )
 		{
 			AActor** LightPtr = &Viewport->Actor->XLevel->Model->Lights(iPermeating);

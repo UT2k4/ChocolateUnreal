@@ -53,14 +53,14 @@ enum EChannelFlags
 -----------------------------------------------------------------------------*/
 
 // Global channel type functions.
-BYTE GAutoRegisterChannel( INT ChType, FChannel* (*Constructor)( UNetConnection* InConnection, INT InChIndex, UBOOL InOpenedLocally ) );
-UBOOL GIsKnownChannelType( INT Type );
+BYTE GAutoRegisterChannel( INT_UNREAL_32S ChType, FChannel* (*Constructor)( UNetConnection* InConnection, INT_UNREAL_32S InChIndex, UBOOL InOpenedLocally ) );
+UBOOL GIsKnownChannelType( INT_UNREAL_32S Type );
 
 // Goes inside class definition,
 #define DECLARE_CHTYPE(chtype,chclass) \
 public: \
 	enum {ChannelType=chtype}; \
-	static FChannel* Construct( UNetConnection* InConnection, INT InChIndex, UBOOL InOpenedLocally ) \
+	static FChannel* Construct( UNetConnection* InConnection, INT_UNREAL_32S InChIndex, UBOOL InOpenedLocally ) \
 		{return new chclass( InConnection, InChIndex, InOpenedLocally );}
 
 // Channel type autoregistration macro.
@@ -68,7 +68,7 @@ public: \
 	BYTE autoregisterI##chclass = GAutoRegisterChannel( chclass::ChannelType, chclass::Construct );
 
 // Channel table.
-extern ENGINE_API FChannel* (*GChannelConstructors[CHTYPE_MAX])( UNetConnection* InConnection, INT InChIndex, UBOOL InOpenedLocally );
+extern ENGINE_API FChannel* (*GChannelConstructors[CHTYPE_MAX])( UNetConnection* InConnection, INT_UNREAL_32S InChIndex, UBOOL InOpenedLocally );
 
 /*-----------------------------------------------------------------------------
 	FChannel base class.
@@ -82,8 +82,8 @@ class ENGINE_API FChannel : public FOutputDevice
 public:
 	// Variables.
 	UNetConnection*	Connection;     // Owner connection.
-	INT             ChIndex;		// Index of this channel.
-	INT				OpenedLocally;  // Whether channel was opened locally or by remote.
+	INT_UNREAL_32S             ChIndex;		// Index of this channel.
+	INT_UNREAL_32S				OpenedLocally;  // Whether channel was opened locally or by remote.
 	EChannelState	State;			// State of the channel.
 	EChannelType	ChType;			// Type of this channel.
 	DOUBLE			CloseTime;      // Time initial close-request was sent.
@@ -99,7 +99,7 @@ public:
 	void WriteBinary( const void* Data, int Length, EName MsgType ) {}
 
 	// Constructor.
-	FChannel( INT InChType, UNetConnection* InConnection, INT InChannelIndex, INT InOpenedLocally );
+	FChannel( INT_UNREAL_32S InChType, UNetConnection* InConnection, INT_UNREAL_32S InChannelIndex, INT_UNREAL_32S InOpenedLocally );
 	virtual ~FChannel();
 
 	// FChannel interface.
@@ -117,8 +117,8 @@ public:
 	UBOOL SendBunch( FOutBunch& Bunch, UBOOL Merge );
 	UBOOL IsNetReady( UBOOL Saturate );
 	void AssertInSequenced();
-	INT ReserveOutgoingIndex( UBOOL bClose );
-	INT MaxSend();
+	INT_UNREAL_32S ReserveOutgoingIndex( UBOOL bClose );
+	INT_UNREAL_32S MaxSend();
 };
 
 /*-----------------------------------------------------------------------------
@@ -133,7 +133,7 @@ class ENGINE_API FControlChannel : public FChannel
 	DECLARE_CHTYPE(CHTYPE_Control,FControlChannel);
 
 	// Constructor.
-	FControlChannel( UNetConnection* InConnection, INT InChannelIndex, INT InOpenedLocally );
+	FControlChannel( UNetConnection* InConnection, INT_UNREAL_32S InChannelIndex, INT_UNREAL_32S InOpenedLocally );
 	~FControlChannel();
 
 	// UChannel interface.
@@ -165,7 +165,7 @@ class ENGINE_API FActorChannel : public FChannel
 	DOUBLE	LastUpdateTime;	// Last time this actor was replicated.
 
 	// Constructor.
-	FActorChannel( UNetConnection* InConnection, INT InChannelIndex, INT InOpenedLocally );
+	FActorChannel( UNetConnection* InConnection, INT_UNREAL_32S InChannelIndex, INT_UNREAL_32S InOpenedLocally );
 	~FActorChannel();
 
 	// UChannel interface.
@@ -193,11 +193,11 @@ class ENGINE_API FFileChannel : public FChannel
 	char    PrettyName[256]; // Pretty name of file.
 	char	Error[256];		 // Error.
 	FILE*	File;			 // File being transfered.
-	INT		Transfered;		 // Bytes transfered.
-	INT		PackageIndex;	 // Index of package in Map.
+	INT_UNREAL_32S		Transfered;		 // Bytes transfered.
+	INT_UNREAL_32S		PackageIndex;	 // Index of package in Map.
 
 	// Constructor.
-	FFileChannel( UNetConnection* InConnection, INT InChannelIndex, INT InOpenedLocally );
+	FFileChannel( UNetConnection* InConnection, INT_UNREAL_32S InChannelIndex, INT_UNREAL_32S InOpenedLocally );
 	~FFileChannel();
 
 	// UChannel interface.

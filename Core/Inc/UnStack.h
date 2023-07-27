@@ -25,14 +25,14 @@ struct CORE_API FFrame
 
 	// Constructors.
 	inline FFrame( UObject* InObject );
-	inline FFrame( UObject* InObject, UStruct* InNode, INT CodeOffset, BYTE* InLocals );
+	inline FFrame( UObject* InObject, UStruct* InNode, INT_UNREAL_32S CodeOffset, BYTE* InLocals );
 
 	// Functions.
 	void Step( UObject* Context, BYTE*& Result );
 	void CDECL ScriptWarn( UBOOL Critical, char* Fmt, ... );
-	INT ReadInt();
+	INT_UNREAL_32S ReadInt();
 	FLOAT ReadFloat();
-	INT ReadWord();
+	INT_UNREAL_32S ReadWord();
 	FName ReadName();
 };
 
@@ -45,7 +45,7 @@ struct CORE_API FMainFrame : public FFrame
 	// Variables.
 	UState* StateNode;
 	QWORD   ProbeMask;
-	INT     LatentAction;
+	INT_UNREAL_32S     LatentAction;
 
 	// Functions.
 	FMainFrame( UObject* InObject );
@@ -74,7 +74,7 @@ struct FOutParmRec
 {
 	BYTE* Dest;
 	BYTE* Src;
-	INT Size;
+	INT_UNREAL_32S Size;
 };
 
 /*-----------------------------------------------------------------------------

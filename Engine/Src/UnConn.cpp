@@ -153,7 +153,7 @@ void UPendingLevel::NotifyReceivedText( UNetConnection* Connection, const char* 
 	if( ParseCommand(&Text,"UPGRADE") )
 	{
 		// Report mismatch.
-		INT Revision=0;
+		INT_UNREAL_32S Revision=0;
 		Parse( Text, "REVISION=", Revision );
 		Engine->SetProgress( "", "", -1.0 );
 	}
@@ -184,6 +184,8 @@ void UPendingLevel::NotifyReceivedText( UNetConnection* Connection, const char* 
 	}
 	else if( ParseCommand( &Text, "WELCOME" ) )
 	{
+		INT_UNREAL_32S i;
+
 		// Server accepted connection.
 		debugf( NAME_DevNet, "Welcomed by server: %s", Text );
 
@@ -193,7 +195,7 @@ void UPendingLevel::NotifyReceivedText( UNetConnection* Connection, const char* 
 		Parse( Text, "CHALLENGE=", Connection->Challenge );
 
 		// Make sure all packages we need are downloadable.
-		for( INT i=0; i<Connection->Driver->Map.Num(); i++ )
+		for( i=0; i<Connection->Driver->Map.Num(); i++ )
 		{
 			char Filename[256];
 			FPackageInfo& Info = Connection->Driver->Map(i);
@@ -231,7 +233,7 @@ void UPendingLevel::NotifyReceivedText( UNetConnection* Connection, const char* 
 	}
 	unguard;
 }
-void UPendingLevel::NotifyReceivedFile( UNetConnection* Connection, INT PackageIndex, const char* Error )
+void UPendingLevel::NotifyReceivedFile( UNetConnection* Connection, INT_UNREAL_32S PackageIndex, const char* Error )
 {
 	guard(UPendingLevel::NotifyReceivedFile);
 	check(NetDriver->Map.IsValidIndex(PackageIndex));
@@ -253,7 +255,7 @@ void UPendingLevel::NotifyReceivedFile( UNetConnection* Connection, INT PackageI
 		FilesNeeded--;
 
 		// Send next download request.
-		for( INT i=0; i<Connection->Driver->Map.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Connection->Driver->Map.Num(); i++ )
 			if( Connection->Driver->Map(i).PackageFlags & PKG_Need )
 				{Connection->ReceiveFile( i ); break;}
 	}
@@ -318,7 +320,7 @@ void UNetConnection::Destroy()
 	}
 	else
 	{
-		INT Index;
+		INT_UNREAL_32S Index;
 		check(Driver->ServerConnection==NULL);
 		check(Driver->Connections.FindItem( this, Index ));
 		Driver->Connections.RemoveItem( this );
@@ -361,7 +363,7 @@ UNetConnection::UNetConnection( UNetDriver* InDriver )
 	guard(UNetConnection::UNetConnection);
 
 	// Init the list of channels.
-	for( INT i=0; i<MAX_CHANNELS; i++ )
+	for( INT_UNREAL_32S i=0; i<MAX_CHANNELS; i++ )
 	{
 		Channels     [i] = NULL;
 		OutReliable  [i] = SEQ_None;
@@ -437,7 +439,7 @@ UBOOL UNetConnection::IsNetReady()
 //
 // Handle a packet we just received.
 //
-void UNetConnection::ReceivedPacket( BYTE* Data, INT Size )
+void UNetConnection::ReceivedPacket( BYTE* Data, INT_UNREAL_32S Size )
 {
 	guard(UNetConnection::ReceivedPacket);
 	AssertValid();
@@ -460,7 +462,7 @@ void UNetConnection::ReceivedPacket( BYTE* Data, INT Size )
 		else if( BunchHeader->ChIndex & CHF_Ack )
 		{
 			// This is an acknowledgement or negative acknowledgement.
-			INT ChannelIndex  = Bunch->ChIndex & CHF_Mask;
+			INT_UNREAL_32S ChannelIndex  = Bunch->ChIndex & CHF_Mask;
 			Data             += sizeof(FBunchHeader);
 			Size             -= sizeof(FBunchHeader);
 
@@ -492,7 +494,7 @@ void UNetConnection::ReceivedPacket( BYTE* Data, INT Size )
 			// This is a valid data bunch.
 			Data += Bunch->GetTotalSize();
 			Size -= Bunch->GetTotalSize();
-			INT ChIndex = Bunch->ChIndex & CHF_Mask;
+			INT_UNREAL_32S ChIndex = Bunch->ChIndex & CHF_Mask;
 			if( Channels[ChIndex] )
 			{
 				// Verify channel type.
@@ -567,7 +569,7 @@ void UNetConnection::SendAck( _WORD ChIndex, _WORD Sequence )
 	FBunchHeader Ack( ChIndex | CHF_Ack, Sequence );
 
 	// Flush the current packet if there's no room.
-	if( OutNum + (INT)sizeof(Ack) > MaxPacket )
+	if( OutNum + (INT_UNREAL_32S)sizeof(Ack) > MaxPacket )
 		FlushNet();
 
 	// Append onto the outgoing packet.
@@ -588,7 +590,7 @@ void UNetConnection::SendNak( _WORD ChIndex, _WORD Sequence )
 	FBunchHeader Nak( ChIndex | CHF_Ack | CHF_AckNak, Sequence );
 
 	// Flush the current packet if there's no room.
-	if( OutNum + (INT)sizeof(Nak) > MaxPacket )
+	if( OutNum + (INT_UNREAL_32S)sizeof(Nak) > MaxPacket )
 		FlushNet();
 
 	// Append onto the outgoing packet.
@@ -707,7 +709,7 @@ FActorChannel* UNetConnection::GetActorChannel( AActor* Actor )
 // The transfer will eventually succeed or fail, and the
 // NotifyReceivedFile will be called with the results.
 //
-void UNetConnection::ReceiveFile( INT PackageIndex )
+void UNetConnection::ReceiveFile( INT_UNREAL_32S PackageIndex )
 {
 	guard(UNetConnection::ReceiveFile);
 	check(Driver->Map.IsValidIndex(PackageIndex));

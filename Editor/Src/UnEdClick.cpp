@@ -153,7 +153,7 @@ void FEditorHitObserver::Click( const FHitCause& Cause, const struct HBspSurf& H
 	{
 		// Apply texture to all selected.
 		GEditor->Trans->Begin( Cause.Viewport->Actor->XLevel, "apply texture to selected surfaces" );
-		for( INT i=0; i<Model->Surfs->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Model->Surfs->Num(); i++ )
 		{
 			if( Model->Surfs->Element(i).PolyFlags & PF_Selected )
 			{

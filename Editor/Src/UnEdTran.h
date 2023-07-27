@@ -12,19 +12,19 @@
 
 class EDITOR_API UTransBuffer : public UObject, public FTransactionTracker
 {
-	DECLARE_CLASS(UTransBuffer,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTransBuffer,UObject,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UTransBuffer)
 
 	// Variables.
 	TArray<BYTE> Data;			// Transaction tracker data.
-	INT		Overflow;			// 1 if active transaction overflowed data buffer.
-	INT		TransCount;			// Ever-increasing counter of maximum transaction.
-	INT		UndoTransCount;		// Transaction count in undo/redo cycle.
-	INT		NumTrans;			// Number of transactions in *Transactions.
-	INT		MaxTrans;			// Maximum number of transactions in *Transactions.
-	INT		NumChanges;			// Number of entries in *ChangeLog.
-	INT		MaxChanges;			// Maximum entries in *ChangeLog.
-	INT		MaxDataOffset;		// Maximum bytes allocated for *Data.
+	INT_UNREAL_32S		Overflow;			// 1 if active transaction overflowed data buffer.
+	INT_UNREAL_32S		TransCount;			// Ever-increasing counter of maximum transaction.
+	INT_UNREAL_32S		UndoTransCount;		// Transaction count in undo/redo cycle.
+	INT_UNREAL_32S		NumTrans;			// Number of transactions in *Transactions.
+	INT_UNREAL_32S		MaxTrans;			// Maximum number of transactions in *Transactions.
+	INT_UNREAL_32S		NumChanges;			// Number of entries in *ChangeLog.
+	INT_UNREAL_32S		MaxChanges;			// Maximum entries in *ChangeLog.
+	INT_UNREAL_32S		MaxDataOffset;		// Maximum bytes allocated for *Data.
 	char	ResetAction[256];	// Reason transaction system was last reset.
 
 	// Pointers, only valid when locked.
@@ -58,8 +58,8 @@ private:
 	void DeleteFirstTransaction();
 	void BeginChanges (class FTransaction *Trans);
 	void EndChanges (class FTransaction *Trans);
-	void RecursiveTransBspNode (UModel *Model,INT iNode);
-	void ApplyChange (class FTransChangeLog *Change, BYTE *SourcePtr, INT DataSize);
+	void RecursiveTransBspNode (UModel *Model,INT_UNREAL_32S iNode);
+	void ApplyChange (class FTransChangeLog *Change, BYTE *SourcePtr, INT_UNREAL_32S DataSize);
 };
 
 /*----------------------------------------------------------------------------

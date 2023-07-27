@@ -145,9 +145,11 @@ IMPLEMENT_CLASS(UClassFactory);
 static void ForceValid( ULevel* Level, UStruct* Struct, BYTE* Data )
 {
 	guard(ForceValid);
+	INT_UNREAL_32S i, j;
+
 	for( TFieldIterator<UProperty> It(Struct); It; ++It )
 	{
-		for( INT i=0; i<It->ArrayDim; i++ )
+		for( i=0; i<It->ArrayDim; i++ )
 		{
 			BYTE* Value = Data + It->Offset + i*It->GetElementSize();
 			if( It->IsA(UObjectProperty::StaticClass) )
@@ -155,7 +157,7 @@ static void ForceValid( ULevel* Level, UStruct* Struct, BYTE* Data )
 				UObject*& Obj = *(UObject**)Value;
 				if( Obj && Obj->IsA(AActor::StaticClass) )
 				{
-					for( INT j=0; j<Level->Num(); j++ )
+					for( j=0; j<Level->Num(); j++ )
 						if( Level->Actors(j)==Obj )
 							break;
 					if( j==Level->Num() )
@@ -208,7 +210,7 @@ UObject* ULevelFactory::Create
 	check(Cast<ABrush>(Level->Actors(1)));
 
 	// Init actors.
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		if( Level->Actors(i) )
 		{
@@ -298,14 +300,14 @@ UObject* ULevelFactory::Create
 				{
 					// Copy the one LevelInfo the position #0.
 					check(Level->Num()>0);
-					INT iActor=0; Level->FindItem( Actor, iActor );
+					INT_UNREAL_32S iActor=0; Level->FindItem( Actor, iActor );
 					Level->Actors(0)       = Actor;
 					Level->Actors(iActor)  = NULL;
 				}
 				else if( Actor->GetClass()==ABrush::StaticClass && !ImportedActive )
 				{
 					// Copy the active brush the position #0.
-					INT iActor=0; Level->FindItem( Actor, iActor );
+					INT_UNREAL_32S iActor=0; Level->FindItem( Actor, iActor );
 					Level->Actors(1)       = Actor;
 					Level->Actors(iActor)  = NULL;
 					ImportedActive = 1;
@@ -396,7 +398,7 @@ UObject* UPolysFactory::Create
 		{
 			// Autocad .DXF file.
 			debugf(NAME_Log,"Reading Autocad DXF file");
-			INT Started=0, NumPts=0, IsFace=0;
+			INT_UNREAL_32S Started=0, NumPts=0, IsFace=0;
 			FVector PointPool[4096];
 			FPoly NewPoly; NewPoly.Init();
 
@@ -406,7 +408,7 @@ UObject* UPolysFactory::Create
 			{
 				// Handle the line.
 				Str = ExtraLine;
-				INT Code = appAtoi(StrLine);
+				INT_UNREAL_32S Code = appAtoi(StrLine);
 				//debugf("DXF: %i: %s",Code,ExtraLine);
 				if( Code==0 )
 				{
@@ -496,7 +498,7 @@ UObject* UPolysFactory::Create
 					}
 					else if( Code>=71 && Code<=79 && (Code-71)==NewPoly.NumVertices )
 					{
-						INT iPoint = Abs(appAtoi(ExtraLine));
+						INT_UNREAL_32S iPoint = Abs(appAtoi(ExtraLine));
 						if( iPoint>0 && iPoint<=NumPts )
 							NewPoly.Vertex[NewPoly.NumVertices++] = PointPool[iPoint-1];
 						else debugf( NAME_Warning, "DXF: Invalid point index %i/%i", iPoint, NumPts );
@@ -947,7 +949,7 @@ UObject* UTextureFactory::Create
 			BYTE Color = *Buffer++;
 			if( (Color & 0xc0) == 0xc0 )
 			{
-				INT RunLength = Color & 0x3f;
+				INT_UNREAL_32S RunLength = Color & 0x3f;
 				Color     = *Buffer++;
 				appMemset( DestPtr, Color, Min(RunLength,(int)(DestEnd - DestPtr)) );
 				DestPtr  += RunLength;
@@ -1015,14 +1017,14 @@ UObject* UTextureFactory::Create
 	if( 1 )
 	{
 		FMemMark Mark(GMem);
-		INT      U      = Texture->USize;
-		INT      V      = Texture->VSize;
+		INT_UNREAL_32S      U      = Texture->USize;
+		INT_UNREAL_32S      V      = Texture->VSize;
 		FColor*  Colors = &Texture->Palette->Colors(0);
 		BYTE*    Data   = &Texture->Mips(0).DataArray(0);
 		FVector* Grad   = new(GMem)FVector[U*V];
-		for( INT i=0,ii=V-1; i<V; ii=i++ )
+		for( INT_UNREAL_32S i=0,ii=V-1; i<V; ii=i++ )
 		{
-			for( INT j=0,jj=U-1; j<U; jj=j++ )
+			for( INT_UNREAL_32S j=0,jj=U-1; j<U; jj=j++ )
 			{
 				FVector A(0,0,Colors[Data[i  * U + j  ]].FBrightness());
 				FVector B(1,0,Colors[Data[i  * U + jj ]].FBrightness());
@@ -1032,7 +1034,7 @@ UObject* UTextureFactory::Create
 		}
 
 		for( i=0,ii=V-1; i<V; ii=i++ )
-			for( INT j=0,jj=U-1; j<U; jj=j++ )
+			for( INT_UNREAL_32S j=0,jj=U-1; j<U; jj=j++ )
 				Grad[i*U+j] = (Grad[i*U+j]+Grad[ii*U+j]+Grad[i*U+jj]+Grad[ii*U+jj]).SafeNormal();
 
 		GFile[appStrlen(GFile)-3]='b';
@@ -1064,9 +1066,9 @@ UObject* UTextureFactory::Create
 			IH.biClrImportant	= 0;
 			appFwrite( &IH, sizeof(IH), 1, F );
 
-			for( INT i=V-1; i>=0; i-- )
+			for( INT_UNREAL_32S i=V-1; i>=0; i-- )
 			{
-				for( INT j=0; j<U; j++ )
+				for( INT_UNREAL_32S j=0; j<U; j++ )
 				{
 					struct {BYTE B,G,R,A;} C;
 					C.R      = Clamp( appFloor(128+Grad[i*U+j].Y*127), 0, 255 );
@@ -1103,14 +1105,14 @@ static inline BYTE AT( BYTE* Screen, int SXL, int X, int Y )
 //	left hand corner).  If it finds a character box, it returns 0 and the
 //	character's length (xl,yl).  Otherwise returns -1.
 //
-static int UFont_ScanFontBox( UTexture* Texture, INT X, INT Y, INT& XL, INT& YL )
+static int UFont_ScanFontBox( UTexture* Texture, INT_UNREAL_32S X, INT_UNREAL_32S Y, INT_UNREAL_32S& XL, INT_UNREAL_32S& YL )
 {
 	guard(UFont_ScanFontBox);
 	BYTE* Data = &Texture->GetMip(0)->DataArray(0);
-	INT FontXL = Texture->USize;
+	INT_UNREAL_32S FontXL = Texture->USize;
 
 	// Find x-length.
-	INT NewXL = 1;
+	INT_UNREAL_32S NewXL = 1;
 	while ( AT(Data,FontXL,X+NewXL,Y)==255 && AT(Data,FontXL,X+NewXL,Y+1)!=255 )
 		NewXL++;
 	
@@ -1118,7 +1120,7 @@ static int UFont_ScanFontBox( UTexture* Texture, INT X, INT Y, INT& XL, INT& YL 
 		return -1;
 
 	// Find y-length.
-	INT NewYL = 1;
+	INT_UNREAL_32S NewYL = 1;
 	while( AT(Data,FontXL,X,Y+NewYL)==255 && AT(Data,FontXL,X+1,Y+NewYL)!=255 )
 		NewYL++;
 
@@ -1154,13 +1156,14 @@ UObject* UFontFactory::Create
 )
 {
 	guard(UFontFactory::Create);
+	int i;
 	UFont* Font = (UFont*)UTextureFactory::Create( Class, InParent, Name, Context, Type, Buffer, BufferEnd, Warn );
 	if( Font )
 	{
 		// Init.
 		BYTE* TextureData = &Font->GetMip(0)->DataArray(0);
 		Font->Characters.Add( UFont::NUM_FONT_CHARS );
-		for( int i=0; i<Font->Characters.Num(); i++ )
+		for( i=0; i<Font->Characters.Num(); i++ )
 		{
 			Font->Characters(i).StartU = 0; Font->Characters(i).USize = 0;
 			Font->Characters(i).StartV = 0; Font->Characters(i).VSize = 0;
@@ -1204,7 +1207,7 @@ UObject* UFontFactory::Create
 
 		// Cleanup font data.
 		for( i=0; i<Font->Mips.Num(); i++ )
-			for( INT j=0; j<Font->Mips(i).DataArray.Num(); j++ )
+			for( INT_UNREAL_32S j=0; j<Font->Mips(i).DataArray.Num(); j++ )
 				if( Font->Mips(i).DataArray(j)==255 )
 					Font->Mips(i).DataArray(j) = 0;
 	}

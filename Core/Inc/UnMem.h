@@ -27,7 +27,7 @@ class CORE_API FMemStack
 {
 public:
 	// Get bytes.
-	inline BYTE* PushBytes( INT AllocSize, INT Align )
+	inline BYTE* PushBytes(INT_UNREAL_32S AllocSize, INT_UNREAL_32S Align )
 	{
 		// Debug checks.
 		guardSlow(FMemStack::PushBytes);
@@ -36,7 +36,7 @@ public:
 		debug(Top<=End);
 
 		// Try to get memory from the current chunk.
-		BYTE* Result = (BYTE *)(((INT)Top+(Align-1))&~(Align-1));
+		BYTE* Result = (BYTE *)(((INT_UNREAL_32S)Top+(Align-1))&~(Align-1));
 		Top = Result + AllocSize;
 
 		// Make sure we didn't overflow.
@@ -52,16 +52,16 @@ public:
 	}
 
 	// Main functions.
-	void Init( INT DefaultChunkSize );
+	void Init(INT_UNREAL_32S DefaultChunkSize );
 	void Exit();
 	void Tick();
 	int  GetByteCount();
 
 	// Friends.
 	friend class FMemMark;
-	friend void* operator new( size_t Size, FMemStack& Mem, INT Count=1, INT Align=DEFAULT_ALIGNMENT );
-	friend void* operator new( size_t Size, FMemStack& Mem, EMemZeroed Tag, INT Count=1, INT Align=DEFAULT_ALIGNMENT );
-	friend void* operator new( size_t Size, FMemStack& Mem, EMemOned Tag, INT Count=1, INT Align=DEFAULT_ALIGNMENT );
+	friend void* operator new( size_t Size, FMemStack& Mem, INT_UNREAL_32S Count=1, INT_UNREAL_32S Align=DEFAULT_ALIGNMENT );
+	friend void* operator new( size_t Size, FMemStack& Mem, EMemZeroed Tag, INT_UNREAL_32S Count=1, INT_UNREAL_32S Align=DEFAULT_ALIGNMENT );
+	friend void* operator new( size_t Size, FMemStack& Mem, EMemOned Tag, INT_UNREAL_32S Count=1, INT_UNREAL_32S Align=DEFAULT_ALIGNMENT );
 
 private:
 	// Constants.
@@ -71,7 +71,7 @@ private:
 	struct FTaggedMemory
 	{
 		FTaggedMemory* Next;
-		INT DataSize;
+		INT_UNREAL_32S DataSize;
 		BYTE Data[];
 	};
 
@@ -79,14 +79,14 @@ private:
 	FMemCache*		GCache;				// The memory cache we use for chunk allocation.
 	BYTE*			Top;				// Top of current chunk (Top<=End).
 	BYTE*			End;				// End of current chunk.
-	INT				DefaultChunkSize;	// Maximum chunk size to allocate.
+	INT_UNREAL_32S				DefaultChunkSize;	// Maximum chunk size to allocate.
 	FTaggedMemory*	TopChunk;			// Only chunks 0..ActiveChunks-1 are valid.
 
 	// Static.
 	static FTaggedMemory* UnusedChunks;
 
 	// Functions.
-	BYTE* AllocateNewChunk( INT MinSize );
+	BYTE* AllocateNewChunk(INT_UNREAL_32S MinSize );
 	void FreeChunks( FTaggedMemory* NewTopChunk );
 };
 
@@ -95,13 +95,13 @@ private:
 -----------------------------------------------------------------------------*/
 
 // Operator new for typesafe memory stack allocation.
-template <class T> inline T* New( FMemStack& Mem, INT Count=1, INT Align=DEFAULT_ALIGNMENT )
+template <class T> inline T* New( FMemStack& Mem, INT_UNREAL_32S Count=1, INT_UNREAL_32S Align=DEFAULT_ALIGNMENT )
 {
 	guardSlow(FMemStack::New);
 	return (T*)Mem.PushBytes( Count*sizeof(T), Align );
 	unguardSlow;
 }
-template <class T> inline T* NewZeroed( FMemStack& Mem, INT Count=1, INT Align=DEFAULT_ALIGNMENT )
+template <class T> inline T* NewZeroed( FMemStack& Mem, INT_UNREAL_32S Count=1, INT_UNREAL_32S Align=DEFAULT_ALIGNMENT )
 {
 	guardSlow(FMemStack::New);
 	BYTE* Result = Mem.PushBytes( Count*sizeof(T), Align );
@@ -109,7 +109,7 @@ template <class T> inline T* NewZeroed( FMemStack& Mem, INT Count=1, INT Align=D
 	return (T*)Result;
 	unguardSlow;
 }
-template <class T> inline T* NewOned( FMemStack& Mem, INT Count=1, INT Align=DEFAULT_ALIGNMENT )
+template <class T> inline T* NewOned( FMemStack& Mem, INT_UNREAL_32S Count=1, INT_UNREAL_32S Align=DEFAULT_ALIGNMENT )
 {
 	guardSlow(FMemStack::New);
 	return (T*)Mem.PushBytes( Count*sizeof(T), Align );
@@ -123,14 +123,14 @@ template <class T> inline T* NewOned( FMemStack& Mem, INT Count=1, INT Align=DEF
 -----------------------------------------------------------------------------*/
 
 // Operator new for typesafe memory stack allocation.
-inline void* operator new( size_t Size, FMemStack& Mem, INT Count, INT Align )
+inline void* operator new( size_t Size, FMemStack& Mem, INT_UNREAL_32S Count, INT_UNREAL_32S Align )
 {
 	// Get uninitialized memory.
 	guardSlow(FMemStack::New1);
 	return Mem.PushBytes( Size*Count, Align );
 	unguardSlow;
 }
-inline void* operator new( size_t Size, FMemStack& Mem, EMemZeroed Tag, INT Count, INT Align )
+inline void* operator new( size_t Size, FMemStack& Mem, EMemZeroed Tag, INT_UNREAL_32S Count, INT_UNREAL_32S Align )
 {
 	// Get zero-filled memory.
 	guardSlow(FMemStack::New2);
@@ -139,7 +139,7 @@ inline void* operator new( size_t Size, FMemStack& Mem, EMemZeroed Tag, INT Coun
 	return Result;
 	unguardSlow;
 }
-inline void* operator new( size_t Size, FMemStack& Mem, EMemOned Tag, INT Count, INT Align )
+inline void* operator new( size_t Size, FMemStack& Mem, EMemOned Tag, INT_UNREAL_32S Count, INT_UNREAL_32S Align )
 {
 	// Get one-filled memory.
 	guardSlow(FMemStack::New3);

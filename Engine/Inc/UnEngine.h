@@ -26,8 +26,8 @@ class ENGINE_API UEngine : public USubsystem
 	class UClient*			Client;
 	class URenderBase*		Render;
 	class UAudioSubsystem*	Audio;
-	INT						TickCycles, GameCycles, ClientCycles;
-	INT						CacheSizeMegs;
+	INT_UNREAL_32S						TickCycles, GameCycles, ClientCycles;
+	INT_UNREAL_32S						CacheSizeMegs;
 	UBOOL					UseSound;
 
 	// Constructors.
@@ -45,13 +45,13 @@ class ENGINE_API UEngine : public USubsystem
 	virtual UBOOL Key( UViewport* Viewport, EInputKey Key );
 	virtual UBOOL InputEvent( UViewport* Viewport, EInputKey iKey, EInputAction State, FLOAT Delta=0.0 );
 	virtual void Tick( FLOAT DeltaSeconds )=0;
-	virtual void Draw( UViewport* Viewport, BYTE* HitData=NULL, INT* HitSize=NULL )=0;
+	virtual void Draw( UViewport* Viewport, BYTE* HitData=NULL, INT_UNREAL_32S* HitSize=NULL )=0;
 	virtual void MouseDelta( UViewport* Viewport, DWORD Buttons, FLOAT DX, FLOAT DY )=0;
 	virtual void MousePosition( UViewport* Viewport, DWORD Buttons, FLOAT X, FLOAT Y )=0;
 	virtual void Click( UViewport* Viewport, DWORD Buttons, FLOAT X, FLOAT Y )=0;
 	virtual void SetClientTravel( UPlayer* Viewport, const char* NextURL, UBOOL bURL, UBOOL bItems, ETravelType TravelType )=0;
-	virtual INT ChallengeResponse( INT Challenge );
-	virtual INT GetMaxTickRate();
+	virtual INT_UNREAL_32S ChallengeResponse( INT_UNREAL_32S Challenge );
+	virtual INT_UNREAL_32S GetMaxTickRate();
 	virtual void SetProgress( const char* Str1, const char* Str2, FLOAT Seconds );
 
 	// Temporary!!

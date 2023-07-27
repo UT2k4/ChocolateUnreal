@@ -200,34 +200,34 @@ typedef struct tagVERTEX
 struct FSGLStats
 {
 	// Stat variables.
-	INT DisplayCount;
+	INT_UNREAL_32S DisplayCount;
 
-	INT Palettes;
-	INT Textures;
-	INT LightMaps;
-	INT FogMaps;
-	INT Reloads;
-	INT LightMaxColors;
-	INT FogMaxColors;
-	INT ComplexSurfs, ComplexPolys, GouraudPolys, Tiles;
+	INT_UNREAL_32S Palettes;
+	INT_UNREAL_32S Textures;
+	INT_UNREAL_32S LightMaps;
+	INT_UNREAL_32S FogMaps;
+	INT_UNREAL_32S Reloads;
+	INT_UNREAL_32S LightMaxColors;
+	INT_UNREAL_32S FogMaxColors;
+	INT_UNREAL_32S ComplexSurfs, ComplexPolys, GouraudPolys, Tiles;
 
-	INT PaletteTime;
-	INT TextureTime;
-	INT LightMapTime;
-	INT FogMapTime;
-	INT ReloadTime;
-	INT LightMaxColorTime;
-	INT FogMaxColorTime;
-	INT TextureLoadTime;
-	INT ComplexSurfTime;
-	INT GouraudPolyTime;
-	INT TileTime;
-	INT StartOfFrameTime;
-	INT RenderFinishTime;
-	INT RenderTime;
+	INT_UNREAL_32S PaletteTime;
+	INT_UNREAL_32S TextureTime;
+	INT_UNREAL_32S LightMapTime;
+	INT_UNREAL_32S FogMapTime;
+	INT_UNREAL_32S ReloadTime;
+	INT_UNREAL_32S LightMaxColorTime;
+	INT_UNREAL_32S FogMaxColorTime;
+	INT_UNREAL_32S TextureLoadTime;
+	INT_UNREAL_32S ComplexSurfTime;
+	INT_UNREAL_32S GouraudPolyTime;
+	INT_UNREAL_32S TileTime;
+	INT_UNREAL_32S StartOfFrameTime;
+	INT_UNREAL_32S RenderFinishTime;
+	INT_UNREAL_32S RenderTime;
 
-	INT LargestLMU,LargestLMV;
-	INT LargestLMDim;
+	INT_UNREAL_32S LargestLMU,LargestLMV;
+	INT_UNREAL_32S LargestLMDim;
 };
 
 extern FSGLStats Stats;
@@ -252,7 +252,7 @@ class DLL_EXPORT USGLRenderDevice : public URenderDevice, public UDDC
 	FPlane	FlashFog;
 
 	// SGL related stuff.
-	INT		InFrame;
+	INT_UNREAL_32S		InFrame;
 	DWORD	CurrentFrame;
 
 	// Tables
@@ -263,9 +263,9 @@ class DLL_EXPORT USGLRenderDevice : public URenderDevice, public UDDC
 	DWORD	SimplePolyFlags;
 	QWORD	SimplePolyTextureCacheID;
 	DWORD	SimplePolyHandler;
-	INT		SimpleVertexCount;
+	INT_UNREAL_32S		SimpleVertexCount;
 	PVERTEX SimpleVertexPtr;
-	INT		SimpleFaceCount;
+	INT_UNREAL_32S		SimpleFaceCount;
 	union
 	{
 		int		(*SimpleFacePtr)[3];
@@ -291,7 +291,7 @@ class DLL_EXPORT USGLRenderDevice : public URenderDevice, public UDDC
 		SGLColor	MaxColor;
 		int			SglTextureName;
 		FLOAT		UScale,VScale;
-		INT			Dimensions;
+		INT_UNREAL_32S			Dimensions;
 		DWORD		User;
 	} PolyCTex, PolyVTex, BumpMapTex, MacroTex, LightMapTex, DetailTex, FogMapTex;
 
@@ -304,7 +304,7 @@ class DLL_EXPORT USGLRenderDevice : public URenderDevice, public UDDC
 		SGLColor	MaxColor;
 		int			SglTextureName;
 		FLOAT		UScale,VScale;
-		INT			Dimensions;
+		INT_UNREAL_32S			Dimensions;
 		BOOL		ReloadCandidate;
 		// Other stuff.
 		DWORD		LastFrameUsed;
@@ -335,7 +335,7 @@ class DLL_EXPORT USGLRenderDevice : public URenderDevice, public UDDC
 	int  GetSglDataSize(int Dimensions,BOOL MipMapped);
 	int  MipMapOffset(int Dimensions,int Level);
 	int NumLevels(int Dimensions);
-	void CreateSglPalette(WORD *SglPalette,FColor *SrcPalette,INT PaletteSize,DWORD TextureFlags,FColor& MaxColor);
+	void CreateSglPalette(WORD *SglPalette,FColor *SrcPalette,INT_UNREAL_32S PaletteSize,DWORD TextureFlags,FColor& MaxColor);
 	void ConvertTextureData(int Dimensions,int XSize,int YSize,
 							int TargetXSize,int TargetYSize,
 							WORD *Target,BYTE *Src,WORD *SglPalette);
@@ -371,7 +371,7 @@ public:
 	UBOOL Init( UViewport* InViewport );
 	void Exit();
 	void Flush();
-	void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT* HitSize );
+	void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* HitData, INT_UNREAL_32S* HitSize );
 	void Unlock( UBOOL Blit );
     void DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Surface, FSurfaceFacet& Facet );
     void DrawGouraudPolygon( FSceneNode* Frame, FTextureInfo& Info, FTransTexture** Pts, int NumPts, DWORD PolyFlags, FSpanBuffer* Span );
@@ -381,8 +381,8 @@ public:
     void Draw2DPoint( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FLOAT X1, FLOAT Y1, FLOAT X2, FLOAT Y2 );
     void GetStats( char* Result );
     void ClearZ( FSceneNode* Frame );
-    void PushHit( const BYTE* Data, INT Count );
-    void PopHit( INT Count, UBOOL bForce );
+    void PushHit( const BYTE* Data, INT_UNREAL_32S Count );
+    void PopHit( INT_UNREAL_32S Count, UBOOL bForce );
     void ReadPixels( FColor* Pixels );
 };
 

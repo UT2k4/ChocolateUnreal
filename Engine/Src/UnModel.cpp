@@ -58,7 +58,7 @@ void UDatabase::Destroy()
 	UObject::Destroy();
 	unguard;
 }
-INT UDatabase::Add( INT NumToAdd )
+INT_UNREAL_32S UDatabase::Add( INT_UNREAL_32S NumToAdd )
 {
 	guard(UObject::Add);
 
@@ -86,7 +86,7 @@ void UDatabase::Remove( int Index, int Count )
 	Modify();
 
 	// Note that all items were modified.
-	for( INT i=Index+Count; i<DbMax; i++ )
+	for( INT_UNREAL_32S i=Index+Count; i<DbMax; i++ )
 		ModifyItem(i);
 
 	// Remove item from list.
@@ -103,7 +103,7 @@ void UDatabase::ModifyAllItems()
 {
 	guard(UObject::ModifyAllItems);
 
-	for( INT i=0; i<DbNum; i++ )
+	for( INT_UNREAL_32S i=0; i<DbNum; i++ )
 		ModifyItem(i);
 	
 	unguardobj;
@@ -300,7 +300,7 @@ void UModel::Serialize( FArchive& Ar )
 	Ar << LeafHulls << Leaves << Lights << LeafZone << LeafLeaf;
 	if( Ar.Ver() <= 41 ) //oldver
 	{
-		INT A,B,C;
+		INT_UNREAL_32S A,B,C;
 		Ar << A << B << C;
 		RootOutside=A;
 		Linked=C;
@@ -411,8 +411,8 @@ void UModel::BuildBound()
 	if( Polys && Polys->Num() )
 	{
 		TArray<FVector> Points;
-		for( INT i=0; i<Polys->Num(); i++ )
-			for( INT j=0; j<Polys->Element(i).NumVertices; j++ )
+		for( INT_UNREAL_32S i=0; i<Polys->Num(); i++ )
+			for( INT_UNREAL_32S j=0; j<Polys->Element(i).NumVertices; j++ )
 				Points.AddItem(Polys->Element(i).Vertex[j]);
 		BoundingBox    = FBox( Points );
 		BoundingSphere = FSphere( Points );
@@ -433,7 +433,7 @@ void UModel::Transform( ABrush* Owner )
 
 	FModelCoords Coords;
 	FLOAT Orientation = Owner->BuildCoords( &Coords, NULL );
-	for( INT i=0; i<Polys->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Polys->Num(); i++ )
 		Polys->Element( i ).Transform( Coords, Owner->PrePivot, Owner->Location, Orientation );
 
 	unguard;
@@ -442,7 +442,7 @@ void UModel::Transform( ABrush* Owner )
 //
 // Returns whether a BSP leaf is potentially visible from another leaf.
 //
-UBOOL UModel::PotentiallyVisible( INT iLeaf1, INT iLeaf2 )
+UBOOL UModel::PotentiallyVisible( INT_UNREAL_32S iLeaf1, INT_UNREAL_32S iLeaf2 )
 {
 	// This is the amazing superfast patent-pending 1 cpu cycle potential visibility 
 	// algorithm by Tim Sweeney:

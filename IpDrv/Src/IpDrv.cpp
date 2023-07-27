@@ -85,7 +85,7 @@ UBOOL wsaInit( char* Error256 )
 	{
 		Tried = 1;
 		WSADATA WSAData;
-		INT Code = WSAStartup( 0x0101, &WSAData );
+		INT_UNREAL_32S Code = WSAStartup( 0x0101, &WSAData );
 		if( Code==0 )
 		{
 			GInitialized = 1;
@@ -122,7 +122,6 @@ class DLL_EXPORT UTcpNetDriver : public UNetDriver
 	char		HostName[256];
 
 	// Constructor.
-	UTcpNetDriver() {}
 
 	// UObject interface.
 	void Destroy();
@@ -133,7 +132,7 @@ class DLL_EXPORT UTcpNetDriver : public UNetDriver
 	UBOOL IsInternet() {return 1;}
 
 	// FExec interface.
-	INT Exec( const char* Cmd, FOutputDevice* Out=GSystem );
+	INT_UNREAL_32S Exec( const char* Cmd, FOutputDevice* Out=GSystem );
 
 	// UTcpNetDriver interface.
 	UTcpipConnection* GetServerConnection() {return (UTcpipConnection*)ServerConnection;}
@@ -149,7 +148,7 @@ IMPLEMENT_CLASS(UTcpNetDriver);
 //
 class DLL_EXPORT UTcpipConnection : public UNetConnection
 {
-	DECLARE_CLASS(UTcpipConnection,UNetConnection,CLASS_Config|CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTcpipConnection,UNetConnection,CLASS_Config|CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UTcpipConnection)
 
 	// Variables.
@@ -161,11 +160,11 @@ class DLL_EXPORT UTcpipConnection : public UNetConnection
 	// Latent queue.
 	struct FLatentQueue
 	{
-		INT				Num;
+		INT_UNREAL_32S				Num;
 		BYTE*			Data;
 		DOUBLE			Time;
 		FLatentQueue*	Next;
-		FLatentQueue( FLatentQueue* InNext, INT InNum, BYTE* InData, DOUBLE InTime )
+		FLatentQueue( FLatentQueue* InNext, INT_UNREAL_32S InNum, BYTE* InData, DOUBLE InTime )
 		:	Num		( InNum )
 		,	Data	( (BYTE*)memcpy( new BYTE[InNum], InData, InNum ) )
 		,	Next	( InNext )
@@ -365,7 +364,7 @@ static UBOOL Matches( sockaddr_in& A, sockaddr_in& B )
 //
 // Convert error code to text.
 //
-char* wsaError( INT Code )
+char* wsaError( INT_UNREAL_32S Code )
 {
 	if( Code == -1 )
 		Code = WSAGetLastError();
@@ -500,8 +499,8 @@ UBOOL UTcpNetDriver::Init( UBOOL Connect, FNetworkNotify* InNotify, FURL& URL, c
 
 	// Increase socket queue size, because we are polling rather than threading
 	// and thus we rely on Windows Sockets to buffer a lot of data on the server.
-	INT RecvSize = Connect ? 0x8000 : 0x20000, SizeSize=sizeof(RecvSize);
-	INT SendSize = Connect ? 0x8000 : 0x20000;
+	INT_UNREAL_32S RecvSize = Connect ? 0x8000 : 0x20000, SizeSize=sizeof(RecvSize);
+	INT_UNREAL_32S SendSize = Connect ? 0x8000 : 0x20000;
 	setsockopt( Socket, SOL_SOCKET, SO_RCVBUF, (char*)&RecvSize, SizeSize );
 	getsockopt( Socket, SOL_SOCKET, SO_RCVBUF, (char*)&RecvSize, &SizeSize );
 	setsockopt( Socket, SOL_SOCKET, SO_SNDBUF, (char*)&SendSize, SizeSize );
@@ -555,8 +554,9 @@ UBOOL UTcpNetDriver::Init( UBOOL Connect, FNetworkNotify* InNotify, FURL& URL, c
 		debugf( NAME_DevNet, "Opened socket to port %i, rate %i", URL.Port, ServerConnection->ByteLimit );
 
 		// Crack the URL.
+		INT_UNREAL_32S i;
 		const char* s = *URL.Host;
-		for( INT i=0; i<4 && s!=NULL && *s>='0' && *s<='9'; i++ )
+		for( i=0; i<4 && s!=NULL && *s>='0' && *s<='9'; i++ )
 		{
 			s = strchr(s,'.');
 			if( s )
@@ -654,12 +654,12 @@ void UTcpNetDriver::Tick()
 	// Process all incoming packets.
 	BYTE Data[UNetConnection::MAX_PACKET_SIZE];
 	sockaddr_in FromAddr;
-	INT Count=0;
+	INT_UNREAL_32S Count=0;
 	while( 1 )
 	{
 		// Get data, if any.
-		INT FromSize = sizeof(FromAddr);
-		INT Size     = recvfrom( Socket, (char*)Data, sizeof(Data), 0, (sockaddr*)&FromAddr, &FromSize );
+		INT_UNREAL_32S FromSize = sizeof(FromAddr);
+		INT_UNREAL_32S Size     = recvfrom( Socket, (char*)Data, sizeof(Data), 0, (sockaddr*)&FromAddr, &FromSize );
 
 		// Handle result.
 		if( Size==SOCKET_ERROR && WSAGetLastError()==WSAEWOULDBLOCK )
@@ -679,7 +679,7 @@ void UTcpNetDriver::Tick()
 		UTcpipConnection* Connection=NULL;
 		if( GetServerConnection() && Matches(GetServerConnection()->RemoteAddr,FromAddr) )
 			Connection = GetServerConnection();
-		for( INT i=0; i<Connections.Num() && !Connection; i++ )
+		for( INT_UNREAL_32S i=0; i<Connections.Num() && !Connection; i++ )
 			if( Matches( ((UTcpipConnection*)Connections(i))->RemoteAddr, FromAddr ) )
 				Connection = (UTcpipConnection*)Connections(i);
 
@@ -709,7 +709,7 @@ void UTcpNetDriver::Tick()
 
 		// Send the packet to the connection for processing.
 		//warning: ReceivedPacket may destroy Connection.
-		debugfSlow( NAME_DevNetTraffic, "%03i: Received %i", (INT)(appSeconds()*1000)%1000, Size );
+		debugfSlow( NAME_DevNetTraffic, "%03i: Received %i", (INT_UNREAL_32S)(appSeconds()*1000)%1000, Size );
 		Connection->LastReceiveTime = Time;
 		Connection->ReceivedPacket( Data, Size );
 	}
@@ -718,7 +718,7 @@ void UTcpNetDriver::Tick()
 	// Poll all sockets.
 	if( GetServerConnection() )
 		GetServerConnection()->Tick();
-	for( INT i=0; i<Connections.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Connections.Num(); i++ )
 		Connections(i)->Tick();
 
 	unguard;
@@ -731,7 +731,7 @@ void UTcpNetDriver::Tick()
 //
 // Execute a command.
 //
-INT UTcpNetDriver::Exec( const char* Cmd, FOutputDevice* Out )
+INT_UNREAL_32S UTcpNetDriver::Exec( const char* Cmd, FOutputDevice* Out )
 {
 	guard(UTcpNetDriver::Exec);
 	if( ParseCommand(&Cmd,"TESTNET") )
@@ -749,7 +749,7 @@ INT UTcpNetDriver::Exec( const char* Cmd, FOutputDevice* Out )
 			for( FChannelIterator It(GetServerConnection()); It; ++It )
 				Out->Logf( "      Channel %i: %s", It.GetIndex(), It->Describe(Other) );
 		}
-		for( INT i=0; i<Connections.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Connections.Num(); i++ )
 		{
 			Connections(i)->Describe( String );
 			Out->Logf( "   %s", String );

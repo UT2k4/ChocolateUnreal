@@ -5,7 +5,7 @@
 
 	FLOAT	FloatFixDX;
 	BYTE*	Screen;
-	INT		FixDX, FixX, X, Y, DY, Count, DestX, ScreenInc, ColorBytes;
+	INT_UNREAL_32S		FixDX, FixX, X, Y, DY, Count, DestX, ScreenInc, ColorBytes;
 
 	guard(UnLine);
 

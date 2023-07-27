@@ -66,7 +66,7 @@ enum EJSMeshTriType
 -----------------------------------------------------------------------------*/
 
 // Mesh sorting function.
-INT Compare( const FMeshTri& A, const FMeshTri& B )
+INT_UNREAL_32S Compare( const FMeshTri& A, const FMeshTri& B )
 {
 	if     ( A.TextureIndex > B.TextureIndex ) return 1;
 	else if( A.TextureIndex < B.TextureIndex ) return -1;
@@ -273,10 +273,10 @@ void UEditorEngine::meshBuildBounds( UMesh* Mesh )
 
 	// Bound all frames.
 	TArray<FVector> AllFrames;
-	for( INT i=0; i<Mesh->AnimFrames; i++ )
+	for( INT_UNREAL_32S i=0; i<Mesh->AnimFrames; i++ )
 	{
 		TArray<FVector> OneFrame;
-		for( INT j=0; j<Mesh->FrameVerts; j++ )
+		for( INT_UNREAL_32S j=0; j<Mesh->FrameVerts; j++ )
 		{
 			FVector Vertex = Mesh->Verts( i * Mesh->FrameVerts + j ).Vector();
 			OneFrame .AddItem( Vertex );

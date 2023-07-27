@@ -49,7 +49,7 @@ public:
 	FRepLink*   Condition;		// Link with original condition.
 	FRepLink*	Next;			// Next replicated link per class.
 	UObject*	LastObject;		// Most recently evaluated actor.
-	INT			LastStamp;		// Most recently evaluated actor timestamp.
+	INT_UNREAL_32S			LastStamp;		// Most recently evaluated actor timestamp.
 	UBOOL		LastResult;		// Whether last result was replicated.
 	FRepLink( UProperty* InProperty, FRepLink* InNext )
 	:	Property	(InProperty)
@@ -72,10 +72,10 @@ struct CORE_API FLabelEntry
 {
 	// Variables.
 	FName	Name;
-	INT		iCode;
+	INT_UNREAL_32S		iCode;
 
 	// Functions.
-	FLabelEntry( FName InName, INT iInCode );
+	FLabelEntry( FName InName, INT_UNREAL_32S iInCode );
 	CORE_API friend FArchive& operator<<( FArchive& Ar, FLabelEntry &Label );
 };
 
@@ -181,22 +181,22 @@ protected:
 //
 class CORE_API UStruct : public UField
 {
-	DECLARE_CLASS(UStruct,UField,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UStruct,UField,0)
 	NO_DEFAULT_CONSTRUCTOR(UStruct)
 
 	// Variables.
 	UTextBuffer*		ScriptText;
 	UField*				Children;
-	INT					PropertiesSize;
+	INT_UNREAL_32S					PropertiesSize;
 	FName				FriendlyName;
-	INT					TextPos;
-	INT					Line;
+	INT_UNREAL_32S					TextPos;
+	INT_UNREAL_32S					Line;
 	TArray<BYTE>		Script;
 	UObjectProperty*	RefLink;
 	UStructProperty*	StructLink;
 
 	// Constructors.
-	UStruct( EIntrinsicConstructor, INT InSize, FName InName, FName InPackageName );
+	UStruct( EIntrinsicConstructor, INT_UNREAL_32S InSize, FName InName, FName InPackageName );
 	UStruct( UStruct* InSuperStruct );
 
 	// UObject interface.
@@ -210,8 +210,8 @@ class CORE_API UStruct : public UField
 	virtual void SerializeBin( FArchive& Ar, BYTE* Data );
 	virtual void SerializeTaggedProperties( FArchive& Ar, BYTE* Data, UClass* DefaultsClass );
 	virtual void CleanupDestroyed( BYTE* Data );
-	virtual EExprToken SerializeExpr( INT& iCode, FArchive& Ar );
-	INT GetPropertiesSize()
+	virtual EExprToken SerializeExpr(INT_UNREAL_32S& iCode, FArchive& Ar );
+	INT_UNREAL_32S GetPropertiesSize()
 	{
 		return PropertiesSize;
 	}
@@ -219,7 +219,7 @@ class CORE_API UStruct : public UField
 	{
 		return ScriptText ? appMemCrc((BYTE*)*ScriptText->Text,ScriptText->Text.Length()) : 0;
 	}
-	void SetPropertiesSize( INT NewSize )
+	void SetPropertiesSize(INT_UNREAL_32S NewSize )
 	{
 		PropertiesSize = NewSize;
 	}
@@ -257,7 +257,7 @@ class CORE_API UStruct : public UField
 //
 class CORE_API UFunction : public UStruct
 {
-	DECLARE_CLASS(UFunction,UStruct,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFunction,UStruct,0)
 	NO_DEFAULT_CONSTRUCTOR(UFunction)
 
 	// Variables.
@@ -307,7 +307,7 @@ class CORE_API UFunction : public UStruct
 //
 class CORE_API UState : public UStruct
 {
-	DECLARE_CLASS(UState,UStruct,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UState,UStruct,0)
 	NO_DEFAULT_CONSTRUCTOR(UState)
 
 	// Variables.
@@ -318,7 +318,7 @@ class CORE_API UState : public UStruct
 	_WORD LabelTableOffset;
 
 	// Constructors.
-	UState( EIntrinsicConstructor, INT InSize, FName InName, FName InPackageName );
+	UState( EIntrinsicConstructor, INT_UNREAL_32S InSize, FName InName, FName InPackageName );
 	UState( UState* InSuperState );
 
 	// UObject interface.
@@ -348,7 +348,7 @@ class CORE_API UState : public UStruct
 //
 class CORE_API UEnum : public UField
 {
-	DECLARE_CLASS(UEnum,UField,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UEnum,UField,0)
 	NO_DEFAULT_CONSTRUCTOR(UEnum)
 
 	// Variables.
@@ -380,12 +380,12 @@ class CORE_API UEnum : public UField
 //
 class CORE_API UClass : public UState
 {
-	DECLARE_CLASS(UClass,UState,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UClass,UState,0)
 
 	// Variables.
 	DWORD				ClassFlags;
-	INT					ClassRecordSize;
-	INT					ClassUnique;
+	INT_UNREAL_32S					ClassRecordSize;
+	INT_UNREAL_32S					ClassUnique;
 	FGuid				ClassGuid;
 	TArray<FDependency> Dependencies;
 	TArray<FName>		PackageImports;
@@ -415,7 +415,8 @@ class CORE_API UClass : public UState
 	char* GetNameCPP()
 	{
 		static char Result[NAME_SIZE+1];
-		for( UClass* C=this; C; C=C->GetSuperClass() )
+		UClass* C = this;
+		for(; C; C=C->GetSuperClass() )
 			if( appStricmp(C->GetName(),"Actor")==0 )
 				break;
 		appSprintf( Result, "%s%s", C ? "A" : "U", GetName() );
@@ -425,8 +426,9 @@ class CORE_API UClass : public UState
 	// UClass interface.
 	void AddDependency( UClass* InClass, UBOOL InDeep )
 	{
+		INT_UNREAL_32S i;
 		guard(UClass::AddDependency);
-		for( INT i=0; i<Dependencies.Num(); i++ )
+		for( i=0; i<Dependencies.Num(); i++ )
 			if( Dependencies(i).Class==InClass )
 				Dependencies(i).Deep |= InDeep;
 		if( i==Dependencies.Num() )
@@ -469,7 +471,7 @@ private:
 //
 class CORE_API UConst : public UField
 {
-	DECLARE_CLASS(UConst,UField,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UConst,UField,0)
 	NO_DEFAULT_CONSTRUCTOR(UConst)
 
 	// Variables.

@@ -118,11 +118,11 @@ void UCanvas::DrawIcon
 void UCanvas::StrLen
 (
 	UFont*		Font,
-	INT&		XL, 
-	INT&		YL, 
+	INT_UNREAL_32S&		XL, 
+	INT_UNREAL_32S&		YL, 
 	const char*	Text,
-	INT			iStart,
-	INT			NumChars
+	INT_UNREAL_32S			iStart,
+	INT_UNREAL_32S			NumChars
 )
 {
 	guard(UCanvas::StrLen);
@@ -148,9 +148,9 @@ void UCanvas::StrLen
 void UCanvas::WrappedStrLen
 (
 	UFont*		Font,
-	INT&		XL, 
-	INT&		YL, 
-	INT			MaxWidth, 
+	INT_UNREAL_32S&		XL, 
+	INT_UNREAL_32S&		YL, 
+	INT_UNREAL_32S			MaxWidth, 
 	const char*	Text
 )
 {
@@ -215,7 +215,7 @@ void UCanvas::WrappedStrLen
 //
 // Font printing.
 //
-static inline void DrawChar( UCanvas* Canvas, FTextureInfo& Info, INT X, INT Y, INT XL, INT YL, INT U, INT V, INT UL, INT VL, FPlane Color )
+static inline void DrawChar( UCanvas* Canvas, FTextureInfo& Info, INT_UNREAL_32S X, INT_UNREAL_32S Y, INT_UNREAL_32S XL, INT_UNREAL_32S YL, INT_UNREAL_32S U, INT_UNREAL_32S V, INT_UNREAL_32S UL, INT_UNREAL_32S VL, FPlane Color )
 {
 	// Reject.
 	FSceneNode* Frame=Canvas->Frame;
@@ -238,8 +238,8 @@ static inline void DrawChar( UCanvas* Canvas, FTextureInfo& Info, INT X, INT Y, 
 void VARARGS UCanvas::Printf
 (
 	UFont*		Font,
-	INT			X,
-	INT			Y,
+	INT_UNREAL_32S			X,
+	INT_UNREAL_32S			Y,
 	const char* Fmt,
 	...
 )
@@ -376,7 +376,7 @@ void UCanvas::execDrawText( FFrame& Stack, BYTE*& Result )
 	//debugf( "DrawText: '%s' %i", Text, CR );
 	if( Style!=STY_None )
 		WrappedPrintf( Font, bCenter, "%s", Text );
-	INT XL, YL;
+	INT_UNREAL_32S XL, YL;
 	WrappedStrLen( Font, XL, YL, ClipX, Text );
 	CurX += XL;
 	CurYL = Max(CurYL,(FLOAT)YL);

@@ -24,8 +24,8 @@ void USound::Serialize( FArchive& Ar )
 		if( Ar.IsLoading() )
 		{
 			// Derive these from the exposed 'low quality' preference setting.
-			INT Force8Bit = 0;
-			INT ForceHalve = 0;
+			INT_UNREAL_32S Force8Bit = 0;
+			INT_UNREAL_32S ForceHalve = 0;
 			if( Audio && Audio->GetLowQualitySetting() && !GIsEditor )
 			{
 				Force8Bit = 1;
@@ -88,7 +88,7 @@ void USound::Destroy()
 	Super::Destroy();
 	unguard;
 }
-void USound::Export( FOutputDevice& Out, const char* FileType, INT Indent )
+void USound::Export( FOutputDevice& Out, const char* FileType, INT_UNREAL_32S Indent )
 {
 	guard(USound::Export);
 	Out.WriteBinary( &Data(0), Data.Num() );
@@ -195,7 +195,7 @@ UBOOL FWaveModInfo::UpdateWaveData( TArray<BYTE>& WavData )
 	if( NewDataSize < SampleDataSize )
 	{		
 		// Shrinkage of data chunk in bytes -> chunk data must always remain 16-bit-padded.
-		INT ChunkShrinkage = Pad16Bit(SampleDataSize)  - Pad16Bit(NewDataSize);
+		INT_UNREAL_32S ChunkShrinkage = Pad16Bit(SampleDataSize)  - Pad16Bit(NewDataSize);
 
 		// Update sizes.
 		*pWaveDataSize  = NewDataSize;
@@ -209,8 +209,8 @@ UBOOL FWaveModInfo::UpdateWaveData( TArray<BYTE>& WavData )
 		if (SampleLoopsNum)
 		{
 			FSampleLoop* pTempSampleLoop = pSampleLoop;
-			INT SampleDivisor = ( (SampleDataSize *  *pBitsPerSample) / (NewDataSize ) );
-			for (INT SL = 0; SL<SampleLoopsNum; SL++)
+			INT_UNREAL_32S SampleDivisor = ( (SampleDataSize *  *pBitsPerSample) / (NewDataSize ) );
+			for (INT_UNREAL_32S SL = 0; SL<SampleLoopsNum; SL++)
 			{
 				pTempSampleLoop->dwStart = pTempSampleLoop->dwStart  * OldBitsPerSample / SampleDivisor;
 				pTempSampleLoop->dwEnd   = pTempSampleLoop->dwEnd  * OldBitsPerSample / SampleDivisor;
@@ -219,10 +219,10 @@ UBOOL FWaveModInfo::UpdateWaveData( TArray<BYTE>& WavData )
 		}		
 			
 		// Now shuffle back all data after wave data by SampleDataSize/2 (+ padding) bytes 
-		// INT SampleShrinkage = ( SampleDataSize/4) * 2;
+		// INT_UNREAL_32S SampleShrinkage = ( SampleDataSize/4) * 2;
 		BYTE* NewWaveDataEnd = SampleDataEnd - ChunkShrinkage;
 
-		for ( INT pt = 0; pt< ( WaveDataEnd -  SampleDataEnd); pt++ )
+		for ( INT_UNREAL_32S pt = 0; pt< ( WaveDataEnd -  SampleDataEnd); pt++ )
 		{ 
 			NewWaveDataEnd[pt] =  SampleDataEnd[pt];
 		}			
@@ -231,7 +231,7 @@ UBOOL FWaveModInfo::UpdateWaveData( TArray<BYTE>& WavData )
 		WavData.SetNum( WavData.Num() - ChunkShrinkage );
 		
 		/*
-		static INT SavedBytes = 0;
+		static INT_UNREAL_32S SavedBytes = 0;
 		SavedBytes += ChunkShrinkage;
 		debugf(NAME_Log," Audio shrunk by: %i bytes, total savings %i bytes.",ChunkShrinkage,SavedBytes);
 		debugf(NAME_Log," New BitsPerSample: %i ", *pBitsPerSample);
@@ -257,20 +257,20 @@ void FWaveModInfo::HalveReduce16to8()
 	guard(FWaveModInfo::HalveReduce16to8);
 
 	DWORD SampleWords =  SampleDataSize >> 1;
-	INT OrigValue,NewValue;
-	INT ErrorDiff = 0;
+	INT_UNREAL_32S OrigValue,NewValue;
+	INT_UNREAL_32S ErrorDiff = 0;
 
 	DWORD SampleBytes = SampleWords >> 1;
 
-	INT NextSample0 = (INT)((SWORD*) SampleDataStart)[0];
-	INT NextSample1,NextSample2;
+	INT_UNREAL_32S NextSample0 = (INT_UNREAL_32S)((SWORD*) SampleDataStart)[0];
+	INT_UNREAL_32S NextSample1,NextSample2;
 
 	BYTE* SampleData =  SampleDataStart;
 	for (DWORD T=0; T<SampleBytes; T++)
 	{
-		NextSample1 = (INT)((SWORD*)SampleData)[T*2];
-		NextSample2 = (INT)((SWORD*)SampleData)[T*2+1];
-		INT Filtered16BitSample = 32768*4 + NextSample0 + NextSample1 + NextSample1 + NextSample2;
+		NextSample1 = (INT_UNREAL_32S)((SWORD*)SampleData)[T*2];
+		NextSample2 = (INT_UNREAL_32S)((SWORD*)SampleData)[T*2+1];
+		INT_UNREAL_32S Filtered16BitSample = 32768*4 + NextSample0 + NextSample1 + NextSample1 + NextSample2;
 		NextSample0 = NextSample2;
 
 		// Error diffusion works in '18 bit' resolution.
@@ -279,7 +279,7 @@ void FWaveModInfo::HalveReduce16to8()
 		NewValue  = (OrigValue + 512) & 0xfffffc00;
 		if (NewValue > 0x3fc00) NewValue = 0x3fc00;
 
-		INT NewSample = NewValue >> (8+2);
+		INT_UNREAL_32S NewSample = NewValue >> (8+2);
 		SampleData[T] = (BYTE)NewSample;	// Output byte.
 
 		ErrorDiff = OrigValue - NewValue;   // Error cycles back into input.
@@ -302,19 +302,19 @@ void FWaveModInfo::Reduce16to8()
 	guard(FWaveModInfo::Reduce16to8);
 
 	DWORD SampleBytes =  SampleDataSize >> 1;
-	INT OrigValue,NewValue;
-	INT ErrorDiff = 0;
+	INT_UNREAL_32S OrigValue,NewValue;
+	INT_UNREAL_32S ErrorDiff = 0;
 	BYTE* SampleData = SampleDataStart;
 
 	for (DWORD T=0; T<SampleBytes; T++)
 	{
 		// Error diffusion works in 16 bit resolution.
-		OrigValue = ErrorDiff + 32768 + (INT)((SWORD*)SampleData)[T];
+		OrigValue = ErrorDiff + 32768 + (INT_UNREAL_32S)((SWORD*)SampleData)[T];
 		// Rounding: '+0.5', then mask off low 2 bits.
 		NewValue  = (OrigValue + 127 ) & 0xffffff00;  // + 128
 		if (NewValue > 0xff00) NewValue = 0xff00;
 
-		INT NewSample = NewValue >> 8;
+		INT_UNREAL_32S NewSample = NewValue >> 8;
 		SampleData[T] = NewSample;
 
 		ErrorDiff = OrigValue - NewValue;  // Error cycles back into input.
@@ -336,20 +336,20 @@ void FWaveModInfo::HalveData()
 	if( *pBitsPerSample == 16)
 	{						
 		DWORD SampleWords =  SampleDataSize >> 1;
-		INT OrigValue,NewValue;
-		INT ErrorDiff = 0;
+		INT_UNREAL_32S OrigValue,NewValue;
+		INT_UNREAL_32S ErrorDiff = 0;
 
 		DWORD ScaledSampleWords = SampleWords >> 1; 
 
-		INT NextSample0 = (INT)((SWORD*) SampleDataStart)[0];
-		INT NextSample1, NextSample2;
+		INT_UNREAL_32S NextSample0 = (INT_UNREAL_32S)((SWORD*) SampleDataStart)[0];
+		INT_UNREAL_32S NextSample1, NextSample2;
 
 		BYTE* SampleData =  SampleDataStart;
 		for (DWORD T=0; T<ScaledSampleWords; T++)
 		{
-			NextSample1 = (INT)((SWORD*)SampleData)[T*2];
-			NextSample2 = (INT)((SWORD*)SampleData)[T*2+1];
-			INT Filtered18BitSample = 32768*4 + NextSample0 + NextSample1 + NextSample1 + NextSample2;
+			NextSample1 = (INT_UNREAL_32S)((SWORD*)SampleData)[T*2];
+			NextSample2 = (INT_UNREAL_32S)((SWORD*)SampleData)[T*2+1];
+			INT_UNREAL_32S Filtered18BitSample = 32768*4 + NextSample0 + NextSample1 + NextSample1 + NextSample2;
 			NextSample0 = NextSample2;
 
 			// Error diffusion works with '18 bit' resolution.
@@ -365,20 +365,20 @@ void FWaveModInfo::HalveData()
 	}
 	else if( *pBitsPerSample == 8 )
 	{									
-		INT OrigValue,NewValue;
-		INT ErrorDiff = 0;
+		INT_UNREAL_32S OrigValue,NewValue;
+		INT_UNREAL_32S ErrorDiff = 0;
 	
 		DWORD SampleBytes = SampleDataSize >> 1;  
 		BYTE* SampleData = SampleDataStart;
 
-		INT NextSample0 = SampleData[0];
-		INT NextSample1, NextSample2;
+		INT_UNREAL_32S NextSample0 = SampleData[0];
+		INT_UNREAL_32S NextSample1, NextSample2;
 
 		for (DWORD T=0; T<SampleBytes; T++)
 		{
 			NextSample1 =  SampleData[T*2];
 			NextSample2 =  SampleData[T*2+1];
-			INT Filtered10BitSample =  NextSample0 + NextSample1 + NextSample1 + NextSample2;
+			INT_UNREAL_32S Filtered10BitSample =  NextSample0 + NextSample1 + NextSample1 + NextSample2;
 			NextSample0 =  NextSample2;
 
 			// Error diffusion works with '10 bit' resolution.
@@ -403,19 +403,19 @@ void FWaveModInfo::NoiseGateFilter()
 	guard(FWaveModInfo::NoiseGateFilter);
 
 	BYTE* SampleData  =  SampleDataStart;
-	INT   SampleBytes = *pWaveDataSize; 
-	INT	  MinBlankSize = 860 * ((*pSamplesPerSec)/11025); // 600-800...
+	INT_UNREAL_32S   SampleBytes = *pWaveDataSize; 
+	INT_UNREAL_32S	  MinBlankSize = 860 * ((*pSamplesPerSec)/11025); // 600-800...
 
 	// Threshold sound amplitude. About 18 seems OK.
-	INT Amplitude	 = 18;
+	INT_UNREAL_32S Amplitude	 = 18;
 
 	// Ignore any over-threshold signals if under this size. ( 32 ?)
-	INT GlitchSize	 = 32 * ((*pSamplesPerSec)/11025);
-	INT StartSilence =  0;
-	INT EndSilence	 =  0;
-	INT LastErased   = -1;
+	INT_UNREAL_32S GlitchSize	 = 32 * ((*pSamplesPerSec)/11025);
+	INT_UNREAL_32S StartSilence =  0;
+	INT_UNREAL_32S EndSilence	 =  0;
+	INT_UNREAL_32S LastErased   = -1;
 
-	for( INT T = 0; T< SampleBytes; T++ )
+	for( INT_UNREAL_32S T = 0; T< SampleBytes; T++ )
 	{
 		UBOOL Loud;
 		if	( Abs(SampleData[T]-128) >= Amplitude )
@@ -446,7 +446,7 @@ void FWaveModInfo::NoiseGateFilter()
 				//
 				if	(( EndSilence - StartSilence) >= MinBlankSize )
 				{					
-					for ( INT Er = StartSilence; Er< EndSilence; Er++ )
+					for ( INT_UNREAL_32S Er = StartSilence; Er< EndSilence; Er++ )
 					{
 						SampleData[Er] = 128;
 					}

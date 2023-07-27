@@ -36,10 +36,10 @@ static void EnviroMap( FSceneNode* Frame, FTransTexture& P )
 --------------------------------------------------------------------------*/
 
 static FLOAT Dot[32];
-static inline INT Clip( FSceneNode* Frame, FTransTexture** Dest, FTransTexture** Src, INT SrcNum )
+static inline INT_UNREAL_32S Clip( FSceneNode* Frame, FTransTexture** Dest, FTransTexture** Src, INT_UNREAL_32S SrcNum )
 {
-	INT DestNum=0;
-	for( INT i=0,j=SrcNum-1; i<SrcNum; j=i++ )
+	INT_UNREAL_32S DestNum=0;
+	for( INT_UNREAL_32S i=0,j=SrcNum-1; i<SrcNum; j=i++ )
 	{
 		if( Dot[j]>=0.0 )
 		{
@@ -61,7 +61,7 @@ static inline INT Clip( FSceneNode* Frame, FTransTexture** Dest, FTransTexture**
 ------------------------------------------------------------------------------*/
 
 // Triangle subdivision table.
-static const CutTable[8][4][3] =
+static const int CutTable[8][4][3] =
 {
 	{{0,1,2},{9,9,9},{9,9,9},{9,9,9}},
 	{{0,3,2},{2,3,1},{9,9,9},{9,9,9}},
@@ -80,7 +80,7 @@ void RenderSubsurface
 	FSpanBuffer*	Span,
 	FTransTexture**	Pts,
 	DWORD			PolyFlags,
-	INT				SubCount
+	INT_UNREAL_32S				SubCount
 )
 {
 	guard(RenderSubsurface);
@@ -90,7 +90,7 @@ void RenderSubsurface
 	{
 		// Environment mapping.
 		if( PolyFlags & PF_Environment )
-			for( INT i=0; i<3; i++ )
+			for( INT_UNREAL_32S i=0; i<3; i++ )
 				EnviroMap( Frame, *Pts[i] );
 
 		// Handle unlit.
@@ -103,10 +103,11 @@ void RenderSubsurface
 	if( SubCount<3 && !(PolyFlags & PF_Flat) )
 	{
 		// Compute side distances.
-		INT CutSide[3], Cuts=0;
+		INT_UNREAL_32S CutSide[3], Cuts=0;
 		FLOAT Alpha[3];
+		INT_UNREAL_32S i, j;
 		STAT(clock(GStat.MeshSubTime));
-		for( INT i=0,j=2; i<3; j=i++ )
+		for( i=0,j=2; i<3; j=i++ )
 		{
 			FLOAT Dist   = FDistSquared(Pts[j]->Point,Pts[i]->Point);
 			FLOAT Curvy  = (Pts[j]->Normal ^ Pts[i]->Normal).SizeSquared();
@@ -125,7 +126,7 @@ void RenderSubsurface
 			Pts[3]=Tmp+0;
 			Pts[4]=Tmp+1;
 			Pts[5]=Tmp+2;
-			for( INT i=0,j=2; i<3; j=i++ ) if( CutSide[j] )
+			for( INT_UNREAL_32S i=0,j=2; i<3; j=i++ ) if( CutSide[j] )
 			{
 				// Compute midpoint.
 				FTransTexture& MidPt = *Pts[j+3];
@@ -165,7 +166,7 @@ void RenderSubsurface
 			FTransTexture* NewPts[6];
 			for( i=0; i<4 && CutTable[Cuts][i][0]!=9; i++ )
 			{
-				for( INT j=0; j<3; j++ )
+				for( INT_UNREAL_32S j=0; j<3; j++ )
 					NewPts[j] = Pts[CutTable[Cuts][i][j]];
 				RenderSubsurface( Frame, Texture, Span, NewPts, PolyFlags, SubCount+1 );
 			}
@@ -187,14 +188,14 @@ void RenderSubsurface
 	}
 
 	// Clip it.
-	INT NumPts=3;
+	INT_UNREAL_32S NumPts=3;
 	BYTE AllCodes = Pts[0]->Flags | Pts[1]->Flags | Pts[2]->Flags;
 	if( AllCodes )
 	{
 		if( AllCodes & FVF_OutXMin )
 		{
 			static FTransTexture* LocalPts[8];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = Frame->PrjXM * Pts[i]->Point.Z + Pts[i]->Point.X;
 			NumPts = Clip( Frame, LocalPts, Pts, NumPts );
 			if( NumPts==0 ) return;
@@ -203,7 +204,7 @@ void RenderSubsurface
 		if( AllCodes & FVF_OutXMax )
 		{
 			static FTransTexture* LocalPts[8];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = Frame->PrjXP * Pts[i]->Point.Z - Pts[i]->Point.X;
 			NumPts = Clip( Frame, LocalPts, Pts, NumPts );
 			if( NumPts==0 ) return;
@@ -212,7 +213,7 @@ void RenderSubsurface
 		if( AllCodes & FVF_OutYMin )
 		{
 			static FTransTexture* LocalPts[8];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = Frame->PrjYM * Pts[i]->Point.Z + Pts[i]->Point.Y;
 			NumPts = Clip( Frame, LocalPts, Pts, NumPts );
 			if( NumPts==0 ) return;
@@ -221,7 +222,7 @@ void RenderSubsurface
 		if( AllCodes & FVF_OutYMax )
 		{
 			static FTransTexture* LocalPts[8];
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 				Dot[i] = Frame->PrjYP * Pts[i]->Point.Z - Pts[i]->Point.Y;
 			NumPts = Clip( Frame, LocalPts, Pts, NumPts );
 			if( NumPts==0 ) return;
@@ -230,7 +231,7 @@ void RenderSubsurface
 		if( Frame->NearClip.W != 0.0 )
 		{
 			UBOOL Clipped=0;
-			for( INT i=0; i<NumPts; i++ )
+			for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 			{
 				Dot[i] = Frame->NearClip.PlaneDot(Pts[i]->Point);
 				Clipped |= (Dot[i]<0.0);
@@ -245,7 +246,7 @@ void RenderSubsurface
 		}
 	}
 
-	for( INT i=0; i<NumPts; i++ )
+	for( INT_UNREAL_32S i=0; i<NumPts; i++ )
 	{
 		//Pts[i]->ScreenX = Clamp(Pts[i]->ScreenX,0.f,Frame->FX);
 		//Pts[i]->ScreenY = Clamp(Pts[i]->ScreenY,0.f,Frame->FY);
@@ -272,13 +273,13 @@ void RenderSubsurface
 struct FMeshTriSort
 {
 	FMeshTri* Tri;
-	INT Key;
+	INT_UNREAL_32S Key;
 };
-INT Compare( const FMeshTriSort& A, const FMeshTriSort& B )
+INT_UNREAL_32S Compare( const FMeshTriSort& A, const FMeshTriSort& B )
 {
 	return B.Key - A.Key;
 }
-INT Compare( const FTransform* A, const FTransform* B )
+INT_UNREAL_32S Compare( const FTransform* A, const FTransform* B )
 {
 	return appRound(B->Point.Z - A->Point.Z);
 }
@@ -318,7 +319,7 @@ static union
 //
 // K6 3D Optimized version of the ComputeOutcode loop of URender::DrawMesh
 // 
-static _inline BYTE DoComputeOutcodeLoop(FSceneNode* Frame,FTransTexture* Samples,INT FrameVerts)
+static _inline BYTE DoComputeOutcodeLoop(FSceneNode* Frame,FTransTexture* Samples,INT_UNREAL_32S FrameVerts)
 {
 #if 1
 	// Unions containing QWORDS are used here so the compiler will align them properly.
@@ -371,7 +372,7 @@ Done:
 	return Outcode;
 #else
 	BYTE Outcode = FVF_OutReject;
-	for( INT i=0; i<FrameVerts; i++ )
+	for( INT_UNREAL_32S i=0; i<FrameVerts; i++ )
 	{
 		// Set this so we know this point has not been lit yet.
 		Samples[i].Light.R = -1;
@@ -635,7 +636,7 @@ static _inline UBOOL DoVisibleCheck(FSceneNode* Frame,FVector& P1,FVector& P2,FV
 //		appRound( V1.Point.Z + V2.Point.Z + V3.Point.Z )
 //
 #pragma warning( disable : 4035 )
-static _inline INT CalculateSimpleKey(FVector& P1,FVector& P2,FVector& P3)
+static _inline INT_UNREAL_32S CalculateSimpleKey(FVector& P1,FVector& P2,FVector& P3)
 {
 #if 1	
 	static float fPointFive=0.5f;
@@ -667,7 +668,7 @@ static _inline INT CalculateSimpleKey(FVector& P1,FVector& P2,FVector& P3)
 //		appRound( FDistSquared(V1.Point,Hack)*FDistSquared(V2.Point,Hack)*FDistSquared(V3.Point,Hack) )
 //
 #pragma warning( disable : 4035 )
-static _inline INT CalculateComplexKey(FVector& P1,FVector& P2,FVector& P3,FVector& Hack)
+static _inline INT_UNREAL_32S CalculateComplexKey(FVector& P1,FVector& P2,FVector& P3,FVector& Hack)
 {
 #if 1
 	static float PointFive=0.5;
@@ -943,7 +944,7 @@ void URender::AMD3DDrawMesh
 #if 0
 	// For testing actor span clipping.
 	if( SpanBuffer )
-		for( INT i=SpanBuffer->StartY; i<SpanBuffer->EndY; i++ )
+		for( INT_UNREAL_32S i=SpanBuffer->StartY; i<SpanBuffer->EndY; i++ )
 			for( FSpan* Span=SpanBuffer->Index[i-SpanBuffer->StartY]; Span; Span=Span->Next )
 				appMemset( Frame->Screen(Span->Start,i), appRand(), (Span->End-Span->Start)*4 );
 #endif
@@ -961,7 +962,7 @@ void URender::AMD3DDrawMesh
 
 	// Compute outcodes.
 //	BYTE Outcode = FVF_OutReject;
-//	for( INT i=0; i<Mesh->FrameVerts; i++ )
+//	for( INT_UNREAL_32S i=0; i<Mesh->FrameVerts; i++ )
 //	{
 //		Samples[i].Light.R = -1;
 //		Samples[i].ComputeOutcode( Frame );
@@ -978,7 +979,7 @@ void URender::AMD3DDrawMesh
 		// Render each wireframe triangle.
 		guardSlow(RenderWire);
 		FPlane Color = Owner->bSelected ? FPlane(.2,.8,.1,0) : FPlane(.6,.4,.1,0);
-		for( INT i=0; i<Mesh->Tris.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mesh->Tris.Num(); i++ )
 		{
 			FMeshTri& Tri    = Mesh->Tris(i);
 			FVector*  P1     = &Samples[Tri.iVertex[2]].Point;
@@ -1010,9 +1011,9 @@ void URender::AMD3DDrawMesh
 		guardSlow(Particles);
 		check(Owner->Texture);
 		FTransform** SortedPts = New<FTransform*>(GMem,Mesh->FrameVerts);
-		INT Count=0;
+		INT_UNREAL_32S i=0, Count=0;
 		// No more x87 code until the next femms.
-		for( INT i=0; i<Mesh->FrameVerts; i++ )
+		for( i=0; i<Mesh->FrameVerts; i++ )
 		{
 //			if( !Samples[i].Flags && Samples[i].Point.Z>1.0)
 			if( !Samples[i].Flags && DoIsGreaterThanOne(Samples[i].Point.Z))
@@ -1057,7 +1058,7 @@ void URender::AMD3DDrawMesh
 	}
 
 	// Set up triangles.
-	INT VisibleTriangles = 0;
+	INT_UNREAL_32S VisibleTriangles = 0;
 	HasSpecialCoords = 0;
 	FMeshTriSort* TriPool=NULL;
 	FVector* TriNormals=NULL;
@@ -1073,7 +1074,7 @@ void URender::AMD3DDrawMesh
 		FMeshTriSort* TriTop = &TriPool[0];
 
 		// Don't do any floating point until next femms.
-		for( INT i=0; i<Mesh->Tris.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mesh->Tris.Num(); i++ )
 		{
 			FMeshTri*   Tri = &Mesh->Tris(i);
 			FTransform& V1  = Samples[Tri->iVertex[0]];
@@ -1137,7 +1138,7 @@ void URender::AMD3DDrawMesh
 		UTexture* EnvironmentMap = NULL;
 		guardSlow(Lock);
 		check(Mesh->Textures.Num()<=ARRAY_COUNT(TextureInfo));
-		for( INT i=0; i<Mesh->Textures.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mesh->Textures.Num(); i++ )
 		{
 			Textures[i] = Mesh->GetTexture( i, Owner );
 			if( Textures[i] )
@@ -1166,19 +1167,19 @@ void URender::AMD3DDrawMesh
 
 		// Perform all vertex lighting.
 		guardSlow(Light);
-		for( INT i=0; i<VisibleTriangles; i++ )
+		for( INT_UNREAL_32S i=0; i<VisibleTriangles; i++ )
 		{
 			FMeshTri& Tri = *TriPool[i].Tri;
-			for( INT j=0; j<3; j++ )
+			for( INT_UNREAL_32S j=0; j<3; j++ )
 			{
-				INT iVert = Tri.iVertex[j];
+				INT_UNREAL_32S iVert = Tri.iVertex[j];
 				FTransSample& Vert = Samples[iVert];
 				if( Vert.Light.R == -1 )
 				{
 					// Compute vertex normal.
 					FVector Norm(0,0,0);
 					FMeshVertConnect& Connect = Mesh->Connects(iVert);
-					for( INT k=0; k<Connect.NumVertTriangles; k++ )
+					for( INT_UNREAL_32S k=0; k<Connect.NumVertTriangles; k++ )
 //						Norm += TriNormals[Mesh->VertLinks(Connect.TriangleListOffset + k)];
 						DoAddNormals(Norm,TriNormals[Mesh->VertLinks(Connect.TriangleListOffset + k)]);
 //					Vert.Normal = FPlane( Vert.Point, Norm * DivSqrtApprox(Norm.SizeSquared()) );
@@ -1210,7 +1211,7 @@ void URender::AMD3DDrawMesh
 		// Draw the triangles.
 		guardSlow(DrawVisible);
 		STAT(GStat.MeshPolyCount+=VisibleTriangles);
-		for( INT i=0; i<VisibleTriangles; i++ )
+		for( INT_UNREAL_32S i=0; i<VisibleTriangles; i++ )
 		{
 			// Set up the triangle.
 			FMeshTri& Tri = *TriPool[i].Tri;
@@ -1218,14 +1219,14 @@ void URender::AMD3DDrawMesh
 			{
 				// Get texture.
 				DWORD PolyFlags = Tri.PolyFlags | ExtraFlags;
-				INT Index = TriPool[i].Tri->TextureIndex;
+				INT_UNREAL_32S Index = TriPool[i].Tri->TextureIndex;
 				FTextureInfo& Info = (Textures[Index] && !(PolyFlags & PF_Environment)) ? TextureInfo[Index] : EnvironmentInfo;
 				UScale = Info.USize / 256.0;
 				VScale = Info.VSize / 256.0;
 
 				// Set up texture coords.
 				FTransTexture* Pts[6];
-				for( INT j=0; j<3; j++ )
+				for( INT_UNREAL_32S j=0; j<3; j++ )
 				{
 					Pts[j]    = &Samples[Tri.iVertex[j]];
 					Pts[j]->U = Tri.Tex[j].U * UScale;
@@ -1298,7 +1299,7 @@ void URender::DrawMesh
 #if 0
 	// For testing actor span clipping.
 	if( SpanBuffer )
-		for( INT i=SpanBuffer->StartY; i<SpanBuffer->EndY; i++ )
+		for( INT_UNREAL_32S i=SpanBuffer->StartY; i<SpanBuffer->EndY; i++ )
 			for( FSpan* Span=SpanBuffer->Index[i-SpanBuffer->StartY]; Span; Span=Span->Next )
 				appMemset( Frame->Screen(Span->Start,i), appRand(), (Span->End-Span->Start)*4 );
 #endif
@@ -1317,7 +1318,7 @@ void URender::DrawMesh
 	// Compute outcodes.
 	BYTE Outcode = FVF_OutReject;
 	guardSlow(Outcode);
-	for( INT i=0; i<Mesh->FrameVerts; i++ )
+	for( INT_UNREAL_32S i=0; i<Mesh->FrameVerts; i++ )
 	{
 		Samples[i].Light.R = -1;
 		Samples[i].ComputeOutcode( Frame );
@@ -1331,7 +1332,7 @@ void URender::DrawMesh
 		// Render each wireframe triangle.
 		guardSlow(RenderWire);
 		FPlane Color = Owner->bSelected ? FPlane(.2,.8,.1,0) : FPlane(.6,.4,.1,0);
-		for( INT i=0; i<Mesh->Tris.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mesh->Tris.Num(); i++ )
 		{
 			FMeshTri& Tri    = Mesh->Tris(i);
 			FVector*  P1     = &Samples[Tri.iVertex[2]].Point;
@@ -1361,8 +1362,8 @@ void URender::DrawMesh
 		guardSlow(Particles);
 		check(Owner->Texture);
 		FTransform** SortedPts = New<FTransform*>(GMem,Mesh->FrameVerts);
-		INT Count=0;
-		for( INT i=0; i<Mesh->FrameVerts; i++ )
+		INT_UNREAL_32S i = 0, Count = 0;
+		for( i=0; i<Mesh->FrameVerts; i++ )
 		{
 			if( !Samples[i].Flags && Samples[i].Point.Z>1.0 )
 			{
@@ -1402,7 +1403,7 @@ void URender::DrawMesh
 	}
 
 	// Set up triangles.
-	INT VisibleTriangles = 0;
+	INT_UNREAL_32S VisibleTriangles = 0;
 	HasSpecialCoords = 0;
 	FMeshTriSort* TriPool=NULL;
 	FVector* TriNormals=NULL;
@@ -1416,7 +1417,7 @@ void URender::DrawMesh
 		// Set up list for triangle sorting, adding all possibly visible triangles.
 		STAT(clock(GStat.MeshProcessTime));
 		FMeshTriSort* TriTop = &TriPool[0];
-		for( INT i=0; i<Mesh->Tris.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mesh->Tris.Num(); i++ )
 		{
 			FMeshTri*   Tri = &Mesh->Tris(i);
 			FTransform& V1  = Samples[Tri->iVertex[0]];
@@ -1470,7 +1471,7 @@ void URender::DrawMesh
 		UTexture* EnvironmentMap = NULL;
 		guardSlow(Lock);
 		check(Mesh->Textures.Num()<=ARRAY_COUNT(TextureInfo));
-		for( INT i=0; i<Mesh->Textures.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mesh->Textures.Num(); i++ )
 		{
 			Textures[i] = Mesh->GetTexture( i, Owner );
 			if( Textures[i] )
@@ -1496,19 +1497,19 @@ void URender::DrawMesh
 
 		// Perform all vertex lighting.
 		guardSlow(Light);
-		for( INT i=0; i<VisibleTriangles; i++ )
+		for( INT_UNREAL_32S i=0; i<VisibleTriangles; i++ )
 		{
 			FMeshTri& Tri = *TriPool[i].Tri;
-			for( INT j=0; j<3; j++ )
+			for( INT_UNREAL_32S j=0; j<3; j++ )
 			{
-				INT iVert = Tri.iVertex[j];
+				INT_UNREAL_32S iVert = Tri.iVertex[j];
 				FTransSample& Vert = Samples[iVert];
 				if( Vert.Light.R == -1 )
 				{
 					// Compute vertex normal.
 					FVector Norm(0,0,0);
 					FMeshVertConnect& Connect = Mesh->Connects(iVert);
-					for( INT k=0; k<Connect.NumVertTriangles; k++ )
+					for( INT_UNREAL_32S k=0; k<Connect.NumVertTriangles; k++ )
 						Norm += TriNormals[Mesh->VertLinks(Connect.TriangleListOffset + k)];
 					Vert.Normal = FPlane( Vert.Point, Norm * DivSqrtApprox(Norm.SizeSquared()) );
 
@@ -1534,7 +1535,7 @@ void URender::DrawMesh
 		// Draw the triangles.
 		guardSlow(DrawVisible);
 		STAT(GStat.MeshPolyCount+=VisibleTriangles);
-		for( INT i=0; i<VisibleTriangles; i++ )
+		for( INT_UNREAL_32S i=0; i<VisibleTriangles; i++ )
 		{
 			// Set up the triangle.
 			FMeshTri& Tri = *TriPool[i].Tri;
@@ -1542,14 +1543,14 @@ void URender::DrawMesh
 			{
 				// Get texture.
 				DWORD PolyFlags = Tri.PolyFlags | ExtraFlags;
-				INT Index = TriPool[i].Tri->TextureIndex;
+				INT_UNREAL_32S Index = TriPool[i].Tri->TextureIndex;
 				FTextureInfo& Info = (Textures[Index] && !(PolyFlags & PF_Environment)) ? TextureInfo[Index] : EnvironmentInfo;
 				UScale = Info.UScale * Info.USize / 256.0;
 				VScale = Info.VScale * Info.VSize / 256.0;
 
 				// Set up texture coords.
 				FTransTexture* Pts[6];
-				for( INT j=0; j<3; j++ )
+				for( INT_UNREAL_32S j=0; j<3; j++ )
 				{
 					Pts[j]    = &Samples[Tri.iVertex[j]];
 					Pts[j]->U = Tri.Tex[j].U * UScale;

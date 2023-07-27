@@ -96,7 +96,7 @@ void UTexture::GetInfo( FTextureInfo& TextureInfo, DOUBLE CurrentTime )
 	TextureInfo.VClamp			= VSize;
 	TextureInfo.NumMips			= GetNumMips();
 	TextureInfo.Palette			= GetColors();
-	for( INT i=0; i<Mips.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Mips.Num(); i++ )
 	{
 		Mips(i).DataPtr     = &Mips(i).DataArray(0);
 		TextureInfo.Mips[i] = &Mips(i);
@@ -272,11 +272,11 @@ void UTexture::Serialize( FArchive& Ar )
 	guard(UTexture::Serialize);
 	UObject::Serialize( Ar );
 	if( (Ar.IsSaving() || Ar.IsLoading()) && (TextureFlags & TF_Parametric) )
-		for( INT i=0; i<Mips.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mips.Num(); i++ )
 			Mips(i).DataArray.Empty();
 	Ar << Mips;
 	if( (Ar.IsSaving() || Ar.IsLoading()) && (TextureFlags & TF_Parametric) )
-		for( INT i=0; i<Mips.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Mips.Num(); i++ )
 			Mips(i).DataArray.AddZeroed( Mips(i).USize * Mips(i).VSize );
 	if( Ar.Ver() <= 38 )//oldver
 	{
@@ -328,7 +328,8 @@ void UTexture::Export( FOutputDevice& Out, const char* FileType, int Indent )
 
 	// Copy all RLE bytes.
 	BYTE* ScreenPtr = &Mips(0).DataArray(0);
-	for( int i=0; i<USize*VSize; i++ )
+	int i;
+	for( i=0; i<USize*VSize; i++ )
 	{
 		BYTE Color = *ScreenPtr++;
 		if( (Color&0xc0)!=0xc0 )
@@ -389,7 +390,7 @@ IMPLEMENT_CLASS(UTexture);
 //
 // Initialize the texture for a given resolution, single mipmap.
 //
-void UTexture::Init( INT InUSize, INT InVSize )
+void UTexture::Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize )
 {
 	guard(UTexture::Init);
 	check(!(USize & (USize-1)));
@@ -438,7 +439,7 @@ void UTexture::CreateMips( UBOOL FullMips, UBOOL Downsample )
 	{
 		while( UBits-Mips.Num()>=0 || VBits-Mips.Num()>=0 )
 		{
-			INT Num = Mips.Num();
+			INT_UNREAL_32S Num = Mips.Num();
 			new(Mips)FMipmap( Max(UBits-Num,0), Max(VBits-Num,0) );
 		}
 	}
@@ -450,12 +451,12 @@ void UTexture::CreateMips( UBOOL FullMips, UBOOL Downsample )
 		FColor  *TrueSource = NULL;
 		FColor  *TrueDest   = NULL;		
 
-		for( INT MipLevel=1; MipLevel<Mips.Num(); MipLevel++ )
+		for( INT_UNREAL_32S MipLevel=1; MipLevel<Mips.Num(); MipLevel++ )
 		{
 			FMipmap&  Src        = Mips(MipLevel-1);
 			FMipmap&  Dest       = Mips(MipLevel  );
-			INT       ThisUTile  = Src.USize;
-			INT       ThisVTile  = Src.VSize;
+			INT_UNREAL_32S       ThisUTile  = Src.USize;
+			INT_UNREAL_32S       ThisVTile  = Src.VSize;
 
 			// Cascade down the mip sequence with truecolor source and destination textures.			
 			TrueSource = TrueDest; // Last destination is current source..
@@ -467,16 +468,16 @@ void UTexture::CreateMips( UBOOL FullMips, UBOOL Downsample )
 				DWORD MaskU = (ThisUTile-1);
 				DWORD MaskV = (ThisVTile-1);
 
-				INT UD =   1 & MaskU;
-				INT VD =  (1 & MaskV)*ThisUTile;
+				INT_UNREAL_32S UD =   1 & MaskU;
+				INT_UNREAL_32S VD =  (1 & MaskV)*ThisUTile;
 
 				// Non-masked mipmap.
-				for( INT V=0; V<Dest.VSize; V++ )
+				for( INT_UNREAL_32S V=0; V<Dest.VSize; V++ )
 				{
-					for( INT U=0; U<Dest.USize; U++)
+					for( INT_UNREAL_32S U=0; U<Dest.USize; U++)
 					{
 						// Get 4 pixels from a one-higher-level mipmap.
-						INT TexCoord = U*2 + V*2*ThisUTile;
+						INT_UNREAL_32S TexCoord = U*2 + V*2*ThisUTile;
 
 						FVector C(0,0,0);
 
@@ -508,19 +509,19 @@ void UTexture::CreateMips( UBOOL FullMips, UBOOL Downsample )
 				DWORD MaskU = (ThisUTile-1);
 				DWORD MaskV = (ThisVTile-1);
 
-				for( INT V=0; V<Dest.VSize; V++ )
+				for( INT_UNREAL_32S V=0; V<Dest.VSize; V++ )
 				{
-					for( INT U=0; U<Dest.USize; U++) 
+					for( INT_UNREAL_32S U=0; U<Dest.USize; U++) 
 					{
-						INT F = 0;
+						INT_UNREAL_32S F = 0;
 						BYTE B;
 						FPlane C(0,0,0,0);
 
-						INT TexCoord = V*2*ThisUTile + U*2;
+						INT_UNREAL_32S TexCoord = V*2*ThisUTile + U*2;
 
-						for (INT I=0;I<2;I++)
+						for (INT_UNREAL_32S I=0;I<2;I++)
 						{
-							for (INT J=0;J<2;J++)
+							for (INT_UNREAL_32S J=0;J<2;J++)
 							{
 								B = Src.DataArray(TexCoord + (I&MaskU) + (J&MaskV)*ThisUTile);
 								if (B)
@@ -593,7 +594,7 @@ void UTexture::CreateOldMips( UBOOL FullMips, UBOOL Downsample )
 	{
 		while( UBits-Mips.Num()>=0 || VBits-Mips.Num()>=0 )
 		{
-			INT Num = Mips.Num();
+			INT_UNREAL_32S Num = Mips.Num();
 			new(Mips)FMipmap( Max(UBits-Num,0), Max(VBits-Num,0) );
 		}
 	}
@@ -601,20 +602,20 @@ void UTexture::CreateOldMips( UBOOL FullMips, UBOOL Downsample )
 	if( FullMips && Downsample )
 	{
 		// Build each mip from the next-larger mip.
-		for( INT MipLevel=1; MipLevel<Mips.Num(); MipLevel++ )
+		for( INT_UNREAL_32S MipLevel=1; MipLevel<Mips.Num(); MipLevel++ )
 		{
 			FMipmap&  Src        = Mips(MipLevel-1);
 			FMipmap&  Dest       = Mips(MipLevel  );
-			INT       ThisUTile  = Src.USize;
-			INT       ThisVTile  = Src.VSize;
+			INT_UNREAL_32S       ThisUTile  = Src.USize;
+			INT_UNREAL_32S       ThisVTile  = Src.VSize;
 			DWORD     UAnd	     = Src.USize-1;
 			DWORD     VAnd	     = Src.VSize-1;
 			if( !(PolyFlags & PF_Masked) )
 			{
 				// Non-masked mipmap.
-				for( INT V=0; V<Dest.VSize; V++ )
+				for( INT_UNREAL_32S V=0; V<Dest.VSize; V++ )
 				{
-					for( INT U=0; U<Dest.USize; U++)
+					for( INT_UNREAL_32S U=0; U<Dest.USize; U++)
 					{
 						FVector C(0,0,0);
 						for( int X=0; X<BoxCSize; X++ )
@@ -627,9 +628,9 @@ void UTexture::CreateOldMips( UBOOL FullMips, UBOOL Downsample )
 			else
 			{
 				// Masked mipmap.
-				for( INT V=0; V<Dest.VSize; V++ )
+				for( INT_UNREAL_32S V=0; V<Dest.VSize; V++ )
 				{
-					for( INT U=0; U<Dest.USize; U++) 
+					for( INT_UNREAL_32S U=0; U<Dest.USize; U++) 
 					{
 						FLOAT F = 0;
 						FPlane C(0,0,0,0);
@@ -733,7 +734,7 @@ void UPalette::Flush()
 	guard(UPalette::Flush);
 
 	GCache.Flush( MakeCacheID(CID_LightingTable,GetIndex(),0,NULL), MakeCacheID(CID_MAX,~0,0,0) );
-	GCache.Flush( MakeCacheID(CID_ColorDepthPalette,0,0,this), MakeCacheID(CID_MAX,0,0,~0) );
+	GCache.Flush( MakeCacheID(CID_ColorDepthPalette,0,0,this), MakeCacheID(CID_MAX,0,0,(UObject*)~0));
 
 	unguard;
 }
@@ -744,9 +745,10 @@ void UPalette::Flush()
 void UPalette::FixPalette()
 {
 	guard(UPalette::FixPalette);
+	int i;
 
 	FColor TempColors[256];
-	for( int i=0; i<256; i++ )
+	for( i=0; i<256; i++ )
 		TempColors[i] = Colors(0);
 
 	for( int iColor=0; iColor<8; iColor++ )
@@ -773,7 +775,7 @@ BYTE UPalette::BestMatch( FColor Color, EBestMatchRange Range )
 {
 	guard(UPalette::BestMatch);
 
-	INT First,Last;
+	INT_UNREAL_32S First,Last;
 	if( Range == RANGE_AllButZero )
 	{
 		First = 1;
@@ -803,12 +805,12 @@ BYTE UPalette::BestMatch( FColor Color, EBestMatchRange Range )
 	{
 		FColor* ColorPtr = &Colors(TestColor);
 
-		INT GreenDelta = Square(ColorPtr->G - TexGreen);
+		INT_UNREAL_32S GreenDelta = Square(ColorPtr->G - TexGreen);
 
 		// By comparing unscaled green, saves about 4 out of every 5 full comparisons.
 		if (GreenDelta < BestUnscaledDelta) // Same as comparing 8*GreenDelta with BestDelta.
 		{
-			INT Delta = 
+			INT_UNREAL_32S Delta = 
 			(
 				8 * GreenDelta                     +
 				4 * Square(ColorPtr->R - TexRed  ) +
@@ -875,13 +877,14 @@ void UPalette::Smooth()
 UPalette* UPalette::ReplaceWithExisting()
 {
 	guard(UPalette::ReplaceWithExisting);
+	int i;
 	for( TObjectIterator<UPalette>It; It; ++It )
 	{
 		if( *It!=this && It->GetParent()==GetParent() )
 		{
 			FColor* C1 = &Colors(0);
 			FColor* C2 = &It->Colors(0);
-			for( int i=0; i<NUM_PAL_COLORS; i++ )
+			for( i=0; i<NUM_PAL_COLORS; i++ )
 				if( *C1++ != *C2++ ) break;
 			if( i == NUM_PAL_COLORS )
 			{

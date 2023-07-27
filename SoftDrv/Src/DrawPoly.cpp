@@ -58,7 +58,7 @@ static struct FTexSetup
 
 
 static FMMX* MMXColors;
-static SavedEBP,SavedESP;
+static int SavedEBP,SavedESP;
 
 static FMMX TriDeltaLight;
 static FMMX TriDeltaFog;
@@ -71,8 +71,8 @@ static FLOAT* FloatPalBase;
 struct TriVertexType
 {
 	FVector Fog,Light; 
-	INT YFloor;
-	INT Reserved;
+	INT_UNREAL_32S YFloor;
+	INT_UNREAL_32S Reserved;
 };
 
 static TriVertexType TriVertex[3];
@@ -87,7 +87,7 @@ static struct FPolyCSetup
 	BYTE*       TexBase;
 	//FLOAT*		PalBase;
 	FLOAT		R, G, B, DR, DG, DB, FlashR, FlashG, FlashB;
-	INT         X0, X1;
+	INT_UNREAL_32S         X0, X1;
 	DWORD		MaskUV;
 	DWORD       UBits;
 } GPolyC;
@@ -101,8 +101,8 @@ struct FMMXEdgeSetup
 	FMMX		UV,DUV;
 	FMMX        LightRGB,DeltaLightRGB;
 	FMMX        FogRGB,  DeltaFogRGB;
-	INT         StartX,DeltaX;
-	INT         StartY,EndY;
+	INT_UNREAL_32S         StartX,DeltaX;
+	INT_UNREAL_32S         StartY,EndY;
 	DWORD       SideIndicator;
 };
 
@@ -112,7 +112,7 @@ struct FMMXEdgeSetup
 struct FMMXPolyCSetup
 {
 	FMMX		UV,LightRGB,FogRGB;
-	INT         StartX,EndX;
+	INT_UNREAL_32S         StartX,EndX;
 }MMXSetup[MaximumYScreenSize];
 
 
@@ -687,7 +687,7 @@ static void PentiumPolyC32Modulated()
   MMX-specific triangle-only render functions
 --------------------------------------------*/
 
-inline void USoftwareRenderDevice::InnerGouraudMMX32(DWORD PolyFlags, INT MinY, INT MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer)
+inline void USoftwareRenderDevice::InnerGouraudMMX32(DWORD PolyFlags, INT_UNREAL_32S MinY, INT_UNREAL_32S MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer)
 {
 
 #if ASM
@@ -709,12 +709,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX32(DWORD PolyFlags, INT MinY, 
 
 	if ( !(PolyFlags & (PF_Masked|PF_Translucent|PF_Modulated)) )
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// Prestepping part.
@@ -863,12 +863,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX32(DWORD PolyFlags, INT MinY, 
 
 	else if (  PolyFlags & PF_Translucent)
 	{
-	for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -1051,12 +1051,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX32(DWORD PolyFlags, INT MinY, 
 	{
 		// Modulation fixed around level 128, no lighting needed.
 
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -1248,12 +1248,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX32(DWORD PolyFlags, INT MinY, 
 	}
 	else if (  PolyFlags & (PF_Masked))
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -1442,7 +1442,7 @@ inline void USoftwareRenderDevice::InnerGouraudMMX32(DWORD PolyFlags, INT MinY, 
 
 
 
-inline void USoftwareRenderDevice::InnerGouraudMMX15(DWORD PolyFlags, INT MinY, INT MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer)
+inline void USoftwareRenderDevice::InnerGouraudMMX15(DWORD PolyFlags, INT_UNREAL_32S MinY, INT_UNREAL_32S MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer)
 {
 	static  BYTE*	TexBase;
 	static  FMMX*	PalBase;
@@ -1473,12 +1473,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX15(DWORD PolyFlags, INT MinY, 
 	{
 	// Normal drawing:
 
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// Prestepping part.
@@ -1657,12 +1657,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX15(DWORD PolyFlags, INT MinY, 
 	}
 	else if (  PolyFlags & PF_Translucent )
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -1911,12 +1911,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX15(DWORD PolyFlags, INT MinY, 
 	}
 	else if (  PolyFlags & PF_Modulated )
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -2167,12 +2167,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX15(DWORD PolyFlags, INT MinY, 
 	}
 	else if (  PolyFlags & PF_Masked )
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -2390,7 +2390,7 @@ inline void USoftwareRenderDevice::InnerGouraudMMX15(DWORD PolyFlags, INT MinY, 
 
 
 
-inline void USoftwareRenderDevice::InnerGouraudMMX16(DWORD PolyFlags, INT MinY, INT MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer)
+inline void USoftwareRenderDevice::InnerGouraudMMX16(DWORD PolyFlags, INT_UNREAL_32S MinY, INT_UNREAL_32S MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer)
 {
 	static  BYTE*	TexBase;
 	static  FMMX*	PalBase;
@@ -2422,12 +2422,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX16(DWORD PolyFlags, INT MinY, 
 	{
 	// Normal drawing:
 
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// Prestepping part.
@@ -2606,12 +2606,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX16(DWORD PolyFlags, INT MinY, 
 	}
 	else if (  PolyFlags & PF_Translucent )
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -2860,12 +2860,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX16(DWORD PolyFlags, INT MinY, 
 	}
 	else if (  PolyFlags & PF_Modulated )
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -3116,12 +3116,12 @@ inline void USoftwareRenderDevice::InnerGouraudMMX16(DWORD PolyFlags, INT MinY, 
 	}
 	else if (  PolyFlags & PF_Masked )
 	{
-		for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT SpanX0 = Set->StartX;  
-				INT SpanX1 = Set->EndX;
+				INT_UNREAL_32S SpanX0 = Set->StartX;  
+				INT_UNREAL_32S SpanX1 = Set->EndX;
 				if ( SpanX1 > Span->End ) SpanX1 = Span->End;
 
 				// prestepping part
@@ -3407,19 +3407,19 @@ void USoftwareRenderDevice::MMXFlashTriangle
 
 
 	
-	INT	MinY, MaxY, MinX, MaxX;
+	INT_UNREAL_32S	MinY, MaxY, MinX, MaxX;
 	MinX = MaxX = appFloor( Point0->ScreenX );
 	MinY = MaxY = TriVertex[0].YFloor = Point0->IntY; //appFloor( Point0->ScreenY );
 
-	INT	PX1 = appFloor( Point1->ScreenX );
-	INT PY1 = TriVertex[1].YFloor = Point1->IntY; //appFloor( Point1->ScreenY );
+	INT_UNREAL_32S	PX1 = appFloor( Point1->ScreenX );
+	INT_UNREAL_32S PY1 = TriVertex[1].YFloor = Point1->IntY; //appFloor( Point1->ScreenY );
 	MinX  = Min(MinX,PX1);
 	MaxX  = Max(MaxX,PX1);
 	MinY  = Min(MinY,PY1);
 	MaxY  = Max(MaxY,PY1);
 
-    INT PX2 = appFloor( Point2->ScreenX );
-    INT PY2 = TriVertex[2].YFloor = Point2->IntY; //appFloor( Point2->ScreenY );
+    INT_UNREAL_32S PX2 = appFloor( Point2->ScreenX );
+    INT_UNREAL_32S PY2 = TriVertex[2].YFloor = Point2->IntY; //appFloor( Point2->ScreenY );
 	MinX  = Min(MinX,PX2);
 	MaxX  = Max(MaxX,PX2);
 	MinY  = Min(MinY,PY2);
@@ -3429,15 +3429,15 @@ void USoftwareRenderDevice::MMXFlashTriangle
 	MinY = Max( MinY,SpanBuffer->StartY);
 	MaxY = Min( MaxY,SpanBuffer->EndY);
 
-	INT SizeX = MaxX-MinX;
-	INT SizeY = MaxY-MinY;
+	INT_UNREAL_32S SizeX = MaxX-MinX;
+	INT_UNREAL_32S SizeY = MaxY-MinY;
 	if ( (SizeX<1) || (SizeY<1) ) return;
 
 	
 	/*
-	static INT Triangles = 0;
-	static INT TriReject = 0;
-	static INT TriSmall  = 0;
+	static INT_UNREAL_32S Triangles = 0;
+	static INT_UNREAL_32S TriReject = 0;
+	static INT_UNREAL_32S TriSmall  = 0;
 	if (((MaxY-MinY)<3) && ((MaxX-MinX)<3)) TriSmall++;
 	Triangles++;
 	if ( !( MinY < MaxY ) || !(MinX < MaxX) ) TriReject++;
@@ -3480,8 +3480,8 @@ void USoftwareRenderDevice::MMXFlashTriangle
 	// The two (arbitrary) +0x600000 offsets brings the mips closer since it carries the 
 	// mantissa over into the exponent. Scales from 0x000000 to max 0x7f0000. 
 
-	INT MipFactor = Max(( (ExpU&0x7FFFFFFF) + 0x600000 ) >>23, ( (ExpV & 0x7FFFFFFF) + 0x600000 ) >>23);
-	INT iMip = Clamp( (MipFactor-127), 0, Texture.NumMips-1 );
+	INT_UNREAL_32S MipFactor = Max(( (ExpU&0x7FFFFFFF) + 0x600000 ) >>23, ( (ExpV & 0x7FFFFFFF) + 0x600000 ) >>23);
+	INT_UNREAL_32S iMip = Clamp( (MipFactor-127), 0, Texture.NumMips-1 );
 
 	// Scale the Fog and Light colors at the vertices. Scale and Fog values range 0-255 for MMX.
 	// Into TriVertex points just so we don't have to modify any vertices.
@@ -3585,10 +3585,10 @@ void USoftwareRenderDevice::MMXFlashTriangle
 	FMMXEdgeSetup	  MMXEdge[3]; 
 	FMMXEdgeSetup*    EdgeSetupPtr;
 	FMipmap* Mip	= Texture.Mips[iMip];
-	INT UBits       = Mip->UBits;
+	INT_UNREAL_32S UBits       = Mip->UBits;
 
-	//INT TexURotate  = 32 + 4 - Mip->UBits;  // 16:16 -> 12:Vshift:fractional.
-	//INT TexVRotate  = 32 + 4;    //16:16 -> 12:20.... for V, 12 :Ubits :20-Ubits for U.
+	//INT_UNREAL_32S TexURotate  = 32 + 4 - Mip->UBits;  // 16:16 -> 12:Vshift:fractional.
+	//INT_UNREAL_32S TexVRotate  = 32 + 4;    //16:16 -> 12:20.... for V, 12 :Ubits :20-Ubits for U.
 
 
 	FLOAT MipVScale,MipUScale;
@@ -3881,7 +3881,7 @@ unguardSlow;
 	/* 
 	Logic:
 
-	for( INT Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++, Set++, Screen.PtrBYTE+= GByteStride )
 		{
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
@@ -3988,19 +3988,19 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 	*/
 #endif
 
-	INT	MinY, MaxY, MinX, MaxX;
+	INT_UNREAL_32S	MinY, MaxY, MinX, MaxX;
 	MinX = MaxX = appFloor( Point0->ScreenX );
 	MinY = MaxY = TriVertex[0].YFloor = Point0->IntY; // appFloor( Point0->ScreenY );
 
-	INT	PX1 = appFloor( Point1->ScreenX );
-	INT PY1 = TriVertex[1].YFloor = Point1->IntY;     // appFloor( Point1->ScreenY );
+	INT_UNREAL_32S	PX1 = appFloor( Point1->ScreenX );
+	INT_UNREAL_32S PY1 = TriVertex[1].YFloor = Point1->IntY;     // appFloor( Point1->ScreenY );
 	MinX  = Min(MinX,PX1);
 	MaxX  = Max(MaxX,PX1);
 	MinY  = Min(MinY,PY1);
 	MaxY  = Max(MaxY,PY1);
 
-    INT PX2 = appFloor( Point2->ScreenX );
-    INT PY2 = TriVertex[2].YFloor = Point2->IntY;     // appFloor( Point2->ScreenY );
+    INT_UNREAL_32S PX2 = appFloor( Point2->ScreenX );
+    INT_UNREAL_32S PY2 = TriVertex[2].YFloor = Point2->IntY;     // appFloor( Point2->ScreenY );
 	MinX  = Min(MinX,PX2);
 	MaxX  = Max(MaxX,PX2);
 	MinY  = Min(MinY,PY2);
@@ -4010,8 +4010,8 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 	MinY = Max( MinY,SpanBuffer->StartY);
 	MaxY = Min( MaxY,SpanBuffer->EndY);
 
-	INT SizeX = MaxX-MinX;
-	INT SizeY = MaxY-MinY;
+	INT_UNREAL_32S SizeX = MaxX-MinX;
+	INT_UNREAL_32S SizeY = MaxY-MinY;
 	if ( (SizeX<1) || (SizeY<1) ) return;
 
 
@@ -4047,8 +4047,8 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 	// The (arbitrary) +0x200000 offset brings the mips closer since it carries
 	// the mantissa over in to the exponent. Scales from 0x000000 to max 0x7f0000.
 
-	INT MipFactor = Max(( (ExpU&0x7FFFFFFF) + 0x000000 ) >> 23, ( (ExpV & 0x7FFFFFFF) + 0x000000 ) >>23);
-	INT iMip = Clamp( (MipFactor-127), 0, Texture.NumMips-1 );
+	INT_UNREAL_32S MipFactor = Max(( (ExpU&0x7FFFFFFF) + 0x000000 ) >> 23, ( (ExpV & 0x7FFFFFFF) + 0x000000 ) >>23);
+	INT_UNREAL_32S iMip = Clamp( (MipFactor-127), 0, Texture.NumMips-1 );
 
 	//See if Texture.Uscale and Vscale are 1.f so they can be ignored...
 
@@ -4180,7 +4180,7 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 				FLOAT X       =  PA->ScreenX  + YAdj * DX;
 
 				// Y-direction prestep.
-				INT Count = TB->YFloor - TA->YFloor;
+				INT_UNREAL_32S Count = TB->YFloor - TA->YFloor;
 				do
 				{	
 					Set->EndX = appFloor( X+=DX ); 
@@ -4201,7 +4201,7 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 
 
 	// Setup.
-	// INT     iMip    = 0;
+	// INT_UNREAL_32S     iMip    = 0;
 	FMipmap* Mip	= Texture.Mips[iMip];
 	GPolyC.TexBase	= Mip->DataPtr;
 	GPolyC.UBits	= Mip->UBits;
@@ -4209,8 +4209,8 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 	GPolyC.MaskUV	= ( Mip->VSize-1 )  +  ((0xffff0000) << (16-(DWORD)Mip->UBits));
 	
 	DWORD DU,DV;
-	*(INT*)&DU = appRound(dUdX);
-	*(INT*)&DV = appRound(dVdX);
+	*(INT_UNREAL_32S*)&DU = appRound(dUdX);
+	*(INT_UNREAL_32S*)&DV = appRound(dVdX);
 
 	// GPolyC.DUV	  = ((QWORD)(DV & 0xffffff) << 18) + ((QWORD)DU << (50-Mip->UBits));
 	DWORD DVRotated = _rotl(DV, 16);
@@ -4312,7 +4312,7 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 
 	DWORD UShift = 16-Mip->UBits;
 
-	for( INT Y=MinY; Y<MaxY; Y++,Set++, GPolyC.Ptr.PtrBYTE+= GByteStride )
+	for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++,Set++, GPolyC.Ptr.PtrBYTE+= GByteStride )
 	{
 		for( FSpan* Span=*Index++; Span; Span=Span->Next )
 		{
@@ -4369,7 +4369,7 @@ void USoftwareRenderDevice::PentiumFlashTriangle
 	Polygon drawing routine.
 -----------------------------------------------------------------------------*/
 
-void USoftwareRenderDevice::DrawGouraudPolygon(FSceneNode* Frame, FTextureInfo& Texture, FTransTexture** Pts, INT NumPts, DWORD PolyFlags, FSpanBuffer* SpanBuffer )
+void USoftwareRenderDevice::DrawGouraudPolygon(FSceneNode* Frame, FTextureInfo& Texture, FTransTexture** Pts, INT_UNREAL_32S NumPts, DWORD PolyFlags, FSpanBuffer* SpanBuffer )
 
 {
 	guardSlow(USoftwareRenderDevice::DrawGouraudPolygon);
@@ -4390,7 +4390,7 @@ void USoftwareRenderDevice::DrawGouraudPolygon(FSceneNode* Frame, FTextureInfo& 
 	// Ensure we have a valid spanbuffer
 	if ( !SpanBuffer ) 
 	{
-		static INT SavedX=0, SavedY=0;
+		static INT_UNREAL_32S SavedX=0, SavedY=0;
 		static FSpanBuffer TempSpanBuffer;
 		static FSpan *SpanIndex[MaximumYScreenSize], DefaultSpan;
 		if( SavedX!=Viewport->SizeX || SavedY!=Viewport->SizeY )
@@ -4403,7 +4403,7 @@ void USoftwareRenderDevice::DrawGouraudPolygon(FSceneNode* Frame, FTextureInfo& 
 			DefaultSpan.Start = 0;
 			DefaultSpan.End   = Viewport->SizeX;
 			DefaultSpan.Next  = 0;
-			for( INT i=0; i<Viewport->SizeY; i++ ) SpanIndex[i]  = &DefaultSpan;
+			for( INT_UNREAL_32S i=0; i<Viewport->SizeY; i++ ) SpanIndex[i]  = &DefaultSpan;
 		}
 		SpanBuffer = &TempSpanBuffer;		
 	}
@@ -4426,20 +4426,20 @@ void USoftwareRenderDevice::DrawGouraudPolygon(FSceneNode* Frame, FTextureInfo& 
 		//
 
 		/*
-		INT MinY = SpanBuffer->StartY;
-		INT MaxY = SpanBuffer->EndY;
+		INT_UNREAL_32S MinY = SpanBuffer->StartY;
+		INT_UNREAL_32S MaxY = SpanBuffer->EndY;
 
 		FSpan** Index   = SpanBuffer->Index;
 
 		if (MinY < 0) appErrorf(" SpanStartY negative!");
 		if (MaxY > Viewport->SizeY) appErrorf(" SpanEndY bigger than ViewportSizeY!");
 
-		for( INT Y=MinY; Y<MaxY; Y++ )
+		for( INT_UNREAL_32S Y=MinY; Y<MaxY; Y++ )
 		{
 			for( FSpan* Span=*Index++; Span; Span=Span->Next )
 			{
-				INT X0 = Span->Start;
-				INT X1 = Span->End;	
+				INT_UNREAL_32S X0 = Span->Start;
+				INT_UNREAL_32S X1 = Span->End;	
 
 				if ( (X0 <0) || ( X1 > Viewport->SizeX))
 					appErrorf( "Span out of bounds. Ypos: %i XStart: %i XEnd: %i",Y, Span->Start,Span->End);
@@ -4473,9 +4473,9 @@ void USoftwareRenderDevice::DrawGouraudPolygon(FSceneNode* Frame, FTextureInfo& 
 			for( int i=0; i<NUM_PAL_COLORS; i++ )
 			{   
 				// Promote 8-bit palette to MMX packed signed words 15:15:15:15 format.
-				MMXColors[i].R = (INT)Texture.Palette[i].B << 7;
-				MMXColors[i].G = (INT)Texture.Palette[i].G << 7;
-				MMXColors[i].B = (INT)Texture.Palette[i].R << 7;
+				MMXColors[i].R = (INT_UNREAL_32S)Texture.Palette[i].B << 7;
+				MMXColors[i].G = (INT_UNREAL_32S)Texture.Palette[i].G << 7;
+				MMXColors[i].B = (INT_UNREAL_32S)Texture.Palette[i].R << 7;
 				MMXColors[i].A = 0;
 				// #debug do this faster - all at once ???
 				// *(((DWORD*)&MMXColors[0])+i) = ( ( *(DWORD*)&Texture.Palette[i]) >>1 ) & 0x7F7F7F7F;
@@ -4541,9 +4541,9 @@ void USoftwareRenderDevice::DrawGouraudPolygon(FSceneNode* Frame, FTextureInfo& 
 	DrawTrianglePtr TriangleFunc;
 
 	if (GIsMMX)
-		TriangleFunc = MMXFlashTriangle;
+		TriangleFunc = &USoftwareRenderDevice::MMXFlashTriangle;
 		else
-		TriangleFunc = PentiumFlashTriangle;
+		TriangleFunc = &USoftwareRenderDevice::PentiumFlashTriangle;
 
 	Point0 = Pts[0];
 	Point1 = Pts[1]; 

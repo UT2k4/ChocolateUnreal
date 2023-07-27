@@ -159,7 +159,7 @@ void UProperty::ExportCPP( FOutputDevice& Out, UBOOL IsLocal, UBOOL IsParm )
 //
 UBOOL UProperty::ExportText
 (
-	INT		Index,
+	INT_UNREAL_32S		Index,
 	char*	ValueStr,
 	BYTE*	Data,
 	BYTE*	Delta,
@@ -239,7 +239,7 @@ const char* UByteProperty::ImportText( const char* Buffer, BYTE* Data, UBOOL Hum
 		FName EnumName = FName( Temp, FNAME_Find );
 		if( EnumName != NAME_None )
 		{
-			INT EnumIndex=0;
+			INT_UNREAL_32S EnumIndex=0;
 			if( Enum->Names.FindItem( EnumName, EnumIndex ) )
 			{
 				*(BYTE*)Data = EnumIndex;
@@ -270,20 +270,20 @@ IMPLEMENT_CLASS(UByteProperty);
 void UIntProperty::ExportCPPItem( FOutputDevice& Out ) const
 {
 	guard(UIntProperty::ExportCPPItem);
-	Out.Log( "INT" );
+	Out.Log( "INT_UNREAL_32S" );
 	unguard;
 }
 void UIntProperty::ExportTextItem( char* ValueStr, BYTE* PropertyValue, BYTE* DefaultValue, UBOOL HumanReadable )
 {
 	guard(UIntProperty::ExportTextItem);
-	appSprintf( ValueStr, "%i", *(INT *)PropertyValue );
+	appSprintf( ValueStr, "%i", *(INT_UNREAL_32S *)PropertyValue );
 	unguard;
 }
 const char* UIntProperty::ImportText( const char* Buffer, BYTE* Data, UBOOL HumanReadable ) const
 {
 	guard(UIntProperty::ImportText);
 	if( *Buffer=='-' || (*Buffer>='0' && *Buffer<='9') )
-		*(INT*)Data = appAtoi( Buffer );
+		*(INT_UNREAL_32S*)Data = appAtoi( Buffer );
 	while( *Buffer=='-' || (*Buffer>='0' && *Buffer<='9') )
 		Buffer++;
 	return Buffer;
@@ -609,12 +609,12 @@ void UStructProperty::ExportTextItem( char* ValueStr, BYTE* PropertyValue, BYTE*
 	}
 	else
 	{
-		INT Count=0;
+		INT_UNREAL_32S Count=0;
 		for( TFieldIterator<UProperty> It(Struct); It; ++It )
 		{
 			if( It->Port() )
 			{
-				for( INT Index=0; Index<It->ArrayDim; Index++ )
+				for( INT_UNREAL_32S Index=0; Index<It->ArrayDim; Index++ )
 				{
 					char Value[1024];
 					if( It->ExportText(Index,Value,PropertyValue,DefaultValue,0) )
@@ -676,7 +676,7 @@ const char* UStructProperty::ImportText( const char* Buffer, BYTE* Data, UBOOL H
 				Name[Count++] = 0;
 
 				// Get optional array element.
-				INT Element=0;
+				INT_UNREAL_32S Element=0;
 				if( *Buffer=='[' )
 				{
 					const char* Start=Buffer;
@@ -726,7 +726,7 @@ const char* UStructProperty::ImportText( const char* Buffer, BYTE* Data, UBOOL H
 				// If not parsed, skip this property in the stream.
 				if( !Parsed )
 				{
-					INT SubCount=0;
+					INT_UNREAL_32S SubCount=0;
 					while
 					(	*Buffer
 					&&	*Buffer!=10

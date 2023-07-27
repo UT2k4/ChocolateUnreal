@@ -396,7 +396,7 @@ void UTransBuffer::EndChanges( FTransaction* Trans )
 			else if( It->IsA(UBspNodes::StaticClass) )
 			{
 				UBspNodes* Nodes = (UBspNodes*)*It;
-				for( INT i=0; i<Nodes->Num(); i++ )
+				for( INT_UNREAL_32S i=0; i<Nodes->Num(); i++ )
 					Nodes->Element(i).NodeFlags &= ~(NF_IsNew);
 			}
 			It->ClearFlags( RF_Trans );
@@ -408,7 +408,7 @@ void UTransBuffer::EndChanges( FTransaction* Trans )
 //
 // Apply one logged change, Undo = 1 (Undo), 0 (Redo).
 //
-void UTransBuffer::ApplyChange( FTransChangeLog* Change, BYTE* SourcePtr, INT DataSize )
+void UTransBuffer::ApplyChange( FTransChangeLog* Change, BYTE* SourcePtr, INT_UNREAL_32S DataSize )
 {
 	guard(UTransBuffer::ApplyChange);
 
@@ -528,7 +528,7 @@ UBOOL UTransBuffer::Undo( ULevel* Level )
 	FTransaction	*Transaction;
 	FTransChangeLog	*Change;
 	char			Descr[256];
-	INT 			i;
+	INT_UNREAL_32S 			i;
 
 	if( !GIsRunning )
 		return 0;
@@ -659,7 +659,8 @@ int UTransBuffer::Redo( ULevel* Level )
 	Lock(0);
 
 	Transaction = &Transactions [0];
-	for( int i=0; i<NumTrans; i++ )
+	int i;
+	for( i=0; i<NumTrans; i++ )
 	{
 		if (Transaction->TransCount == UndoTransCount) goto Found;
 		Transaction++;
@@ -695,7 +696,7 @@ int UTransBuffer::Redo( ULevel* Level )
 // is the index of the record in the object Res, or -1 to note changes to stuff
 // in the object.
 //
-void UTransBuffer::NoteSingleChange( UObject* Res, INT Index )
+void UTransBuffer::NoteSingleChange( UObject* Res, INT_UNREAL_32S Index )
 {
 	guard(UTransBuffer::NoteSingleChange);
 
@@ -703,7 +704,7 @@ void UTransBuffer::NoteSingleChange( UObject* Res, INT Index )
  	FTransaction	*Transaction = &Transactions [NumTrans-1];
 	FTransChangeLog	*Changes;
 	BYTE			*SourcePtr,*DestPtr;
-	INT				DataSize;
+	INT_UNREAL_32S				DataSize;
 
 	if( !GIsRunning || !Res || Overflow )
 		return;

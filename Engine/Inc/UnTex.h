@@ -85,7 +85,7 @@ public:
 	{
 		return R!=C.R || G!=C.G || B!=C.B;
 	}
-	INT Brightness() const
+	INT_UNREAL_32S Brightness() const
 	{
 		return (2*(int)R + 3*(int)G + 1*(int)B)>>3;
 	}
@@ -109,7 +109,7 @@ public:
 	{
 		return FPlane(R/255.f,G/255.f,B/255.f,A/255.0);
 	}
-	FColor Brighten( INT Amount )
+	FColor Brighten( INT_UNREAL_32S Amount )
 	{
 		return FColor( Plane() * (1.0 - Amount/24.0) );
 	}
@@ -136,7 +136,6 @@ class ENGINE_API UPalette : public UObject
 	TArray<FColor> Colors;
 
 	// Constructors.
-	UPalette() {}
 
 	// UObject interface.
 	void Serialize( FArchive& Ar );
@@ -172,7 +171,7 @@ enum ETextureFlags
 struct ENGINE_API FMipmap
 {
 	BYTE*			DataPtr;		// Pointer to data, valid only when locked.
-	INT				USize,  VSize;	// Power of two tile dimensions.
+	INT_UNREAL_32S				USize,  VSize;	// Power of two tile dimensions.
 	BYTE			UBits,  VBits;	// Power of two tile bits.
 	TArray<BYTE>	DataArray;		// Data.
 	FMipmap()
@@ -217,8 +216,8 @@ class ENGINE_API UBitmap : public UObject
 	BYTE		Format;				// ETextureFormat.
 	UPalette*	Palette;			// Palette if 8-bit palettized.
 	BYTE		UBits, VBits;		// # of bits in USize, i.e. 8 for 256.
-	INT			USize, VSize;		// Size, must be power of 2.
-	INT			UClamp, VClamp;		// Clamped width, must be <= size.
+	INT_UNREAL_32S			USize, VSize;		// Size, must be power of 2.
+	INT_UNREAL_32S			UClamp, VClamp;		// Clamped width, must be <= size.
 	FColor		MipZero;			// Overall average color of texture.
 	FColor		MaxColor;			// Maximum color for normalization.
 	DOUBLE		LastUpdateTime;		// Last time texture was locked for rendering.
@@ -231,8 +230,8 @@ class ENGINE_API UBitmap : public UObject
 
 	// UBitmap interface.
 	virtual void GetInfo( FTextureInfo& TextureInfo, DOUBLE Time )=0;
-	virtual INT GetNumMips()=0;
-	virtual FMipmap* GetMip( INT i )=0;
+	virtual INT_UNREAL_32S GetNumMips()=0;
+	virtual FMipmap* GetMip( INT_UNREAL_32S i )=0;
 };
 
 //
@@ -240,7 +239,7 @@ class ENGINE_API UBitmap : public UObject
 //
 class ENGINE_API UTexture : public UBitmap
 {
-	DECLARE_CLASS(UTexture,UBitmap,CLASS_SafeReplace)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTexture,UBitmap,CLASS_SafeReplace)
 
 	// Subtextures.
 	UTexture*	BumpMap;			// Bump map to illuminate this texture with.
@@ -281,19 +280,19 @@ class ENGINE_API UTexture : public UBitmap
 	// UObject interface.
 	void Serialize( FArchive& Ar );
 	const char* Import( const char* Buffer, const char* BufferEnd, const char* FileType );
-	void Export( FOutputDevice& Out, const char* FileType, INT Indent );
+	void Export( FOutputDevice& Out, const char* FileType, INT_UNREAL_32S Indent );
 	void PostLoad();
 
 	// UBitmap interface.
 	DWORD GetColorsIndex() {return Palette->GetIndex();}
 	FColor* GetColors()    {return Palette ? &Palette->Colors(0) : NULL;}
-	INT GetNumMips()       {return Mips.Num();}
-	FMipmap* GetMip(INT i) {return &Mips(i);}
+	INT_UNREAL_32S GetNumMips()       {return Mips.Num();}
+	FMipmap* GetMip(INT_UNREAL_32S i) {return &Mips(i);}
 	void GetInfo( FTextureInfo& TextureInfo, DOUBLE Time );
 
 	// UTexture interface.
 	virtual void Clear( DWORD ClearFlags );
-	virtual void Init( INT InUSize, INT InVSize );
+	virtual void Init( INT_UNREAL_32S InUSize, INT_UNREAL_32S InVSize );
 	virtual void Tick( FLOAT DeltaSeconds );
 	virtual void ConstantTimeTick();
 	virtual void MousePosition( DWORD Buttons, FLOAT X, FLOAT Y ) {}
@@ -347,11 +346,11 @@ struct FTextureInfo
 	ETextureFormat		Format;			// Texture format.
 	FLOAT				UScale;			// U Scaling.
 	FLOAT				VScale;			// V Scaling.
-	INT					USize;			// Base U size.
-	INT					VSize;			// Base V size.
-	INT					UClamp;			// U clamping value, or 0 if none.
-	INT					VClamp;			// V clamping value, or 0 if none.
-	INT					NumMips;		// Number of mipmaps.
+	INT_UNREAL_32S					USize;			// Base U size.
+	INT_UNREAL_32S					VSize;			// Base V size.
+	INT_UNREAL_32S					UClamp;			// U clamping value, or 0 if none.
+	INT_UNREAL_32S					VClamp;			// V clamping value, or 0 if none.
+	INT_UNREAL_32S					NumMips;		// Number of mipmaps.
 	FColor*				Palette;		// Palette colors.
 	DWORD				TextureFlags;	// From ETextureFlags.
 	FMipmap*			Mips[MAX_MIPS];	// Array of NumMips of mipmaps.
@@ -388,7 +387,7 @@ public:
 //
 class ENGINE_API UFont : public UTexture
 {
-	DECLARE_CLASS(UFont,UTexture,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFont,UTexture,0)
 
 	// Constants.
 	enum {NUM_FONT_CHARS=256};

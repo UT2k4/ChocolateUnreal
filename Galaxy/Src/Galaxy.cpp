@@ -44,7 +44,7 @@ extern "C"
 #define safecall(f) \
 { \
 	guard(f); \
-	INT Error=f; \
+	INT_UNREAL_32S Error=f; \
 	if( Error ) \
 		debugf( NAME_Warning, "%s failed: %i", #f, Error ); \
 	unguard; \
@@ -64,7 +64,7 @@ class FPlayingSound
 public:
 	glxChannel*	Channel;
 	AActor*		Actor;
-	INT			Id;
+	INT_UNREAL_32S			Id;
 	UBOOL		Is3D;
 	USound*		Sound;
 	FVector		Location;
@@ -80,7 +80,7 @@ public:
 	,	Sound	(0)
 	,	Priority(0)
 	{}
-	FPlayingSound( AActor* InActor, INT InId, USound* InSound, FVector InLocation, FLOAT InVolume, FLOAT InRadius, FLOAT InPitch, FLOAT InPriority )
+	FPlayingSound( AActor* InActor, INT_UNREAL_32S InId, USound* InSound, FVector InLocation, FLOAT InVolume, FLOAT InRadius, FLOAT InPitch, FLOAT InPriority )
 	:	Channel	(NULL)
 	,	Actor	(InActor)
 	,	Id		(InId)
@@ -99,7 +99,7 @@ public:
 //
 class DLL_EXPORT UGalaxyAudioSubsystem : public UAudioSubsystem
 {
-	DECLARE_CLASS(UGalaxyAudioSubsystem,UAudioSubsystem,CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UGalaxyAudioSubsystem,UAudioSubsystem,CLASS_Config)
 
 	// Configuration.
 	UBOOL			UseDirectSound;
@@ -114,9 +114,9 @@ class DLL_EXPORT UGalaxyAudioSubsystem : public UAudioSubsystem
 	UBOOL			ReverseStereo;
 	UBOOL			LowSoundQuality;
 	UBOOL			Initialized;
-	INT				Latency;
+	INT_UNREAL_32S				Latency;
 	BYTE			OutputRate;
-	INT				EffectsChannels;
+	INT_UNREAL_32S				EffectsChannels;
 	BYTE			MusicVolume;
 	BYTE			SoundVolume;
 	FLOAT			AmbientFactor;
@@ -131,7 +131,7 @@ class DLL_EXPORT UGalaxyAudioSubsystem : public UAudioSubsystem
 	BYTE			CurrentCDTrack;
 	BYTE			CurrentSection;
 	glxReverb		CurrentReverb;
-	INT				FreeSlot;
+	INT_UNREAL_32S				FreeSlot;
 	FLOAT			MusicFade;
 
 	// Constructor.
@@ -150,7 +150,7 @@ class DLL_EXPORT UGalaxyAudioSubsystem : public UAudioSubsystem
 	void Update( FPointRegion Region, FCoords& Coords );
 	void UnregisterSound( USound* Sound );
 	void UnregisterMusic( UMusic* Music );
-	UBOOL PlaySound( AActor* Actor, INT Id, USound* Sound, FVector Location, FLOAT Volume, FLOAT Radius, FLOAT Pitch );
+	UBOOL PlaySound( AActor* Actor, INT_UNREAL_32S Id, USound* Sound, FVector Location, FLOAT Volume, FLOAT Radius, FLOAT Pitch );
 	void NoteDestroy( AActor* Actor );
 	void RegisterSound( USound* Sound );
 	void RegisterMusic( UMusic* Music ) {};
@@ -158,8 +158,8 @@ class DLL_EXPORT UGalaxyAudioSubsystem : public UAudioSubsystem
 
 	// Internal functions.
 	void SetVolumes();
-	void StopSound( INT Index );
-	FPlayingSound* FindActiveSound( INT Id, INT& Index );
+	void StopSound( INT_UNREAL_32S Index );
+	FPlayingSound* FindActiveSound( INT_UNREAL_32S Id, INT_UNREAL_32S& Index );
 
 	// Inlines.
 	glxSample* GetSound( USound* Sound )
@@ -326,7 +326,7 @@ void UGalaxyAudioSubsystem::SetViewport( UViewport* InViewport )
 	// Stop all playing sounds.
 	memset( &CurrentReverb, 0, sizeof(CurrentReverb) );
 	glxSetSampleReverb( &CurrentReverb );
-	for( INT i=0; i<EffectsChannels; i++ )
+	for( INT_UNREAL_32S i=0; i<EffectsChannels; i++ )
 		StopSound( i );
 
 	// Remember the viewport.
@@ -359,8 +359,8 @@ void UGalaxyAudioSubsystem::SetViewport( UViewport* InViewport )
 			// Start sound output.
 			guard(glxStartOutput);
 			check(Viewport->GetWindow());
-			INT Rate = OutputRate==0 ? 11024 : OutputRate==1 ? 22050 : 44100;
-			INT Result;
+			INT_UNREAL_32S Rate = OutputRate==0 ? 11024 : OutputRate==1 ? 22050 : 44100;
+			INT_UNREAL_32S Result;
 			try
 			{
 				Result = glxStartOutput( Viewport->GetWindow(), Rate, OutputMode, Latency );
@@ -482,7 +482,7 @@ void UGalaxyAudioSubsystem::UnregisterSound( USound* Sound )
 		debugf( NAME_DevSound, "Unregister sound: %s", Sound->GetFullName() );
 
 		// Shut it up.
-		for( INT i=0; i<EffectsChannels; i++ )
+		for( INT_UNREAL_32S i=0; i<EffectsChannels; i++ )
 			if( PlayingSounds[i].Sound==Sound )
 				StopSound( i );
 
@@ -524,7 +524,7 @@ UBOOL UGalaxyAudioSubsystem::Exec( const char* Cmd, FOutputDevice* Out )
 	guard(UGalaxyAudioSubsystem::Exec);
 	if( Viewport && ParseCommand( &Cmd, "CDTRACK") )
 	{
-		INT i = atoi(Cmd);
+		INT_UNREAL_32S i = atoi(Cmd);
 		Out->Logf( "CD Track %i", i );
 		Viewport->Actor->CdTrack = i;
 		Viewport->Actor->Transition = MTRAN_Instant;
@@ -532,7 +532,7 @@ UBOOL UGalaxyAudioSubsystem::Exec( const char* Cmd, FOutputDevice* Out )
 	}
 	else if( CurrentMusic && ParseCommand( &Cmd, "MUSICORDER") )
 	{
-		INT i = atoi(Cmd);
+		INT_UNREAL_32S i = atoi(Cmd);
 		Out->Logf( "Galaxy order %i", i );
 		glxControlMusic( GLX_SETPOSITION, i );
 		return 1;
@@ -548,7 +548,7 @@ UBOOL UGalaxyAudioSubsystem::Exec( const char* Cmd, FOutputDevice* Out )
 //
 // Stop an active sound effect.
 //
-void UGalaxyAudioSubsystem::StopSound( INT Index )
+void UGalaxyAudioSubsystem::StopSound( INT_UNREAL_32S Index )
 {
 	guard(UGalaxyAudioSubsystem::StopSound);
 	FPlayingSound& Playing = PlayingSounds[Index];
@@ -575,7 +575,7 @@ void UGalaxyAudioSubsystem::StopSound( INT Index )
 UBOOL UGalaxyAudioSubsystem::PlaySound
 (
 	AActor*	Actor,
-	INT		Id,
+	INT_UNREAL_32S		Id,
 	USound*	Sound,
 	FVector	Location,
 	FLOAT	Volume,
@@ -596,9 +596,9 @@ UBOOL UGalaxyAudioSubsystem::PlaySound
 	FLOAT Priority = SoundPriority( Viewport, Location, Volume, Radius );
 
 	// If already playing, stop it.
-	INT   Index        = -1;
+	INT_UNREAL_32S   Index        = -1;
 	FLOAT BestPriority = Priority;
-	for( INT i=0; i<EffectsChannels; i++ )
+	for( INT_UNREAL_32S i=0; i<EffectsChannels; i++ )
 	{
 		FPlayingSound& Playing = PlayingSounds[i];
 		if( (Playing.Id&~1)==(Id&~1) )
@@ -683,7 +683,7 @@ void UGalaxyAudioSubsystem::Update( FPointRegion Region, FCoords& Coords )
 	if( Realtime )
 	{
 		guard(StartAmbience);
-		for( INT i=0; i<Viewport->Actor->XLevel->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Viewport->Actor->XLevel->Num(); i++ )
 		{
 			AActor* Actor = Viewport->Actor->XLevel->Actors(i);
 			if
@@ -691,8 +691,9 @@ void UGalaxyAudioSubsystem::Update( FPointRegion Region, FCoords& Coords )
 			&&	Actor->AmbientSound
 			&&	FDistSquared(Viewport->Actor->Location,Actor->Location)<=Square(Actor->WorldSoundRadius()) )
 			{
-				INT Id = Actor->GetIndex()*16+SLOT_Ambient*2;
-				for( INT j=0; j<EffectsChannels; j++ )
+				INT_UNREAL_32S Id = Actor->GetIndex()*16+SLOT_Ambient*2;
+				INT_UNREAL_32S j;
+				for( j=0; j<EffectsChannels; j++ )
 					if( PlayingSounds[j].Id==Id )
 						break;
 				if( j==EffectsChannels )
@@ -707,7 +708,7 @@ void UGalaxyAudioSubsystem::Update( FPointRegion Region, FCoords& Coords )
 
 	// Update all playing ambient sounds.
 	guard(UpdateAmbience);
-	for( INT i=0; i<EffectsChannels; i++ )
+	for( INT_UNREAL_32S i=0; i<EffectsChannels; i++ )
 	{
 		FPlayingSound& Playing = PlayingSounds[i];
 		if( (Playing.Id&14)==SLOT_Ambient*2 )
@@ -742,7 +743,7 @@ void UGalaxyAudioSubsystem::Update( FPointRegion Region, FCoords& Coords )
 
 	// Update all active sounds.
 	guard(UpdateSounds);
-	for( INT Index=0; Index<EffectsChannels; Index++ )
+	for( INT_UNREAL_32S Index=0; Index<EffectsChannels; Index++ )
 	{
 		FPlayingSound& Playing = PlayingSounds[Index];
 		if( Playing.Actor )
@@ -778,9 +779,9 @@ void UGalaxyAudioSubsystem::Update( FPointRegion Region, FCoords& Coords )
 				PanAngle *= Size / CenterDist;
 
 			// Compute panning and volume.
-			INT     GlxPan      = Clamp( (INT)(GLX_MAXSMPPANNING/2 + PanAngle*GLX_MAXSMPPANNING*7/8/PI), 0, GLX_MAXSMPPANNING );
+			INT_UNREAL_32S     GlxPan      = Clamp( (INT_UNREAL_32S)(GLX_MAXSMPPANNING/2 + PanAngle*GLX_MAXSMPPANNING*7/8/PI), 0, GLX_MAXSMPPANNING );
 			FLOAT   Attenuation = Clamp(1.0-Size/Playing.Radius,0.0,1.0);
-			INT     GlxVolume   = Clamp( (INT)(GLX_MAXSMPVOLUME * Playing.Volume * Attenuation * EFFECT_FACTOR), 0, GLX_MAXSMPVOLUME );
+			INT_UNREAL_32S     GlxVolume   = Clamp( (INT_UNREAL_32S)(GLX_MAXSMPVOLUME * Playing.Volume * Attenuation * EFFECT_FACTOR), 0, GLX_MAXSMPVOLUME );
 			if( ReverseStereo )
 				GlxPan = GLX_MAXSMPPANNING-GlxPan;
 			if( Location.Z<0.0 && UseSurround )
@@ -978,7 +979,7 @@ void UGalaxyAudioSubsystem::Update( FPointRegion Region, FCoords& Coords )
 		AZoneInfo* ReverbZone = Viewport->Actor->Region.Zone;
 		Reverb.Volume     = ReverbZone->MasterGain/255.0;
 		Reverb.HFDamp     = Clamp(ReverbZone->CutoffHz,0,44100);//max samp rate
-		for( INT i=0; i<ARRAY_COUNT(ReverbZone->Delay); i++ )
+		for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(ReverbZone->Delay); i++ )
 		{
 			Reverb.Delay[i].Time = ReverbZone->Delay[i]/500.0;
 			Reverb.Delay[i].Gain = ReverbZone->Gain[i]/255.0;

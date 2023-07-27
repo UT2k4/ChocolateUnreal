@@ -14,7 +14,7 @@
 enum {NAME_SIZE	= 64};
 
 // Name index.
-typedef INT NAME_INDEX;
+typedef INT_UNREAL_32S NAME_INDEX;
 
 // Enumeration for finding name.
 enum EFindName
@@ -152,9 +152,9 @@ private:
 
 	// Static subsystem variables.
 	static TArray<FNameEntry*>	Names;			 // Table of all names.
-	static TArray<INT>          Available;       // Indices of available names.
+	static TArray<INT_UNREAL_32S>          Available;       // Indices of available names.
 	static FNameEntry*			NameHash[8192];  // Hashed names.
-	static INT					Duplicate;       // Duplicate name, if any.
+	static INT_UNREAL_32S					Duplicate;       // Duplicate name, if any.
 };
 
 /*----------------------------------------------------------------------------

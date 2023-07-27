@@ -17,9 +17,9 @@ struct FMeshVert
 	union
 	{
 #if __INTEL__
-		struct {INT X:11; INT Y:11; INT Z:10;};
+		struct {INT_UNREAL_32S X:11; INT_UNREAL_32S Y:11; INT_UNREAL_32S Z:10;};
 #else
-		struct {INT Z:10; INT Y:11; INT X:11;};
+		struct {INT_UNREAL_32S Z:10; INT_UNREAL_32S Y:11; INT_UNREAL_32S X:11;};
 #endif
 		struct {DWORD D;};
 	};
@@ -66,7 +66,7 @@ struct FMeshTri
 	_WORD		iVertex[3];		// Vertex indices.
 	FMeshUV		Tex[3];			// Texture UV coordinates.
 	DWORD		PolyFlags;		// Surface flags.
-	INT			TextureIndex;	// Source texture index.
+	INT_UNREAL_32S			TextureIndex;	// Source texture index.
 	friend FArchive &operator<<( FArchive& Ar, FMeshTri& T )
 	{
 		Ar << T.iVertex[0] << T.iVertex[1] << T.iVertex[2];
@@ -101,8 +101,8 @@ struct FMeshAnimSeq
 {
 	FName					Name;		// Sequence's name.
 	FName					Group;		// Group.
-	INT						StartFrame;	// Starting frame number.
-	INT						NumFrames;	// Number of frames in sequence.
+	INT_UNREAL_32S						StartFrame;	// Starting frame number.
+	INT_UNREAL_32S						NumFrames;	// Number of frames in sequence.
 	FLOAT					Rate;		// Playback rate in frames per second.
 	TArray<FMeshAnimNotify> Notifys;	// Notifications.
 	friend FArchive &operator<<( FArchive& Ar, FMeshAnimSeq& A )
@@ -120,8 +120,8 @@ struct FMeshAnimSeq
 // shared, interpolated normal shading.
 struct FMeshVertConnect
 {
-	INT	NumVertTriangles;
-	INT	TriangleListOffset;
+	INT_UNREAL_32S	NumVertTriangles;
+	INT_UNREAL_32S	TriangleListOffset;
 	friend FArchive &operator<<( FArchive& Ar, FMeshVertConnect& C )
 		{return Ar << C.NumVertTriangles << C.TriangleListOffset;}
 };
@@ -136,7 +136,7 @@ struct FMeshVertConnect
 //
 class ENGINE_API UMesh : public UPrimitive
 {
-	DECLARE_CLASS(UMesh,UPrimitive,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UMesh,UPrimitive,0)
 
 	// Objects.
 	TArray<FMeshVert>		Verts;
@@ -145,12 +145,12 @@ class ENGINE_API UMesh : public UPrimitive
 	TArray<FMeshVertConnect>Connects;
 	TArray<FBox>			BoundingBoxes;
 	TArray<FSphere>			BoundingSpheres;
-	TArray<INT>				VertLinks;
+	TArray<INT_UNREAL_32S>				VertLinks;
 	TArray<UTexture*>		Textures;
 
 	// Counts.
-	INT						FrameVerts;
-	INT						AnimFrames;
+	INT_UNREAL_32S						FrameVerts;
+	INT_UNREAL_32S						AnimFrames;
 
 	// Render info.
 	DWORD					AndFlags;
@@ -162,8 +162,8 @@ class ENGINE_API UMesh : public UPrimitive
 	FRotator				RotOrigin;	// Amount to rotate when importing (mostly for yawing).
 
 	// Editing info.
-	INT						CurPoly;	// Index of selected polygon.
-	INT						CurVertex;	// Index of selected vertex.
+	INT_UNREAL_32S						CurPoly;	// Index of selected polygon.
+	INT_UNREAL_32S						CurVertex;	// Index of selected vertex.
 
 	// UObject interface.
 	UMesh();
@@ -202,9 +202,9 @@ class ENGINE_API UMesh : public UPrimitive
 		return NULL;
 		unguardSlow;
 	}
-	void GetFrame( FVector* Verts, INT Size, FCoords Coords, AActor* Owner );
-	void AMD3DGetFrame( FVector* Verts, INT Size, FCoords Coords, AActor* Owner );
-	UTexture* GetTexture( INT Count, AActor* Owner )
+	void GetFrame( FVector* Verts, INT_UNREAL_32S Size, FCoords Coords, AActor* Owner );
+	void AMD3DGetFrame( FVector* Verts, INT_UNREAL_32S Size, FCoords Coords, AActor* Owner );
+	UTexture* GetTexture( INT_UNREAL_32S Count, AActor* Owner )
 	{
 		guardSlow(UMesh::GetTexture);
 		if( Count!=0 && Textures(Count) )

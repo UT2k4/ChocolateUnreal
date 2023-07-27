@@ -15,16 +15,17 @@ Revision history:
 class FInputVarCache
 {
 public:
-	INT Count;
+	INT_UNREAL_32S Count;
 	UProperty* Properties[];
 	static FInputVarCache* Get( UClass* Class, FCacheItem*& Item )
 	{
+		TFieldIterator<UProperty> It(Class);
 		QWORD CacheId = MakeCacheID( CID_Extra3, Class );
 		FInputVarCache* Result = (FInputVarCache*)GCache.Get(CacheId,Item);
 		if( !Result )
 		{
-			INT Count=0, Temp=0;
-			for( TFieldIterator<UProperty> It(Class); It; ++It )
+			INT_UNREAL_32S Count=0, Temp=0;
+			for( It; It; ++It )
 				if( It->PropertyFlags & CPF_Input )
 					Count++;
 			Result = (FInputVarCache*)GCache.Create(CacheId,Item,sizeof(FInputVarCache)+Count*sizeof(UProperty*));
@@ -70,9 +71,9 @@ UInput::UInput()
 
 		// Add key list.
 		UStruct* DynamicStringStruct=FindObject<UStruct>(ANY_PACKAGE,"DynamicString");
-		for( INT i=0; i<IK_MAX; i++ )
+		for( INT_UNREAL_32S i=0; i<IK_MAX; i++ )
 			if( *GetKeyName((EInputKey)i) )
-				new(Class,GetKeyName((EInputKey)i),RF_Public)UStructProperty( EC_CppProperty, (INT)&((UInput*)NULL)->Bindings[i], "RawKeys", CPF_Config, DynamicStringStruct );
+				new(Class,GetKeyName((EInputKey)i),RF_Public)UStructProperty( EC_CppProperty, (INT_UNREAL_32S)&((UInput*)NULL)->Bindings[i], "RawKeys", CPF_Config, DynamicStringStruct );
 
 		// Load config.
 		Class->GetDefaultObject()->LoadConfig( NAME_Config );
@@ -113,6 +114,7 @@ BYTE* UInput::FindButtonName( AActor* Actor, const char* ButtonName ) const
 	guard(UInput::FindButtonName);
 	check(Viewport);
 	check(Actor);
+	INT_UNREAL_32S i;
 
 	// Map ButtonName to a FName.
 	FName Button( ButtonName, FNAME_Find );
@@ -122,7 +124,7 @@ BYTE* UInput::FindButtonName( AActor* Actor, const char* ButtonName ) const
 	{
 		FCacheItem* Item;
 		FInputVarCache* Cache = FInputVarCache::Get( Actor->GetClass(), Item );
-		for( INT i=0; i<Cache->Count; i++ )
+		for( i=0; i<Cache->Count; i++ )
 			if
 			(	Cache->Properties[i]->GetFName()==Button
 			&&	Cast<UByteProperty>(Cache->Properties[i]) )
@@ -281,7 +283,7 @@ UBOOL UInput::Exec( const char* Str, FOutputDevice* Out )
 	}
 	else if( ParseCommand( &Str, "KEYNAME" ) )
 	{
-		INT keyNo = appAtoi(Str);
+		INT_UNREAL_32S keyNo = appAtoi(Str);
 		appStrcpy( Temp, GetKeyName(EInputKey(keyNo)));
 		Out->Log( Temp );
 		return 1;
@@ -301,7 +303,7 @@ UBOOL UInput::Exec( const char* Str, FOutputDevice* Out )
 		FName Name(Temp,FNAME_Find);
 		if( Name!=NAME_None )
 		{
-			for( INT i=0; i<ARRAY_COUNT(Aliases); i++ )
+			for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(Aliases); i++ )
 			{
 				if( Aliases[i].Alias==Name )
 				{
@@ -374,13 +376,13 @@ void UInput::ReadInput( FLOAT DeltaSeconds, FOutputDevice* Out )
 
 	// Update everything with IST_Hold.
 	if( DeltaSeconds != 0.0 )
-		for( INT i=0; i<IK_MAX; i++ )
+		for( INT_UNREAL_32S i=0; i<IK_MAX; i++ )
 			if( KeyDownTable[i] )
 				Process( *GSystem, (EInputKey)i, IST_Hold, DeltaSeconds );
 
 	// Scale the axes.
 	FLOAT Scale = DeltaSeconds!=0.0 ? 20.0/DeltaSeconds : 0.0;
-	for( INT i=0; i<Cache->Count; i++ )
+	for( INT_UNREAL_32S i=0; i<Cache->Count; i++ )
 		if( Cast<UFloatProperty>(Cache->Properties[i]) )
 			*(FLOAT*)((BYTE*)Viewport->Actor + Cache->Properties[i]->Offset) *= Scale;
 
@@ -401,7 +403,7 @@ void UInput::ResetInput()
 	check(Viewport);
 
 	// Reset all keys.
-	for( INT i=0; i<IK_MAX; i++ )
+	for( INT_UNREAL_32S i=0; i<IK_MAX; i++ )
 		KeyDownTable[i] = 0;
 
 	// Reset all input bytes.
@@ -450,7 +452,7 @@ UBOOL UInput::FindKeyName( const char* KeyName, EInputKey& iKey ) const
 	appSprintf( Temp, "IK_%s", KeyName );
 	FName N( Temp, FNAME_Find );
 	if( N != NAME_None )
-		return InputKeys->Names.FindItem( N, *(INT*)&iKey );
+		return InputKeys->Names.FindItem( N, *(INT_UNREAL_32S*)&iKey );
 	return 0;
 	unguard;
 }

@@ -49,10 +49,10 @@ public:
 		// Varibles.
 		AActor*          Actor;     // The actor.
 		FCollisionLink*  Next;      // Next link belonging to this collision bucket.
-		INT				 iLocation; // Based hash location.
+		INT_UNREAL_32S				 iLocation; // Based hash location.
 
 		// Functions.
-		FCollisionLink( AActor *InActor, FCollisionLink *InNext, INT iInLocation )
+		FCollisionLink( AActor *InActor, FCollisionLink *InNext, INT_UNREAL_32S iInLocation )
 		:	Actor		(InActor)
 		,	Next        (InNext)
 		,	iLocation	(iInLocation)
@@ -60,21 +60,21 @@ public:
 	} *Hash[NUM_BUCKETS];
 
 	// Statics.
-	static INT InitializedBasis;
-	static INT CollisionTag;
-	static INT HashX[NUM_BUCKETS];
-	static INT HashY[NUM_BUCKETS];
-	static INT HashZ[NUM_BUCKETS];
+	static INT_UNREAL_32S InitializedBasis;
+	static INT_UNREAL_32S CollisionTag;
+	static INT_UNREAL_32S HashX[NUM_BUCKETS];
+	static INT_UNREAL_32S HashY[NUM_BUCKETS];
+	static INT_UNREAL_32S HashZ[NUM_BUCKETS];
 
 	// Implementation.
-	void GetActorExtent( AActor *Actor, INT &iX0, INT &iX1, INT &iY0, INT &iY1, INT &iZ0, INT &iZ1 );
-	void GetHashIndices( FVector Location, INT &iX, INT &iY, INT &iZ )
+	void GetActorExtent( AActor *Actor, INT_UNREAL_32S &iX0, INT_UNREAL_32S &iX1, INT_UNREAL_32S &iY0, INT_UNREAL_32S &iY1, INT_UNREAL_32S &iZ0, INT_UNREAL_32S &iZ1 );
+	void GetHashIndices( FVector Location, INT_UNREAL_32S &iX, INT_UNREAL_32S &iY, INT_UNREAL_32S &iZ )
 	{
 		iX = Clamp(appRound( (Location.X + XY_OFS) * (1.0/GRAN_XY) ), 0, (int)NUM_BUCKETS);
 		iY = Clamp(appRound( (Location.Y + XY_OFS) * (1.0/GRAN_XY) ), 0, (int)NUM_BUCKETS);
 		iZ = Clamp(appRound( (Location.Z + Z_OFS ) * (1.0/GRAN_Z ) ), 0, (int)NUM_BUCKETS);
 	}
-	struct FCollisionLink*& GetHashLink( INT iX, INT iY, INT iZ, INT &iLocation )
+	struct FCollisionLink*& GetHashLink( INT_UNREAL_32S iX, INT_UNREAL_32S iY, INT_UNREAL_32S iZ, INT_UNREAL_32S &iLocation )
 	{
 		iLocation = iX + (iY << BASIS_BITS) + (iZ << (BASIS_BITS*2));
 		return Hash[ HashX[iX] ^ HashY[iY] ^ HashZ[iZ] ];
@@ -93,17 +93,17 @@ ENGINE_API FCollisionHashBase* GNewCollisionHash()
 -----------------------------------------------------------------------------*/
 
 // FCollisionHash statics.
-INT FCollisionHash::InitializedBasis=0;
-INT FCollisionHash::CollisionTag=0;
-INT FCollisionHash::HashX[NUM_BUCKETS];
-INT FCollisionHash::HashY[NUM_BUCKETS];
-INT FCollisionHash::HashZ[NUM_BUCKETS];	
+INT_UNREAL_32S FCollisionHash::InitializedBasis=0;
+INT_UNREAL_32S FCollisionHash::CollisionTag=0;
+INT_UNREAL_32S FCollisionHash::HashX[NUM_BUCKETS];
+INT_UNREAL_32S FCollisionHash::HashY[NUM_BUCKETS];
+INT_UNREAL_32S FCollisionHash::HashZ[NUM_BUCKETS];	
 
 // Global pool of available links.
 static FCollisionHash::FCollisionLink* GAvailable = NULL;
 
 // Global statistics.
-static INT GActorsAdded=0, GFragsAdded=0, GUsed=0, GChecks=0;
+static INT_UNREAL_32S GActorsAdded=0, GFragsAdded=0, GUsed=0, GChecks=0;
 
 /*-----------------------------------------------------------------------------
 	FCollisionHash init/exit.
@@ -114,13 +114,14 @@ static INT GActorsAdded=0, GFragsAdded=0, GUsed=0, GChecks=0;
 //
 FCollisionHash::FCollisionHash()
 {
+	int i;
 	guard(FCollisionHash::FCollisionHash);
 	GAvailable = NULL;
 
 	// Initialize collision basis tables if necessary.
 	if( !InitializedBasis )
 	{
-		for( int i=0; i<NUM_BUCKETS; i++ )
+		for( i=0; i<NUM_BUCKETS; i++ )
 		{
 			HashX[i] = HashY[i] = HashZ[i] = i;
 		}
@@ -193,7 +194,7 @@ void FCollisionHash::Tick()
 void FCollisionHash::GetActorExtent
 (
 	AActor *Actor,
-	INT &X0, INT &X1, INT &Y0, INT &Y1, INT &Z0, INT &Z1
+	INT_UNREAL_32S &X0, INT_UNREAL_32S &X1, INT_UNREAL_32S &Y0, INT_UNREAL_32S &Y1, INT_UNREAL_32S &Z0, INT_UNREAL_32S &Z1
 )
 {
 	guard(FCollisionHash::GetActorExtent);
@@ -225,15 +226,15 @@ void FCollisionHash::AddActor( AActor *Actor )
 	GActorsAdded++;
 
 	// Add actor in all the specified places.
-	INT X0,Y0,Z0,X1,Y1,Z1;
+	INT_UNREAL_32S X0,Y0,Z0,X1,Y1,Z1;
 	GetActorExtent( Actor, X0, X1, Y0, Y1, Z0, Z1 );
-	for( INT X=X0; X<=X1; X++ )
+	for( INT_UNREAL_32S X=X0; X<=X1; X++ )
 	{
-		for( INT Y=Y0; Y<=Y1; Y++ )
+		for( INT_UNREAL_32S Y=Y0; Y<=Y1; Y++ )
 		{
-			for( INT Z=Z0; Z<=Z1; Z++ )
+			for( INT_UNREAL_32S Z=Z0; Z<=Z1; Z++ )
 			{
-				INT iLocation;
+				INT_UNREAL_32S iLocation;
 				FCollisionLink*& Link = GetHashLink( X, Y, Z, iLocation );
 				if( GAvailable )
 				{
@@ -270,16 +271,16 @@ void FCollisionHash::RemoveActor( AActor* Actor )
 		appErrorf( "%s moved without proper hashing", Actor->GetFullName() );
 
 	// Remove actor.
-	INT X0,Y0,Z0,X1,Y1,Z1;
-	INT ExpectFrags=0, FoundFrags=0;
+	INT_UNREAL_32S X0,Y0,Z0,X1,Y1,Z1;
+	INT_UNREAL_32S ExpectFrags=0, FoundFrags=0;
 	GetActorExtent( Actor, X0, X1, Y0, Y1, Z0, Z1 );
-	for( INT X=X0; X<=X1; X++ )
+	for( INT_UNREAL_32S X=X0; X<=X1; X++ )
 	{
-		for( INT Y=Y0; Y<=Y1; Y++ )
+		for( INT_UNREAL_32S Y=Y0; Y<=Y1; Y++ )
 		{
-			for( INT Z=Z0; Z<=Z1; Z++ )
+			for( INT_UNREAL_32S Z=Z0; Z<=Z1; Z++ )
 			{
-				INT iLocation;
+				INT_UNREAL_32S iLocation;
 				FCollisionLink** Link = &GetHashLink( X, Y, Z, iLocation );
 				while( *Link )
 				{
@@ -323,15 +324,15 @@ FCheckResult* FCollisionHash::ActorPointCheck
 	FCheckResult* Result=NULL;
 
 	// Get extent indices.
-	INT X0,Y0,Z0,X1,Y1,Z1;
+	INT_UNREAL_32S X0,Y0,Z0,X1,Y1,Z1;
 	GetHashIndices( Location - Extent, X0, Y0, Z0 );
 	GetHashIndices( Location + Extent, X1, Y1, Z1 );
 	CollisionTag++;
 
 	// Check all actors in this neighborhood.
-	for( INT X=X0; X<=X1; X++ ) for( INT Y=Y0; Y<=Y1; Y++ ) for( INT Z=Z0; Z<=Z1; Z++ )
+	for( INT_UNREAL_32S X=X0; X<=X1; X++ ) for( INT_UNREAL_32S Y=Y0; Y<=Y1; Y++ ) for( INT_UNREAL_32S Z=Z0; Z<=Z1; Z++ )
 	{
-		INT iLocation;
+		INT_UNREAL_32S iLocation;
 		for( FCollisionLink* Link = GetHashLink( X, Y, Z, iLocation ); Link; Link=Link->Next )
 		{
 			// Skip if we've already checked this actor.
@@ -371,16 +372,16 @@ FCheckResult* FCollisionHash::ActorRadiusCheck
 	FCheckResult* Result=NULL;
 
 	// Get extent indices.
-	INT X0,Y0,Z0,X1,Y1,Z1;
+	INT_UNREAL_32S X0,Y0,Z0,X1,Y1,Z1;
 	GetHashIndices( Location - FVector(Radius,Radius,Radius), X0, Y0, Z0 );
 	GetHashIndices( Location + FVector(Radius,Radius,Radius), X1, Y1, Z1 );
 	CollisionTag++;
 	FLOAT RadiusSq = Radius * Radius;
 
 	// Check all actors in this neighborhood.
-	for( INT X=X0; X<=X1; X++ ) for( INT Y=Y0; Y<=Y1; Y++ ) for( INT Z=Z0; Z<=Z1; Z++ )
+	for( INT_UNREAL_32S X=X0; X<=X1; X++ ) for( INT_UNREAL_32S Y=Y0; Y<=Y1; Y++ ) for( INT_UNREAL_32S Z=Z0; Z<=Z1; Z++ )
 	{
-		INT iLocation;
+		INT_UNREAL_32S iLocation;
 		for( FCollisionLink* Link = GetHashLink( X, Y, Z, iLocation ); Link; Link=Link->Next )
 		{
 			// Skip if we've already checked this actor.
@@ -422,15 +423,15 @@ FCheckResult* FCollisionHash::ActorEncroachmentCheck
 	Exchange( Rotation, Actor->Rotation );
 
 	// Get extent indices.
-	INT X0,Y0,Z0,X1,Y1,Z1;
+	INT_UNREAL_32S X0,Y0,Z0,X1,Y1,Z1;
 	GetActorExtent( Actor, X0, X1, Y0, Y1, Z0, Z1 );
 	FCheckResult *Result, **PrevLink = &Result;
 	CollisionTag++;
 
 	// Check all actors in this neighborhood.
-	for( INT X=X0; X<=X1; X++ ) for( INT Y=Y0; Y<=Y1; Y++ ) for( INT Z=Z0; Z<=Z1; Z++ )
+	for( INT_UNREAL_32S X=X0; X<=X1; X++ ) for( INT_UNREAL_32S Y=Y0; Y<=Y1; Y++ ) for( INT_UNREAL_32S Z=Z0; Z<=Z1; Z++ )
 	{
-		INT iLocation;
+		INT_UNREAL_32S iLocation;
 		for( FCollisionLink* Link = GetHashLink( X, Y, Z, iLocation ); Link; Link=Link->Next )
 		{
 			// Skip if we've already checked this actor.
@@ -496,7 +497,7 @@ FCheckResult* FCollisionHash::ActorLineCheck
 
 	// Get extent.
 	CollisionTag++;
-	INT X0,Y0,Z0,X1,Y1,Z1,X;
+	INT_UNREAL_32S X0,Y0,Z0,X1,Y1,Z1,X;
 	FBox Box( FBox(0) + Start + End );
 	GetHashIndices( Box.Min - Size, X0, Y0, Z0 );
 	GetHashIndices( Box.Max + Size, X1, Y1, Z1 );
@@ -504,11 +505,11 @@ FCheckResult* FCollisionHash::ActorLineCheck
 	// Check all potentially colliding actors in the hash.
 	for( X=X0; X<=X1; X++ )
 	{
-		for( INT Y=Y0; Y<=Y1; Y++ )
+		for( INT_UNREAL_32S Y=Y0; Y<=Y1; Y++ )
 		{
-			for( INT Z=Z0; Z<=Z1; Z++ )
+			for( INT_UNREAL_32S Z=Z0; Z<=Z1; Z++ )
 			{
-				INT iLocation;
+				INT_UNREAL_32S iLocation;
 				for( FCollisionLink* Link = GetHashLink( X, Y, Z, iLocation ); Link; Link=Link->Next )
 				{
 					// Skip if we've already checked this actor.

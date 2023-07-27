@@ -13,7 +13,7 @@
 -----------------------------------------------------------------------------*/
 
 #define HIT_SIZE 8
-INT Pixels[HIT_SIZE][HIT_SIZE];
+INT_UNREAL_32S Pixels[HIT_SIZE][HIT_SIZE];
 #define IGNORE 0xfe0d
 
 /*-----------------------------------------------------------------------------
@@ -23,23 +23,23 @@ INT Pixels[HIT_SIZE][HIT_SIZE];
 //
 // Push hit data.
 //
-void USoftwareRenderDevice::PushHit( const BYTE* Data, INT Count )
+void USoftwareRenderDevice::PushHit( const BYTE* Data, INT_UNREAL_32S Count )
 {
 	guard(USoftwareRenderDevice::PushHit);
 	check(Viewport->HitYL<=HIT_SIZE);
 	check(Viewport->HitXL<=HIT_SIZE);
 
 	// Save the passed info on the working stack.
-	INT Index = HitStack.Add(Count);
+	INT_UNREAL_32S Index = HitStack.Add(Count);
 	appMemcpy( &HitStack(Index), Data, Count );
 
 	// Cleanup under cursor.
 	if( Viewport->ColorBytes==2 )
 	{
 		_WORD* W = (_WORD*)Viewport->_Screen(Viewport->HitX,Viewport->HitY);
-		for( INT Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
+		for( INT_UNREAL_32S Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
 		{
-			for( INT X=0; X<Viewport->HitXL; X++ )
+			for( INT_UNREAL_32S X=0; X<Viewport->HitXL; X++ )
 			{
 				Pixels[X][Y] = W[X];
 				W[X] = IGNORE;
@@ -49,9 +49,9 @@ void USoftwareRenderDevice::PushHit( const BYTE* Data, INT Count )
 	else if( Viewport->ColorBytes==4 )
 	{
 		DWORD* W = (DWORD*)Viewport->_Screen(Viewport->HitX,Viewport->HitY);
-		for( INT Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
+		for( INT_UNREAL_32S Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
 		{
-			for( INT X=0; X<Viewport->HitXL; X++ )
+			for( INT_UNREAL_32S X=0; X<Viewport->HitXL; X++ )
 			{
 				Pixels[X][Y] = W[X];
 				W[X] = IGNORE;
@@ -66,7 +66,7 @@ void USoftwareRenderDevice::PushHit( const BYTE* Data, INT Count )
 //
 // Pop hit data.
 //
-void USoftwareRenderDevice::PopHit( INT Count, UBOOL bForce )
+void USoftwareRenderDevice::PopHit( INT_UNREAL_32S Count, UBOOL bForce )
 {
 	guard(USoftwareRenderDevice::PopHit);
 	check(Count<=HitStack.Num());
@@ -76,9 +76,9 @@ void USoftwareRenderDevice::PopHit( INT Count, UBOOL bForce )
 	if( Viewport->ColorBytes==2 )
 	{
 		_WORD* W = (_WORD*)Viewport->_Screen(Viewport->HitX,Viewport->HitY);
-		for( INT Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
+		for( INT_UNREAL_32S Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
 		{
-			for( INT X=0; X<Viewport->HitXL; X++ )
+			for( INT_UNREAL_32S X=0; X<Viewport->HitXL; X++ )
 			{
 				if( W[X] != IGNORE )
 					Hit=1;
@@ -89,9 +89,9 @@ void USoftwareRenderDevice::PopHit( INT Count, UBOOL bForce )
 	else if( Viewport->ColorBytes==4 )
 	{
 		DWORD* W = (DWORD*)Viewport->_Screen(Viewport->HitX,Viewport->HitY);
-		for( INT Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
+		for( INT_UNREAL_32S Y=0; Y<Viewport->HitYL; Y++,W+=Viewport->Stride )
 		{
-			for( INT X=0; X<Viewport->HitXL; X++ )
+			for( INT_UNREAL_32S X=0; X<Viewport->HitXL; X++ )
 			{
 				if( W[X] != IGNORE )
 					Hit=1;

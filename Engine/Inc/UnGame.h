@@ -15,7 +15,7 @@
 //
 class ENGINE_API UGameEngine : public UEngine
 {
-	DECLARE_CLASS(UGameEngine,UEngine,CLASS_Config|CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UGameEngine,UEngine,CLASS_Config|CLASS_Transient)
 
 	// Variables.
 	ULevel*			GLevel;
@@ -36,20 +36,20 @@ class ENGINE_API UGameEngine : public UEngine
 	// UEngine interface.
 	void Init();
 	void Tick( FLOAT DeltaSeconds );
-	void Draw( UViewport* Viewport, BYTE* HitData=NULL, INT* HitSize=NULL );
+	void Draw( UViewport* Viewport, BYTE* HitData=NULL, INT_UNREAL_32S* HitSize=NULL );
 	UBOOL Exec( const char* Cmd, FOutputDevice* Out=GSystem );
 	void MouseDelta( UViewport*, DWORD, FLOAT, FLOAT );
 	void MousePosition( class UViewport*, DWORD, FLOAT, FLOAT );
 	void Click( UViewport*, DWORD, FLOAT, FLOAT );
 	void SetClientTravel( UPlayer* Viewport, const char* NextURL, UBOOL bURL, UBOOL bItems, ETravelType TravelType );
-	INT GetMaxTickRate();
-	INT ChallengeResponse( INT Challenge );
+	INT_UNREAL_32S GetMaxTickRate();
+	INT_UNREAL_32S ChallengeResponse( INT_UNREAL_32S Challenge );
 	void SetProgress( const char* Str1, const char* Str2, FLOAT Seconds );
 
 	// UGameEngine interface.
 	virtual UBOOL Browse( FURL URL, char* Error256 );
 	virtual ULevel* LoadMap( const FURL& URL, UPendingLevel* Pending, char* Error256 );
-	virtual void SaveGame( INT Position );
+	virtual void SaveGame( INT_UNREAL_32S Position );
 	virtual void CancelPending();
 	virtual void PaintProgress();
 };

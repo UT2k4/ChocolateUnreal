@@ -48,14 +48,14 @@ class IPDRV_API ATcpLink : public AInfo
 public:
     CHAR URL[80];
     BYTE IP[4];
-    INT Port;
+    INT_UNREAL_32S Port;
     FLOAT KeepaliveSeconds;
     FLOAT KeepaliveCounter;
     FLOAT TimeoutSeconds;
     FLOAT TimeoutCounter;
     BYTE TcpInternal[64];
-    INT MainSocket;
-    INT ConnectSocket;
+    INT_UNREAL_32S MainSocket;
+    INT_UNREAL_32S ConnectSocket;
     DWORD bSocketInitialized:1;
     DWORD bSocketBound:1;
     DWORD bWSAInitialized:1;
@@ -83,9 +83,9 @@ public:
         appStrncpy(Parms.S,S,240);
         ProcessEvent(FindFunctionChecked(IPDRV_ReceivedText),&Parms);
     }
-    void eventReceivedBinary(INT Count)
+    void eventReceivedBinary(INT_UNREAL_32S Count)
     {
-        struct {INT Count; } Parms;
+        struct {INT_UNREAL_32S Count; } Parms;
         Parms.Count=Count;
         ProcessEvent(FindFunctionChecked(IPDRV_ReceivedBinary),&Parms);
     }
@@ -101,7 +101,7 @@ public:
     {
         ProcessEvent(FindFunctionChecked(IPDRV_Accepted),NULL);
     }
-    DECLARE_CLASS(ATcpLink,AInfo,0|CLASS_Transient)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ATcpLink,AInfo,0|CLASS_Transient)
     #include "ATcpLink.h"
 };
 
@@ -117,7 +117,7 @@ enum EUdpMode
 class IPDRV_API AUdpLink : public AInfo
 {
 public:
-    INT Socket;
+    INT_UNREAL_32S Socket;
     BYTE UdpMode;
     void execIpAddrToURL( FFrame& Stack, BYTE*& Result );
     void execSendBinary( FFrame& Stack, BYTE*& Result );
@@ -141,7 +141,7 @@ public:
         Parms.Addr=Addr;
         ProcessEvent(FindFunctionChecked(IPDRV_Resolved),&Parms);
     }
-    DECLARE_CLASS(AUdpLink,AInfo,0|CLASS_Transient)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AUdpLink,AInfo,0|CLASS_Transient)
     #include "AUdpLink.h"
 };
 

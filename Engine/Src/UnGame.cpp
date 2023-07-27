@@ -36,7 +36,7 @@ void UGameEngine::PaintProgress()
 	unguard;
 }
 
-INT UGameEngine::ChallengeResponse( INT Challenge )
+INT_UNREAL_32S UGameEngine::ChallengeResponse( INT_UNREAL_32S Challenge )
 {
 	guard(UGameEngine::ChallengeResponse);
 	return (Challenge*237) ^ (0x93fe92Ce) ^ (Challenge>>16) ^ (Challenge<<16);
@@ -288,7 +288,7 @@ void UGameEngine::CancelPending()
 static void MatchViewportsToActors( UClient* Client, ULevel* Level, const FURL& URL )
 {
 	guard(MatchViewportsToActors);
-	for( INT i=0; i<Client->Viewports.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 	{
 		char Error256[256]="";
 		UViewport* Viewport = Client->Viewports(i);
@@ -365,6 +365,8 @@ UBOOL UGameEngine::Browse( FURL URL, char* Error256 )
 	}
 	else if( (Option=URL.GetOption("load=",NULL))!=NULL )
 	{
+		INT_UNREAL_32S i;
+
 		// Handle restarting.
 		guard(LoadURL);
 		char Temp[256], Error256[256];
@@ -372,7 +374,7 @@ UBOOL UGameEngine::Browse( FURL URL, char* Error256 )
 		if( LoadMap(FURL(&LastURL,Temp,TRAVEL_Partial),NULL,Error256) )
 		{
 			// Copy the hub stack.
-			for( INT i=0; i<GLevel->GetLevelInfo()->HubStackLevel; i++ )
+			for( i=0; i<GLevel->GetLevelInfo()->HubStackLevel; i++ )
 			{
 				char Src[256], Dest[256];
 				appSprintf( Src, "%s\\Save%i%i.usa", GSys->SavePath, appAtoi(Option), i );
@@ -453,7 +455,7 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 	debugf( NAME_Log, "LoadMap: %s", *Str );
 
 	// Remember current level's stack level.
-	INT SavedHubStackLevel = GLevel ? GLevel->GetLevelInfo()->HubStackLevel : 0;
+	INT_UNREAL_32S SavedHubStackLevel = GLevel ? GLevel->GetLevelInfo()->HubStackLevel : 0;
 
 	// Display loading screen.
 	guard(LoadingScreen);
@@ -476,7 +478,7 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 		if( Pending )
 		{
 			UNetConnection* Connection = Pending->NetDriver->ServerConnection;
-			for( INT i=0; i<Connection->Driver->Map.Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<Connection->Driver->Map.Num(); i++ )
 				GObj.GetPackageLinker( Connection->Driver->Map(i).Parent, NULL, LOAD_Verify | LOAD_Throw | LOAD_KeepImports | LOAD_NoWarn, NULL, &Connection->Driver->Map(i).Guid );
 			if( Connection->Driver->Map.Num() )
 			{
@@ -499,7 +501,7 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 	guard(DissociateViewports);
 	if( Client )
 	{
-		for( INT i=0; i<Client->Viewports.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 		{
 			APlayerPawn* Actor          = Client->Viewports(i)->Actor;
 			ULevel*      Level          = Actor->XLevel;
@@ -621,9 +623,11 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 	guard(SetupZoneTable);
 	QWORD OldConvConn[64];
 	QWORD ConvConn[64];
-	for( INT i=0; i<64; i++ )
+	INT_UNREAL_32S i, j, k;
+
+	for( i=0; i<64; i++ )
 	{
-		for ( INT j=0; j<64; j++ )
+		for ( j=0; j<64; j++ )
 		{
 			OldConvConn[i] = GLevel->Model->Nodes->Zones[i].Connectivity;
 			if( i == j )
@@ -634,14 +638,14 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 	}
 	for( i=1; i<64; i++ )
 	{
-		for( INT j=0; j<64; j++ )
-			for( INT k=0; k<64; k++ )
+		for( j=0; j<64; j++ )
+			for( k=0; k<64; k++ )
 				if( (GLevel->ZoneDist[j][k] > i) && ((OldConvConn[j] & ((QWORD)1 << k)) != 0) )
 					GLevel->ZoneDist[j][k] = i;
 		for( j=0; j<64; j++ )
 			ConvConn[j] = 0;
 		for( j=0; j<64; j++ )
-			for( INT k=0; k<64; k++ )
+			for( k=0; k<64; k++ )
 				if( (OldConvConn[j] & ((QWORD)1 << k)) != 0 )
 					ConvConn[j] = ConvConn[j] | OldConvConn[k];
 		for( j=0; j<64; j++ )
@@ -654,7 +658,7 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 	char Error256[256]="";
 	char GameClassName[256]="";
 	guard(InitGameInfo);
-	for( INT i=0; i<URL.Op.Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<URL.Op.Num(); i++ )
 	{
 		appStrcat( Options, "?" );
 		appStrcat( Options, *URL.Op(i) );
@@ -703,20 +707,23 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 	GLevel->iFirstDynamicActor = 0;
 	if( !Info->bBegunPlay )
 	{
+		INT_UNREAL_32S i;
+
 		// Lock the level.
 		debugf( NAME_Log, "Bringing %s up for play...", GLevel->GetFullName() );
 
 		// Init touching actors.
-		for( INT i=0; i<GLevel->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<GLevel->Num(); i++ )
 			if( GLevel->Actors(i) )
-				for( INT j=0; j<ARRAY_COUNT(GLevel->Actors(i)->Touching); j++ )
+				for( INT_UNREAL_32S j=0; j<ARRAY_COUNT(GLevel->Actors(i)->Touching); j++ )
 					GLevel->Actors(i)->Touching[j] = NULL;
 
 		// Handle network issues.
 		if( !GLevel->IsServer() )
 		{
+
 			// Kill off actors that aren't interesting to the client.
-			for( INT i=0; i<GLevel->Num(); i++ )
+			for( i=0; i<GLevel->Num(); i++ )
 			{
 				AActor* Actor = GLevel->Actors(i);
 				if( Actor )
@@ -783,12 +790,14 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 	}
 	unguard;
 
+	INT_UNREAL_32S i;
+
 	// Rearrange actors: static first, then others.
 	guard(Rearrange);
 	TArray<AActor*> Actors;
 	Actors.AddItem(GLevel->Element(0));
 	Actors.AddItem(GLevel->Element(1));
-	for( INT i=2; i<GLevel->Num(); i++ )
+	for( i=2; i<GLevel->Num(); i++ )
 		if( GLevel->Element(i) && GLevel->Element(i)->bStatic )
 			Actors.AddItem( GLevel->Element(i) );
 	GLevel->iFirstDynamicActor=Actors.Num();
@@ -818,7 +827,7 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 		MatchViewportsToActors( Client, GLevel->IsServer() ? GLevel : GEntry, URL );
 
 		// Reset input.
-		for( INT i=0; i<Client->Viewports.Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Client->Viewports.Num(); i++ )
 			Client->Viewports(i)->Input->ResetInput();
 
 		// Init brush tracker.
@@ -850,7 +859,7 @@ ULevel* UGameEngine::LoadMap( const FURL& URL, UPendingLevel* Pending, char* Err
 //
 // Draw a global view.
 //
-void UGameEngine::Draw( UViewport* Viewport, BYTE* HitData, INT* HitSize )
+void UGameEngine::Draw( UViewport* Viewport, BYTE* HitData, INT_UNREAL_32S* HitSize )
 {
 	guard(UGameEngine::Draw);
 
@@ -929,7 +938,7 @@ void ExportTravel( FOutputDevice& Out, AActor* Actor )
 	Out.Logf( "Class=%s Name=%s\r\n{\r\n", Actor->GetClass()->GetPathName(), Actor->GetName() );
 	for( TFieldIterator<UProperty> It(Actor->GetClass()); It; ++It )
 	{
-		for( INT Index=0; Index<It->ArrayDim; Index++ )
+		for( INT_UNREAL_32S Index=0; Index<It->ArrayDim; Index++ )
 		{
 			char Value[1024];
 			if
@@ -997,7 +1006,7 @@ void UGameEngine::SetClientTravel( UPlayer* Player, const char* NextURL, UBOOL b
 //
 // Get tick rate limitor.
 //
-INT UGameEngine::GetMaxTickRate()
+INT_UNREAL_32S UGameEngine::GetMaxTickRate()
 {
 	guard(UEngine::GetMaxTickRate);
 	if( GLevel && GLevel->NetDriver && !GLevel->NetDriver->ServerConnection )
@@ -1013,7 +1022,7 @@ INT UGameEngine::GetMaxTickRate()
 void UGameEngine::Tick( FLOAT DeltaSeconds )
 {
 	guard(UGameEngine::Tick);
-	INT LocalTickCycles=0;
+	INT_UNREAL_32S LocalTickCycles=0;
 	clock(LocalTickCycles);
 
 	// If all viewports closed, time to exit.
@@ -1061,7 +1070,7 @@ void UGameEngine::Tick( FLOAT DeltaSeconds )
 			// Travel to new level, and exit.
 			TArray<FString> TravelNames;
 			TArray<FString>	TravelItems;
-			for( INT i=0; i<GLevel->Num(); i++ )
+			for( INT_UNREAL_32S i=0; i<GLevel->Num(); i++ )
 			{
 				APlayerPawn* P = Cast<APlayerPawn>( GLevel->Element(i) );
 				if( P && P->Player )
@@ -1148,7 +1157,7 @@ void UGameEngine::Tick( FLOAT DeltaSeconds )
 
 	// Render everything.
 	guard(ClientTick);
-	INT LocalClientCycles=0;
+	INT_UNREAL_32S LocalClientCycles=0;
 	if( Client )
 	{
 		clock(LocalClientCycles);
@@ -1171,8 +1180,10 @@ void UGameEngine::Tick( FLOAT DeltaSeconds )
 //
 // Save the current game state to a file.
 //
-void UGameEngine::SaveGame( INT Position )
+void UGameEngine::SaveGame( INT_UNREAL_32S Position )
 {
+	INT_UNREAL_32S i;
+
 	guard(UGameEngine::SaveGame);
 	char Filename[256];
 	appMkdir( GSys->SavePath );
@@ -1189,7 +1200,7 @@ void UGameEngine::SaveGame( INT Position )
 	if( GObj.SavePackage( GLevel->GetParent(), GLevel, 0, Filename ) )
 	{
 		// Copy the hub stack.
-		for( INT i=0; i<GLevel->GetLevelInfo()->HubStackLevel; i++ )
+		for( i=0; i<GLevel->GetLevelInfo()->HubStackLevel; i++ )
 		{
 			char Src[256], Dest[256];
 			appSprintf( Src, "%s\\Game%i.usa", GSys->SavePath, i );
@@ -1204,7 +1215,7 @@ void UGameEngine::SaveGame( INT Position )
 			appUnlink( Filename );
 		}
 	}
-	for( INT i=0; i<GLevel->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<GLevel->Num(); i++ )
 		if( Cast<AMover>(GLevel->Actors(i)) )
 			Cast<AMover>(GLevel->Actors(i))->SavedPos = FVector(-1,-1,-1);
 	GLevel->BrushTracker = GNewBrushTracker( GLevel );

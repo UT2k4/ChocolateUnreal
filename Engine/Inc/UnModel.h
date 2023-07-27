@@ -15,7 +15,7 @@
 //
 class ENGINE_API UModel : public UPrimitive
 {
-	DECLARE_CLASS(UModel,UPrimitive,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UModel,UPrimitive,0)
 
 	// References.
 	UVectors*				Vectors;
@@ -27,7 +27,7 @@ class ENGINE_API UModel : public UPrimitive
 	TArray<FLightMapIndex>	LightMap;
 	TArray<BYTE>			LightBits;
 	TArray<FBox>			Bounds;
-	TArray<INT>				LeafHulls;
+	TArray<INT_UNREAL_32S>				LeafHulls;
 	TArray<FLeaf>			Leaves;
 	TArray<AActor*>			Lights;
 	UBitArray*				LeafZone;
@@ -74,26 +74,26 @@ class ENGINE_API UModel : public UPrimitive
 	void Modify();
 	void BuildBound();
 	void Transform( ABrush* Owner );
-	void EmptyModel( INT EmptySurfInfo, INT EmptyPolys );
+	void EmptyModel( INT_UNREAL_32S EmptySurfInfo, INT_UNREAL_32S EmptyPolys );
 	void ShrinkModel();
-	UBOOL PotentiallyVisible( INT iLeaf1, INT iLeaf2 );
+	UBOOL PotentiallyVisible( INT_UNREAL_32S iLeaf1, INT_UNREAL_32S iLeaf2 );
 
 	// UModel collision functions.
-	typedef void (*PLANE_FILTER_CALLBACK )(UModel *Model, INT iNode, int Param);
-	typedef void (*SPHERE_FILTER_CALLBACK)(UModel *Model, INT iNode, int IsBack, int Outside, int Param);
+	typedef void (*PLANE_FILTER_CALLBACK )(UModel *Model, INT_UNREAL_32S iNode, int Param);
+	typedef void (*SPHERE_FILTER_CALLBACK)(UModel *Model, INT_UNREAL_32S iNode, int IsBack, int Outside, int Param);
 	FPointRegion PointRegion( AZoneInfo* Zone, FVector Location ) const;
 	FLOAT FindNearestVertex
 	(
 		const FVector	&SourcePoint,
 		FVector			&DestPoint,
 		FLOAT			MinRadius,
-		INT				&pVertex
+		INT_UNREAL_32S				&pVertex
 	) const;
 	void PrecomputeSphereFilter
 	(
 		const FPlane	&Sphere
 	);
-	FLightMapIndex* GetLightMapIndex( INT iSurf )
+	FLightMapIndex* GetLightMapIndex( INT_UNREAL_32S iSurf )
 	{
 		guard(UModel::GetLightMapIndex);
 		if( iSurf == INDEX_NONE ) return NULL;

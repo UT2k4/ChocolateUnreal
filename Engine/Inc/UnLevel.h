@@ -32,7 +32,7 @@ public:
 	virtual ULevel* NotifyGetLevel()=0;
 	virtual void NotifyReceivedText( UNetConnection* Connection, const char* Text )=0;
 	virtual UBOOL NotifySendingFile( UNetConnection* Connection, FGuid GUID )=0;
-	virtual void NotifyReceivedFile( UNetConnection* Connection, INT PackageIndex, const char* Error )=0;
+	virtual void NotifyReceivedFile( UNetConnection* Connection, INT_UNREAL_32S PackageIndex, const char* Error )=0;
 	virtual void NotifyProgress( const char* Str1, const char* Str2, FLOAT Seconds )=0;
 };
 
@@ -125,7 +125,7 @@ enum ELevelTick
 //
 class ENGINE_API ULevel : public ULevelBase
 {
-	DECLARE_CLASS(ULevel,ULevelBase,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULevel,ULevelBase,0)
 	DECLARE_DB_CLASS(ULevel,ULevelBase,AActor*)
 	NO_DEFAULT_CONSTRUCTOR(ULevel)
 
@@ -146,11 +146,11 @@ class ENGINE_API ULevel : public ULevelBase
 	AActor* FirstDeleted;
 	struct FActorLink* NewlySpawned;
 	UBOOL InTick, Ticked;
-	INT iFirstDynamicActor, NetTag;
+	INT_UNREAL_32S iFirstDynamicActor, NetTag;
 	BYTE ZoneDist[64][64];
 
 	// Temporary stats.
-	INT NetTickCycles, ActorTickCycles, AudioTickCycles, FindPathCycles, MoveCycles, NumMoves, NumReps, NumPV, GetRelevantCycles, NumRPC, SeePlayer, Spawning, Unused;
+	INT_UNREAL_32S NetTickCycles, ActorTickCycles, AudioTickCycles, FindPathCycles, MoveCycles, NumMoves, NumReps, NumPV, GetRelevantCycles, NumRPC, SeePlayer, Spawning, Unused;
 
 	// Constructor.
 	ULevel( UEngine* InEngine, UBOOL RootOutside );
@@ -166,13 +166,13 @@ class ENGINE_API ULevel : public ULevelBase
 	virtual void Tick( ELevelTick TickType, FLOAT DeltaSeconds );
 	virtual void TickNetClient( FLOAT DeltaSeconds );
 	virtual void TickNetServer( FLOAT DeltaSeconds );
-	virtual INT ServerTickClient( UNetConnection* Conn, FLOAT DeltaSeconds );
+	virtual INT_UNREAL_32S ServerTickClient( UNetConnection* Conn, FLOAT DeltaSeconds );
 	virtual void ReconcileActors();
 	virtual void RememberActors();
 	virtual UBOOL Exec( const char* Cmd, FOutputDevice* Out=GSystem );
 	virtual void ShrinkLevel();
 	virtual void ModifyAllItems();
-	virtual INT GetRelevantActors( APlayerPawn* Pawn, AActor** List, INT Max );
+	virtual INT_UNREAL_32S GetRelevantActors( APlayerPawn* Pawn, AActor** List, INT_UNREAL_32S Max );
 	virtual void CompactActors();
 	virtual UBOOL Listen( char* Error256 );
 	virtual UBOOL IsServer();
@@ -204,7 +204,7 @@ class ENGINE_API ULevel : public ULevelBase
 	UBOOL NotifyAcceptingChannel( class FChannel* Channel );
 	ULevel* NotifyGetLevel() {return this;}
 	void NotifyReceivedText( UNetConnection* Connection, const char* Text );
-	void NotifyReceivedFile( UNetConnection* Connection, INT PackageIndex, const char* Error );
+	void NotifyReceivedFile( UNetConnection* Connection, INT_UNREAL_32S PackageIndex, const char* Error );
 	UBOOL NotifySendingFile( UNetConnection* Connection, FGuid GUID );
 
 	// Accessors.
@@ -217,7 +217,7 @@ class ENGINE_API ULevel : public ULevelBase
 		return (ABrush*)Actors(1);
 		unguardSlow;
 	}
-	INT GetActorIndex( AActor* Actor )
+	INT_UNREAL_32S GetActorIndex( AActor* Actor )
 	{
 		guard(ULevel::GetActorIndex);
 		for( int i=0; i<Num(); i++ )
@@ -235,7 +235,7 @@ class ENGINE_API ULevel : public ULevelBase
 		return (ALevelInfo*)Actors(0);
 		unguardSlow;
 	}
-	AZoneInfo* GetZoneActor( INT iZone )
+	AZoneInfo* GetZoneActor( INT_UNREAL_32S iZone )
 	{
 		guardSlow(ULevel::GetZoneActor);
 		return Model->Nodes->Zones[iZone].ZoneActor ? Model->Nodes->Zones[iZone].ZoneActor : GetLevelInfo();
@@ -300,7 +300,7 @@ public:
 	}
 protected:
 	ULevel*		Level;
-	INT		    Index;
+	INT_UNREAL_32S		    Index;
 };
 
 /*-----------------------------------------------------------------------------

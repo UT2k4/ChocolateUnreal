@@ -51,7 +51,7 @@ void UEditorEngine::edactPasteSelected( ULevel* Level )
 	ResetSound();
 
 	// Offset them.
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 		if( Level->Element(i) && Level->Element(i)->bSelected )
 			Level->Element(i)->Location += FVector(32,32,32);
 
@@ -68,7 +68,7 @@ void UEditorEngine::edactPasteSelected( ULevel* Level )
 void UEditorEngine::edactDeleteSelected( ULevel* Level )
 {
 	guard(UEditorEngine::edactDeleteSelected);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if
@@ -92,9 +92,10 @@ void UEditorEngine::edactDuplicateSelected( ULevel* Level )
 {
 	guard(UEditorEngine::edactDuplicateSelected);
 	FVector Delta(32.0, 32.0, 0.0);
+	int i;
 
 	// Untag all actors.
-	for( int i=0; i<Level->Num(); i++ )
+	for( i=0; i<Level->Num(); i++ )
 		if( Level->Actors(i) )
 			Level->Actors(i)->bTempEditor = 0;
 
@@ -146,9 +147,10 @@ void UEditorEngine::edactDuplicateSelected( ULevel* Level )
 void UEditorEngine::edactReplaceSelectedBrush( ULevel* Level )
 {
 	guard(UEditorEngine::edactReplaceSelectedBrush);
+	int i;
 
 	// Untag all actors.
-	for( int i=0; i<Level->Num(); i++ )
+	for( i=0; i<Level->Num(); i++ )
 		if( Level->Actors(i) )
 			Level->Actors(i)->bTempEditor = 0;
 
@@ -189,9 +191,10 @@ void UEditorEngine::edactReplaceSelectedBrush( ULevel* Level )
 void UEditorEngine::edactReplaceSelectedWithClass( ULevel* Level,UClass* Class )
 {
 	guard(UEditorEngine::edactReplaceSelectedWithClass);
+	int i;
 
 	// Untag all actors.
-	for( int i=0; i<Level->Num(); i++ )
+	for( i=0; i<Level->Num(); i++ )
 		if( Level->Actors(i) )
 			Level->Actors(i)->bTempEditor = 0;
 
@@ -244,7 +247,7 @@ void UEditorEngine::edactHideSelected( ULevel* Level )
 {
 	guard(UEditorEngine::edactHideSelected);
 
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if( Actor && Actor!=Level->Brush() && Actor->bSelected )
@@ -264,7 +267,7 @@ void UEditorEngine::edactHideUnselected( ULevel* Level )
 {
 	guard(UEditorEngine::edactHideUnselected);
 
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if( Actor && !Actor->IsA(ACamera::StaticClass) && Actor!=Level->Brush() && !Actor->bSelected )
@@ -283,7 +286,7 @@ void UEditorEngine::edactHideUnselected( ULevel* Level )
 void UEditorEngine::edactUnHideAll( ULevel* Level )
 {
 	guard(UEditorEngine::edactUnHideAll);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if
@@ -314,7 +317,9 @@ void UEditorEngine::edactSelectAll( ULevel* Level )
 #if 1 //WOT
 	// Add all selected actors' group name to the GroupArray
 	TArray<FName> GroupArray;
-	for( INT i=0; i<Level->Num(); i++ )
+	INT_UNREAL_32S i;
+
+	for( i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if( Actor && !Actor->IsA(ACamera::StaticClass) && !Actor->bHiddenEd )
@@ -333,7 +338,7 @@ void UEditorEngine::edactSelectAll( ULevel* Level )
 
 	// if GroupArray is empty, select all unselected actors (v156 default "Select All" behavior)
 	} else if( GroupArray.Num() == 0 ) {
-		for( INT i=0; i<Level->Num(); i++ )
+		for( i=0; i<Level->Num(); i++ )
 		{
 			AActor* Actor = Level->Actors(i);
 			if( Actor && !Actor->IsA(ACamera::StaticClass) && !Actor->bSelected && !Actor->bHiddenEd )
@@ -351,7 +356,7 @@ void UEditorEngine::edactSelectAll( ULevel* Level )
 			AActor* Actor = Level->Actors(i);
 			if( Actor && !Actor->IsA(ACamera::StaticClass) && !Actor->bSelected && !Actor->bHiddenEd )
 			{
-				for( INT j=0; j<GroupArray.Num(); j++ ) {
+				for( INT_UNREAL_32S j=0; j<GroupArray.Num(); j++ ) {
 					if( appStrfind( *Actor->Group, *GroupArray(j) ) != NULL ) {
 						Actor->Modify();
 						Actor->bSelected=1;
@@ -362,7 +367,7 @@ void UEditorEngine::edactSelectAll( ULevel* Level )
 		}
 	}
 #else
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if( Actor && !Actor->IsA(ACamera::StaticClass) && !Actor->bSelected && !Actor->bHiddenEd )
@@ -383,9 +388,10 @@ void UEditorEngine::edactSelectAll( ULevel* Level )
 void UEditorEngine::edactSelectInside( ULevel* Level )
 {
 	guard(UEditorEngine::edactSelectInside);
+	INT_UNREAL_32S i;
 
 	// Untag all actors.
-	for( INT i=0; i<Level->Num(); i++ )
+	for( i=0; i<Level->Num(); i++ )
 		if( Level->Actors(i) )
 			Level->Actors(i)->bTempEditor = 0;
 
@@ -407,7 +413,7 @@ void UEditorEngine::edactSelectInside( ULevel* Level )
 		// get the plane for each polygon in the default brush
 		FPoly* Poly = &DefaultBrush->Polys->Element( i );
 		FPlane Plane( Poly->Base.TransformPointBy(DefaultBrushC), Poly->Normal.TransformVectorBy(DefaultBrushC) );
-		for( INT j=0; j<Level->Num(); j++ )
+		for( INT_UNREAL_32S j=0; j<Level->Num(); j++ )
 		{
 			// deselect all actors that are in front of the plane (outside the brush)
 			AActor* Actor = Level->Actors(j);
@@ -423,10 +429,10 @@ void UEditorEngine::edactSelectInside( ULevel* Level )
 				} else {
 					// examine all the points
 					UPolys* Polys = Actor->Brush->Polys;
-					for( INT k=0; k<Polys->Num(); k++ ) 
+					for( INT_UNREAL_32S k=0; k<Polys->Num(); k++ ) 
 					{
 						FCoords BrushC(Actor->ToWorld());
-						for( INT m=0; m<Polys->Element(k).NumVertices; m++ ) 
+						for( INT_UNREAL_32S m=0; m<Polys->Element(k).NumVertices; m++ ) 
 						{
 							FLOAT Dist = Plane.PlaneDot( Polys->Element(k).Vertex[m].TransformPointBy(BrushC) );
 							if( Dist >= 0.0 )
@@ -461,7 +467,7 @@ void UEditorEngine::edactSelectInside( ULevel* Level )
 void UEditorEngine::edactSelectInvert( ULevel* Level )
 {
 	guard(UEditorEngine::edactSelectInvert);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 		if( Actor && !Actor->IsA(ACamera::StaticClass) && Actor!=Level->Brush() && !Actor->bHiddenEd )
@@ -481,7 +487,7 @@ void UEditorEngine::edactSelectInvert( ULevel* Level )
 void UEditorEngine::edactSelectOfClass( ULevel* Level, UClass* Class )
 {
 	guard(UEditorEngine::edactSelectOfClass);
-	for( INT i=0; i<Level->Num(); i++ )
+	for( INT_UNREAL_32S i=0; i<Level->Num(); i++ )
 	{
 		AActor* Actor = Level->Actors(i);
 #if 1 //WOT

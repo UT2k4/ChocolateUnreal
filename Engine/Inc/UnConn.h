@@ -44,27 +44,27 @@ class ENGINE_API UNetConnection : public UPlayer
 	FURL			URL;				  // URL of the other side.
 
 	// Negotiated parameters.
-	INT				ProtocolVersion;	  // Protocol version we're communicating with (<=PROTOCOL_VERSION).
-	INT				MaxPacket;			  // Maximum packet size.
-	INT				ByteLimit;			  // Maximum bytes per second.
-	INT				SimLatency;			  // Simulated latency in milliseconds.
-	INT 			SimPacketLoss;		  // Simulated packet loss, 0=none, 100=all.
-	INT				Challenge;			  // Server-generated challenge.
+	INT_UNREAL_32S				ProtocolVersion;	  // Protocol version we're communicating with (<=PROTOCOL_VERSION).
+	INT_UNREAL_32S				MaxPacket;			  // Maximum packet size.
+	INT_UNREAL_32S				ByteLimit;			  // Maximum bytes per second.
+	INT_UNREAL_32S				SimLatency;			  // Simulated latency in milliseconds.
+	INT_UNREAL_32S 			SimPacketLoss;		  // Simulated packet loss, 0=none, 100=all.
+	INT_UNREAL_32S				Challenge;			  // Server-generated challenge.
 	FString			RequestURL;			  // URL requested by client
 
 	// Internal.
 	DOUBLE			LastReceiveTime;	  // Last time a packet was received, for timeout checking.
 	DOUBLE			LastSendTime;		  // Last time a packet was sent, for keepalives.
 	DOUBLE			LastTickTime;		  // Last time of polling.
-	INT				QueuedBytes;		  // Bytes assumed to be queued up.
-	INT				LastBunchStart;		  // Most recently sent bunch.
-	INT				LastBunchEnd;		  // Most recently sent bunch.
-	INT				LastOutIndex;		  // Most recent outgoing index.
-	INT				SentBunchStart;		  // Most recently sent bunch end.
+	INT_UNREAL_32S				QueuedBytes;		  // Bytes assumed to be queued up.
+	INT_UNREAL_32S				LastBunchStart;		  // Most recently sent bunch.
+	INT_UNREAL_32S				LastBunchEnd;		  // Most recently sent bunch.
+	INT_UNREAL_32S				LastOutIndex;		  // Most recent outgoing index.
+	INT_UNREAL_32S				SentBunchStart;		  // Most recently sent bunch end.
 
 	// Packet.
 	BYTE	OutData[MAX_PACKET_SIZE];     // Outgoing packet.
-	INT		OutNum;						  // Number of bytes in outgoing packet.
+	INT_UNREAL_32S		OutNum;						  // Number of bytes in outgoing packet.
 
 	// Channel table.
 	FChannel*  Channels     [ MAX_CHANNELS ];
@@ -95,11 +95,11 @@ class ENGINE_API UNetConnection : public UPlayer
 	virtual UBOOL IsNetReady();
 	class FControlChannel* GetControlChannel();
 	FChannel* CreateChannel( enum EChannelType Type, UBOOL bOpenedLocally, _WORD ChannelIndex=MAXWORD );
-	void ReceivedPacket( BYTE* Data, INT Size );
+	void ReceivedPacket( BYTE* Data, INT_UNREAL_32S Size );
 	void SendAck( _WORD ChIndex, _WORD Sequence );
 	void SendNak( _WORD ChIndex, _WORD Sequence );
 	class FActorChannel* GetActorChannel( AActor* Actor );
-	void ReceiveFile( INT PackageIndex );
+	void ReceiveFile( INT_UNREAL_32S PackageIndex );
 	void SlowAssertValid()
 	{
 #if CHECK_ALL
@@ -133,7 +133,7 @@ public:
 	{
 		return Index<UNetConnection::MAX_CHANNELS;
 	}
-	INT GetIndex()
+	INT_UNREAL_32S GetIndex()
 	{
 		return Index;
 	}
@@ -149,7 +149,7 @@ public:
 	}
 private:
 	// Variables.
-	INT Index;
+	INT_UNREAL_32S Index;
 	UNetConnection* Conn;
 };
 
@@ -176,7 +176,7 @@ public:
 	{
 		return Index<UNetConnection::MAX_CHANNELS;
 	}
-	INT GetIndex()
+	INT_UNREAL_32S GetIndex()
 	{
 		return Index;
 	}
@@ -194,7 +194,7 @@ public:
 	}
 private:
 	// Variables.
-	INT Index;
+	INT_UNREAL_32S Index;
 	UNetConnection* Conn;
 };
 

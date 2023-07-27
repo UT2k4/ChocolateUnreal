@@ -60,9 +60,9 @@ union FMMX
 	struct
 	{
 #if __INTEL__
-		INT IL, IH;
+		INT_UNREAL_32S IL, IH;
 #else
-		INT IH, IL;
+		INT_UNREAL_32S IH, IL;
 #endif
 	};
 	struct
@@ -119,7 +119,7 @@ class DLL_EXPORT USoftwareRenderDevice : public URenderDevice
 	DECLARE_CLASS(USoftwareRenderDevice,URenderDevice,CLASS_Config)
 
 	// Temp statistics.
-	INT SurfPalBuilds;
+	INT_UNREAL_32S SurfPalBuilds;
 
 	// Preference variables.
 	UBOOL FastTranslucency;
@@ -137,16 +137,16 @@ class DLL_EXPORT USoftwareRenderDevice : public URenderDevice
 	DWORD RenderMode;  // 
 	DWORD ColorMode;   //
 
-	INT FrameLocksCounter;
-	INT GByteStride;
+	INT_UNREAL_32S FrameLocksCounter;
+	INT_UNREAL_32S GByteStride;
 	FVector FlashScale, FlashFog;
 	FLOAT  PerspError;
 	FLOAT  GMasterScale;
 	FVector GFloatScale, GFloatFog, GMaxColor, GFloatRange;
 	TArray<BYTE> HitStack;
 	BYTE* HitData;
-	INT* HitSize;
-	INT HitCount;
+	INT_UNREAL_32S* HitSize;
+	INT_UNREAL_32S HitCount;
 	
 
 	// URenderDevice interface.
@@ -155,16 +155,16 @@ class DLL_EXPORT USoftwareRenderDevice : public URenderDevice
 	void Exit();
 	void Flush();
 	UBOOL Exec( const char* Cmd, FOutputDevice* Out );
-	void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* InHitData, INT* InHitSize );
+	void Lock( FPlane FlashScale, FPlane FlashFog, FPlane ScreenClear, DWORD RenderLockFlags, BYTE* InHitData, INT_UNREAL_32S* InHitSize );
 	void Unlock( UBOOL Blit );
 	void DrawComplexSurface( FSceneNode* Frame, FSurfaceInfo& Surface, FSurfaceFacet& Facet );
-	void DrawGouraudPolygon( FSceneNode* Frame, FTextureInfo& Texture, FTransTexture** Pts, INT NumPts, DWORD PolyFlags, FSpanBuffer* SpanBuffer );
+	void DrawGouraudPolygon( FSceneNode* Frame, FTextureInfo& Texture, FTransTexture** Pts, INT_UNREAL_32S NumPts, DWORD PolyFlags, FSpanBuffer* SpanBuffer );
 	void DrawTile( FSceneNode* Frame, FTextureInfo& Texture, FLOAT X, FLOAT Y, FLOAT XL, FLOAT YL, FLOAT U, FLOAT V, FLOAT UL, FLOAT VL, FSpanBuffer* Span, FLOAT Z, FPlane Light, FPlane Fog, DWORD PolyFlags );
 	void GetStats( char* Result );
 	void Draw2DLine( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FVector P1, FVector P2 );
 	void Draw2DPoint( FSceneNode* Frame, FPlane Color, DWORD LineFlags, FLOAT X1, FLOAT Y1, FLOAT X2, FLOAT Y2 );
-	void PushHit( const BYTE* Data, INT Count );
-	void PopHit( INT Count, UBOOL bForce );
+	void PushHit( const BYTE* Data, INT_UNREAL_32S Count );
+	void PopHit( INT_UNREAL_32S Count, UBOOL bForce );
 	void ReadPixels( FColor* Pixels );
 	void ClearZ( FSceneNode* Frame ){};
 
@@ -177,13 +177,13 @@ private:
 
 	void MMXDrawRectangle( FSceneNode* Node, FTextureInfo& Texture,FTransTexture* Pts, DWORD PolyFlags, FSpanBuffer* SpanBuffer );
 	void PentiumDrawRectangle( FSceneNode* Node, FTextureInfo& Texture,FTransTexture* Pts, DWORD PolyFlags, FSpanBuffer* SpanBuffer );
-	void InitMMXFlashes( FLOAT Brightness, INT ColorBytes, DWORD Caps);
-	void InitColorTables( FLOAT Brightness, INT ColorBytes, DWORD Caps);
+	void InitMMXFlashes( FLOAT Brightness, INT_UNREAL_32S ColorBytes, DWORD Caps);
+	void InitColorTables( FLOAT Brightness, INT_UNREAL_32S ColorBytes, DWORD Caps);
 	void InitDepthFogTable();
 
-	void InnerGouraudMMX32(DWORD PolyFlags, INT MinY, INT MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer);
-    void InnerGouraudMMX16(DWORD PolyFlags, INT MinY, INT MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer);
-	void InnerGouraudMMX15(DWORD PolyFlags, INT MinY, INT MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer);
+	void InnerGouraudMMX32(DWORD PolyFlags, INT_UNREAL_32S MinY, INT_UNREAL_32S MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer);
+    void InnerGouraudMMX16(DWORD PolyFlags, INT_UNREAL_32S MinY, INT_UNREAL_32S MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer);
+	void InnerGouraudMMX15(DWORD PolyFlags, INT_UNREAL_32S MinY, INT_UNREAL_32S MaxY, FSceneNode* Frame,FMipmap* Mip,FSpanBuffer* SpanBuffer);
 
 	void BlitTile32(FSpanBuffer* Span);
 	void BlitMask32(FSpanBuffer* Span);
@@ -193,9 +193,9 @@ private:
 	void ClearScreenFast16(_WORD* Dest, DWORD Color);
 	void ClearScreenFast32(DWORD* Dest, DWORD Color);
 
-	void RenderSurfSpansMMX32( FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT TaskStartY, INT TaskEndY);
-	void RenderSurfSpansMMX15( FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT TaskStartY, INT TaskEndY);
-	void RenderSurfSpansMMX16( FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT TaskStartY, INT TaskEndY);
+	void RenderSurfSpansMMX32( FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT_UNREAL_32S TaskStartY, INT_UNREAL_32S TaskEndY);
+	void RenderSurfSpansMMX15( FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT_UNREAL_32S TaskStartY, INT_UNREAL_32S TaskEndY);
+	void RenderSurfSpansMMX16( FRainbowPtr& DestPtr, FSurfaceInfo& Surface,INT_UNREAL_32S TaskStartY, INT_UNREAL_32S TaskEndY);
 };
 
 

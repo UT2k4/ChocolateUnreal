@@ -10,12 +10,12 @@ class ENGINE_API FReachSpec
 {
 
 public:
-	INT distance; 
+	INT_UNREAL_32S distance; 
 	AActor *Start;
 	AActor *End; //actor at endpoint of this path (next waypoint or goal)
-	INT CollisionRadius; 
-    INT CollisionHeight; 
-	INT reachFlags; //see defined bits above
+	INT_UNREAL_32S CollisionRadius; 
+    INT_UNREAL_32S CollisionHeight; 
+	INT_UNREAL_32S reachFlags; //see defined bits above
 	BYTE  bPruned;
 
 	inline int supports (int iRadius, int iHeight, int moveFlags);

@@ -35,7 +35,7 @@ void AMover::PostLoad()
 
 	// Fix brush poly iLinks which were broken.
 	if( Brush && Brush->Polys )
-		for( INT i=0; i<Brush->Polys->Num(); i++ )
+		for( INT_UNREAL_32S i=0; i<Brush->Polys->Num(); i++ )
 			Brush->Polys->Element(i).iLink = i;
 
 	unguard;
@@ -69,7 +69,7 @@ void AMover::PostEditChange()
 	ABrush::PostEditChange();
 
 	// Validate KeyNum.
-	KeyNum = Clamp( (INT)KeyNum, (INT)0, (INT)ARRAY_COUNT(KeyPos)-1 );
+	KeyNum = Clamp( (INT_UNREAL_32S)KeyNum, (INT_UNREAL_32S)0, (INT_UNREAL_32S)ARRAY_COUNT(KeyPos)-1 );
 
 	// Update BasePos.
 	BasePos  = Location - OldPos;
@@ -103,7 +103,7 @@ void AMover::SetWorldRaytraceKey()
 	guard(AMover::SetWorldRaytraceKey);
 	if( WorldRaytraceKey!=255 )
 	{
-		WorldRaytraceKey = Clamp((INT)WorldRaytraceKey,0,(INT)ARRAY_COUNT(KeyPos)-1);
+		WorldRaytraceKey = Clamp((INT_UNREAL_32S)WorldRaytraceKey,0,(INT_UNREAL_32S)ARRAY_COUNT(KeyPos)-1);
 		if( bCollideActors && XLevel->Hash ) XLevel->Hash->RemoveActor( this );
 		Location = BasePos + KeyPos[WorldRaytraceKey];
 		Rotation = BaseRot + KeyRot[WorldRaytraceKey];
@@ -122,7 +122,7 @@ void AMover::SetBrushRaytraceKey()
 {
 	guard(AMover::SetBrushRaytraceKey);
 
-	BrushRaytraceKey = Clamp((INT)BrushRaytraceKey,0,(INT)ARRAY_COUNT(KeyPos)-1);
+	BrushRaytraceKey = Clamp((INT_UNREAL_32S)BrushRaytraceKey,0,(INT_UNREAL_32S)ARRAY_COUNT(KeyPos)-1);
 	if( bCollideActors && XLevel->Hash ) XLevel->Hash->RemoveActor( this );
 	Location = BasePos + KeyPos[BrushRaytraceKey];
 	Rotation = BaseRot + KeyRot[BrushRaytraceKey];

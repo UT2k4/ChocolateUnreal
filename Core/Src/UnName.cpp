@@ -12,10 +12,10 @@
 	FName statics.
 -----------------------------------------------------------------------------*/
 
-INT					FName::Duplicate =0;
+INT_UNREAL_32S					FName::Duplicate =0;
 FNameEntry*			FName::NameHash[8192];
 TArray<FNameEntry*>	FName::Names;
-TArray<INT>         FName::Available;
+TArray<INT_UNREAL_32S>         FName::Available;
 
 /*-----------------------------------------------------------------------------
 	FName implementation.
@@ -64,7 +64,7 @@ FName::FName( const char* Name, EFindName FindType )
 
 	// Form a valid name by discarding any invalid characters.
 	char ValidName[NAME_SIZE];
-	INT Count=0;
+	INT_UNREAL_32S Count=0;
 	while( *Name && Count<NAME_SIZE )
 	{
 		ValidName[Count++] = *Name;
@@ -73,7 +73,7 @@ FName::FName( const char* Name, EFindName FindType )
 	ValidName[Count]=0;
 
 	// Try to find the name in the hash.
-	INT iHash = appStrihash(ValidName) & (ARRAY_COUNT(NameHash)-1);
+	INT_UNREAL_32S iHash = appStrihash(ValidName) & (ARRAY_COUNT(NameHash)-1);
 	for( FNameEntry* Hash=NameHash[iHash]; Hash; Hash=Hash->HashNext )
 	{
 		if( appStricmp( ValidName, Hash->Name )==0 )
@@ -184,7 +184,8 @@ void FName::DeleteEntry( int i )
 	check(!(Name->Flags & RF_Intrinsic));
 
 	int iHash = appStrihash(Name->Name) & (ARRAY_COUNT(NameHash)-1);
-	for( FNameEntry **HashLink=&NameHash[iHash]; *HashLink && *HashLink!=Name; HashLink=&(*HashLink)->HashNext );
+	FNameEntry** HashLink;
+	for( HashLink=&NameHash[iHash]; *HashLink && *HashLink!=Name; HashLink=&(*HashLink)->HashNext );
 	if( !*HashLink )
 		appErrorf( "Unhashed name '%s'", Name->Name );
 	*HashLink = (*HashLink)->HashNext;

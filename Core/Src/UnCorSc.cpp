@@ -2311,8 +2311,8 @@ void UObject::execCaps( FFrame& Stack, BYTE*& Result )
 
 	P_GET_STRING(A);
 	P_FINISH;
-
-	for( int i=0; A[i]; i++ )
+	int i;
+	for( i=0; A[i]; i++ )
 		Result[i] = appToUpper(A[i]);
 	Result[i]=0;
 
@@ -2591,7 +2591,8 @@ void UObject::execGetPropertyText( FFrame& Stack, BYTE*& Result )
 	P_FINISH;
 
 	*(char*)Result = 0;
-	for( UField* Field=GetClass()->Children; Field; Field=Field->Next )
+	UField* Field;
+	for( Field=GetClass()->Children; Field; Field=Field->Next )
 		if( appStricmp( Field->GetName(), PropName )==0 )
 			break;
 	UProperty* Property = Cast<UProperty>( Field );
@@ -2609,7 +2610,8 @@ void UObject::execSetPropertyText( FFrame& Stack, BYTE*& Result )
 	P_GET_STRING(PropName);
 	P_GET_STRING(PropValue);
 	P_FINISH;
-	for( UField* Field=GetClass()->Children; Field; Field=Field->Next )
+	UField* Field;
+	for( Field=GetClass()->Children; Field; Field=Field->Next )
 		if( appStricmp( Field->GetName(), PropName )==0 )
 			break;
 	UProperty* Property = Cast<UProperty>( Field );
@@ -2720,11 +2722,11 @@ BYTE CORE_API GRegisterIntrinsic( int iIntrinsic, void* Func )
 	{
 		Initialized = 1;
 		for( int i=0; i<ARRAY_COUNT(GIntrinsics); i++ )
-			GIntrinsics[i] = UObject::execUndefined;
+			GIntrinsics[i] = &UObject::execUndefined;
 	}
 	if( iIntrinsic != INDEX_NONE )
 	{
-		if( iIntrinsic<0 || iIntrinsic>ARRAY_COUNT(GIntrinsics) || GIntrinsics[iIntrinsic]!=UObject::execUndefined) 
+		if( iIntrinsic<0 || iIntrinsic>ARRAY_COUNT(GIntrinsics) || GIntrinsics[iIntrinsic]!=&UObject::execUndefined) 
 			GIntrinsicDuplicate = iIntrinsic;
 		*(void**)&GIntrinsics[iIntrinsic] = Func;
 	}

@@ -4,7 +4,6 @@
 =============================================================================*/
 
 	// Constructors.
-	AActor() {}
 
 	// UObject interface.
 	void ProcessEvent( UFunction* Function, void* Parms );

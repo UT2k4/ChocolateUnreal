@@ -57,7 +57,6 @@ class ENGINE_API USound : public UObject
 	static UAudioSubsystem* Audio;
 
 	// Constructor.
-	USound() {}
 
 	// UObject interface.
 	void Serialize( FArchive& Ar );
@@ -85,7 +84,6 @@ class ENGINE_API UMusic : public UObject
 	static UAudioSubsystem* Audio;
 
 	// Constructor.
-	UMusic() {}
 
 	// UObject implementation.
 	void Serialize( FArchive& Ar );

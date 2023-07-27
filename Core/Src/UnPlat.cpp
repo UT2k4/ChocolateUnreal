@@ -343,7 +343,8 @@ void appInit()
 	char Comp[MAX_COMPUTERNAME_LENGTH+1]="";
 	DWORD Size=MAX_COMPUTERNAME_LENGTH+1;
 	GetComputerName( Comp, &Size );
-	for( char *c=Comp, *d=GComputerName; *c!=0; c++ )
+	char *c, *d;
+	for( c=Comp, d=GComputerName; *c!=0; c++ )
 		if( appIsAlnum(*c) && d<GComputerName+ARRAY_COUNT(GComputerName)-1 )
 			*d++ = *c;
 	*d++ = 0;
@@ -360,11 +361,6 @@ void appInit()
 
 	// Randomize.
 	srand( (unsigned)time( NULL ) );
-
-	// Set heap granularity.
-	INT_UNREAL_32S OldHeapGranularity=*__p__amblksiz(), NewHeapGranularity=0x10000;
-	*__p__amblksiz() = NewHeapGranularity;
-	debugf( NAME_Init, "Heap granularity changed from %i to %i", OldHeapGranularity, NewHeapGranularity );
 
 	// Get memory.
 	MEMORYSTATUS M;
@@ -1292,7 +1288,8 @@ CORE_API const char* appBaseDir()
 	{
 		// Get directory this executable was launched from.
 		GetModuleFileName( hInstance, BaseDir, ARRAY_COUNT(BaseDir) );
-		for( INT_UNREAL_32S i=strlen(BaseDir)-1; i>0; i-- )
+		INT_UNREAL_32S i;
+		for( i=strlen(BaseDir)-1; i>0; i-- )
 			if( BaseDir[i-1]=='\\' || BaseDir[i-1]=='/' )
 				break;
 		BaseDir[i]=0;

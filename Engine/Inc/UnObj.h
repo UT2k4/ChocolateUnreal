@@ -323,7 +323,7 @@ public:
 //
 class ENGINE_API UBspNodes : public UDatabase
 {
-	DECLARE_CLASS(UBspNodes,UDatabase,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UBspNodes,UDatabase,0)
 	DECLARE_DB_CLASS(UBspNodes,UDatabase,FBspNode)
 
 	enum {MAX_ZONES=64};				// Maximum zones in a Bsp, limited by QWORD bitmask size
@@ -481,7 +481,6 @@ class ENGINE_API UBspSurfs : public UDatabase
 	DECLARE_DB_CLASS(UBspSurfs,UDatabase,FBspSurf)
 
 	// Constructors.
-	UBspSurfs() {}
 
 	// UObject interface.
 	void ModifySelected(int UpdateMaster);
@@ -647,7 +646,6 @@ class ENGINE_API UPolys : public UDatabase
 	DECLARE_DB_CLASS(UPolys,UDatabase,FPoly)
 
 	// Constructors.
-	UPolys() {}
 
 	// UObject interface.
 	void Export( FOutputDevice& Out, const char* FileType, int Indent );
@@ -667,7 +665,6 @@ class ENGINE_API UVectors : public UDatabase
 	DECLARE_DB_CLASS(UVectors,UDatabase,FVector)
 
 	// Constructors.
-	UVectors() {}
 };
 
 /*-----------------------------------------------------------------------------
@@ -708,7 +705,6 @@ class ENGINE_API UVerts : public UDatabase
 	INT_UNREAL_32S NumSharedSides; // Number of unique iSideIndex's.
 
 	// Constructors.
-	UVerts() {}
 
 	// UObject interface.
 	void Serialize(FArchive& Ar)
@@ -729,7 +725,7 @@ class ENGINE_API UVerts : public UDatabase
 //
 class ENGINE_API UBitArray : public UObject
 {
-	DECLARE_CLASS(UBitArray,UObject,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UBitArray,UObject,0)
 	NO_DEFAULT_CONSTRUCTOR(UBitArray)
 
 	// Variables.
@@ -767,7 +763,7 @@ class ENGINE_API UBitArray : public UObject
 //
 class ENGINE_API UBitMatrix : public UBitArray
 {
-	DECLARE_CLASS(UBitMatrix,UBitArray,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UBitMatrix,UBitArray,0)
 	NO_DEFAULT_CONSTRUCTOR(UBitMatrix)
 
 	// Variables.

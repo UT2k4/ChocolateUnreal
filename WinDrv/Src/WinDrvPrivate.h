@@ -54,7 +54,7 @@ enum EWindowsBlitType
 //
 class DLL_EXPORT UWindowsViewport : public UViewport, public WWindow
 {
-	DECLARE_CLASS(UWindowsViewport,UViewport,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UWindowsViewport,UViewport,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UWindowsViewport)
 
 	// Variables.
@@ -128,7 +128,7 @@ class DLL_EXPORT UWindowsViewport : public UViewport, public WWindow
 //
 class DLL_EXPORT UWindowsClient : public UClient, public FNotifyHook
 {
-	DECLARE_CLASS(UWindowsClient,UClient,CLASS_Transient|CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UWindowsClient,UClient,CLASS_Transient|CLASS_Config)
 
 	// Constants.
 	enum {MAX_DD=4};

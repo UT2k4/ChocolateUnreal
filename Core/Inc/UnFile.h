@@ -3,7 +3,7 @@
 	Copyright 1997 Epic MegaGames, Inc. This software is a trade secret.
 =============================================================================*/
 
-
+#include <stdarg.h>
 /*-----------------------------------------------------------------------------
 	Global variables.
 -----------------------------------------------------------------------------*/
@@ -308,7 +308,7 @@ CORE_API INT_UNREAL_32S appStrtoi( const char* Start, char** End, INT_UNREAL_32S
 CORE_API void appQsort( void* Base, INT_UNREAL_32S num, INT_UNREAL_32S width, int(CDECL *compare)(const void* A, const void* B ) );
 CORE_API INT_UNREAL_32S appStrnicmp( const char* A, const char* B, INT_UNREAL_32S Count );
 CORE_API INT_UNREAL_32S appSprintf( char* Dest, const char* Fmt, ... );
-CORE_API INT_UNREAL_32S appGetVarArgs( char* Dest, const char*& Fmt );
+CORE_API INT_UNREAL_32S appGetVarArgs(char* Dest, const char* Fmt, va_list va);
 CORE_API void appMemswap( void* Ptr1, void* Ptr2, DWORD Size );
 
 //

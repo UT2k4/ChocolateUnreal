@@ -4,7 +4,6 @@
 =============================================================================*/
 
 	// Constructors.
-	AZoneInfo() {}
 
 	// UObject interface.
 	void PostEditChange();

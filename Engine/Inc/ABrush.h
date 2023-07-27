@@ -4,7 +4,6 @@
 =============================================================================*/
 
 	// Constructors.
-	ABrush() {}
 
 	// UObject interface.
 	void PostLoad();

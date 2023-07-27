@@ -88,7 +88,7 @@ class CORE_API UProperty : public UField
 //
 class CORE_API UByteProperty : public UProperty
 {
-	DECLARE_CLASS(UByteProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UByteProperty,UProperty,0)
 
 	// Variables.
 	UEnum* Enum;
@@ -135,7 +135,7 @@ class CORE_API UByteProperty : public UProperty
 //
 class CORE_API UIntProperty : public UProperty
 {
-	DECLARE_CLASS(UIntProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UIntProperty,UProperty,0)
 
 	// Constructors.
 	UIntProperty()
@@ -175,7 +175,7 @@ class CORE_API UIntProperty : public UProperty
 //
 class CORE_API UBoolProperty : public UProperty
 {
-	DECLARE_CLASS(UBoolProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UBoolProperty,UProperty,0)
 
 	// Variables.
 	DWORD BitMask;
@@ -236,7 +236,7 @@ class CORE_API UBoolProperty : public UProperty
 //
 class CORE_API UFloatProperty : public UProperty
 {
-	DECLARE_CLASS(UFloatProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFloatProperty,UProperty,0)
 
 	// Constructors.
 	UFloatProperty()
@@ -276,7 +276,7 @@ class CORE_API UFloatProperty : public UProperty
 //
 class CORE_API UObjectProperty : public UProperty
 {
-	DECLARE_CLASS(UObjectProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UObjectProperty,UProperty,0)
 
 	// Variables.
 	class UClass* PropertyClass;
@@ -324,7 +324,7 @@ class CORE_API UObjectProperty : public UProperty
 //
 class CORE_API UClassProperty : public UObjectProperty
 {
-	DECLARE_CLASS(UClassProperty,UObjectProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UClassProperty,UObjectProperty,0)
 
 	// Variables.
 	class UClass* MetaClass;
@@ -357,7 +357,7 @@ class CORE_API UClassProperty : public UObjectProperty
 //
 class CORE_API UNameProperty : public UProperty
 {
-	DECLARE_CLASS(UNameProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UNameProperty,UProperty,0)
 
 	// Constructors.
 	UNameProperty()
@@ -397,7 +397,7 @@ class CORE_API UNameProperty : public UProperty
 //
 class CORE_API UStringProperty : public UProperty
 {
-	DECLARE_CLASS(UStringProperty,UProperty,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UStringProperty,UProperty,0)
 
 	// Variables.
 		INT_UNREAL_32S StringSize;
@@ -453,8 +453,7 @@ class CORE_API UStructProperty : public UProperty
 	UStructProperty* NextStruct;
 
 	// Constructors.
-	UStructProperty()
-	{}
+
 	UStructProperty( ECppProperty, INT_UNREAL_32S InOffset, const char* InCategory, DWORD InFlags, UStruct* InStruct )
 	:	UProperty( EC_CppProperty, InOffset, InCategory, InFlags )
 	,	Struct( InStruct )
@@ -523,7 +522,8 @@ template <class T> T* FindField( UStruct* Owner, const char* FieldName )
 inline UBOOL UObject::IsA( class UClass* SomeBase ) const
 {
 	guardSlow(UObject::IsA);
-	for( UClass* TempClass=Class; TempClass; TempClass=(UClass*)TempClass->SuperField )
+	UClass* TempClass;
+	for( TempClass=Class; TempClass; TempClass=(UClass*)TempClass->SuperField )
 		if( TempClass==SomeBase )
 			return 1;
 	return SomeBase==NULL;

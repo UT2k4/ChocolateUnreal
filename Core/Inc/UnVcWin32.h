@@ -50,8 +50,8 @@ enum {CACHE_LINE_SIZE   = 32}; // Cache line size.
 #define STDCALL		__stdcall				/* Standard calling convention */
 
 // Variable arguments.
-#define GET_VARARGS(msg,fmt) appGetVarArgs(msg,fmt)
-
+#define GET_VARARGS(msg,fmt) {va_list va_;va_start(va_,fmt); appGetVarArgs(msg,fmt,va_);va_end(va_);}
+#define GET_VARARGSR(msg,fmt,result) {va_list va_;va_start(va_,fmt);result =  appGetVarArgs(msg,fmt,va_);va_end(va_);}
 // Compiler name.
 #ifdef _DEBUG
 	#define COMPILER "Compiled with Visual C++ Debug"

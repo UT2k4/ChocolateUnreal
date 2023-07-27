@@ -220,7 +220,7 @@ public:
 
 class EDITOR_API UEditorEngine : public UEngine, public FNotifyHook
 {
-	DECLARE_CLASS(UEditorEngine,UEngine,CLASS_Transient|CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UEditorEngine,UEngine,CLASS_Transient|CLASS_Config)
 
 	// Objects.
 	ULevel*					 Level;

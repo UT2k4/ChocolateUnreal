@@ -67,7 +67,7 @@ EDITOR_API extern class FGlobalTopicTable GTopics;
 
 class EDITOR_API UClassFactory : public UFactory
 {
-	DECLARE_CLASS(UClassFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UClassFactory,UFactory,0)
 
 	// Constructor.
 	UClassFactory();
@@ -82,7 +82,7 @@ class EDITOR_API UClassFactory : public UFactory
 
 class EDITOR_API ULevelFactory : public UFactory
 {
-	DECLARE_CLASS(ULevelFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULevelFactory,UFactory,0)
 
 	// Constructor.
 	ULevelFactory();
@@ -97,7 +97,7 @@ class EDITOR_API ULevelFactory : public UFactory
 
 class EDITOR_API UPolysFactory : public UFactory
 {
-	DECLARE_CLASS(UPolysFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UPolysFactory,UFactory,0)
 
 	// Constructor.
 	UPolysFactory();
@@ -112,7 +112,7 @@ class EDITOR_API UPolysFactory : public UFactory
 
 class EDITOR_API UModelFactory : public UFactory
 {
-	DECLARE_CLASS(UModelFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UModelFactory,UFactory,0)
 
 	// Constructor.
 	UModelFactory();
@@ -127,7 +127,7 @@ class EDITOR_API UModelFactory : public UFactory
 
 class EDITOR_API USoundFactory : public UFactory
 {
-	DECLARE_CLASS(USoundFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(USoundFactory,UFactory,0)
 
 	// Constructor.
 	USoundFactory();
@@ -142,7 +142,7 @@ class EDITOR_API USoundFactory : public UFactory
 
 class EDITOR_API UMusicFactory : public UFactory
 {
-	DECLARE_CLASS(UMusicFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UMusicFactory,UFactory,0)
 
 	// Constructor.
 	UMusicFactory();
@@ -157,7 +157,7 @@ class EDITOR_API UMusicFactory : public UFactory
 
 class EDITOR_API UTextureFactory : public UFactory
 {
-	DECLARE_CLASS(UTextureFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTextureFactory,UFactory,0)
 
 	// Constructor.
 	UTextureFactory();
@@ -172,7 +172,7 @@ class EDITOR_API UTextureFactory : public UFactory
 
 class EDITOR_API UFontFactory : public UTextureFactory
 {
-	DECLARE_CLASS(UFontFactory,UTextureFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFontFactory,UTextureFactory,0)
 
 	// Constructor.
 	UFontFactory();

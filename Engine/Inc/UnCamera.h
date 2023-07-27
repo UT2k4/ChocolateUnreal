@@ -15,7 +15,7 @@
 //
 class ENGINE_API UCanvas : public UObject
 {
-	DECLARE_CLASS(UCanvas,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UCanvas,UObject,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UCanvas)
 
 	// Variables.

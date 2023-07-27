@@ -15,7 +15,7 @@
 //
 class ENGINE_API UModel : public UPrimitive
 {
-	DECLARE_CLASS(UModel,UPrimitive,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UModel,UPrimitive,0)
 
 	// References.
 	UVectors*				Vectors;

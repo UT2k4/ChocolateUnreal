@@ -14,7 +14,7 @@
 //
 class ENGINE_API UConsole : public UObject, public FOutputDevice
 {
-	DECLARE_CLASS(UConsole,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UConsole,UObject,CLASS_Transient)
 
 	// Constructor.
 	UConsole();

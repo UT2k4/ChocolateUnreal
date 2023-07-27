@@ -37,7 +37,7 @@ struct FAlias
 //
 class ENGINE_API UInput : public USubsystem
 {
-	DECLARE_CLASS(UInput,USubsystem,CLASS_Transient|CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UInput,USubsystem,CLASS_Transient|CLASS_Config)
 
 	// Variables.
 	FAlias		Aliases[40];

@@ -12,7 +12,7 @@
 //
 class CORE_API UPackage : public UObject
 {
-	DECLARE_CLASS(UPackage,UObject,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UPackage,UObject,0)
 
 	// Variables.
 	void* DllHandle;
@@ -66,7 +66,7 @@ class CORE_API ULanguage : public UObject
 //
 class CORE_API UTextBuffer : public UObject, public FOutputDevice
 {
-	DECLARE_CLASS(UTextBuffer,UObject,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTextBuffer,UObject,0)
 
 	// Variables.
 	INT_UNREAL_32S Pos, Top;

@@ -99,7 +99,7 @@ void FMemCache::Init
 	);
 
 	// Init the hash table to empty since no items are used.
-	for( i=0; i<HASH_COUNT; i++ )
+	for(int i=0; i<HASH_COUNT; i++ )
 		HashItems[i] = NULL;
 
 	// Success.
@@ -462,7 +462,8 @@ BYTE* FMemCache::Create
 	// for each set, remembering the best cost.
 	SQWORD Cost=0;
 	FCacheItem* First=CacheItems;
-	for( FCacheItem* Last=CacheItems; Last!=LastItem; Last=Last->LinearNext )
+	FCacheItem* Last = CacheItems;
+	for( Last=CacheItems; Last!=LastItem; Last=Last->LinearNext )
 	{
 		// Add the cost and size of new Last element to our accumulator.
 		Cost += Last->Cost;

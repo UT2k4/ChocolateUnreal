@@ -122,7 +122,6 @@ class DLL_EXPORT UTcpNetDriver : public UNetDriver
 	char		HostName[256];
 
 	// Constructor.
-	UTcpNetDriver() {}
 
 	// UObject interface.
 	void Destroy();
@@ -149,7 +148,7 @@ IMPLEMENT_CLASS(UTcpNetDriver);
 //
 class DLL_EXPORT UTcpipConnection : public UNetConnection
 {
-	DECLARE_CLASS(UTcpipConnection,UNetConnection,CLASS_Config|CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTcpipConnection,UNetConnection,CLASS_Config|CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UTcpipConnection)
 
 	// Variables.

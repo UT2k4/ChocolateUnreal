@@ -136,7 +136,7 @@ struct FMeshVertConnect
 //
 class ENGINE_API UMesh : public UPrimitive
 {
-	DECLARE_CLASS(UMesh,UPrimitive,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UMesh,UPrimitive,0)
 
 	// Objects.
 	TArray<FMeshVert>		Verts;

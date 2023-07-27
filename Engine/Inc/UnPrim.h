@@ -68,7 +68,7 @@ struct FCheckResult : public FIteratorActorList
 //
 class ENGINE_API UPrimitive : public UObject
 {
-	DECLARE_CLASS(UPrimitive,UObject,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UPrimitive,UObject,0)
 
 	// Variables.
 	FBox BoundingBox;

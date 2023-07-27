@@ -119,12 +119,13 @@ void ObjTopicHandler::Get(ULevel *Level, const char *Item, FOutputDevice &Out)
 		if( ParseObject<UClass>(Item,"CLASS=",Class,ANY_PACKAGE) )
 		{
 			TArray<UObject*> List;
+			UObject* TopParent;
 			for( FObjectIterator It; It; ++It )
 			{
 				if( It->IsA(Class) && It->GetParent()!=GObj.GetTransientPackage() )
 				{
 					check(It->GetParent());
-					for( UObject* TopParent=It->GetParent(); TopParent->GetParent()!=NULL; TopParent=TopParent->GetParent() );
+					for( TopParent=It->GetParent(); TopParent->GetParent()!=NULL; TopParent=TopParent->GetParent() );
 					if( TopParent->IsA(UPackage::StaticClass) )
 						List.AddUniqueItem( TopParent );
 				}

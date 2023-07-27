@@ -192,7 +192,7 @@ class DLL_EXPORT FSpark
 
 class DLL_EXPORT UFireTexture : public UFractalTexture
 {
-	DECLARE_CLASS(UFireTexture,UFractalTexture,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFireTexture,UFractalTexture,0)
 
 	// Persistent variables.
     BYTE		SparkType;    
@@ -382,7 +382,7 @@ class DLL_EXPORT UWaterTexture : public UFractalTexture
 
 class DLL_EXPORT UWaveTexture : public UWaterTexture
 {
-	DECLARE_CLASS(UWaveTexture,UWaterTexture,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UWaveTexture,UWaterTexture,0)
 
 	// Persistent variables.
 	BYTE    BumpMapLight;
@@ -422,7 +422,7 @@ class DLL_EXPORT UWaveTexture : public UWaterTexture
 
 class DLL_EXPORT UWetTexture : public UWaterTexture
 {
-	DECLARE_CLASS(UWetTexture,UWaterTexture,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UWetTexture,UWaterTexture,0)
 
     // Persistent variables
     UTexture*	SourceTexture;
@@ -498,7 +498,7 @@ struct DLL_EXPORT KeyPoint
 
 class DLL_EXPORT UIceTexture : public UFractalTexture
 {
-	DECLARE_CLASS(UIceTexture,UFractalTexture,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UIceTexture,UFractalTexture,0)
 
 	// Persistent variables.
     UTexture*   GlassTexture;

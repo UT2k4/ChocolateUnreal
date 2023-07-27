@@ -125,7 +125,7 @@ enum ELevelTick
 //
 class ENGINE_API ULevel : public ULevelBase
 {
-	DECLARE_CLASS(ULevel,ULevelBase,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULevel,ULevelBase,0)
 	DECLARE_DB_CLASS(ULevel,ULevelBase,AActor*)
 	NO_DEFAULT_CONSTRUCTOR(ULevel)
 

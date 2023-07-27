@@ -15,7 +15,7 @@
 //
 class ENGINE_API UGameEngine : public UEngine
 {
-	DECLARE_CLASS(UGameEngine,UEngine,CLASS_Config|CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UGameEngine,UEngine,CLASS_Config|CLASS_Transient)
 
 	// Variables.
 	ULevel*			GLevel;

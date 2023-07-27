@@ -796,7 +796,8 @@ void UObject::SaveConfig( DWORD Flags, const char* Filename )
 			}
 		}
 	}
-	for( UClass* BaseClass=GetClass(); BaseClass->GetSuperClass(); BaseClass=BaseClass->GetSuperClass() )
+	UClass* BaseClass;
+	for( BaseClass=GetClass(); BaseClass->GetSuperClass(); BaseClass=BaseClass->GetSuperClass() )
 		if( !(BaseClass->GetSuperClass()->ClassFlags & CLASS_Config) )
 			break;
 	if( BaseClass )
@@ -1292,9 +1293,10 @@ private:
 	FArchive& operator<<( UObject*& Obj )
 	{
 		guard(FArchiveShowReferences<<Obj);
+		INT_UNREAL_32S i;
 		if( Obj && Obj->GetParent()!=Parent )
 		{
-			for( INT_UNREAL_32S i=0; i<Exclude.Num(); i++ )
+			for( i=0; i<Exclude.Num(); i++ )
 				if( Exclude(i) == Obj->GetParent() )
 					break;
 			if( i==Exclude.Num() )
@@ -1360,7 +1362,7 @@ UBOOL FObjectManager::Exec( const char* Cmd, FOutputDevice* Out )
 	else if( ParseCommand(&Str,"DUMPINTRINSICS") )
 	{
 		for( INT_UNREAL_32S i=0; i<EX_Max; i++ )
-			if( GIntrinsics[i] == UObject::execUndefined )
+			if( GIntrinsics[i] == &UObject::execUndefined )
 				debugf( "Intrinsic %i is available", i );
 		return 1;
 	}
@@ -1486,7 +1488,7 @@ UBOOL FObjectManager::Exec( const char* Cmd, FOutputDevice* Out )
 					if( Parse(Str,Temp,F) )
 						Exclude.AddItem( GObj.CreatePackage(NULL,*F) );
 				}
-				Out->Logf( "Dependencies of %s:", *Pkg );
+				Out->Logf( "Dependencies of %s:", Pkg );
 				for( FObjectIterator It; It; ++It )
 					if( It->GetParent()==Pkg )
 						FArchiveShowReferences ArShowReferences( Out, Pkg, *It, Exclude );
@@ -1510,8 +1512,9 @@ UBOOL FObjectManager::Exec( const char* Cmd, FOutputDevice* Out )
 			{
 				INT_UNREAL_32S ThisSize = It->MemUsage();
 				TotalCount++;
+				int i;
 
-				for( int i=0; i<Num; i++ )
+				for( i=0; i<Num; i++ )
 					if( TypeList[i] == It->GetClass() )
 						break;
 				if( i==Num && Num<MAX )
@@ -1666,9 +1669,10 @@ ULinkerLoad* FObjectManager::GetPackageLinker
 			Result = new( GetTransientPackage() )ULinkerLoad( InParent, NewFilename, LoadFlags );
 
 		// Verify compatibility.
+		INT_UNREAL_32S i;
 		if( CompatibleGuid )
 		{
-			for( INT_UNREAL_32S i=0; i<Result->Heritage.Num(); i++ )
+			for( i=0; i<Result->Heritage.Num(); i++ )
 				if( Result->Heritage(i)==*CompatibleGuid )
 					break;
 			if( i==Result->Heritage.Num() )
@@ -2220,7 +2224,8 @@ UBOOL FObjectManager::SavePackage( UObject* InParent, UObject* Base, DWORD TopLe
 
 		// Set linker reverse mappings.
 		guard(SetLinkerMappings);
-		for( INT_UNREAL_32S i=0; i<Linker->ExportMap.Num(); i++ )
+		INT_UNREAL_32S i;
+		for( i=0; i<Linker->ExportMap.Num(); i++ )
 			Linker->ObjectIndices(Linker->ExportMap(i)._Object->GetIndex()) = i+1;
 		for( i=0; i<Linker->ImportMap.Num(); i++ )
 			Linker->ObjectIndices(Linker->ImportMap(i).Object->GetIndex()) = -i-1;
@@ -2918,7 +2923,8 @@ void CacheDrivers( UBOOL ForceRefresh )
 		appStrcpy( CachedLanguage, GetLanguage() );
 		AllPreferences.Empty();
 		AllDrivers.Empty();
-		for( INT_UNREAL_32S i=0; i<ARRAY_COUNT(GSys->Paths); i++ )
+		INT_UNREAL_32S i;
+		for( i=0; i<ARRAY_COUNT(GSys->Paths); i++ )
 		{
 			if( GSys->Paths[i] )
 			{
@@ -3086,8 +3092,9 @@ void UEnum::Export( FOutputDevice& Out, const char* FileType, int Indent )
 	if( appStricmp(FileType,"H")==0 )
 	{
 		// C++ header.
+		int i;
 		Out.Logf("%senum %s\r\n{\r\n",appSpc(Indent),GetName());
-		for( int i=0; i<Names.Num(); i++ )
+		for( i=0; i<Names.Num(); i++ )
 			Out.Logf( "%s    %-24s=%i,\r\n", appSpc(Indent), *Names(i), i );
 
 		if( appStrchr(*Names(0),'_') )
@@ -3220,7 +3227,8 @@ void FPackageMap::AddLinker( ULinkerLoad* Linker )
 	guard(FPackageMap::AddLinker);
 
 	// Skip if already on list.
-	for( INT_UNREAL_32S i=0; i<Num(); i++ )
+	INT_UNREAL_32S i;
+	for( i=0; i<Num(); i++ )
 		if( (*this)(i).Parent == Linker->LinkerRoot )
 			return;
 
@@ -3241,7 +3249,8 @@ void FPackageMap::AddLinker( ULinkerLoad* Linker )
 void FPackageMap::Compute()
 {
 	guard(FPackageInfo::Compute);
-	for( INT_UNREAL_32S i=0; i<Num(); i++ )
+	INT_UNREAL_32S i;
+	for( i=0; i<Num(); i++ )
 	{
 		if( (*this)(i).Linker==NULL )
 			(*this)(i).Linker = GObj.GetPackageLinker( (*this)(i).Parent, NULL, LOAD_NoFail | LOAD_KeepImports, NULL, &(*this)(i).Guid );

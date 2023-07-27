@@ -75,20 +75,22 @@ public:
 	{
 		return Data;
 	}
-	void Remove(INT_UNREAL_32S Index, INT_UNREAL_32S Count, INT_UNREAL_32S ElementSize );
+	void Remove(INT_UNREAL_32S Index, INT_UNREAL_32S Count, INT_UNREAL_32S ElementSize);
+
 	void Realloc(INT_UNREAL_32S ElementSize);
 protected:
-	FArray(INT_UNREAL_32S InNum, INT_UNREAL_32S ElementSize )
-	:	ArrayNum( InNum )
-	,	ArrayMax( InNum )
-	,	Data    ( NULL  )
+	//void Realloc(INT_UNREAL_32S ElementSize);
+	FArray(INT_UNREAL_32S InNum, INT_UNREAL_32S ElementSize)
+		: ArrayNum(InNum)
+		, ArrayMax(InNum)
+		, Data(NULL)
 	{
-		Realloc( ElementSize );
+		Realloc(ElementSize);
 	}
 	~FArray()
 	{
-		if( Data )
-			appFree( Data );
+		if (Data)
+			appFree(Data);
 	}
 	void* Data;
 public:
@@ -240,7 +242,7 @@ public:
 	}
 	void Remove( int Index, int Count=1 );
 	template< class T >
-	friend FArchive& operator<<( FArchive& Ar, TArray& A );
+	friend	inline FArchive& operator<<(FArchive& Ar, TArray<T>& A);
 	void SetNum( INT_UNREAL_32S NewSize )
 	{
 		guardSlow(TArray::SetNum);
@@ -487,6 +489,18 @@ private:
 template< class TK, class TI > class TMap
 {
 public:
+	INT_UNREAL_32S Size()
+	{
+		return Pairs.ArrayNum;
+	}
+	TI&operator[](INT_UNREAL_32S i)
+	{
+		return Pairs(i).Value;
+	}
+	const TI&operator[](INT_UNREAL_32S i)const
+	{
+		return Pairs(i).Value;
+	}
 	void Add( const TK& Key, const TI& Value )
 	{
 		INT_UNREAL_32S i;
@@ -498,6 +512,10 @@ public:
 		Pairs(i).Key   = Key;
 		Pairs(i).Value = Value;
 	}
+	void Empty()
+	{
+		Pairs.Empty();
+	}
 	UBOOL Find( const TK& Key, TI& Value ) const
 	{
 		INT_UNREAL_32S i;
@@ -507,6 +525,29 @@ public:
 		if( i<Pairs.Num() )
 			Value = Pairs(i).Value;
 		return i<Pairs.Num();
+	}
+	UBOOL Find(const TK& Key, TI*& Value) 
+	{
+		INT_UNREAL_32S i;
+		for ( i = 0; i < Pairs.Num(); i++)
+			if (Pairs(i).Key == Key)
+				break;
+		if (i < Pairs.Num())
+			Value = &Pairs(i).Value;
+		else
+			Value = 0;
+		return i < Pairs.Num();
+	}
+	TI* Find(const TK& Key) 
+	{
+		INT_UNREAL_32S i;
+		for ( i = 0; i < Pairs.Num(); i++)
+			if (Pairs(i).Key == Key)
+				break;
+		if (i < Pairs.Num())
+			return & Pairs(i).Value;
+		check(false);
+		return 0;
 	}
 private:
 	struct FPair

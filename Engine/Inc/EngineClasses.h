@@ -1356,7 +1356,7 @@ public:
 class ENGINE_API AScout : public APawn
 {
 public:
-    DECLARE_CLASS(AScout,APawn,0|CLASS_Config)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AScout,APawn,0|CLASS_Config)
     NO_DEFAULT_CONSTRUCTOR(AScout)
 };
 
@@ -1458,14 +1458,14 @@ public:
     class APawn* WaitingPawn;
     DWORD bOpening:1;
     DWORD bPlayerOnly:1;
-    DECLARE_CLASS(AMover,ABrush,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AMover,ABrush,0)
     #include "AMover.h"
 };
 
 class ENGINE_API AInfo : public AActor
 {
 public:
-    DECLARE_CLASS(AInfo,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AInfo,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(AInfo)
 };
 
@@ -1478,7 +1478,7 @@ public:
     BYTE MoveFlags;
     BYTE DodgeMove;
     DWORD bSent:1;
-    DECLARE_CLASS(ASavedMove,AInfo,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ASavedMove,AInfo,0)
     NO_DEFAULT_CONSTRUCTOR(ASavedMove)
 };
 
@@ -1565,14 +1565,14 @@ public:
     {
         ProcessEvent(FindFunctionChecked(ENGINE_Generate),NULL);
     }
-    DECLARE_CLASS(AWarpZoneInfo,AZoneInfo,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AWarpZoneInfo,AZoneInfo,0)
     NO_DEFAULT_CONSTRUCTOR(AWarpZoneInfo)
 };
 
 class ENGINE_API ASkyZoneInfo : public AZoneInfo
 {
 public:
-    DECLARE_CLASS(ASkyZoneInfo,AZoneInfo,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ASkyZoneInfo,AZoneInfo,0)
     NO_DEFAULT_CONSTRUCTOR(ASkyZoneInfo)
 };
 
@@ -1638,7 +1638,7 @@ public:
     FLOAT NextSwitchCountdown;
     void execGetAddressURL( FFrame& Stack, BYTE*& Result );
     void execGetLocalURL( FFrame& Stack, BYTE*& Result );
-    DECLARE_CLASS(ALevelInfo,AZoneInfo,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ALevelInfo,AZoneInfo,0)
     NO_DEFAULT_CONSTRUCTOR(ALevelInfo)
 };
 
@@ -1733,7 +1733,7 @@ public:
     {
         ProcessEvent(FindFunctionChecked(ENGINE_DetailChange),NULL);
     }
-    DECLARE_CLASS(AGameInfo,AInfo,0|CLASS_Config)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AGameInfo,AInfo,0|CLASS_Config)
     NO_DEFAULT_CONSTRUCTOR(AGameInfo)
 };
 
@@ -1754,7 +1754,7 @@ public:
     CHAR EnabledString[32];
     CHAR DisabledString[32];
     CHAR MenuTitle[32];
-    DECLARE_CLASS(AMenu,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AMenu,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(AMenu)
 };
 
@@ -1765,14 +1765,14 @@ public:
     INT_UNREAL_32S Crosshair;
     class UClass* MainMenuType;
     class AMenu* MainMenu;
-    DECLARE_CLASS(AHUD,AActor,0|CLASS_Config)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AHUD,AActor,0|CLASS_Config)
     NO_DEFAULT_CONSTRUCTOR(AHUD)
 };
 
 class ENGINE_API ATriggers : public AActor
 {
 public:
-    DECLARE_CLASS(ATriggers,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ATriggers,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(ATriggers)
 };
 
@@ -1800,7 +1800,7 @@ public:
     FLOAT DamageThreshold;
     class AActor* TriggerActor;
     class AActor* TriggerActor2;
-    DECLARE_CLASS(ATrigger,ATriggers,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ATrigger,ATriggers,0)
     NO_DEFAULT_CONSTRUCTOR(ATrigger)
 };
 
@@ -1858,7 +1858,7 @@ public:
         ProcessEvent(FindFunctionChecked(ENGINE_BotDesireability),&Parms);
         return Parms.ReturnValue;
     }
-    DECLARE_CLASS(AInventory,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AInventory,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(AInventory)
 };
 
@@ -1900,14 +1900,14 @@ public:
     class USound* Misc3Sound;
     CHAR MessageNoAmmo[64];
     FRotator AdjustedAim;
-    DECLARE_CLASS(AWeapon,AInventory,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AWeapon,AInventory,0)
     NO_DEFAULT_CONSTRUCTOR(AWeapon)
 };
 
 class ENGINE_API AKeypoint : public AActor
 {
 public:
-    DECLARE_CLASS(AKeypoint,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AKeypoint,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(AKeypoint)
 };
 
@@ -1919,7 +1919,7 @@ public:
     DWORD bEndOfPath:1;
     class AInterpolationPoint* Prev;
     class AInterpolationPoint* Next;
-    DECLARE_CLASS(AInterpolationPoint,AKeypoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AInterpolationPoint,AKeypoint,0)
     NO_DEFAULT_CONSTRUCTOR(AInterpolationPoint)
 };
 
@@ -1934,7 +1934,7 @@ public:
     class USound* ImpactSound;
     class USound* MiscSound;
     FLOAT ExploWallOut;
-    DECLARE_CLASS(AProjectile,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AProjectile,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(AProjectile)
 };
 
@@ -1954,7 +1954,7 @@ public:
     class UClass* content3;
     class USound* EndPushSound;
     DWORD bPushSoundPlaying:1;
-    DECLARE_CLASS(ADecoration,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ADecoration,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(ADecoration)
 };
 
@@ -1969,7 +1969,7 @@ public:
     DWORD bSlidingCarcass:1;
     INT_UNREAL_32S CumulativeDamage;
     class APawn* Bugs;
-    DECLARE_CLASS(ACarcass,ADecoration,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ACarcass,ADecoration,0)
     NO_DEFAULT_CONSTRUCTOR(ACarcass)
 };
 
@@ -2001,7 +2001,7 @@ public:
         ProcessEvent(FindFunctionChecked(ENGINE_Accept),&Parms);
         return Parms.ReturnValue;
     }
-    DECLARE_CLASS(ANavigationPoint,AActor,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ANavigationPoint,AActor,0)
     NO_DEFAULT_CONSTRUCTOR(ANavigationPoint)
 };
 
@@ -2010,7 +2010,7 @@ class ENGINE_API ALiftExit : public ANavigationPoint
 public:
     FName LiftTag;
     class AMover* MyLift;
-    DECLARE_CLASS(ALiftExit,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ALiftExit,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(ALiftExit)
 };
 
@@ -2019,7 +2019,7 @@ class ENGINE_API ALiftCenter : public ANavigationPoint
 public:
     FName LiftTag;
     class AMover* MyLift;
-    DECLARE_CLASS(ALiftCenter,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ALiftCenter,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(ALiftCenter)
 };
 
@@ -2029,21 +2029,21 @@ public:
     class AWarpZoneInfo* markedWarpZone;
     class AActor* TriggerActor;
     class AActor* TriggerActor2;
-    DECLARE_CLASS(AWarpZoneMarker,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AWarpZoneMarker,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(AWarpZoneMarker)
 };
 
 class ENGINE_API AButtonMarker : public ANavigationPoint
 {
 public:
-    DECLARE_CLASS(AButtonMarker,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AButtonMarker,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(AButtonMarker)
 };
 
 class ENGINE_API ATriggerMarker : public ANavigationPoint
 {
 public:
-    DECLARE_CLASS(ATriggerMarker,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ATriggerMarker,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(ATriggerMarker)
 };
 
@@ -2051,7 +2051,7 @@ class ENGINE_API AInventorySpot : public ANavigationPoint
 {
 public:
     class AInventory* markedItem;
-    DECLARE_CLASS(AInventorySpot,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AInventorySpot,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(AInventorySpot)
 };
 
@@ -2061,7 +2061,7 @@ public:
     BYTE TeamNumber;
     DWORD bSinglePlayerStart:1;
     DWORD bCoopStart:1;
-    DECLARE_CLASS(APlayerStart,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(APlayerStart,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(APlayerStart)
 };
 
@@ -2079,14 +2079,14 @@ public:
     FVector TargetVelocity;
     class AActor* TriggerActor;
     class AActor* TriggerActor2;
-    DECLARE_CLASS(ATeleporter,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ATeleporter,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(ATeleporter)
 };
 
 class ENGINE_API APathNode : public ANavigationPoint
 {
 public:
-    DECLARE_CLASS(APathNode,ANavigationPoint,0)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(APathNode,ANavigationPoint,0)
     NO_DEFAULT_CONSTRUCTOR(APathNode)
 };
 

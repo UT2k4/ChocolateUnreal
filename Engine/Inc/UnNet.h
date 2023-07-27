@@ -39,7 +39,7 @@ enum {NET_REVISION=1};
 //
 class UPendingLevel : public ULevelBase
 {
-	DECLARE_CLASS(UPendingLevel,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UPendingLevel,UObject,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UPendingLevel)
 
 	// Variables.

@@ -101,7 +101,7 @@ public:
     {
         ProcessEvent(FindFunctionChecked(IPDRV_Accepted),NULL);
     }
-    DECLARE_CLASS(ATcpLink,AInfo,0|CLASS_Transient)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(ATcpLink,AInfo,0|CLASS_Transient)
     #include "ATcpLink.h"
 };
 
@@ -141,7 +141,7 @@ public:
         Parms.Addr=Addr;
         ProcessEvent(FindFunctionChecked(IPDRV_Resolved),&Parms);
     }
-    DECLARE_CLASS(AUdpLink,AInfo,0|CLASS_Transient)
+    DECLARE_CLASS_WITHOUT_CONSTRUCT(AUdpLink,AInfo,0|CLASS_Transient)
     #include "AUdpLink.h"
 };
 

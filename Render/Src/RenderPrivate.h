@@ -380,7 +380,7 @@ inline FLOAT SqrtApprox   (FLOAT F) {return appSqrt(F);}
 //
 class RENDER_API URender : public URenderBase
 {
-	DECLARE_CLASS(URender,URenderBase,CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(URender,URenderBase,CLASS_Config)
 
 	// Friends.
 	friend class  FGlobalSpanTextureMapper;

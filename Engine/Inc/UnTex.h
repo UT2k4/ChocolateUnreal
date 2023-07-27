@@ -136,7 +136,6 @@ class ENGINE_API UPalette : public UObject
 	TArray<FColor> Colors;
 
 	// Constructors.
-	UPalette() {}
 
 	// UObject interface.
 	void Serialize( FArchive& Ar );
@@ -240,7 +239,7 @@ class ENGINE_API UBitmap : public UObject
 //
 class ENGINE_API UTexture : public UBitmap
 {
-	DECLARE_CLASS(UTexture,UBitmap,CLASS_SafeReplace)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTexture,UBitmap,CLASS_SafeReplace)
 
 	// Subtextures.
 	UTexture*	BumpMap;			// Bump map to illuminate this texture with.
@@ -388,7 +387,7 @@ public:
 //
 class ENGINE_API UFont : public UTexture
 {
-	DECLARE_CLASS(UFont,UTexture,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFont,UTexture,0)
 
 	// Constants.
 	enum {NUM_FONT_CHARS=256};

@@ -99,7 +99,7 @@ public:
 //
 class DLL_EXPORT UGalaxyAudioSubsystem : public UAudioSubsystem
 {
-	DECLARE_CLASS(UGalaxyAudioSubsystem,UAudioSubsystem,CLASS_Config)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UGalaxyAudioSubsystem,UAudioSubsystem,CLASS_Config)
 
 	// Configuration.
 	UBOOL			UseDirectSound;

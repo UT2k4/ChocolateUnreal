@@ -244,7 +244,7 @@ public:
 	INT_UNREAL_32S				ObjectBase;		// Net index of first object.
 	INT_UNREAL_32S				NameBase;		// Net index of first name.
 	DWORD			PackageFlags;	// Package flags.
-
+	inline bool operator==(const FPackageInfo&right)const { return appMemcmp(this, &right, sizeof(FPackageInfo))==0; }
 	// Functions.
 	FPackageInfo( ULinkerLoad* InLinker=NULL );
 	CORE_API friend FArchive& operator<<( FArchive& Ar, FPackageInfo& I );
@@ -338,9 +338,23 @@ public: \
 		{ return GObj.AllocateObject( StaticClass, Parent, Name, SetFlags ); } \
 
 // Declare a concrete class.
+#define DECLARE_CLASS_WITHOUT_CONSTRUCT( TClass, TSuperClass, TStaticFlags ) \
+	DECLARE_BASE_CLASS( TClass, TSuperClass, TStaticFlags ) \
+	/* Typesafe pointer archiver */ \
+	friend FArchive &operator<<( FArchive& Ar, TClass*& Res ) \
+		{ return Ar << *(UObject**)&Res; } \
+	/* Empty virtual destructor */ \
+	virtual ~TClass() \
+		{ ConditionalDestroy(); } \
+	void* operator new( size_t Size, EInternal* Mem ) \
+		{ return (void*)Mem; } \
+	static void InternalConstructor( void* X ) \
+		{ new( (EInternal*)X )TClass(); } \
+
 #define DECLARE_CLASS( TClass, TSuperClass, TStaticFlags ) \
 	DECLARE_BASE_CLASS( TClass, TSuperClass, TStaticFlags ) \
 	/* Typesafe pointer archiver */ \
+	TClass(){}\
 	friend FArchive &operator<<( FArchive& Ar, TClass*& Res ) \
 		{ return Ar << *(UObject**)&Res; } \
 	/* Empty virtual destructor */ \
@@ -604,6 +618,10 @@ public:
 	const char* GetName() const
 	{
 		return *Name;
+	}
+	 FName GetFName() 
+	{
+		return Name;
 	}
 	const FName GetFName() const
 	{

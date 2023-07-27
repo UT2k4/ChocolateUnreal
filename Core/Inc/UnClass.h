@@ -181,7 +181,7 @@ protected:
 //
 class CORE_API UStruct : public UField
 {
-	DECLARE_CLASS(UStruct,UField,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UStruct,UField,0)
 	NO_DEFAULT_CONSTRUCTOR(UStruct)
 
 	// Variables.
@@ -257,7 +257,7 @@ class CORE_API UStruct : public UField
 //
 class CORE_API UFunction : public UStruct
 {
-	DECLARE_CLASS(UFunction,UStruct,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UFunction,UStruct,0)
 	NO_DEFAULT_CONSTRUCTOR(UFunction)
 
 	// Variables.
@@ -307,7 +307,7 @@ class CORE_API UFunction : public UStruct
 //
 class CORE_API UState : public UStruct
 {
-	DECLARE_CLASS(UState,UStruct,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UState,UStruct,0)
 	NO_DEFAULT_CONSTRUCTOR(UState)
 
 	// Variables.
@@ -348,7 +348,7 @@ class CORE_API UState : public UStruct
 //
 class CORE_API UEnum : public UField
 {
-	DECLARE_CLASS(UEnum,UField,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UEnum,UField,0)
 	NO_DEFAULT_CONSTRUCTOR(UEnum)
 
 	// Variables.
@@ -380,7 +380,7 @@ class CORE_API UEnum : public UField
 //
 class CORE_API UClass : public UState
 {
-	DECLARE_CLASS(UClass,UState,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UClass,UState,0)
 
 	// Variables.
 	DWORD				ClassFlags;
@@ -412,11 +412,11 @@ class CORE_API UClass : public UState
 	// UStruct interface.
 	UBOOL MergeBools() {return 1;}
 	UStruct* GetInheritanceSuper() {return GetSuperClass();}
-	UClass* C;
 	char* GetNameCPP()
 	{
 		static char Result[NAME_SIZE+1];
-		for( C=this; C; C=C->GetSuperClass() )
+		UClass* C = this;
+		for(; C; C=C->GetSuperClass() )
 			if( appStricmp(C->GetName(),"Actor")==0 )
 				break;
 		appSprintf( Result, "%s%s", C ? "A" : "U", GetName() );
@@ -471,7 +471,7 @@ private:
 //
 class CORE_API UConst : public UField
 {
-	DECLARE_CLASS(UConst,UField,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UConst,UField,0)
 	NO_DEFAULT_CONSTRUCTOR(UConst)
 
 	// Variables.

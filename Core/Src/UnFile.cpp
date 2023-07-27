@@ -36,7 +36,8 @@ void FArchive::String( char* S, INT_UNREAL_32S MaxLength )
 {
 	guardSlow(FArchive::String);
 	check(MaxLength>0);
-	for( INT_UNREAL_32S Count=0; Count<MaxLength-1; Count++ )
+	INT_UNREAL_32S Count;
+	for( Count=0; Count<MaxLength-1; Count++ )
 	{
 		Serialize( &S[Count], 1 );
 		if( S[Count] == 0 )
@@ -463,7 +464,7 @@ CORE_API INT_UNREAL_32S appChdir( const char* Dirname )
 CORE_API INT_UNREAL_32S appFprintf( FILE* F, const char* Fmt, ... )
 {
 	char Temp[32768];
-	INT_UNREAL_32S Result = GET_VARARGS(Temp,Fmt);
+	GET_VARARGS(Temp,Fmt);
 	return appFwrite( Temp, 1, strlen(Temp), F );
 }
 
@@ -534,18 +535,17 @@ const char* appSpc( int num )
 //
 CORE_API INT_UNREAL_32S appSprintf( char* Dest, const char* Fmt, ... )
 {
-	return GET_VARARGS(Dest,Fmt);
+	INT_UNREAL_32S result = 0;
+	GET_VARARGSR(Dest, Fmt, result);
+	return result;
 }
 
 //
 // Format a variable arguments expression.
 //
-CORE_API INT_UNREAL_32S appGetVarArgs( char* Dest, const char*& Fmt )
+CORE_API INT_UNREAL_32S appGetVarArgs(char* Dest, const char* Fmt, va_list va)
 {
-	va_list ArgPtr;
-	va_start( ArgPtr, Fmt );
-	INT_UNREAL_32S Result = vsprintf( Dest, Fmt, ArgPtr );
-	va_end( ArgPtr );
+	INT_UNREAL_32S Result = vsprintf(Dest, Fmt, va);
 	return Result;
 }
 
@@ -571,11 +571,11 @@ CORE_API INT_UNREAL_32S appStrlen( const char* String )
 }
 CORE_API char* appStrstr( const char* String, const char* Find )
 {
-	return strstr(String,Find);
+	return const_cast<char*>(strstr(String, Find));
 }
 CORE_API char* appStrchr( const char* String, int c )
 {
-	return strchr(String,c);
+	return const_cast<char*>(strchr(String, c));
 }
 CORE_API char* appStrcat( char* Dest, const char* Src )
 {
@@ -990,13 +990,13 @@ const char* appStrfind( const char* str, const char* find )
 	char f,c;
 
 	alnum  = 0;
-	f      = toupper(*find);
+	f      = appToUpper(*find);
 	length = strlen(find)-1;
 	find   ++;
 	c      = *str++;
 	while( c )
 	{
-		c = toupper(c);
+		c = appToUpper(c);
 		if( !alnum && c==f && !appStrnicmp(str,find,length) )
 			return str-1;
 		alnum = (c>='A' && c<='Z') || (c>='0' && c<='9');

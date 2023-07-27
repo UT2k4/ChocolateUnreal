@@ -15,7 +15,11 @@
 
 // API definition.
 #ifndef CORE_API
+#ifdef CORE_EXPORTS
+#define CORE_API DLL_EXPORT
+#else
 #define CORE_API DLL_IMPORT
+#endif
 #endif
 
 // Build options.

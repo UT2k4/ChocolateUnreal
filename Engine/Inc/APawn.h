@@ -4,7 +4,6 @@
 =============================================================================*/
 
 	// Constructors.
-	APawn() {}
 
 	// Latent movement
 	void setMoveTimer(FLOAT MoveSize);

@@ -18,7 +18,7 @@
 //
 class CORE_API UTextBufferFactory : public UFactory
 {
-	DECLARE_CLASS(UTextBufferFactory,UFactory,0)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTextBufferFactory,UFactory,0)
 
 	// Constructor.
 	UTextBufferFactory();

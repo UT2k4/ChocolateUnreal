@@ -12,7 +12,7 @@
 
 class EDITOR_API UTransBuffer : public UObject, public FTransactionTracker
 {
-	DECLARE_CLASS(UTransBuffer,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(UTransBuffer,UObject,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(UTransBuffer)
 
 	// Variables.

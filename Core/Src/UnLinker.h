@@ -347,7 +347,7 @@ struct FPackageFileSummary
 //
 class CORE_API ULinker : public UObject
 {
-	DECLARE_CLASS(ULinker,UObject,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULinker,UObject,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(ULinker)
 
 	// Constants.
@@ -387,7 +387,8 @@ class CORE_API ULinker : public UObject
 
 		// Prevent garbage collecting of linker's names and package.
 		Ar << NameMap << LinkerRoot;
-		for( INT_UNREAL_32S i=0; i<ExportMap.Num(); i++ )
+		INT_UNREAL_32S i;
+		for( i=0; i<ExportMap.Num(); i++ )
 		{
 			FObjectExport& E = ExportMap(i);
 			Ar << E.ObjectName << E.OldGroup << E.ClassPackage << E.ClassName;
@@ -412,7 +413,7 @@ class CORE_API ULinker : public UObject
 //
 class ULinkerLoad : public ULinker, public FArchiveFileLoad
 {
-	DECLARE_CLASS(ULinkerLoad,ULinker,CLASS_Transient)
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULinkerLoad,ULinker,CLASS_Transient)
 	NO_DEFAULT_CONSTRUCTOR(ULinkerLoad)
 
 	// Friends.
@@ -436,7 +437,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 		// Error if linker already loaded.
 		for( INT_UNREAL_32S i=0; i<GObj.Loaders.Num(); i++ )
 			if( GObj.GetLoader(i)->LinkerRoot == LinkerRoot )
-				appThrowf( LocalizeError("LinkerExists"), *LinkerRoot );
+				appThrowf( LocalizeError("LinkerExists"), LinkerRoot );
 
 		// Begin.
 		GSystem->StatusUpdatef( 0, 0, LocalizeProgress("Loading"), Filename );
@@ -619,8 +620,9 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 					VerifyImport( -Import.PackageIndex-1 );
 					Import.SourceLinker = ImportMap(-Import.PackageIndex-1).SourceLinker;
 					check(Import.SourceLinker);
+					FObjectImport* Top;
 					for
-					(	FObjectImport* Top = &Import
+					(	Top = &Import
 					;	Top->PackageIndex<0
 					;	Top = &ImportMap(-Top->PackageIndex-1) );
 					Pkg = GObj.CreatePackage( NULL, *Top->ObjectName );
@@ -665,7 +667,7 @@ class ULinkerLoad : public ULinker, public FArchiveFileLoad
 						}
 					}
 					if( !(Source.ObjectFlags & RF_Public) )
-						appThrowf( LocalizeError("FailedImportPrivate"), *Source.ClassName, *Import.SourceLinker->LinkerRoot, *Source.ObjectName );
+						appThrowf( LocalizeError("FailedImportPrivate"), Source.ClassName, Import.SourceLinker->LinkerRoot, *Source.ObjectName );
 					Import.SourceIndex = j;
 					break;
 				}
@@ -1037,7 +1039,7 @@ private:
 //
 class ULinkerSave : public ULinker, public FArchiveFileSave
 {
-	DECLARE_CLASS(ULinkerSave,ULinker,CLASS_Transient);
+	DECLARE_CLASS_WITHOUT_CONSTRUCT(ULinkerSave,ULinker,CLASS_Transient);
 	NO_DEFAULT_CONSTRUCTOR(ULinkerSave);
 
 	// Variables.

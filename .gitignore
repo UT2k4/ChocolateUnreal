@@ -436,3 +436,15 @@ Music/
 Shared/
 Sounds/
 Textures/
+
+System/Core.u
+System/Editor.u
+System/Engine.u
+System/Fire.u
+System/IpDrv.u
+System/MSVCRT.dll
+# TODO: remove once
+# unrealed is converted
+# to .NET
+System/UnrealEd.exe
+System/Unreali.u

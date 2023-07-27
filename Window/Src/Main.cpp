@@ -342,23 +342,6 @@ UEngine* InitEngine()
 		::MessageBox( NULL, Localize("FirstRun","Starting"), Localize("FirstRun","Caption"), MB_OK|MB_ICONINFORMATION|MB_TASKMODAL );
 		SetConfigBool( "FirstRun", "FirstRun", 0 );
 	}
-	char CdPath[256]="", Check[256];
-	GetConfigString( "Engine.Engine", "CdPath", CdPath, ARRAY_COUNT(CdPath) );
-	appSprintf( Check, "%sTextures\\Palettes.utx", CdPath );
-	while( !GIsEditor && appFSize(Check)<=0 )
-	{
-		if( MessageBox
-		(
-			NULL,
-			"Please insert the Unreal CD-Rom into your drive and press OK to continue, or Cancel to exit.",
-			"Cd Required At Startup",
-			MB_TASKMODAL|MB_OKCANCEL
-		)==IDCANCEL )
-		{
-			GIsCriticalError = 1;
-			ExitProcess( 0 );
-		}
-	}
 
 	// Create the global engine object.
 	UClass* EngineClass;

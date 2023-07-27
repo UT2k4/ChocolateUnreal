@@ -118,7 +118,7 @@ UBOOL USGLRenderDevice::Init( UViewport* InViewport )
 	if (Status==DDCERR_OK)
 	{
 		guard(DDCCreateRenderingObject);
-		Status=DDCCreateRenderingObject(Viewport->GetWindow(),
+		Status=DDCCreateRenderingObject(reinterpret_cast<HWND>(Viewport->GetWindow()),
 										TRUE,
 										X,Y,Bpp,NumBuffers);
 		unguard;
@@ -490,7 +490,7 @@ int USGLRenderDevice::Exec( const char *Cmd, FOutputDevice* Out )
 
 			// Init and create a new rendering object
 			guard(DDCCreateRenderingObject);
-			int Status=DDCCreateRenderingObject(Viewport->GetWindow(),
+			int Status=DDCCreateRenderingObject(reinterpret_cast<HWND>(Viewport->GetWindow()),
 												TRUE,
 												X,Y,
 												(ColorDepth==0)?16:24,

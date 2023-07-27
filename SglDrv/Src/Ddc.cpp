@@ -325,9 +325,9 @@ LRESULT CALLBACK _DDCWindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 	{
 		// Call original procedure
 		if (bOverrideReturnVal)
-			CallWindowProc((PROC)Context->TargetWindowProc,hWnd,uMsg,wParam,lParam);
+			CallWindowProc((WNDPROC)Context->TargetWindowProc,hWnd,uMsg,wParam,lParam);
 		else
-			ReturnVal=CallWindowProc((PROC)Context->TargetWindowProc,hWnd,uMsg,wParam,lParam);
+			ReturnVal=CallWindowProc((WNDPROC)Context->TargetWindowProc,hWnd,uMsg,wParam,lParam);
 	}
 	return ReturnVal;
 }

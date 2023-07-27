@@ -149,6 +149,7 @@
       <ImportLibrary>.\Release\GlideDrv.lib</ImportLibrary>
       <BaseAddress>0x10600000</BaseAddress>
       <AdditionalDependencies>..\Lib\Glide2X.lib;..\..\Core\Lib\Core.lib;..\..\Engine\Lib\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

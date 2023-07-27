@@ -102,6 +102,7 @@
       <ImportLibrary>.\..\Lib\Galaxy.lib</ImportLibrary>
       <BaseAddress>0x10500000</BaseAddress>
       <AdditionalDependencies>..\..\Core\Lib\Core.lib;..\..\Engine\Lib\Engine.lib;..\Lib\Galaxy-s.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

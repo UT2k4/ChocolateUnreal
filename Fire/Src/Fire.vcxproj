@@ -148,6 +148,7 @@
       <ImportLibrary>.\..\Lib\Fire.lib</ImportLibrary>
       <BaseAddress>0x10400000</BaseAddress>
       <AdditionalDependencies>..\..\Core\Lib\Core.lib;..\..\Engine\Lib\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

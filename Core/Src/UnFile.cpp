@@ -258,7 +258,8 @@ CORE_API void* appRealloc( void* Ptr, INT_UNREAL_32S NewSize, const char* Tag )
 		}
 		else
 		{
-			for( FTrackedAllocation *A = GTrackedAllocations; A; A=A->Next )
+			FTrackedAllocation* A;
+			for( A = GTrackedAllocations; A; A=A->Next )
 				if( A->Ptr == Ptr )
 					break;
 			if( !A )
